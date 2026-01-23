@@ -7,6 +7,6 @@
 
 """File Service Processors API."""
 
-from ..processors.zip import RecordingStream, ZipProcessor
+from .zip import RecordingStream, ZipProcessor
 
 __all__ = ("RecordingStream", "ZipProcessor")

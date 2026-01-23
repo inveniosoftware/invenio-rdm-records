@@ -128,7 +128,7 @@ class StreamedZipContainerItem:
 
         @stream_with_context
         def generate_zip():
-            """Generator that created ZIP file on the fly."""
+            """Generator that creates a ZIP file on the fly."""
             # Create ZipStream object
             zs = ZipStream(compress_type=ZIP_DEFLATED)
             try:
@@ -181,7 +181,7 @@ class StreamedZipContainerItem:
                 except Exception:
                     pass
 
-        # Cant calculate size here. Realistically zipstream can calculate size, but there will be no compression according to the docs
+        # Cannot calculate size here. Realistically zipstream can calculate size, but there will be no compression according to the docs
         return Response(
             generate_zip(),
             mimetype="application/zip",
@@ -189,17 +189,15 @@ class StreamedZipContainerItem:
         )
 
     def _collect_files(self, container_item_metadata):
-        """Recursively collect all files in a directory container item."""
+        """Collect all files in a directory container item."""
         files = []
 
         if container_item_metadata.get("type") == "file":
             return [container_item_metadata]
 
-        for sub_item in container_item_metadata.get("children", {}).values():
-            if sub_item.get("type") == "file":
-                files.append(sub_item)
-            elif sub_item.get("type") == "folder":
-                files.extend(self._collect_files(sub_item))
+        for container_item in container_item_metadata.get("items", {}).values():
+            if container_item.get("type") == "file":
+                files.append(container_item)
 
         return files
 
@@ -223,20 +221,12 @@ class ZipExtractor(FileExtractor):
 
     @staticmethod
     def _find_container_item(container_item_metadata, path_parts):
-        """Recursively find container item in TOC based on path parts."""
+        """Find a container item in TOC based on path parts."""
         if not path_parts:
             return None
 
-        key = path_parts[0]
-        for sub_item in container_item_metadata:
-            if sub_item["key"] == key:
-                if len(path_parts) == 1:
-                    return sub_item
-                elif sub_item.get("children"):
-                    return ZipExtractor._find_container_item(
-                        sub_item["children"].values(), path_parts[1:]
-                    )
-        return None
+        container_item_id = "/".join(path_parts)
+        return container_item_metadata.get(container_item_id)
 
     def list(self, file_record):
         """Return the cached table of contents for the ZIP file."""
@@ -255,7 +245,11 @@ class ZipExtractor(FileExtractor):
 
         Raises FileNotFoundError if listing or metadata is not found.
         """
-        parts = list(PurePosixPath(path).parts)
+        p = PurePosixPath(path)
+        # Validate path: must not be absolute and must not contain parent directory references
+        if p.is_absolute() or any(part == ".." for part in p.parts):
+            raise FileNotFoundError(f"Invalid path: '{path}'")
+        parts = list(p.parts)
 
         # Load the cached table of contents
         listing_file = file_record.record.media_files.get(f"{file_record.key}.listing")
@@ -267,7 +261,7 @@ class ZipExtractor(FileExtractor):
 
         # Find the requested container item in the TOC
         container_item_metadata = self._find_container_item(
-            listing.get("children", {}).values(), parts
+            listing.get("items", {}), parts
         )
         toc = listing.get("toc", {})
 

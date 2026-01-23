@@ -98,32 +98,24 @@ class ZipProcessor(FileProcessor):
 
         Example structure:
         {
-            "children": {
-                "test_zip":
-                {
-                    "key": "test_zip",
-                    "id": "test_zip",
-                    "type": "folder",
-                    "children": {
-                        "test1.txt":
-                            {
-                                "key": "test1.txt",
-                                "type": "file",
-                                "id": "test_zip/test1.txt",
-                                "size": 12,
-                                "compressed_size": 14,
-                                "mime_type": "text/plain",
-                                "crc": 2962613731,
-                            }
-                    },
-            }
+            "items": {
+                "test_zip/test1.txt":
+                    {
+                        "key": "test1.txt",
+                        "type": "file",
+                        "id": "test_zip/test1.txt",
+                        "size": 12,
+                        "compressed_size": 14,
+                        "mime_type": "text/plain",
+                        "crc": 2962613731,
+                    }
             },
             "total": 1,
             "truncated": False,
         }
         """
 
-        def insert_container_item(root, parts, info, current_path=""):
+        def insert_container_item(root, parts, info):
             """
             Insert a container item into the hierarchical tree.
 
@@ -131,24 +123,10 @@ class ZipProcessor(FileProcessor):
             components. For example, "dir1/dir2/file.txt" will create:
             dir1 -> dir2 -> file.txt
             """
-            toc_pos = root
-            current_path = ""
-            for part in parts[:-1]:
-                current_path = os.path.join(current_path, part)
-                children = toc_pos.setdefault("children", {})
-                if part not in children:
-                    children[part] = {
-                        "key": part,
-                        "id": current_path,
-                        "type": "folder",
-                        "children": {},
-                    }
-
-                toc_pos = children[part]
-
-            toc_pos["children"][parts[-1]] = {
+            container_item_id = "/".join(parts)
+            root["items"][container_item_id] = {
                 "key": parts[-1],
-                "id": "/".join(parts),
+                "id": container_item_id,
                 "type": "file",
                 "size": info.file_size,
                 "compressed_size": info.compress_size,
@@ -157,7 +135,7 @@ class ZipProcessor(FileProcessor):
                 "crc": info.CRC,
             }
 
-        toc_root = {"children": {}}
+        toc_root = {"items": {}}
         total_entries = 0
         truncated = False
 

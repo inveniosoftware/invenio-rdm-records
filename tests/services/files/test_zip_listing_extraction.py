@@ -52,27 +52,17 @@ def test_zip_file_listing(
     # Get file metadata
     listing = file_service.list_container(identity_simple, draft.id, "test.zip")
     assert listing.to_dict() == {
-        "children": {
-            "test_zip": {
-                "children": {
-                    "test1.txt": {
-                        "key": "test1.txt",
-                        "type": "file",
-                        "id": "test_zip/test1.txt",
-                        "size": 12,
-                        "compressed_size": 14,
-                        "mime_type": "text/plain",
-                        "crc": 2962613731,
-                        "links": {
-                            "content": f"https://127.0.0.1:5000/api/records/{draft.id}/files/test.zip/container/test_zip/test1.txt",
-                        },
-                    }
-                },
-                "key": "test_zip",
-                "id": "test_zip",
-                "type": "folder",
+        "items": {
+            "test_zip/test1.txt": {
+                "key": "test1.txt",
+                "type": "file",
+                "id": "test_zip/test1.txt",
+                "size": 12,
+                "compressed_size": 14,
+                "mime_type": "text/plain",
+                "crc": 2962613731,
                 "links": {
-                    "content": f"https://127.0.0.1:5000/api/records/{draft.id}/files/test.zip/container/test_zip"
+                    "content": f"https://127.0.0.1:5000/api/records/{draft.id}/files/test.zip/container/test_zip/test1.txt",
                 },
             }
         },
@@ -400,10 +390,8 @@ def test_zip_listing_resource(
     )
     assert res.status_code == 200
     assert res.json == {
-        "children": {
-            "test_zip": {
-                "children": {
-                    "test1.txt": {
+        "items": {
+            "test_zip/test1.txt": {
                         "key": "test1.txt",
                         "type": "file",
                         "id": "test_zip/test1.txt",
@@ -415,14 +403,6 @@ def test_zip_listing_resource(
                             "content": f"https://127.0.0.1:5000/api/records/{draft.id}/files/test.zip/container/test_zip/test1.txt",
                         },
                     }
-                },
-                "key": "test_zip",
-                "id": "test_zip",
-                "type": "folder",
-                "links": {
-                    "content": f"https://127.0.0.1:5000/api/records/{draft.id}/files/test.zip/container/test_zip"
-                },
-            }
         },
         "total": 1,
         "truncated": False,
@@ -436,8 +416,6 @@ def test_zip_file_extract_resource(
     data["files"] = {"enabled": True}
     data["media_files"] = {"enabled": True}
     service = current_rdm_records_service
-
-    file_service = service.files
 
     # Create
     draft = service.create(identity_simple, data)
@@ -467,7 +445,7 @@ def test_zip_file_extract_resource(
     service.draft_files.commit_file(identity_simple, draft.id, "test_directory_zip.zip")
 
     # Publish the record
-    record = service.publish(identity_simple, draft.id)
+    service.publish(identity_simple, draft.id)
 
     res = client.get(
         f"/records/{draft.id}/files/test_directory_zip.zip/container/test_directory_zip/directory1/directory1-file1.txt",
@@ -487,8 +465,6 @@ def test_zip_folder_extract_resource(
     data["media_files"] = {"enabled": True}
     service = current_rdm_records_service
 
-    file_service = service.files
-
     # Create
     draft = service.create(identity_simple, data)
 
@@ -517,7 +493,7 @@ def test_zip_folder_extract_resource(
     service.draft_files.commit_file(identity_simple, draft.id, "test_directory_zip.zip")
 
     # Publish the record
-    record = service.publish(identity_simple, draft.id)
+    service.publish(identity_simple, draft.id)
 
     res = client.get(
         f"/records/{draft.id}/files/test_directory_zip.zip/container/test_directory_zip/directory1",

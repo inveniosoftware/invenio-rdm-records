@@ -24,7 +24,7 @@ class ReplyStream:
     repeatedly, but where the headers have been pre-fetched and cached.
 
     Attributes:
-        self_stream: The underlying file-like object to read from for non-cached regions. For example file_record.open_stream("rb").
+        underlying_stream: The underlying file-like object to read from for non-cached regions. For example file_record.open_stream("rb").
         header_pos (int): Byte offset in the file where the cached header begins.
         header (bytes): The cached header bytes stored in memory.
         header_len (int): Length of the cached header in bytes.
@@ -32,9 +32,9 @@ class ReplyStream:
         file_size (int): Total size of the virtual file in bytes (max offset read).
     """
 
-    def __init__(self, self_stream, header_pos, header, file_size):
+    def __init__(self, underlying_stream, header_pos, header, file_size):
         """Initialize a ReplyStream with a cached header region."""
-        self.self_stream = self_stream
+        self.underlying_stream = underlying_stream
         self.header_pos = header_pos
         self.header = header
         self.header_len = len(header)
@@ -66,23 +66,22 @@ class ReplyStream:
 
         Use cache when seeking within the cached header region, otherwise seek in the underlying stream.
         """
-        match whence:
-            case os.SEEK_SET:
-                self.current_pos = offset
-            case os.SEEK_CUR:
-                self.current_pos = self.current_pos + offset
-            case os.SEEK_END:
-                self.current_pos = self.file_size + offset
-            case _:
-                raise ValueError("Invalid value for 'whence'.")
+        if whence == os.SEEK_SET:
+            self.current_pos = offset
+        elif whence == os.SEEK_CUR:
+            self.current_pos = self.current_pos + offset
+        elif whence == os.SEEK_END:
+            self.current_pos = self.file_size + offset
+        else:
+            raise ValueError("Invalid value for 'whence'.")
 
         # Only seek in the underlying stream if we're reading outside the cached header region
         if self.current_pos < self.header_pos:
             # Before the cached region - seek in underlying stream
-            self.self_stream.seek(self.current_pos, os.SEEK_SET)
+            self.underlying_stream.seek(self.current_pos, os.SEEK_SET)
         elif self.current_pos >= self.header_pos + self.header_len:
             # After the cached region - seek in underlying stream
-            self.self_stream.seek(self.current_pos, os.SEEK_SET)
+            self.underlying_stream.seek(self.current_pos, os.SEEK_SET)
         # else: within the cached header region, no need to seek in underlying stream
 
         return self.current_pos
@@ -105,7 +104,7 @@ class ReplyStream:
             # Before cached header
             if self.current_pos < self.header_pos:
                 chunk_size = min(bytes_to_read, self.header_pos - self.current_pos)
-                chunk = self.self_stream.read(chunk_size)
+                chunk = self.underlying_stream.read(chunk_size)
                 result += chunk
                 self.current_pos += len(chunk)
                 bytes_to_read -= len(chunk)
@@ -124,7 +123,7 @@ class ReplyStream:
 
             # After cached header
             else:
-                chunk = self.self_stream.read(bytes_to_read)
+                chunk = self.underlying_stream.read(bytes_to_read)
                 result += chunk
                 self.current_pos += len(chunk)
                 bytes_to_read -= len(chunk)
