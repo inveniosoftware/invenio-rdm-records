@@ -415,6 +415,11 @@ def app_config(app_config, mock_datacite_client):
 def extra_entry_points():
     """Extra entrypoints."""
     return {
+        "invenio_administration.views": [
+            "invenio_app_rdm_records_list = tests.mock_module.administration:RecordAdminListView",
+            "invenio_app_rdm_drafts_list = tests.mock_module.administration:DraftAdminListView",
+            "invenio_requests_user_moderation_list = tests.mock_module.administration:UserModerationListView",
+        ],
         "invenio_base.blueprints": [
             "invenio_app_rdm_records = tests.mock_module:create_invenio_app_rdm_records_blueprint",  # noqa
             "invenio_app_rdm_requests = tests.mock_module:create_invenio_app_rdm_requests_blueprint",  # noqa
