@@ -442,7 +442,7 @@ class WithFileLinks(type):
                 "record_files.extract_container_item",
                 params=["pid_value", "key", "path"],
                 vars=lambda container_item_metadata, variables: variables.update(
-                    {"path": container_item_metadata["id"]}
+                    {"path": container_item_metadata["key"]}
                 ),
             ),
         }
