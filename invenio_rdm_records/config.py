@@ -346,6 +346,14 @@ RDM_FACETS = {
             },
         },
     },
+    "publication_date": {
+        "facet": facets.publication_date,
+        "ui": {
+            "field": "publication_date",
+            "type": "date",
+            "separator": "..",
+        },
+    },
 }
 
 RDM_SEARCH_SORT_BY_VERIFIED = False
@@ -404,7 +412,7 @@ RDM_SORT_OPTIONS = {
 
 
 RDM_SEARCH = {
-    "facets": ["access_status", "file_type", "resource_type"],
+    "facets": ["publication_date", "access_status", "file_type", "resource_type"],
     "sort": [
         "bestmatch",
         "newest",
@@ -445,7 +453,13 @@ The configuration has four possible keys:
 """
 
 RDM_SEARCH_DRAFTS = {
-    "facets": ["access_status", "is_published", "resource_type", "file_type"],
+    "facets": [
+        "publication_date",
+        "access_status",
+        "is_published",
+        "resource_type",
+        "file_type",
+    ],
     "sort": ["bestmatch", "updated-desc", "updated-asc", "newest", "oldest", "version"],
 }
 """User records search configuration (i.e. list of uploads)."""

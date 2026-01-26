@@ -15,6 +15,7 @@ from warnings import warn
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.records.facets import (
     CombinedTermsFacet,
+    DateFacet,
     NestedTermsFacet,
     TermsFacet,
 )
@@ -107,4 +108,12 @@ subject_combined = CombinedTermsFacet(
     splitchar=SPLITCHAR,
     label=_("Subjects"),
     value_labels=SubjectsLabels(),
+)
+
+
+publication_date = DateFacet(
+    field="metadata.publication_date_range",
+    label=_("Publication date"),
+    interval="year",
+    separator="..",
 )
