@@ -82,6 +82,7 @@ class AdditionalTitlesFieldComponent extends Component {
                   aria-label={i18next.t("Remove field")}
                   className="close-btn"
                   icon="close"
+                  type="button"
                   onClick={() => arrayHelpers.remove(indexPath)}
                 />
               </Form.Field>

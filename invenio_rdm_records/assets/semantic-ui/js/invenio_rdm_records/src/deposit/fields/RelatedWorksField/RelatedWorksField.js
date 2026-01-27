@@ -120,6 +120,7 @@ class RelatedWorksFieldComponent extends Component {
 
                 <Form.Field>
                   <Button
+                    type="button"
                     aria-label={i18next.t("Remove field")}
                     className="close-btn"
                     icon="close"
