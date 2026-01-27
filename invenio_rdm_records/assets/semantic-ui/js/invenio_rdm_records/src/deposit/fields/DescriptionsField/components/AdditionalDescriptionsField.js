@@ -50,6 +50,7 @@ export class AdditionalDescriptionsField extends Component {
                       className="close-btn"
                       floated="right"
                       icon
+                      type="button"
                       onClick={() => arrayHelpers.remove(indexPath)}
                     >
                       <Icon name="close" />
