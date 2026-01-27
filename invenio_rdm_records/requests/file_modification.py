@@ -10,12 +10,13 @@
 from invenio_access.permissions import system_identity
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.uow import ModelCommitOp
-from invenio_requests.customizations import RequestType, actions
+from invenio_requests.customizations import actions
 from invenio_requests.proxies import current_requests_service
 from invenio_search.api import dsl
 from marshmallow import ValidationError, fields, validate
 
 from invenio_rdm_records.proxies import current_rdm_records_service as records_service
+from invenio_rdm_records.requests.base import BaseRequest
 
 from ..requests.base import BaseRequest
 

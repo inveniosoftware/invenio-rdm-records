@@ -90,6 +90,7 @@ def test_uploader_add_record_to_communities(
         assert response.json["status"] == "submitted"
         assert response.json["type"] == CommunityInclusion.type_id
         assert response.json["is_open"] is True
+        assert f"/me/requests/{request_id}" in response.json["links"]["self_html"]
 
     client = uploader.logout(client)
     # check search results

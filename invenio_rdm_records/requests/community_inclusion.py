@@ -11,11 +11,12 @@ from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services.uow import RecordIndexOp
-from invenio_requests.customizations import RequestType, actions
+from invenio_requests.customizations import actions
 
 from invenio_rdm_records.notifications.builders import (
     CommunityInclusionAcceptNotificationBuilder,
 )
+from invenio_rdm_records.requests.base import BaseRequest
 from invenio_rdm_records.services.errors import InvalidAccessRestrictions
 
 from ..proxies import current_rdm_records_service as service
