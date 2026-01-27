@@ -69,8 +69,6 @@ from requests import Request
 from werkzeug.local import LocalProxy
 
 from invenio_rdm_records.records.processors.tiles import TilesProcessor
-from invenio_rdm_records.services.files.extractors.zip import ZipExtractor
-from invenio_rdm_records.services.files.processors.zip import ZipProcessor
 
 from ..records import RDMDraft, RDMRecord
 from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
@@ -564,10 +562,6 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "RDM_FILES_SERVICE_COMPONENTS", default=FileServiceConfig.components
     )
 
-    file_processors = FileServiceConfig.file_processors + [ZipProcessor()]
-
-    file_extractors = FileServiceConfig.file_extractors + [ZipExtractor()]
-
 
 class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     """RDM record draft service config."""
@@ -953,10 +947,6 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     components = FromConfig(
         "RDM_DRAFT_FILES_SERVICE_COMPONENTS", default=FileServiceConfig.components
     )
-
-    file_processors = FileServiceConfig.file_processors + [ZipProcessor()]
-
-    file_extractors = FileServiceConfig.file_extractors + [ZipExtractor()]
 
 
 class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
