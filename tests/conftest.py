@@ -3,7 +3,7 @@
 # Copyright (C) 2019-2026 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
 # Copyright (C) 2021 TU Wien.
-# Copyright (C) 2022-2023 Graz University of Technology.
+# Copyright (C) 2022-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -164,7 +164,7 @@ def mock_datacite_client():
 
 
 @pytest.fixture(scope="module")
-def app_config(app_config, mock_datacite_client):
+def app_config(app_config, mock_datacite_client, cache_uri):
     """Override pytest-invenio app_config fixture.
 
     For test purposes we need to enforce the configuration variables set in
@@ -409,6 +409,12 @@ def app_config(app_config, mock_datacite_client):
     ]
     app_config["RDM_REQUEST_RECORD_DELETION_ENABLED"] = True
     app_config["RDM_REQUEST_RECORD_DELETION_POLICIES"] = [RequestDeletionPolicy()]
+
+    app_config["COMMUNITIES_IDENTITIES_CACHE_REDIS_URL"] = cache_uri
+    app_config["BROKER_URI"] = cache_uri
+    app_config["CACHE_REDIS_URL"] = cache_uri
+    app_config["CELERY_RESULT_BACKEND"] = cache_uri
+    app_config["IIIF_CACHE_REDIS_URL"] = cache_uri
 
     return app_config
 
