@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version 23.2.2 (release 2026-01-27)
+
+- fix(deposit): prevent Enter key from removing array field rows
+
+
 Version 23.2.1 (release 2026-01-22)
 
 - fix(permissions): allow system user to manage files
