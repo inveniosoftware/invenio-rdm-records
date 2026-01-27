@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2025-2026 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -8,7 +9,7 @@
 """Secret links for sharing access to records."""
 
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 from invenio_db import db
 from sqlalchemy_utils import UUIDType
@@ -38,11 +39,14 @@ class SecretLink(db.Model):
     """
 
     created = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow, index=True
+        db.UTCDateTime,
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+        index=True,
     )
     """Creation timestamp."""
 
-    expires_at = db.Column(db.DateTime, nullable=True)
+    expires_at = db.Column(db.UTCDateTime, nullable=True)
     """Expiration date."""
 
     permission_level = db.Column(db.String, nullable=False, default="")
@@ -89,7 +93,7 @@ class SecretLink(db.Model):
     def is_expired(self):
         """Determine if link is expired."""
         if self.expires_at:
-            return datetime.utcnow() > self.expires_at
+            return datetime.now(timezone.utc) > self.expires_at
 
         return False
 
@@ -98,7 +102,7 @@ class SecretLink(db.Model):
         """Get the SecretLink referenced by the specified token."""
         data = cls.load_token(token)
         if data:
-            link = cls.query.get(data["id"])
+            link = db.session.get(cls, data["id"])
             return link
         else:
             return None
@@ -149,7 +153,7 @@ class SecretLink(db.Model):
         data = cls.load_token(token, expected_data=expected_data)
 
         if data:
-            link = cls.query.get(data["id"])
+            link = db.session.get(cls, data["id"])
             if link and not link.is_expired:
                 return True
 

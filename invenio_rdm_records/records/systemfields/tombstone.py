@@ -8,7 +8,7 @@
 
 """Systemfield for managing tombstone information of a record."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from invenio_records.systemfields import SystemField
 from invenio_requests.resolvers.registry import ResolverRegistry
@@ -92,7 +92,7 @@ class Tombstone:
     def removal_date(self, value):
         """Set the removal date."""
         if value is None:
-            value = datetime.utcnow()
+            value = datetime.now(timezone.utc)
 
         if isinstance(value, datetime):
             value = value.isoformat()

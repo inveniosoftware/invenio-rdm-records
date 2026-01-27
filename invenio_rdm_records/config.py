@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2019-2026 CERN.
 # Copyright (C) 2019 Northwestern University.
-# Copyright (C) 2021-2024 Graz University of Technology.
+# Copyright (C) 2021-2025 Graz University of Technology.
 # Copyright (C) 2023 TU Wien.
 # Copyright (C) 2025-2026 University of Münster.
 #
@@ -555,7 +555,7 @@ RDM_PARENT_PERSISTENT_IDENTIFIER_PROVIDERS = [
     providers.DataCitePIDProvider(
         "datacite",
         client=providers.DataCiteClient("datacite", config_prefix="DATACITE"),
-        serializer=DataCite45JSONSerializer(schema_context={"is_parent": True}),
+        serializer=DataCite45JSONSerializer(is_parent=True),
         label=_("Concept DOI"),
     ),
 ]

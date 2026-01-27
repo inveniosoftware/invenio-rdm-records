@@ -3,7 +3,7 @@
 # Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021-2023 TU Wien.
-# Copyright (C) 2021 Graz University of Technology.
+# Copyright (C) 2021-2025 Graz University of Technology.
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2024 KTH Royal Institute of Technology.
 #
@@ -12,9 +12,8 @@
 
 """RDM Record Service."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 
-import arrow
 from flask import current_app
 from invenio_access.permissions import system_identity, system_user_id
 from invenio_accounts.models import User
@@ -163,7 +162,7 @@ class RDMRecordService(RecordService):
 
     def scan_expired_embargos(self, identity):
         """Scan for records with an expired embargo."""
-        today = arrow.utcnow().date().isoformat()
+        today = datetime.now(timezone.utc).date().isoformat()
 
         embargoed_q = (
             f"access.embargo.active:true AND access.embargo.until:[* TO {today}]"
@@ -729,7 +728,7 @@ class RDMRecordService(RecordService):
                 draft.created
                 + current_app.config["RDM_RECORDS_RESTRICTION_GRACE_PERIOD"]
             )
-            if end_of_grace_period <= datetime.now():
+            if end_of_grace_period <= datetime.now(timezone.utc):
                 raise ValidationError(
                     _(
                         "Record visibility can not be changed to restricted "
@@ -812,7 +811,7 @@ class RDMRecordService(RecordService):
         uow=None,
     ):
         """Set user files quota."""
-        user = User.query.get(id_)
+        user = db.session.get(User, id_)
 
         self.require_permission(identity, "manage_quota", record=user)
 
