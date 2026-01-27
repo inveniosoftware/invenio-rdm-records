@@ -346,6 +346,13 @@ RDM_FACETS = {
             },
         },
     },
+    "publication_date": {
+        "facet": facets.publication_date,
+        "ui": {
+            "field": "publication_date",
+            "type": "date",
+        },
+    },
 }
 
 RDM_SEARCH_SORT_BY_VERIFIED = False
