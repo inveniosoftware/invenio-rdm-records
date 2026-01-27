@@ -27,12 +27,34 @@ import { DepositService } from "./DepositService";
 import { configureStore } from "../store";
 import { RDMUploadProgressNotifier } from "../components/UploadProgressNotifier";
 
+/**
+ * Instantiates a class if a constructor is provided, otherwise returns the object as-is.
+ * @param {Function|Object|null} classOrInstance - A class constructor or an instance
+ * @param {Array} args - Arguments to pass to the constructor if instantiating
+ * @returns {Object|null} The instance or null if input is null/undefined
+ */
+const asInstance = (classOrInstance, ...args) => {
+  if (!classOrInstance) {
+    return null;
+  }
+
+  if (typeof classOrInstance === "function") {
+    return new classOrInstance(...args);
+  }
+
+  return classOrInstance;
+};
+
 export class DepositFormApp extends Component {
   constructor(props) {
     super(props);
 
     const recordSerializer = props.recordSerializer
-      ? props.recordSerializer
+      ? asInstance(
+          props.recordSerializer,
+          props.config.default_locale,
+          props.config.custom_fields.vocabularies
+        )
       : new RDMDepositRecordSerializer(
           props.config.default_locale,
           props.config.custom_fields.vocabularies
