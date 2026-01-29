@@ -56,7 +56,7 @@ def verify_access_request_token():
 def read_request(request, **kwargs):
     """UI endpoint for the guest access request details."""
     request_type = request["type"]
-    community = request["receiver"]["community"]
+    community = request["receiver"].get("community", None)
     request_is_accepted = request["status"] == GuestAcceptAction.status_to
     permissions = request.has_permissions_to(["create_comment"])
 
