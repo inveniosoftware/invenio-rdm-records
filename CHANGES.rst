@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v22.7.3 (released 2026-01-29)
+
+- fix(access_requests_ui): Fix view for guest when receiver isnt community
+
 Version v22.7.2 (released 2026-01-29)
 
 - bibtex: schema: add publication-thesis for compatibility
