@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v22.7.2 (released 2026-01-29)
+
+- bibtex: schema: add publication-thesis for compatibility
+
 Version v22.7.1 (released 2026-01-16)
 
 - fix(deposit): rename conflicting prop func which was breaking deposit submission
