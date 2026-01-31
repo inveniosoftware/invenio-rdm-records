@@ -12,6 +12,7 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 from flask import current_app
+from invenio_db import db
 from invenio_oauth2server.models import Token
 from marshmallow import Schema, fields
 
@@ -49,7 +50,7 @@ def validate_rat(token):
     if not access_token_id.isdigit():
         raise InvalidTokenIDError()
 
-    access_token = Token.query.get(int(access_token_id))
+    access_token = db.session.get(Token, int(access_token_id))
     is_invalid_scope = (
         access_token and tokens_generate_scope.id not in access_token.scopes
     )

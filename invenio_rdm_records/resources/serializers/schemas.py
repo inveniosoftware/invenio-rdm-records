@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 CERN
+# Copyright (C) 2026 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -16,7 +17,7 @@ class CommonFieldsMixin:
 
     def get_doi(self, obj):
         """Get DOI."""
-        if self.context.get("doi_all_versions", False):
+        if getattr(self, "doi_all_versions", False):
             # If all versions export is requested, we return the DOI from the parent
             if "doi" in obj["parent"]["pids"]:
                 return obj["parent"]["pids"]["doi"]["identifier"]

@@ -356,6 +356,8 @@ class TombstoneSchema(Schema):
 class UIRecordSchema(BaseObjectSchema):
     """Schema for dumping extra information for the UI."""
 
+    object_key = "ui"
+
     publication_date_l10n_medium = FormatEDTF(
         attribute="metadata.publication_date", format="medium"
     )

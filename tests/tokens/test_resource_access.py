@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Test Resource access tokens."""
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from io import BytesIO
 
 import jwt
@@ -31,7 +32,7 @@ def _generate_pat_token(
     client,
     access_token,
     scope=tokens_generate_scope.id,
-    expires=datetime.utcnow() + timedelta(hours=10),
+    expires=datetime.now(timezone.utc) + timedelta(hours=10),
 ):
     """Create a personal access token."""
     with db.session.begin_nested():
@@ -57,7 +58,7 @@ def _generate_pat_token(
 
 def _rat_gen(token, payload=None, headers=None):
     """Create a resource access token."""
-    payload = {"iat": datetime.utcnow()} if payload is None else payload
+    payload = {"iat": datetime.now(timezone.utc)} if payload is None else payload
     headers = {"kid": str(token.id)} if headers is None else headers
     return jwt.encode(
         payload=payload,
@@ -137,7 +138,10 @@ def test_rat_validation_failed(app, db, uploader, superuser_identity, oauth2_cli
         validate_rat(
             _rat_gen(
                 pat["token"],
-                payload={"iat": datetime.utcnow() - timedelta(hours=1), "sub": {}},
+                payload={
+                    "iat": datetime.now(timezone.utc) - timedelta(hours=1),
+                    "sub": {},
+                },
             )
         )
     # case: RAT is missing "sub" key
@@ -170,7 +174,7 @@ def test_rec_files_permissions_with_rat(
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "test.pdf",
@@ -228,7 +232,7 @@ def test_rec_metadata_permissions_with_rat(
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "test.pdf",
@@ -286,7 +290,7 @@ def test_draft_files_permissions_with_rat(
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "test.pdf",
@@ -344,7 +348,7 @@ def test_draft_metadata_permissions_with_rat(
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "test.pdf",
@@ -401,7 +405,7 @@ def test_fully_restricted_rec_files_permissions_with_rat(
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "test.pdf",
@@ -460,7 +464,7 @@ def test_fully_restricted_draft_files_permissions_with_rat(
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "test.pdf",
@@ -518,7 +522,7 @@ def test_rec_files_permissions_with_rat_invalid_token_error(
     )["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "test.pdf",
@@ -577,7 +581,7 @@ def test_rec_files_permissions_with_rat_missing_token_id_error(
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "test.pdf",
@@ -645,7 +649,7 @@ def test_rec_files_permissions_with_rat_invalid_token_id_error(
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "test.pdf",
@@ -712,7 +716,7 @@ def test_rec_files_permissions_with_rat_expired_token_error(
     # generate expired RAT
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
-        payload={"iat": datetime.utcnow() - timedelta(hours=1), "sub": {}},
+        payload={"iat": datetime.now(timezone.utc) - timedelta(hours=1), "sub": {}},
         key=pat.access_token,
         algorithm="HS256",
         headers={"kid": str(pat.id)},
@@ -765,7 +769,7 @@ def test_rec_files_permissions_with_rat_wrong_file(
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "another file.pdf",
@@ -823,7 +827,7 @@ def test_rec_files_permissions_with_rat_wrong_access(
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "test.pdf",
@@ -882,7 +886,7 @@ def test_rec_files_permissions_with_rat_wrong_recid(
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "test.pdf",
@@ -941,7 +945,7 @@ def test_rec_files_permissions_with_rat_wrong_signer(
     pat = _generate_pat_token(db, community_owner, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
         payload={
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "sub": {
                 "record_id": recid,
                 "file": "test.pdf",

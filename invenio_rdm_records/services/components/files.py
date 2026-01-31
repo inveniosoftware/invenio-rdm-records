@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2025 TU Wien.
+# Copyright (C) 2026 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Service component taking care of files-related tasks such as setting the quota."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flask import current_app
 from invenio_drafts_resources.services.records.components import DraftFilesComponent
@@ -46,7 +47,7 @@ class RDMDraftFilesComponent(DraftFilesComponent):
             and not can_manage_files  # This allows admins to bypass the check
             and not draft.files.bucket.locked  # Only if the bucket is still unlocked
         ):
-            if (datetime.utcnow() - record.created) > modification_period:
+            if (datetime.now(timezone.utc) - record.created) > modification_period:
                 raise ValidationError(
                     current_app.config.get(
                         "RDM_FILE_MODIFICATION_VALIDATION_ERROR_MESSAGE"

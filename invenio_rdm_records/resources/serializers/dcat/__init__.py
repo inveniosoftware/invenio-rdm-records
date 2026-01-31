@@ -178,7 +178,7 @@ class DCATSerializer(MarshmallowSerializer):
                     namespaces=namespaces,
                 )[0]
 
-                if subject_element:
+                if subject_element is not None:
                     # Add the valueURI to the dct:subject element as rdf:about
                     subject_element.set(
                         "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about", value_uri
