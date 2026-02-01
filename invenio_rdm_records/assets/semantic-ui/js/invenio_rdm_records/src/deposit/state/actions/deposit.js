@@ -117,6 +117,17 @@ async function _saveDraft(
     throw error;
   }
 
+  if (response.errors && typeof response.errors === "object") {
+    for (const key in response.errors) {
+      if (Object.prototype.hasOwnProperty.call(response.errors, key)) {
+        const val = response.errors[key];
+        if (val?.message && typeof val === "object") {
+          response.errors[key] = val.message;
+        }
+      }
+    }
+  }
+
   const draftHasValidationErrors = showOnlyValidationErrorsWithSeverityError
     ? _hasValidationErrorsWithSeverityError(response.errors)
     : !_isEmpty(response.errors);
