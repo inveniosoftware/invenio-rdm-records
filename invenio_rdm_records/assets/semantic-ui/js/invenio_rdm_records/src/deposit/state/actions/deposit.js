@@ -101,6 +101,8 @@ async function _saveDraft(
   try {
     response = await saveDraftWithUrlUpdate(draft, draftsService, failType);
     console.log("DEBUG: Save Success Payload:", response.data);
+    const currentState = getState();
+    console.log("DEBUG: Full Deposit State on Success:", currentState.deposit);
   } catch (error) {
     console.error("Error saving draft", error, draft);
     console.error("DEBUG: Save Error Object:", error);
