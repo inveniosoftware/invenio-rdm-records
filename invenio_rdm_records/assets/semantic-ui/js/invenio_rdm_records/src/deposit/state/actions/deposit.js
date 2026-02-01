@@ -117,15 +117,24 @@ async function _saveDraft(
     throw error;
   }
 
-  if (response.errors && typeof response.errors === "object") {
-    for (const key in response.errors) {
-      if (Object.prototype.hasOwnProperty.call(response.errors, key)) {
-        const val = response.errors[key];
-        if (val?.message && typeof val === "object") {
-          response.errors[key] = val.message;
-        }
+  const clean = (obj) => {
+    if (!obj || typeof obj !== "object") return obj;
+    for (const key in obj) {
+      const v = obj[key];
+      // If we find the {message, severity, description} object:
+      if (v?.message && typeof v === "object") {
+        obj[key] = v.message;
+      } else if (typeof v === "object") {
+        clean(v); // Search deeper
       }
     }
+    return obj;
+  };
+
+  // Clean both the direct errors and any errors embedded in data
+  response.errors = clean(response.errors);
+  if (response.data?.errors) {
+    response.data.errors = clean(response.data.errors);
   }
 
   const draftHasValidationErrors = showOnlyValidationErrorsWithSeverityError
