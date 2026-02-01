@@ -121,11 +121,9 @@ async function _saveDraft(
 
   const editorState = depositState?.editorState || {};
   const actions = editorState?.actions || {};
-  const { 
-    communityStateMustBeChecked = false, 
-    shouldDeleteReview = false, 
-    shouldUpdateReview = false 
-  } = actions;
+  const communityStateMustBeChecked = actions?.communityStateMustBeChecked || false;
+  const shouldDeleteReview = actions?.shouldDeleteReview || false;
+  const shouldUpdateReview = actions?.shouldUpdateReview || false;
   const selectedCommunity = editorState?.selectedCommunity;
 
   if (communityStateMustBeChecked) {
