@@ -1,47 +1,61 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 CERN.
+# Copyright (C) 2025 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM requests decorators."""
 
+import copy
 from functools import wraps
 
+from invenio_records_resources.services import ConditionalLink, LinksTemplate
 from invenio_requests import current_requests_service
-from invenio_requests.services.requests.links import RequestLink, RequestLinksTemplate
 
-from ..services.review.links import RequestRecordLink
+from ..services.review.links import RecordEndpointLinkFromRequest
 
 
 def request_next_link(**kwargs):
-    """Add the `next_html` extra link to the request item."""
+    """Add the `next_html` extra link to the request item.
+
+    This approach was taken because `ReviewService` returns a `RequestItem`
+    i.e., its config doesn't control the links of the result item generated.
+    """
 
     def decorator(f):
         @wraps(f)
         def inner(self, *args, **kwargs):
             request_item = f(self, *args, **kwargs)
 
-            # check if the request is still open, or accepted (closed)
-            has_review_request = request_item._record.is_open
-            if has_review_request:
-                next_html = RequestLink("{+ui}/requests/{id}")
-            else:
-                next_html = RequestRecordLink("{+ui}/records/{record_id}")
+            config_of_requests_service = current_requests_service.config
+            links_item_w_next_html = copy.deepcopy(
+                config_of_requests_service.links_item
+            )
+            links_item_w_next_html["next_html"] = ConditionalLink(
+                # obj is the request here
+                cond=lambda obj, ctx: obj.is_open,  # i.e. has review request
+                # just the self_html link of the request
+                if_=links_item_w_next_html["self_html"],
+                else_=RecordEndpointLinkFromRequest(
+                    "invenio_app_rdm_records.record_detail"
+                ),
+            )
+            new_links_tpl = LinksTemplate(
+                links_item_w_next_html,
+                # to avoid reaching for private properties we reproduce what
+                # RequestsService.links_item_tpl does using only public interfaces.
+                # We could make LinksTemplate.context public as an alternative/in the
+                # future.
+                context={
+                    "permission_policy_cls": (
+                        config_of_requests_service.permission_policy_cls
+                    ),
+                },
+            )
+            request_item.links_tpl = new_links_tpl
 
-            # add the `next_html` link to help the UI to decide where to go next
-            prev_item_tpl = current_requests_service.links_item_tpl
-            links_item = dict(
-                **prev_item_tpl._links,
-                next_html=next_html,
-            )
-            links_item_tpl = RequestLinksTemplate(
-                links_item,
-                prev_item_tpl._action_link,
-                context=prev_item_tpl._context,
-            )
-            request_item.links_tpl = links_item_tpl
             return request_item
 
         return inner

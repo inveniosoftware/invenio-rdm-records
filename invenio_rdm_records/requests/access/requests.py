@@ -17,6 +17,7 @@ from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import gettext as t
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
+from invenio_records_resources.services import ConditionalLink, EndpointLink
 from invenio_requests import current_events_service
 from invenio_requests.customizations import RequestType, actions
 from invenio_requests.customizations.event_types import CommentEventType
@@ -255,9 +256,16 @@ class UserAccessRequest(RequestType):
     allowed_receiver_ref_types = ["user", "community"]
     allowed_topic_ref_types = ["record"]
 
-    def _update_link_config(self, **context_vars):
-        """Update the 'ui' variable for generation of links."""
-        return {"ui": context_vars["ui"] + "/access"}
+    links_item = {
+        # Note that this keeps the original logic whereby
+        # the route associated with read_request is always returned
+        # even though the user is typically authenticated
+        "self_html": EndpointLink(
+            "invenio_app_rdm_requests.read_request",
+            params=["request_pid_value"],
+            vars=lambda obj, vars: vars.update(request_pid_value=vars["request"].id),
+        ),
+    }
 
     available_actions = {
         "create": actions.CreateAction,
@@ -275,6 +283,12 @@ class UserAccessRequest(RequestType):
     }
 
 
+def _is_authenticated(obj, context):
+    """Check if authenticated."""
+    identity = getattr(g, "identity", None)
+    return identity and authenticated_user in identity.provides
+
+
 class GuestAccessRequest(RequestType):
     """Access request type coming from a guest."""
 
@@ -287,6 +301,29 @@ class GuestAccessRequest(RequestType):
     allowed_receiver_ref_types = ["user", "community"]
     allowed_topic_ref_types = ["record"]
 
+    links_item = {
+        # Note that this tries to keep the original logic whereby an authenticated user
+        # gets the route associated with user_dashboard_request_view, while an
+        # unauthenticated user gets the one associated with read_request
+        "self_html": ConditionalLink(
+            cond=_is_authenticated,
+            if_=EndpointLink(
+                "invenio_app_rdm_requests.user_dashboard_request_view",
+                params=["request_pid_value"],
+                vars=lambda obj, vars: (
+                    vars.update(request_pid_value=vars["request"].id)
+                ),
+            ),
+            else_=EndpointLink(
+                "invenio_app_rdm_requests.read_request",
+                params=["request_pid_value"],
+                vars=lambda obj, vars: (
+                    vars.update(request_pid_value=vars["request"].id)
+                ),
+            ),
+        )
+    }
+
     @classmethod
     def _create_payload_cls(cls):
         class PayloadBaseSchema(ma.Schema, FieldPermissionsMixin):
@@ -298,18 +335,6 @@ class GuestAccessRequest(RequestType):
                 unknown = ma.RAISE
 
         cls.payload_schema_cls = PayloadBaseSchema
-
-    def _update_link_config(self, **context_vars):
-        """Fix the prefix required for "self_html"."""
-        prefix = "/me"
-
-        if hasattr(g, "identity"):
-            identity = context_vars.get("identity", g.identity)
-
-            if authenticated_user not in identity.provides:
-                prefix = "/access"
-
-        return {"ui": context_vars["ui"] + prefix}
 
     @validates("secret_link_expiration")
     def _validate_days(self, value):

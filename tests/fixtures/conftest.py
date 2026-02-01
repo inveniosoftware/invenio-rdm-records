@@ -34,6 +34,11 @@ def admin_role(db):
 def extra_entry_points():
     """Vocabularies entry points."""
     return {
+        "invenio_administration.views": [
+            "invenio_app_rdm_records_list = tests.mock_module.administration:RecordAdminListView",
+            "invenio_app_rdm_drafts_list = tests.mock_module.administration:DraftAdminListView",
+            "invenio_requests_user_moderation_list = tests.mock_module.administration:UserModerationListView",
+        ],
         "invenio_rdm_records.fixtures": [
             "vocabularies_A = tests.fixtures.mock_module_A.fixtures.vocabularies",
             "vocabularies_B = tests.fixtures.mock_module_B.fixtures.vocabularies",
