@@ -238,6 +238,7 @@ export const publish = (draft, { removeSelectedCommunity = false }) => {
     const response = await _saveDraft(draft, config.service.drafts, {
       depositState: getState().deposit,
       dispatchFn: dispatch,
+      getState: getState,
       failType: DRAFT_PUBLISH_FAILED,
       partialValidationActionType: DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS,
       // Users should be able to publish a record with validation warnings.
@@ -274,6 +275,7 @@ export const submitReview = (draft, { reviewComment, directPublish }) => {
     const response = await _saveDraft(draft, config.service.drafts, {
       depositState: getState().deposit,
       dispatchFn: dispatch,
+      getState: getState,
       failType: DRAFT_SUBMIT_REVIEW_FAILED,
       partialValidationActionType: DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS,
       // Users should be able to submit for review a record with validation warnings.
@@ -308,6 +310,7 @@ export const preview = (draft) => {
     const response = await _saveDraft(draft, config.service.drafts, {
       depositState: getState().deposit,
       dispatchFn: dispatch,
+      getState: getState,
       failType: DRAFT_PREVIEW_FAILED,
       partialValidationActionType: DRAFT_HAS_VALIDATION_ERRORS,
       // Users should be able to preview a record with validation warnings.
