@@ -119,10 +119,14 @@ async function _saveDraft(
     : !_isEmpty(response.errors);
   const draftValidationErrorResponse = draftHasValidationErrors ? response : {};
 
-  const {
-    actions: { communityStateMustBeChecked, shouldDeleteReview, shouldUpdateReview },
-    selectedCommunity,
-  } = depositState.editorState;
+  const editorState = depositState?.editorState || {};
+  const actions = editorState?.actions || {};
+  const { 
+    communityStateMustBeChecked = false, 
+    shouldDeleteReview = false, 
+    shouldUpdateReview = false 
+  } = actions;
+  const selectedCommunity = editorState?.selectedCommunity;
 
   if (communityStateMustBeChecked) {
     const draftWithLinks = response.data;
