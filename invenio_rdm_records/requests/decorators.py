@@ -35,12 +35,12 @@ def request_next_link(**kwargs):
             )
             links_item_w_next_html["next_html"] = ConditionalLink(
                 # obj is the request here
-                cond=lambda obj, ctx: obj.is_open, # i.e. has review request
+                cond=lambda obj, ctx: obj.is_open,  # i.e. has review request
                 # just the self_html link of the request
                 if_=links_item_w_next_html["self_html"],
                 else_=RecordEndpointLinkFromRequest(
                     "invenio_app_rdm_records.record_detail"
-                )
+                ),
             )
             new_links_tpl = LinksTemplate(
                 links_item_w_next_html,
@@ -52,7 +52,7 @@ def request_next_link(**kwargs):
                     "permission_policy_cls": (
                         config_of_requests_service.permission_policy_cls
                     ),
-                }
+                },
             )
             request_item.links_tpl = new_links_tpl
 
