@@ -30,7 +30,7 @@ from invenio_rdm_records.services.components.verified import UserModerationHandl
 from . import tokens
 from .requests.community_inclusion import CommunityInclusion
 from .requests.community_submission import CommunitySubmission
-from .resources.serializers import DataCite45JSONSerializer
+from .resources.serializers import CrossrefXMLSerializer, DataCite45JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
 from .services.permissions import RDMRecordPermissionPolicy
@@ -499,11 +499,24 @@ RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
         client=providers.DataCiteClient("datacite", config_prefix="DATACITE"),
         label=_("DOI"),
     ),
+    # Crossref DOI provider
+    providers.CrossrefPIDProvider(
+        "crossref",
+        client=providers.CrossrefClient("crossref", config_prefix="CROSSREF"),
+        label=_("DOI"),
+    ),
     # DOI provider for externally managed DOIs
     providers.ExternalPIDProvider(
         "external",
         "doi",
-        validators=[providers.BlockedPrefixes(config_names=["DATACITE_PREFIX"])],
+        validators=[
+            providers.BlockedPrefixes(
+                config_names=[
+                    "DATACITE_PREFIX",
+                    "CROSSREF_PREFIX",
+                ]
+            )
+        ],
         label=_("DOI"),
     ),
     # OAI identifier
@@ -588,7 +601,7 @@ Check the signature of validate_optional_doi for more information.
 # Configuration for the DataCiteClient used by the DataCitePIDProvider
 
 DATACITE_ENABLED = False
-"""Flag to enable/disable DOI registration."""
+"""Flag to enable/disable DataCite DOI registration."""
 
 DATACITE_USERNAME = ""
 """DataCite username."""
@@ -622,6 +635,47 @@ DATACITE_DATACENTER_SYMBOL = ""
 
 This is only required if you want your records to be harvestable (OAI-PMH)
 in DataCite XML format.
+"""
+
+# Configuration for the CrossrefClient used by the CrossrefPIDProvider
+
+CROSSREF_ENABLED = False
+"""Flag to enable/disable Crossref DOI registration."""
+
+CROSSREF_USERNAME = ""
+"""Crossref username."""
+
+CROSSREF_PASSWORD = ""
+"""Crossref password."""
+
+CROSSREF_PREFIX = ""
+"""Crossref DOI prefix."""
+
+CROSSREF_DEPOSITOR = ""
+"""Crossref depositor name."""
+
+CROSSREF_EMAIL = ""
+"""Crossref depositor email."""
+
+CROSSREF_REGISTRANT = ""
+"""Crossref registrant."""
+
+CROSSREF_TEST_MODE = True
+"""Crossref test mode enabled."""
+
+CROSSREF_FORMAT = "{prefix}/{id}"
+"""A string used for formatting the DOI or a callable.
+
+If set to a string, you can used ``{prefix}`` and ``{id}`` inside the string.
+
+You can also provide a callable instead:
+
+.. code-block:: python
+
+    def make_doi(prefix, record):
+        return f"{prefix}/{record.pid.pid_value}"
+
+    CROSSREF_FORMAT = make_doi
 """
 
 #
