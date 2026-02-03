@@ -4,30 +4,37 @@
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
-"""RDM github release metadata."""
+"""RDM VCS release metadata."""
+
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
 import yaml
 from flask import current_app
-from invenio_github.errors import CustomGitHubMetadataError
 from invenio_i18n import _
+from invenio_vcs.errors import CustomVCSReleaseNoRetryError
+from invenio_vcs.generic_models import GenericContributor
 from marshmallow import Schema, ValidationError
 from mistune import markdown
+
+if TYPE_CHECKING:
+    from invenio_rdm_records.services.github.release import RDMVCSRelease
 
 
 class RDMReleaseMetadata(object):
     """Wraps a realease object to extract its data to meet RDM specific needs."""
 
-    def __init__(self, rdm_github_release):
+    def __init__(self, rdm_vcs_release: "RDMVCSRelease"):
         """Constructor."""
-        self.rdm_release = rdm_github_release
+        self.rdm_release = rdm_vcs_release
 
     @property
     def related_identifiers(self):
         """Return related identifiers."""
-        repo_name = self.rdm_release.repository_payload["full_name"]
-        release_tag_name = self.rdm_release.release_payload["tag_name"]
+        repo_name = self.rdm_release.generic_repo.full_name
+        release_tag_name = self.rdm_release.generic_release.tag_name
         return {
-            "identifier": "https://github.com/{}/tree/{}".format(
+            "identifier": self.rdm_release.provider.factory.url_for_tag(
                 repo_name, release_tag_name
             ),
             "scheme": "url",
@@ -38,10 +45,10 @@ class RDMReleaseMetadata(object):
     @property
     def title(self):
         """Generate a title from a release and its repository name."""
-        repo_name = self.rdm_release.repository_payload["full_name"]
+        repo_name = self.rdm_release.generic_repo.full_name
         release_name = (
-            self.rdm_release.release_payload.get("name")
-            or self.rdm_release.release_payload["tag_name"]
+            self.rdm_release.generic_release.name
+            or self.rdm_release.generic_release.tag_name
         )
         return f"{repo_name}: {release_name}"
 
@@ -52,10 +59,10 @@ class RDMReleaseMetadata(object):
         If the relesae does not have any body, the repository description is used.
         Falls back for "No description provided".
         """
-        if self.rdm_release.release_payload.get("body"):
-            return markdown(self.rdm_release.release_payload["body"])
-        elif self.rdm_release.repository_payload.get("description"):
-            return self.rdm_release.repository_payload["description"]
+        if self.rdm_release.generic_release.body:
+            return markdown(self.rdm_release.generic_release.body)
+        elif self.rdm_release.generic_repo.description:
+            return self.rdm_release.generic_repo.description
         return _("No description provided.")
 
     @property
@@ -63,11 +70,16 @@ class RDMReleaseMetadata(object):
         """Return default metadata for a release."""
         # Get default right from app config or use cc-by-4.0 if default is not set in app
         # TODO use the default software license
-        version = self.rdm_release.release_payload.get("tag_name", "")
+        version = self.rdm_release.generic_release.tag_name
+
+        publication_date = self.rdm_release.generic_release.published_at
+        if publication_date is None:
+            publication_date = datetime.now(tz=timezone.utc)
+        publication_date = publication_date.date().isoformat()
 
         return dict(
             description=self.description,
-            publication_date=self.rdm_release.release_payload["published_at"][:10],
+            publication_date=publication_date,
             related_identifiers=[self.related_identifiers],
             version=version,
             title=self.title,
@@ -81,14 +93,7 @@ class RDMReleaseMetadata(object):
     @property
     def repo_license(self):
         """Get license from repository, if any."""
-        repo_license_obj = self.rdm_release.repository_payload.get("license", {})
-        if not repo_license_obj:
-            return None
-        spdx_id = repo_license_obj.get("spdx_id")
-        # For 'other' type of licenses, Github sets the spdx_id to NOASSERTION
-        if spdx_id == "NOASSERTION":
-            return None
-        return spdx_id
+        return self.rdm_release.generic_repo.license_spdx
 
     @property
     def contributors(self):
@@ -100,14 +105,13 @@ class RDMReleaseMetadata(object):
             processing can't recover since `creators` is a mandatory field.
         """
 
-        def serialize_author(gh_data):
+        def serialize_author(contributor: GenericContributor):
             """Serializes github contributor data into RDM author."""
-            gh_username = gh_data["login"]
             # Default name to the user's login
-            name = gh_data.get("name") or gh_username
-            company = gh_data.get("company")
+            name = contributor.display_name or contributor.username
+            company = contributor.company
 
-            rdm_contributor = {
+            rdm_contributor: dict = {
                 "person_or_org": {"type": "personal", "family_name": name},
             }
             if company:
@@ -115,19 +119,21 @@ class RDMReleaseMetadata(object):
             return rdm_contributor
 
         contributors = []
+        provider_contributors = self.rdm_release.contributors
 
-        # Get contributors from api
-        for c in self.rdm_release.contributors:
-            rdm_author = serialize_author(c)
-            if rdm_author:
-                contributors.append(rdm_author)
+        if provider_contributors is not None:
+            # Get contributors from api
+            for c in provider_contributors:
+                rdm_author = serialize_author(c)
+                if rdm_author:
+                    contributors.append(rdm_author)
 
         return contributors
 
     @property
     def citation_metadata(self):
         """Get citation metadata for file in repository."""
-        citation_file_path = current_app.config.get("GITHUB_CITATION_FILE")
+        citation_file_path = current_app.config.get("VCS_CITATION_FILE")
 
         if not citation_file_path:
             return {}
@@ -139,8 +145,9 @@ class RDMReleaseMetadata(object):
             # Load metadata from citation file and serialize it
             return self.load_citation_metadata(data)
         except ValidationError as e:
-            # Wrap the error into CustomGitHubMetadataError() so it can be handled upstream
-            raise CustomGitHubMetadataError(file=citation_file_path, message=e.messages)
+            # Wrap the error into CustomVCSReleaseNoRetryError() so it can be handled upstream.
+            # This also ensures the release isn't retried without user action.
+            raise CustomVCSReleaseNoRetryError(message=e.messages)
 
     @property
     def extra_metadata(self):
@@ -157,13 +164,13 @@ class RDMReleaseMetadata(object):
             return {}
 
         # Fetch the citation file and load it
-        content = self.rdm_release.retrieve_remote_file(citation_file_name)
-
-        data = (
-            yaml.safe_load(content.decoded.decode("utf-8"))
-            if content is not None
-            else None
+        content = self.rdm_release.provider.retrieve_remote_file(
+            self.rdm_release.generic_repo.id,
+            self.rdm_release.generic_release.tag_name,
+            citation_file_name,
         )
+
+        data = yaml.safe_load(content.decode("utf-8")) if content is not None else None
 
         return data
 
@@ -172,7 +179,7 @@ class RDMReleaseMetadata(object):
         if not citation_data:
             return {}
 
-        citation_schema = current_app.config.get("GITHUB_CITATION_METADATA_SCHEMA")
+        citation_schema = current_app.config.get("VCS_CITATION_METADATA_SCHEMA")
 
         assert issubclass(citation_schema, Schema), _(
             "Citation schema is needed to load citation metadata."

@@ -1,0 +1,45 @@
+{% set repository_full_name = notification.context.repository_full_name %}
+{% set release_tag = notification.context.release_tag %}
+{% set record = notification.context.record %}
+
+{% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
+{% set record_link = record.data["links"]["self_html"] %}
+
+{%- block subject -%}
+    {{ _("A release from %(repository_name)s was published successfully", repository_name=repository_full_name) }}
+{%- endblock subject -%}
+
+{%- block html_body -%}
+<table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
+    <tr>
+        <td>{{ _("Release %(release_tag)s of %(repository_name)s has been received and published successfully.", release_tag=release_tag, repository_name=repository_full_name) }}
+        </td>
+    </tr>
+    <tr>
+        <td>{{ _("For more details,")}} <a href="{{ record_link }}" class="button">{{ _("view the published record.") }}</a></td>
+    </tr>
+    <tr>
+        <td><strong>_</strong></td>
+    </tr>
+    <tr>
+        <td style="font-size:smaller">{{ _("This is an auto-generated message. To manage notifications, visit your") }} <a href="{{ account_settings_link }}">{{ _("account settings") }}</a>.</td>
+    </tr>
+</table>
+{%- endblock html_body -%}
+
+{%- block plain_body -%}
+{{ _("Release %(release_tag)s of %(repository_name)s has been received and published successfully.", release_tag=release_tag, repository_name=repository_full_name) }}
+
+{{ _("For more details,") }} [{{ _("view the published record.") }}]({{ record_link }})
+
+{{ _("This is an auto-generated message. To manage notifications, visit your account settings") }}
+{%- endblock plain_body -%}
+
+{# Markdown for Slack/Mattermost/chat #}
+{%- block md_body -%}
+{{ _("Release %(release_tag)s of %(repository_name)s has been received and published successfully.", release_tag=release_tag, repository_name=repository_full_name) }}
+
+{{ _("For more details,") }} [{{ _("view the published record.") }}]({{ record_link }})
+
+{{ _("This is an auto-generated message. To manage notifications, visit your account settings")}}
+{%- endblock md_body -%}
