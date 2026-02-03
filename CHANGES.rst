@@ -3,7 +3,7 @@
     Copyright (C) 2019-2025 CERN.
     Copyright (C) 2019-2024 Northwestern University.
     Copyright (C) 2024      KTH Royal Institute of Technology.
-    Copyright (C) 2024-2025 Graz University of Technology.
+    Copyright (C) 2024-2026 Graz University of Technology.
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
     modify it under the terms of the MIT License; see LICENSE file for more
@@ -11,6 +11,29 @@
 
 Changes
 =======
+
+Version v24.0.0 (released 2026-02-03)
+
+- chore(setup): bump dependencies
+- refactor(Link): take into account upstream changes
+- chore(black): update formatting to >= 26.0
+- refactor: replace deprecated Link usage
+- revert: part of utcnow fix
+- fix: SyntaxWarning: "\d" is invalid
+- fix: ChangedInMarshmallow4Warning
+- fix: FutureWarning
+- fix:  PytestCollectionWarning
+- fix(Warning): Received  for a non-boolean attribute .
+- fix(js): react warnings
+- fix(chore): RemovedInMarshmallow4Warning
+- fix(chore): DeprecationWarning stdlib
+- fix(chore): LegacyAPIWarning sqlalchemy
+- fix(chore): DeprecationWarning stdlib
+- fix:  DeprecationWarning
+- refactor: remove max_number form context
+- refactor: remove usage of is_parent context
+- refactor(schema): remove usage of object_key
+- fix(access_requests_ui): Fix view for guest when receiver isnt community
 
 Version 23.2.2 (release 2026-01-27)
 
