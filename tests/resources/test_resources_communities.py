@@ -570,7 +570,7 @@ def test_invalid_record_or_draft(
     assert response.status_code == 404
 
 
-def test_remove_community(
+def test_remove_community_from_record(
     client, uploader, curator, record_community, headers, community
 ):
     """Test removal of a community from the record."""
@@ -1111,3 +1111,60 @@ def test_remove_record_last_community_with_multiple_communities(
     record_saved = client.get(f"/records/{record_pid}", headers=headers)
     # check that only one community ID is associated with the record
     assert len(record_saved.json["parent"]["communities"]["ids"]) == 1
+
+
+def test_remove_community_from_record_restricted_to_curators(
+    db, client, uploader, record_community, headers, community, monkeypatch
+):
+    """Test that record owners cannot remove communities when config is disabled."""
+    from flask import current_app
+
+    # Create a record with a community as uploader (record owner)
+    client_uploader = uploader.login(client)
+    record = record_community.create_record()
+
+    # Verify the community is added
+    record_data = client_uploader.get(
+        f"/records/{record.pid.pid_value}", headers=headers
+    )
+    assert community.id in record_data.json["parent"]["communities"]["ids"]
+
+    # Try to remove community as owner - should succeed with default config
+    data = {"communities": [{"id": community.id}]}
+    response = client_uploader.delete(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json=data,
+    )
+    assert response.status_code == 200
+    assert not response.json.get("errors")
+
+    # Re-add the community for next test
+    record = _add_to_community(db, record, community)
+
+    # Now disable the config - owners should NOT be able to remove
+    monkeypatch.setitem(
+        current_app.config, "RDM_ALLOW_OWNERS_REMOVE_COMMUNITY_FROM_RECORD", False
+    )
+
+    # Try to remove community as owner - should fail
+    response = client_uploader.delete(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json=data,
+    )
+
+    # Should get errors (permission denied for owner)
+    assert response.status_code == 400
+    assert len(response.json.get("errors", [])) > 0
+
+    # Verify community is still there
+    record_data = client_uploader.get(
+        f"/records/{record.pid.pid_value}", headers=headers
+    )
+    assert community.id in record_data.json["parent"]["communities"]["ids"]
+
+    # Reset config
+    monkeypatch.setitem(
+        current_app.config, "RDM_ALLOW_OWNERS_REMOVE_COMMUNITY_FROM_RECORD", True
+    )

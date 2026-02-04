@@ -217,7 +217,10 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
 
         try:
             self.require_permission(
-                identity, "remove_community", record=record, community_id=community_id
+                identity,
+                "remove_community_from_record",
+                record=record,
+                community_id=community_id,
             )
             # By default, admin/superuser has permission to do everything,
             # so PermissionDeniedError won't be raised for admin in any case
@@ -233,7 +236,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
 
         # Run components
         self.run_components(
-            "remove_community",
+            "remove_community_from_record",
             identity,
             record=record,
             community=community,
