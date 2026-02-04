@@ -143,6 +143,11 @@ class PIDManager:
         """
         provider = self._get_provider(scheme, provider_name)
         pid_attrs = {}
+        # Extract prefix from existing PID metadata if available
+        prefix = (
+            draft.pids.get(scheme, {}).get("prefix") if draft.pids.get(scheme) else None
+        )
+
         if identifier is not None:
             try:
                 pid = provider.get(identifier)
@@ -169,8 +174,20 @@ class PIDManager:
                     message=_("External identifier value is required."),
                     field_name=f"pids.{scheme}",
                 )
-            pid = provider.create(draft)
+            # Generate ID with optional prefix override
+            pid_kwargs = {}
+            if prefix:
+                pid_kwargs["prefix"] = prefix
+            pid = provider.create(draft, **pid_kwargs)
             pid_attrs = {"identifier": pid.pid_value, "provider": provider.name}
+            # Preserve prefix in attributes if it was provided
+            if prefix:
+                pid_attrs["prefix"] = prefix
+            # Extract and store the actually used prefix from the generated DOI
+            # This ensures the prefix is available for parent PID creation
+            elif pid.pid_value and "/" in pid.pid_value:
+                actual_prefix = pid.pid_value.split("/")[0]
+                pid_attrs["prefix"] = actual_prefix
 
         if provider.client:  # provider and identifier already in dict
             pid_attrs["client"] = provider.client.name
@@ -186,13 +203,26 @@ class PIDManager:
             result[scheme] = self.create(
                 draft,
                 scheme,
-                pid_attrs["identifier"],
+                pid_attrs.get("identifier"),
                 pid_attrs.get("provider"),
             )
 
         # Create without an identifier value provided (only the scheme)
+        # Use provider and prefix from pids dict if available
         for scheme in schemes or []:
-            result[scheme] = self.create(draft, scheme)
+            pid_attrs = (pids or {}).get(scheme, {})
+            provider_name = pid_attrs.get("provider")
+
+            # Temporarily store prefix in draft.pids for create() to read
+            prefix = pid_attrs.get("prefix")
+            if prefix and scheme not in draft.pids:
+                draft.pids[scheme] = {"prefix": prefix}
+            elif prefix and scheme in draft.pids:
+                # Preserve existing prefix if not already set
+                if "prefix" not in draft.pids[scheme]:
+                    draft.pids[scheme]["prefix"] = prefix
+
+            result[scheme] = self.create(draft, scheme, provider_name=provider_name)
 
         return result
 
@@ -247,10 +277,7 @@ class PIDManager:
         if not provider.can_modify(pid) and not soft_delete:
             raise ValidationError(
                 message=[
-                    _(
-                        "Cannot discard a reserved or registered persistent "
-                        "identifier."
-                    ),
+                    _("Cannot discard a reserved or registered persistent identifier."),
                 ],
                 field_name=f"pids.{scheme}",
             )

@@ -91,6 +91,23 @@ class CrossrefClient:
         prefix = kwargs.get("prefix", self.cfg("prefix"))
         if not prefix:
             raise RuntimeError("Invalid DOI prefix configured.")
+
+        # Validate prefix against allowed prefixes
+        # Always allow the configured default prefix, optionally check against
+        # additional prefixes
+        default_prefix = self.cfg("prefix")
+        additional_prefixes = self.cfg("additional_prefixes")
+        if additional_prefixes is None:
+            allowed_prefixes = [default_prefix]
+        else:
+            allowed_prefixes = [default_prefix] + additional_prefixes
+
+        if prefix not in allowed_prefixes:
+            raise RuntimeError(
+                f"DOI prefix '{prefix}' is not in the list of allowed Crossref prefixes. "
+                f"Allowed prefixes: {', '.join(allowed_prefixes)}"
+            )
+
         doi_format = self.cfg("format", "{prefix}/{id}")
         if callable(doi_format):
             return doi_format(prefix, record)
@@ -208,13 +225,8 @@ class CrossrefPIDProvider(PIDProvider):
 
     @classmethod
     def is_enabled(cls, app):
-        """Determine if crossref is enabled or not.
-
-        If DATACITE_ENABLED is set to True or CROSSREF_ENABLED is set to False, the CrossrefPIDProvider is disabled.
-        """
-        return app.config.get("CROSSREF_ENABLED", False) and not app.config.get(
-            "DATACITE_ENABLED", False
-        )
+        """Determine if crossref is enabled or not."""
+        return app.config.get("CROSSREF_ENABLED", False)
 
     def can_modify(self, pid, **kwargs):
         """Checks if the PID can be modified."""
