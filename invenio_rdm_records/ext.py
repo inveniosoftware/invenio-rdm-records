@@ -17,6 +17,7 @@ from warnings import warn
 from flask import Blueprint
 from flask_iiif import IIIF
 from flask_principal import identity_loaded
+from importlib_metadata import entry_points
 from invenio_records_resources.resources.files import FileResource
 
 from . import config
@@ -99,6 +100,7 @@ class InvenioRDMRecords(object):
     def init_app(self, app):
         """Flask application initialization."""
         self.init_config(app)
+        self.init_record_service_registry(app)
         self.init_services(app)
         self.init_resource(app)
         app.extensions["invenio-rdm-records"] = self
@@ -301,6 +303,22 @@ class InvenioRDMRecords(object):
         for config_item in datacite_config_items:
             if config_item in app.config:
                 app.config[config_item] = str(app.config[config_item])
+
+    def init_record_service_registry(self, app):
+        """Initialize record service registry."""
+        self.record_service_registry = {}
+        self._register_entry_point(
+            self.record_service_registry,
+            "invenio_rdm_records.services.record_service_registry",
+        )
+
+    def _register_entry_point(self, registry, ep_name):
+        """Load entry points into the given registry."""
+        for ep in set(entry_points(group=ep_name)):
+            ext_name = ep.name
+            callback = ep.load()
+            assert callable(callback)
+            registry.setdefault(ext_name, callback)
 
 
 def finalize_app(app):

@@ -100,6 +100,7 @@ from .search_params import (
     StatusParam,
 )
 from .sort import VerifiedRecordsSortParam
+from werkzeug.utils import cached_property
 
 
 def is_draft_and_has_review(record, ctx):
@@ -555,8 +556,20 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
 class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     """RDM record draft service config."""
 
-    # Record and draft classes
-    record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
+    @cached_property
+    def record_cls(self):
+        """Record class."""
+        cfg_cls = self._app.config.get("RDM_RECORD_CLS", RDMRecord)
+        exts = getattr(
+            self._app.extensions["invenio-rdm-records"], "record_service_registry", {}
+        )
+        new_cls = cfg_cls
+        for name, _ext in exts.items():
+            tmp = _ext(self._app, new_cls)
+            assert type(tmp) == type(cfg_cls), f"Invalid record type. Expected: {type(cfg_cls)}, got: {type(tmp)}"
+            new_cls = tmp
+        return new_cls
+
     draft_cls = FromConfig("RDM_DRAFT_CLS", default=RDMDraft)
 
     # Schemas
