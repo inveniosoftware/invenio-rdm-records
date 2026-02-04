@@ -190,10 +190,6 @@ class PrioritizedVocabulariesFixtures:
         # If it's not already loaded it means it's a new one
         if reload and reload in self._loaded_vocabularies:
             self._loaded_vocabularies.remove(reload)
-            # Also remove all child schemes (e.g., subjects.FOS when reloading subjects)
-            self._loaded_vocabularies = {
-                v for v in self._loaded_vocabularies if not v.startswith(f"{reload}.")
-            }
         # 1- Load from app_data_folder
         filepath = self._app_data_folder / self._filename
         # An instance doesn't necessarily have custom vocabularies
