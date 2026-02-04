@@ -30,6 +30,7 @@ from invenio_rdm_records.services.components.verified import UserModerationHandl
 from . import tokens
 from .requests.community_inclusion import CommunityInclusion
 from .requests.community_submission import CommunitySubmission
+from .requests.record_deletion import RecordDeletion
 from .resources.serializers import DataCite45JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
@@ -280,6 +281,8 @@ RDM_COMMUNITY_REQUIRED_TO_PUBLISH = False
 RDM_COMMUNITY_INCLUSION_REQUEST_CLS = CommunityInclusion
 """Request type for record inclusion requests."""
 
+RDM_MODERATION_REQUEST_TYPES = [RecordDeletion.type_id]
+"""List of moderation request types for RDM records."""
 #
 # Search configuration
 #
