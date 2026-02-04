@@ -25,7 +25,6 @@ from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.errors import AlreadyMemberError
 from invenio_communities.proxies import current_communities
 from invenio_pidstore.errors import PersistentIdentifierError
-from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_resources.proxies import current_service_registry
 from invenio_requests import current_events_service, current_requests_service
 from invenio_requests.customizations import CommentEventType
@@ -61,29 +60,8 @@ def create_vocabulary_record(service_str, data):
         except PersistentIdentifierError:
             service.create(system_identity, data)
             current_app.logger.info(f"added new fixture with {data}")
-        # Generic vocabularies with type field
-        pid_type = data["type"]
-        pid_value = data["id"]
     else:
-        # Special vocabularies like subjects (without type field)
-        # Use the service_str as the type
-        pid_type = service_str
-        pid_value = data["id"]
-
-    # Check if PID exists in the database
-    existing_pid = PersistentIdentifier.query.filter_by(
-        pid_type=pid_type, pid_value=pid_value
-    ).first()
-
-    if existing_pid:
-        # Update existing record
-        pid = (pid_type, pid_value)
-        service.update(system_identity, pid, data=data)
-        current_app.logger.debug(f"updated existing fixture with {data}")
-    else:
-        # Create new record
         service.create(system_identity, data)
-        current_app.logger.debug(f"added new fixture with {data}")
 
 
 @shared_task
