@@ -190,7 +190,9 @@ class InvenioRDMRecords(object):
         )
 
         self.iiif_service = IIIFService(
-            records_service=self.records_service, config=None
+            records_service=self.records_service,
+            records_media_files_service=self.records_media_files_service,
+            config=None,
         )
 
         self.record_communities_service = RecordCommunitiesService(
