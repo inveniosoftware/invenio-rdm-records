@@ -18,9 +18,10 @@ import {
   ResultsLoader,
   SearchBar,
 } from "react-searchkit";
-import { Grid, Menu, Modal } from "semantic-ui-react";
+import { Grid, Modal } from "semantic-ui-react";
 import { CommunityListItem } from "./CommunityListItem";
 import PropTypes from "prop-types";
+import { CommunitiesStatusFilter } from "@js/invenio_communities/community";
 
 export class CommunitySelectionSearch extends Component {
   constructor(props) {
@@ -50,7 +51,7 @@ export class CommunitySelectionSearch extends Component {
       isInitialSubmission,
       CommunityListItem,
       pagination,
-      myCommunitiesEnabled,
+      communitiesStatusFilterEnabled,
       autofocus,
     } = this.props;
 
@@ -74,7 +75,7 @@ export class CommunitySelectionSearch extends Component {
         >
           <>
             <Modal.Content as={Grid} className="m-0 pb-0 centered">
-              {myCommunitiesEnabled && (
+              {communitiesStatusFilterEnabled && (
                 <Grid.Column
                   mobile={16}
                   tablet={8}
@@ -83,47 +84,27 @@ export class CommunitySelectionSearch extends Component {
                   floated="left"
                   className="pt-0 pl-0"
                 >
-                  <Menu role="tablist" className="theme-primary-menu" compact>
-                    <Menu.Item
-                      as="button"
-                      role="tab"
-                      id="all-communities-tab"
-                      aria-selected={selectedAppId === allCommunities.appId}
-                      aria-controls={allCommunities.appId}
-                      name="All"
-                      active={selectedAppId === allCommunities.appId}
-                      onClick={() =>
-                        this.setState({
-                          selectedConfig: allCommunities,
-                        })
-                      }
-                    >
-                      {i18next.t("All")}
-                    </Menu.Item>
-                    <Menu.Item
-                      as="button"
-                      role="tab"
-                      id="my-communities-tab"
-                      aria-selected={selectedAppId === myCommunities.appId}
-                      aria-controls={myCommunities.appId}
-                      name="My communities"
-                      active={selectedAppId === myCommunities.appId}
-                      onClick={() =>
-                        this.setState({
-                          selectedConfig: myCommunities,
-                        })
-                      }
-                    >
-                      {i18next.t("My communities")}
-                    </Menu.Item>
-                  </Menu>
+                  <CommunitiesStatusFilter
+                    myCommunitiesOnClick={() => {
+                      this.setState({
+                        selectedConfig: myCommunities,
+                      });
+                    }}
+                    allCommunitiesOnClick={() => {
+                      this.setState({
+                        selectedConfig: allCommunities,
+                      });
+                    }}
+                    appId={selectedAppId}
+                    allCommunitiesSelected={selectedAppId === allCommunities.appId}
+                  />
                 </Grid.Column>
               )}
               <Grid.Column
                 mobile={16}
                 tablet={8}
                 computer={8}
-                floated={myCommunitiesEnabled ? "right" : "null"}
+                floated={communitiesStatusFilterEnabled ? "right" : "null"}
                 verticalAlign="middle"
                 className="pt-0 pr-0 pl-0"
               >
@@ -182,14 +163,14 @@ CommunitySelectionSearch.propTypes = {
   isInitialSubmission: PropTypes.bool,
   CommunityListItem: PropTypes.elementType,
   pagination: PropTypes.bool,
-  myCommunitiesEnabled: PropTypes.bool,
+  communitiesStatusFilterEnabled: PropTypes.bool,
   autofocus: PropTypes.bool,
 };
 
 CommunitySelectionSearch.defaultProps = {
   isInitialSubmission: true,
   pagination: true,
-  myCommunitiesEnabled: true,
+  communitiesStatusFilterEnabled: true,
   autofocus: true,
   CommunityListItem: CommunityListItem,
   apiConfigs: {
