@@ -15,6 +15,8 @@ import io
 from flask_iiif.api import IIIFImageAPIWrapper
 from invenio_records_resources.services import Service
 
+from ..errors import IdentifierShapeException
+
 try:
     metadata.distribution("wand")
     from wand.image import Image
@@ -52,16 +54,24 @@ class IIIFService(Service):
 
         We assume the uuid is build as ``<record|draft>:<pid_value>``.
         """
-        type_, id_ = uuid.split(":", 1)
-        return type_, id_
+        try:
+            type_, id_ = uuid.split(":")
+            return type_, id_
+
+        except ValueError:
+            raise IdentifierShapeException(uuid, "<record|draft>:<pid_value>")
 
     def _iiif_image_uuid(self, uuid):
         """Split the uuid content.
 
         We assume the uuid is build as ``<record|draft>:<pid_value>:<key>``.
         """
-        type_, id_, key = uuid.split(":", 2)
-        return type_, id_, key
+        try:
+            type_, id_, key = uuid.split(":", 2)
+            return type_, id_, key
+
+        except ValueError:
+            raise IdentifierShapeException(uuid, "<record|draft>:<pid_value>:<key>")
 
     def file_service(self, type_):
         """Get the correct instance of the file service, draft vs record."""
