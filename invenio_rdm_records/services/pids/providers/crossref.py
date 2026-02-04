@@ -13,10 +13,10 @@ import warnings
 from collections import ChainMap
 from time import time
 
+import idutils
 import requests
 from commonmeta import validate_prefix
 from flask import current_app
-import idutils
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -91,6 +91,23 @@ class CrossrefClient:
         prefix = kwargs.get("prefix", self.cfg("prefix"))
         if not prefix:
             raise RuntimeError("Invalid DOI prefix configured.")
+
+        # Validate prefix against allowed prefixes
+        # Always allow the configured default prefix, optionally check against
+        # additional prefixes
+        default_prefix = self.cfg("prefix")
+        additional_prefixes = self.cfg("additional_prefixes")
+        if additional_prefixes is None:
+            allowed_prefixes = [default_prefix]
+        else:
+            allowed_prefixes = [default_prefix] + additional_prefixes
+
+        if prefix not in allowed_prefixes:
+            raise RuntimeError(
+                f"DOI prefix '{prefix}' is not in the list of allowed Crossref prefixes. "
+                f"Allowed prefixes: {', '.join(allowed_prefixes)}"
+            )
+
         doi_format = self.cfg("format", "{prefix}/{id}")
         if callable(doi_format):
             return doi_format(prefix, record)
@@ -208,23 +225,19 @@ class CrossrefPIDProvider(PIDProvider):
 
     @classmethod
     def is_enabled(cls, app):
-        """Determine if crossref is enabled or not.
-
-        If DATACITE_ENABLED is set to True or CROSSREF_ENABLED is set to False, the CrossrefPIDProvider is disabled.
-        """
-        return app.config.get("CROSSREF_ENABLED", False) and not app.config.get(
-            "DATACITE_ENABLED", False
-        )
+        """Determine if crossref is enabled or not."""
+        return app.config.get("CROSSREF_ENABLED", False)
 
     def can_modify(self, pid, **kwargs):
         """Checks if the PID can be modified."""
         return not pid.is_registered()
 
-    def register(self, pid, record, **kwargs):
+    def register(self, pid, record, url=None, **kwargs):
         """Register metadata with the Crossref XML API.
 
         :param pid: the PID to register.
         :param record: the record metadata for the DOI.
+        :param url: the landing page URL for the DOI.
         :returns: `True` if is registered successfully.
         """
         local_success = super().register(pid)
@@ -232,7 +245,7 @@ class CrossrefPIDProvider(PIDProvider):
             return False
 
         try:
-            doc = self.serializer.dump_obj(record)
+            doc = self.serializer.dump_obj(record, url=url)
             self.client.deposit(doc)
             return True
         except Exception as e:
@@ -247,10 +260,11 @@ class CrossrefPIDProvider(PIDProvider):
 
         :param pid: the PID to update.
         :param record: the record metadata for the DOI.
+        :param url: the landing page URL for the DOI.
         :returns: `True` if is updated successfully.
         """
         try:
-            doc = self.serializer.dump_obj(record)
+            doc = self.serializer.dump_obj(record, url=url)
             self.client.deposit(doc)
             return True
         except Exception as e:
@@ -298,6 +312,7 @@ class CrossrefPIDProvider(PIDProvider):
                   `{"field": <field>, "messages: ["<msgA1>", ...]}`.
         """
         errors = []
+
         try:
             # Validate DOI. Should be a valid DOI.
             if (

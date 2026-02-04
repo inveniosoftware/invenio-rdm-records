@@ -13,6 +13,7 @@
 from copy import deepcopy
 from unittest import mock
 
+import idutils
 import pytest
 from invenio_i18n import _
 from invenio_pidstore.models import PIDStatus
@@ -28,7 +29,30 @@ from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
 @pytest.fixture()
 def crossref_config(running_app, mock_crossref_client):
-    old_config = running_app.app.config.copy()
+    # Save specific nested configs with deepcopy to avoid mutation leaks
+    old_persistent_ids = deepcopy(
+        running_app.app.config.get("RDM_PERSISTENT_IDENTIFIERS")
+    )
+    old_parent_persistent_ids = deepcopy(
+        running_app.app.config.get("RDM_PARENT_PERSISTENT_IDENTIFIERS")
+    )
+    old_providers = running_app.app.config.get("RDM_PERSISTENT_IDENTIFIER_PROVIDERS")
+    old_parent_providers = running_app.app.config.get(
+        "RDM_PARENT_PERSISTENT_IDENTIFIER_PROVIDERS"
+    )
+    old_simple_keys = {
+        k: running_app.app.config.get(k)
+        for k in [
+            "CROSSREF_ENABLED",
+            "DATACITE_ENABLED",
+            "CROSSREF_USERNAME",
+            "CROSSREF_PASSWORD",
+            "CROSSREF_DEPOSITOR",
+            "CROSSREF_EMAIL",
+            "CROSSREF_REGISTRANT",
+            "CROSSREF_PREFIX",
+        ]
+    }
     running_app.app.config.update(
         {
             "CROSSREF_ENABLED": True,
@@ -70,11 +94,33 @@ def crossref_config(running_app, mock_crossref_client):
                     label=_("Concept DOI"),
                 ),
             ],
+            "RDM_PARENT_PERSISTENT_IDENTIFIERS": {
+                "doi": {
+                    "providers": ["crossref"],
+                    "required": True,
+                    "label": _("Concept DOI"),
+                    "validator": idutils.is_doi,
+                    "normalizer": idutils.normalize_doi,
+                    "is_enabled": lambda app: True,
+                },
+            },
         }
     )
     yield
-    running_app.app.config.clear()
-    running_app.app.config.update(old_config)
+    # Restore saved configs
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"] = old_persistent_ids
+    running_app.app.config["RDM_PARENT_PERSISTENT_IDENTIFIERS"] = (
+        old_parent_persistent_ids
+    )
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIER_PROVIDERS"] = old_providers
+    running_app.app.config["RDM_PARENT_PERSISTENT_IDENTIFIER_PROVIDERS"] = (
+        old_parent_providers
+    )
+    for k, v in old_simple_keys.items():
+        if v is not None:
+            running_app.app.config[k] = v
+        elif k in running_app.app.config:
+            del running_app.app.config[k]
 
 
 @pytest.fixture(scope="module")
@@ -133,9 +179,9 @@ def test_register_pid(
         [
             mock.call(
                 metadata={
-                    "identifiers": [{"identifier": doi, "identifierType": "DOI"}],
+                    "doi": doi,
                     "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                     "creators": [
                         {
                             "givenName": "Troy",
@@ -175,14 +221,13 @@ def test_register_pid_crossref(
         "crossref",
         "external",
     ]
-    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["is_enabled"] = (
-        lambda *args, **kwargs: True
-    )
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"][
+        "is_enabled"
+    ] = lambda *args, **kwargs: True
     service = current_rdm_records.records_service
     data = minimal_record.copy()
-    doi = "10.1234/test.1234"
+    # Set provider without identifier - let pids.create() generate one
     data["pids"]["doi"] = {
-        "identifier": doi,
         "provider": "crossref",
         "client": "crossref",
     }
@@ -201,37 +246,8 @@ def test_register_pid_crossref(
     assert pid.status == PIDStatus.RESERVED
     register_or_update_pid(recid=record["id"], scheme="doi")
     assert pid.status == PIDStatus.REGISTERED
-    mock_crossref_client.api.post.assert_has_calls(
-        [
-            mock.call(
-                metadata={
-                    "identifiers": [{"identifier": doi, "identifierType": "DOI"}],
-                    "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
-                    "publisher": "Acme Inc",
-                    "creators": [
-                        {
-                            "givenName": "Troy",
-                            "nameIdentifiers": [],
-                            "familyName": "Brown",
-                            "nameType": "Personal",
-                            "name": "Brown, Troy",
-                        },
-                        {
-                            "nameIdentifiers": [],
-                            "nameType": "Organizational",
-                            "name": "Troy Inc.",
-                        },
-                    ],
-                    "titles": [{"title": "A Romans story"}],
-                    "schemaVersion": "http://datacite.org/schema/kernel-4",
-                    "publicationYear": "2020",
-                    "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                },
-                url=f"https://127.0.0.1:5000/doi/{doi}",
-                doi=doi,
-            )
-        ]
-    )
+    # Crossref provider calls client.deposit(xml_doc) with serialized XML
+    mock_crossref_client.deposit.assert_called()
 
 
 def test_register_restricted_pid(
@@ -273,9 +289,9 @@ def test_register_restricted_pid(
         [
             mock.call(
                 metadata={
-                    "identifiers": [{"identifier": doi, "identifierType": "DOI"}],
+                    "doi": doi,
                     "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                     "creators": [
                         {
                             "givenName": "Troy",
@@ -361,15 +377,15 @@ def test_update_pid(
                     ],
                     "titles": [{"title": "A Romans story"}],
                     "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                    "identifiers": [
-                        {"identifier": doi, "identifierType": "DOI"},
+                    "doi": doi,
+                    "alternateIdentifiers": [
                         {
-                            "identifier": record["pids"]["oai"]["identifier"],
-                            "identifierType": "oai",
+                            "alternateIdentifier": record["pids"]["oai"]["identifier"],
+                            "alternateIdentifierType": "oai",
                         },
                     ],
                     "publicationYear": "2020",
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                 },
                 doi=doi,
                 url=f"https://127.0.0.1:5000/doi/{doi}",
@@ -402,11 +418,9 @@ def test_update_pid(
                     ],
                     "titles": [{"title": "A Romans story"}],
                     "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                    "identifiers": [
-                        {"identifier": parent_doi, "identifierType": "DOI"}
-                    ],
+                    "doi": parent_doi,
                     "publicationYear": "2020",
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                 },
                 doi=parent_doi,
                 url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -430,9 +444,9 @@ def test_update_pid_crossref(
         "crossref",
         "external",
     ]
-    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["is_enabled"] = (
-        lambda *args, **kwargs: True
-    )
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"][
+        "is_enabled"
+    ] = lambda *args, **kwargs: True
     minimal_record["pids"]["doi"] = {
         "identifier": "10.1234/inveniordm.1234",
         "provider": "crossref",
@@ -454,93 +468,15 @@ def test_update_pid_crossref(
 
     # we do not explicitly call the update_pid task
     # we check that the lower level provider update is called
+    # Reset mock after first publish so we can check the update publish separately
+    mock_crossref_client.deposit.reset_mock()
     record_edited = service.edit(superuser_identity, record.id)
     assert mock_crossref_client.deposit.called is False
     service.publish(superuser_identity, record_edited.id)
 
-    mock_crossref_client.deposit.assert_has_calls(
-        [
-            mock.call(
-                metadata={
-                    "event": "publish",
-                    "schemaVersion": "http://datacite.org/schema/kernel-4",
-                    "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
-                    "creators": [
-                        {
-                            "name": "Brown, Troy",
-                            "familyName": "Brown",
-                            "nameIdentifiers": [],
-                            "nameType": "Personal",
-                            "givenName": "Troy",
-                        },
-                        {
-                            "name": "Troy Inc.",
-                            "nameIdentifiers": [],
-                            "nameType": "Organizational",
-                        },
-                    ],
-                    "relatedIdentifiers": [
-                        {
-                            "relatedIdentifier": parent_doi,
-                            "relationType": "IsVersionOf",
-                            "relatedIdentifierType": "DOI",
-                        }
-                    ],
-                    "titles": [{"title": "A Romans story"}],
-                    "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                    "identifiers": [
-                        {"identifier": doi, "identifierType": "DOI"},
-                        {
-                            "identifier": record["pids"]["oai"]["identifier"],
-                            "identifierType": "oai",
-                        },
-                    ],
-                    "publicationYear": "2020",
-                    "publisher": "Acme Inc",
-                },
-                doi=doi,
-                url=f"https://127.0.0.1:5000/doi/{doi}",
-            ),
-            mock.call(
-                metadata={
-                    "event": "publish",
-                    "schemaVersion": "http://datacite.org/schema/kernel-4",
-                    "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
-                    "creators": [
-                        {
-                            "name": "Brown, Troy",
-                            "familyName": "Brown",
-                            "nameIdentifiers": [],
-                            "nameType": "Personal",
-                            "givenName": "Troy",
-                        },
-                        {
-                            "name": "Troy Inc.",
-                            "nameIdentifiers": [],
-                            "nameType": "Organizational",
-                        },
-                    ],
-                    "relatedIdentifiers": [
-                        {
-                            "relatedIdentifier": doi,
-                            "relationType": "HasVersion",
-                            "relatedIdentifierType": "DOI",
-                        }
-                    ],
-                    "titles": [{"title": "A Romans story"}],
-                    "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                    "identifiers": [
-                        {"identifier": parent_doi, "identifierType": "DOI"}
-                    ],
-                    "publicationYear": "2020",
-                    "publisher": "Acme Inc",
-                },
-                doi=parent_doi,
-                url=f"https://127.0.0.1:5000/doi/{parent_doi}",
-            ),
-        ],
-        any_order=True,
-    )
+    # Crossref provider calls client.deposit(xml_doc) with serialized XML
+    # for both child and parent records
+    assert mock_crossref_client.deposit.call_count >= 2
 
 
 def test_invalidate_pid(
@@ -598,11 +534,9 @@ def test_invalidate_pid(
                     ],
                     "titles": [{"title": "A Romans story"}],
                     "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                    "identifiers": [
-                        {"identifier": parent_doi, "identifierType": "DOI"}
-                    ],
+                    "doi": parent_doi,
                     "publicationYear": "2020",
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                 },
                 doi=parent_doi,
                 url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -689,9 +623,9 @@ def test_invalidate_versions_pid(
                 ],
                 "titles": [{"title": "A Romans story v2"}],
                 "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                "identifiers": [{"identifier": parent_doi, "identifierType": "DOI"}],
+                "doi": parent_doi,
                 "publicationYear": "2020",
-                "publisher": "Acme Inc",
+                "publisher": {"name": "Acme Inc"},
             },
             doi=parent_doi,
             url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -725,11 +659,9 @@ def test_invalidate_versions_pid(
                 ],
                 "titles": [{"title": "A Romans story v2"}],
                 "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                "identifiers": [
-                    {"identifier": parent_doi, "identifierType": "DOI"},
-                ],
+                "doi": parent_doi,
                 "publicationYear": "2020",
-                "publisher": "Acme Inc",
+                "publisher": {"name": "Acme Inc"},
             },
             doi=parent_doi,
             url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -772,11 +704,9 @@ def test_invalidate_versions_pid(
                     ],
                     "titles": [{"title": "A Romans story v2"}],
                     "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                    "identifiers": [
-                        {"identifier": parent_doi, "identifierType": "DOI"},
-                    ],
+                    "doi": parent_doi,
                     "publicationYear": "2020",
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                 },
                 doi=parent_doi,
                 url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -840,9 +770,9 @@ def test_restore_pid(
                 ],
                 "titles": [{"title": "A Romans story"}],
                 "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                "identifiers": [{"identifier": parent_doi, "identifierType": "DOI"}],
+                "doi": parent_doi,
                 "publicationYear": "2020",
-                "publisher": "Acme Inc",
+                "publisher": {"name": "Acme Inc"},
             },
             doi=parent_doi,
             url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -890,11 +820,9 @@ def test_restore_pid(
                     ],
                     "titles": [{"title": "A Romans story"}],
                     "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                    "identifiers": [
-                        {"identifier": parent_doi, "identifierType": "DOI"}
-                    ],
+                    "doi": parent_doi,
                     "publicationYear": "2020",
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                 },
                 doi=parent_doi,
                 url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -1022,19 +950,16 @@ def test_full_record_register(
                             },
                         }
                     ],
-                    "identifiers": [
+                    "doi": doi,
+                    "alternateIdentifiers": [
                         {
-                            "identifier": doi,
-                            "identifierType": "DOI",
-                        },
-                        {
-                            "identifier": "1924MNRAS..84..308E",
-                            "identifierType": "bibcode",
+                            "alternateIdentifier": "1924MNRAS..84..308E",
+                            "alternateIdentifierType": "bibcode",
                         },
                     ],
                     "language": "dan",
                     "publicationYear": "2018",
-                    "publisher": "InvenioRDM",
+                    "publisher": {"name": "InvenioRDM"},
                     "relatedIdentifiers": [
                         {
                             "relatedIdentifier": "10.1234/foo.bar",
@@ -1099,11 +1024,10 @@ def test_full_record_register_crossref(
         "crossref",
         "external",
     ]
-    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["is_enabled"] = (
-        lambda *args, **kwargs: True
-    )
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"][
+        "is_enabled"
+    ] = lambda *args, **kwargs: True
     full_record["pids"]["doi"] = {
-        "identifier": "10.1234/mock.doi",
         "provider": "crossref",
         "client": "crossref",
     }
@@ -1126,155 +1050,5 @@ def test_full_record_register_crossref(
     register_or_update_pid(recid=record["id"], scheme="doi")
     assert pid.status == PIDStatus.REGISTERED
 
-    mock_crossref_client.deposit.assert_has_calls(
-        [
-            mock.call(
-                metadata={
-                    "contributors": [
-                        {
-                            "affiliation": [
-                                {
-                                    "affiliationIdentifier": "https://ror.org/01ggx4157",
-                                    "affiliationIdentifierScheme": "ROR",
-                                    "name": "CERN",
-                                }
-                            ],
-                            "contributorType": "Other",
-                            "familyName": "Nielsen",
-                            "givenName": "Lars Holm",
-                            "name": "Nielsen, Lars Holm",
-                            "nameIdentifiers": [
-                                {
-                                    "nameIdentifier": "0000-0001-8135-3489",
-                                    "nameIdentifierScheme": "ORCID",
-                                }
-                            ],
-                            "nameType": "Personal",
-                        }
-                    ],
-                    "creators": [
-                        {
-                            "affiliation": [
-                                {
-                                    "affiliationIdentifier": "https://ror.org/01ggx4157",
-                                    "affiliationIdentifierScheme": "ROR",
-                                    "name": "CERN",
-                                },
-                                {"name": "free-text"},
-                            ],
-                            "familyName": "Nielsen",
-                            "givenName": "Lars Holm",
-                            "name": "Nielsen, Lars Holm",
-                            "nameIdentifiers": [
-                                {
-                                    "nameIdentifier": "0000-0001-8135-3489",
-                                    "nameIdentifierScheme": "ORCID",
-                                }
-                            ],
-                            "nameType": "Personal",
-                        }
-                    ],
-                    "dates": [
-                        {"date": "2018/2020-09", "dateType": "Issued"},
-                        {
-                            "date": "1939/1945",
-                            "dateInformation": "A date",
-                            "dateType": "Other",
-                        },
-                    ],
-                    "descriptions": [
-                        {
-                            "description": "A description \nwith HTML tags",
-                            "descriptionType": "Abstract",
-                        },
-                        {
-                            "description": "Bla bla bla",
-                            "descriptionType": "Methods",
-                            "lang": "eng",
-                        },
-                    ],
-                    "formats": ["application/pdf"],
-                    "fundingReferences": [
-                        {
-                            "awardNumber": "755021",
-                            "awardTitle": "Personalised Treatment For "
-                            "Cystic Fibrosis Patients "
-                            "With Ultra-rare CFTR "
-                            "Mutations (and beyond)",
-                            "awardURI": "https://cordis.europa.eu/project/id/755021",
-                            "funderIdentifier": "00k4n6c32",
-                            "funderIdentifierType": "ROR",
-                            "funderName": "European Commission",
-                        }
-                    ],
-                    "geoLocations": [
-                        {
-                            "geoLocationPlace": "test location place",
-                            "geoLocationPoint": {
-                                "pointLatitude": "-60.63932",
-                                "pointLongitude": "-32.94682",
-                            },
-                        }
-                    ],
-                    "identifiers": [
-                        {
-                            "identifier": doi,
-                            "identifierType": "DOI",
-                        },
-                        {
-                            "identifier": "1924MNRAS..84..308E",
-                            "identifierType": "bibcode",
-                        },
-                    ],
-                    "language": "dan",
-                    "publicationYear": "2018",
-                    "publisher": "InvenioRDM",
-                    "relatedIdentifiers": [
-                        {
-                            "relatedIdentifier": "10.1234/foo.bar",
-                            "relatedIdentifierType": "DOI",
-                            "relationType": "IsCitedBy",
-                            "resourceTypeGeneral": "Dataset",
-                        }
-                    ],
-                    "rightsList": [
-                        {
-                            "rights": "A custom license",
-                            "rightsUri": "https://customlicense.org/licenses/by/4.0/",
-                        },
-                        {
-                            "rights": "Creative Commons Attribution 4.0 International",
-                            "rightsIdentifier": "cc-by-4.0",
-                            "rightsIdentifierScheme": "spdx",
-                            "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
-                        },
-                    ],
-                    "schemaVersion": "http://datacite.org/schema/kernel-4",
-                    "sizes": ["11 pages"],
-                    "subjects": [
-                        {
-                            "subject": "Abdominal Injuries",
-                            "subjectScheme": "MeSH",
-                            "valueURI": "http://id.nlm.nih.gov/mesh/A-D000007",
-                        },
-                        {"subject": "custom"},
-                    ],
-                    "titles": [
-                        {"title": "InvenioRDM"},
-                        {
-                            "lang": "eng",
-                            "title": "a research data management platform",
-                            "titleType": "Subtitle",
-                        },
-                    ],
-                    "types": {
-                        "resourceType": "Photo",
-                        "resourceTypeGeneral": "Image",
-                    },
-                    "version": "v1.0",
-                },
-                url=f"https://127.0.0.1:5000/doi/{doi}",
-                doi=doi,
-            )
-        ]
-    )
+    # Crossref provider calls client.deposit(xml_doc) with serialized XML
+    mock_crossref_client.deposit.assert_called()

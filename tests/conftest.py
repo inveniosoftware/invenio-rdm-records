@@ -40,6 +40,7 @@ from datetime import datetime, timedelta, timezone
 from io import BytesIO
 from unittest import mock
 
+import idutils
 import pytest
 from flask_principal import Identity, Need, RoleNeed, UserNeed
 from flask_security import login_user
@@ -108,7 +109,6 @@ from invenio_rdm_records.requests.entity_resolvers import (
     RDMRecordServiceResultResolver,
 )
 from invenio_rdm_records.resources.serializers import (
-    CrossrefXMLSerializer,
     DataCite45JSONSerializer,
 )
 from invenio_rdm_records.services.communities.components import (
@@ -308,6 +308,26 @@ def app_config(app_config, mock_datacite_client):
         ),
     ]
 
+    # Override RDM_PERSISTENT_IDENTIFIERS to match the providers registered
+    # above (no Crossref provider in the default test config).
+    app_config["RDM_PERSISTENT_IDENTIFIERS"] = {
+        "doi": {
+            "providers": ["datacite", "external"],
+            "required": True,
+            "label": _("DOI"),
+            "validator": idutils.is_doi,
+            "normalizer": idutils.normalize_doi,
+            "is_enabled": providers.DataCitePIDProvider.is_enabled,
+            "ui": {"default_selected": "yes"},
+        },
+        "oai": {
+            "providers": ["oai"],
+            "required": True,
+            "label": _("OAI"),
+            "is_enabled": providers.OAIPIDProvider.is_enabled,
+        },
+    }
+
     # Custom fields
     app_config["RDM_CUSTOM_FIELDS"] = [
         TextCF(name="cern:myfield", use_as_filter=True),
@@ -464,6 +484,26 @@ def _search_delete_indexes(current_search):
         Community.index._name,
     ]
     list(current_search.delete(index_list=to_delete))
+
+
+@pytest.fixture(scope="module")
+def search(appctx):
+    """Setup and teardown all registered search indices.
+
+    Overrides pytest_invenio's search fixture to recover gracefully
+    from stale indices left by previous test modules or external test runs.
+    """
+    from invenio_search import current_search, current_search_client
+
+    try:
+        list(current_search.create())
+    except Exception:
+        # Delete all indices and aliases, then recreate
+        current_search_client.indices.delete(index="*", ignore=[400, 404])
+        list(current_search.create())
+    current_search_client.indices.refresh()
+    yield current_search_client
+    _search_delete_indexes(current_search)
 
 
 # overwrite pytest_invenio.fixture to only delete record indices
@@ -1346,6 +1386,78 @@ def resource_type_v(app, resource_type_type):
             },
             "icon": "chart bar outline",
             "title": {"en": "Photo"},
+            "tags": ["depositable", "linkable"],
+            "type": "resourcetypes",
+        },
+    )
+
+    vocabulary_service.create(
+        system_identity,
+        {
+            "id": "publication",
+            "props": {
+                "csl": "report",
+                "datacite_general": "Text",
+                "datacite_type": "",
+                "openaire_resourceType": "0017",
+                "openaire_type": "publication",
+                "eurepo": "info:eu-repo/semantics/other",
+                "schema.org": "https://schema.org/CreativeWork",
+                "subtype": "",
+                "type": "publication",
+                "marc21_type": "publication",
+                "marc21_subtype": "",
+            },
+            "icon": "file alternate",
+            "title": {"en": "Publication"},
+            "tags": ["depositable", "linkable"],
+            "type": "resourcetypes",
+        },
+    )
+
+    vocabulary_service.create(
+        system_identity,
+        {
+            "id": "publication-journal",
+            "props": {
+                "csl": "journal",
+                "datacite_general": "Journal",
+                "datacite_type": "",
+                "openaire_resourceType": "0043",
+                "openaire_type": "publication",
+                "eurepo": "info:eu-repo/semantics/article",
+                "schema.org": "https://schema.org/ScholarlyArticle",
+                "subtype": "publication-journal",
+                "type": "publication",
+                "marc21_type": "publication",
+                "marc21_subtype": "journal",
+            },
+            "icon": "file alternate",
+            "title": {"en": "Journal"},
+            "tags": ["depositable", "linkable"],
+            "type": "resourcetypes",
+        },
+    )
+
+    vocabulary_service.create(
+        system_identity,
+        {
+            "id": "publication-preprint",
+            "props": {
+                "csl": "article",
+                "datacite_general": "Preprint",
+                "datacite_type": "",
+                "openaire_resourceType": "0016",
+                "openaire_type": "publication",
+                "eurepo": "info:eu-repo/semantics/preprint",
+                "schema.org": "https://schema.org/ScholarlyArticle",
+                "subtype": "publication-preprint",
+                "type": "publication",
+                "marc21_type": "publication",
+                "marc21_subtype": "preprint",
+            },
+            "icon": "file alternate",
+            "title": {"en": "Preprint"},
             "tags": ["depositable", "linkable"],
             "type": "resourcetypes",
         },

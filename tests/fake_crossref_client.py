@@ -124,6 +124,10 @@ class FakeCrossRefXMLClient:
 class FakeCrossrefClient(providers.CrossrefClient):
     """Fake CrossRef Client."""
 
+    def deposit(self, input_xml):
+        """Fake deposit - does nothing."""
+        return "SUCCESS"
+
     @property
     def api(self):
         """CrossRef XML API client instance."""
