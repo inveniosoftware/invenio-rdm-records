@@ -304,6 +304,27 @@ class ParentPIDsComponent(ServiceComponent):
         #       already published records that don't have one (i.e. legacy records).
         # Create all missing PIDs (this happens only on first publish)
         missing_required_schemes = required_schemes - current_schemes
+
+        # Copy provider and prefix from child record PIDs to ensure consistency
+        child_pids = draft.get("pids", {})
+        for scheme in missing_required_schemes:
+            if scheme in child_pids and scheme not in current_pids:
+                # Copy provider and prefix from child to parent
+                current_pids[scheme] = {
+                    "provider": child_pids[scheme].get("provider"),
+                }
+                # Copy prefix if it exists, or extract from identifier
+                if "prefix" in child_pids[scheme]:
+                    current_pids[scheme]["prefix"] = child_pids[scheme]["prefix"]
+                elif (
+                    "identifier" in child_pids[scheme]
+                    and "/" in child_pids[scheme]["identifier"]
+                ):
+                    # Extract prefix from DOI identifier (e.g., "10.12345/abc" -> "10.12345")
+                    current_pids[scheme]["prefix"] = child_pids[scheme][
+                        "identifier"
+                    ].split("/")[0]
+
         pids = self.service.pids.parent_pid_manager.create_all(
             record.parent,
             pids=current_pids,

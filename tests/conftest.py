@@ -107,7 +107,10 @@ from invenio_rdm_records.requests.entity_resolvers import (
     EmailResolver,
     RDMRecordServiceResultResolver,
 )
-from invenio_rdm_records.resources.serializers import DataCite45JSONSerializer
+from invenio_rdm_records.resources.serializers import (
+    CrossrefXMLSerializer,
+    DataCite45JSONSerializer,
+)
 from invenio_rdm_records.services.communities.components import (
     CommunityServiceComponents,
 )
@@ -117,6 +120,7 @@ from invenio_rdm_records.services.request_policies import (
     RequestDeletionPolicy,
 )
 
+from .fake_crossref_client import FakeCrossrefClient
 from .fake_datacite_client import FakeDataCiteClient
 
 
@@ -153,6 +157,12 @@ def celery_config():
 def _(x):
     """Identity function for string extraction."""
     return x
+
+
+@pytest.fixture(scope="module")
+def mock_crossref_client():
+    """Mock Crossref client."""
+    return FakeCrossrefClient
 
 
 @pytest.fixture(scope="module")

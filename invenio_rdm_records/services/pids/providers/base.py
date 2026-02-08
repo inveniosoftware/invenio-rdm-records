@@ -83,7 +83,7 @@ class PIDProvider:
         if pid_value is None:
             if not self.is_managed():
                 raise ValueError(_("You must provide a pid value."))
-            pid_value = self.generate_id(record)
+            pid_value = self.generate_id(record, **kwargs)
 
         try:
             pid = self.get(pid_value)
@@ -101,6 +101,9 @@ class PIDProvider:
         # re-activate if previously deleted
         if pid.is_deleted():
             pid.sync_status(PIDStatus.NEW)
+            return pid
+        # if PID exists and belongs to the same record, return it
+        elif pid.object_uuid == record.id:
             return pid
         else:
             raise PIDAlreadyExists(self.pid_type, pid_value)
