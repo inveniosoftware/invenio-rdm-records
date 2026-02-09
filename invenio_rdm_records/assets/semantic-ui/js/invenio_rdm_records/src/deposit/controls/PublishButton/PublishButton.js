@@ -124,6 +124,7 @@ class PublishButtonComponent extends Component {
             onSubmit={this.handlePublish}
             publishModalExtraContent={publishModalExtraContent}
             buttonLabel={buttonLabel}
+            depositFormHandleSubmit={formik.handleSubmit}
           />
         )}
       </>
