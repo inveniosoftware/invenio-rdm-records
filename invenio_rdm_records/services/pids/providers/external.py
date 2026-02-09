@@ -26,12 +26,14 @@ class BlockedPrefixes:
 
     @property
     def prefixes(self):
-        """Get list of blocked prefixes."""
+        """Get list of blocked prefixes. Can be string, list or dict in config."""
         _prefixes = []
         for name in self._config_names:
             val = current_app.config[name]
             if isinstance(val, str):
                 _prefixes += [val]
+            elif isinstance(val, dict):
+                _prefixes += list(val.values())
             else:
                 _prefixes += val
         return _prefixes + self._prefixes

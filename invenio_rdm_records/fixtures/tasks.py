@@ -235,4 +235,4 @@ def create_demo_invitation_requests(user_id, n_requests):
         #         comment_with_type
         #     )
 
-        print(f"Created request for user {user_id} and " f"community {community_id}")
+        print(f"Created request for user {user_id} and community {community_id}")

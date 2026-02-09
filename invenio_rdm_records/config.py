@@ -499,11 +499,24 @@ RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
         client=providers.DataCiteClient("datacite", config_prefix="DATACITE"),
         label=_("DOI"),
     ),
+    # Crossref DOI provider
+    providers.CrossrefPIDProvider(
+        "crossref",
+        client=providers.CrossrefClient("crossref", config_prefix="CROSSREF"),
+        label=_("DOI"),
+    ),
     # DOI provider for externally managed DOIs
     providers.ExternalPIDProvider(
         "external",
         "doi",
-        validators=[providers.BlockedPrefixes(config_names=["DATACITE_PREFIX"])],
+        validators=[
+            providers.BlockedPrefixes(
+                config_names=[
+                    "DATACITE_PREFIX",
+                    "CROSSREF_PREFIX",
+                ]
+            )
+        ],
         label=_("DOI"),
     ),
     # OAI identifier
@@ -523,14 +536,15 @@ The name is further used to configure the desired persistent identifiers (see
 """
 
 RDM_PERSISTENT_IDENTIFIERS = {
-    # DOI automatically removed if DATACITE_ENABLED is False.
+    # DOI automatically removed if DATACITE_ENABLED and CROSSREF_ENABLED are False.
     "doi": {
-        "providers": ["datacite", "external"],
+        "providers": ["datacite", "crossref", "external"],
         "required": True,
         "label": _("DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
-        "is_enabled": providers.DataCitePIDProvider.is_enabled,
+        "is_enabled": providers.DataCitePIDProvider.is_enabled
+        or providers.CrossrefPIDProvider.is_enabled,
         "ui": {"default_selected": "yes"},  # "yes", "no" or "not_needed"
     },
     "oai": {
@@ -588,7 +602,7 @@ Check the signature of validate_optional_doi for more information.
 # Configuration for the DataCiteClient used by the DataCitePIDProvider
 
 DATACITE_ENABLED = False
-"""Flag to enable/disable DOI registration."""
+"""Flag to enable/disable DataCite DOI registration."""
 
 DATACITE_USERNAME = ""
 """DataCite username."""
@@ -598,6 +612,9 @@ DATACITE_PASSWORD = ""
 
 DATACITE_PREFIX = ""
 """DataCite DOI prefix."""
+
+DATACITE_ADDITIONAL_PREFIXES = []
+"""List of additional DataCite DOI prefixes supported for registration."""
 
 DATACITE_TEST_MODE = True
 """DataCite test mode enabled."""
@@ -622,6 +639,50 @@ DATACITE_DATACENTER_SYMBOL = ""
 
 This is only required if you want your records to be harvestable (OAI-PMH)
 in DataCite XML format.
+"""
+
+# Configuration for the CrossrefClient used by the CrossrefPIDProvider
+
+CROSSREF_ENABLED = False
+"""Flag to enable/disable Crossref DOI registration."""
+
+CROSSREF_USERNAME = ""
+"""Crossref username."""
+
+CROSSREF_PASSWORD = ""
+"""Crossref password."""
+
+CROSSREF_PREFIX = ""
+"""Crossref DOI prefix."""
+
+CROSSREF_ADDITIONAL_PREFIXES = []
+"""List of additional Crossref DOI prefixes supported for registration."""
+
+CROSSREF_DEPOSITOR = ""
+"""Crossref depositor name."""
+
+CROSSREF_EMAIL = ""
+"""Crossref depositor email."""
+
+CROSSREF_REGISTRANT = ""
+"""Crossref registrant."""
+
+CROSSREF_TEST_MODE = True
+"""Crossref test mode enabled."""
+
+CROSSREF_FORMAT = "{prefix}/{id}"
+"""A string used for formatting the DOI or a callable.
+
+If set to a string, you can used ``{prefix}`` and ``{id}`` inside the string.
+
+You can also provide a callable instead:
+
+.. code-block:: python
+
+    def make_doi(prefix, record):
+        return f"{prefix}/{record.pid.pid_value}"
+
+    CROSSREF_FORMAT = make_doi
 """
 
 #
