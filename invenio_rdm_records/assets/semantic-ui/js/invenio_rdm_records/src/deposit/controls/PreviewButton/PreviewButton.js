@@ -24,13 +24,19 @@ export class PreviewButtonComponent extends Component {
 
   handlePreview = (event, handleSubmit) => {
     const { setSubmitContext } = this.context;
+    const { depositFormHandleSubmit } = this.props;
 
     setSubmitContext(DepositFormSubmitActions.PREVIEW);
-    handleSubmit(event);
+
+    if (depositFormHandleSubmit) {
+      depositFormHandleSubmit();
+    } else {
+      handleSubmit(event);
+    }
   };
 
   render() {
-    const { actionState, formik, ...ui } = this.props;
+    const { actionState, formik, depositFormHandleSubmit, ...ui } = this.props;
     const { handleSubmit, isSubmitting } = formik;
 
     const uiProps = _omit(ui, ["dispatch"]);
@@ -38,6 +44,7 @@ export class PreviewButtonComponent extends Component {
     return (
       <Button
         name="preview"
+        type="button"
         disabled={isSubmitting}
         onClick={(e) => this.handlePreview(e, handleSubmit)}
         loading={isSubmitting && actionState === DRAFT_PREVIEW_STARTED}
@@ -53,10 +60,12 @@ export class PreviewButtonComponent extends Component {
 PreviewButtonComponent.propTypes = {
   actionState: PropTypes.string,
   formik: PropTypes.object.isRequired,
+  depositFormHandleSubmit: PropTypes.func,
 };
 
 PreviewButtonComponent.defaultProps = {
   actionState: undefined,
+  depositFormHandleSubmit: undefined,
 };
 
 const mapStateToProps = (state) => ({
