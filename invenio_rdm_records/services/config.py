@@ -6,6 +6,7 @@
 # Copyright (C) 2021-2026 Graz University of Technology.
 # Copyright (C) 2022      Universität Hamburg
 # Copyright (C) 2024      KTH Royal Institute of Technology.
+# Copyright (C) 2025 CESNET i.a.l.e.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -376,6 +377,13 @@ def vars_self_iiif(drafcord, vars):
     vars["uuid"] = get_iiif_uuid_of_drafcord(drafcord, vars)
 
 
+def is_container(file_, ctx):
+    """Determine if a file is a container."""
+    # We do not have file service as part of context here, so we need to rely on the list of configured file extensions.
+    file_ext = splitext(file_.key)[1].lower()
+    return file_ext in current_app.config["RDM_RECORDS_CONTAINER_EXTENSIONS"]
+
+
 #
 # Default service configuration
 #
@@ -438,6 +446,16 @@ class WithFileLinks(type):
 
     def __init__(cls, *args, **kwargs):
         """Constructor."""
+        cls.container_item_links_item = {
+            "content": EndpointLink(
+                "record_files.extract_container_item",
+                params=["pid_value", "key", "path"],
+                vars=lambda container_item_metadata, variables: variables.update(
+                    {"path": container_item_metadata["key"]}
+                ),
+            ),
+        }
+
         cls.file_links_list = {
             "self": EndpointLink(
                 f"{cls.name_of_file_blueprint}.search", params=["pid_value"]
@@ -515,6 +533,9 @@ class WithFileLinks(type):
                     }
                 ),
             ),
+            'container': FileEndpointLink(
+                f"{cls.name_of_file_blueprint}.list_container", params=["pid_value", "key"], when=is_container
+            ),
         }
 
 
@@ -532,6 +553,11 @@ class FileServiceConfig(
 
     name_of_file_blueprint = ""  # Has to be overridden by descendants
     allow_archive_download = FromConfig("RDM_ARCHIVE_DOWNLOAD_ENABLED", True)
+
+
+    file_extractors = FromConfig(
+        "RDM_RECORD_FILE_EXTRACTORS", default=[]
+    )
 
 
 class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
