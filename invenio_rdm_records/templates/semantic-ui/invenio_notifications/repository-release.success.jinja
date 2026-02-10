@@ -3,7 +3,7 @@
 {% set record = notification.context.record %}
 
 {% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
-{% set record_link = record.data["links"]["self_html"] %}
+{% set record_link = record["links"]["self_html"] %}
 
 {%- block subject -%}
     {{ _("A release from %(repository_name)s was published successfully", repository_name=repository_full_name) }}
