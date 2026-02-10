@@ -17,6 +17,7 @@ import idutils
 from invenio_access.permissions import system_permission
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.records.queryparser import QueryParser
+from invenio_records_resources.services.files.extractors.zip import ZipExtractor
 from invenio_records_resources.services.records.queryparser.transformer import (
     RestrictedTerm,
     RestrictedTermValue,
@@ -889,3 +890,9 @@ RDM_RECORDS_ALLOW_RESTRICTION_AFTER_GRACE_PERIOD = False
 
 RDM_RECORDS_REQUIRE_SECRET_LINKS_EXPIRATION = False
 """Whether share access links require an expiration date to be set or not."""
+
+RDM_RECORDS_CONTAINER_EXTENSIONS=[".zip"]
+"""List of file extensions for container files.
+Experimental, this config can later be removed."""
+
+RDM_RECORD_FILE_EXTRACTORS = [ZipExtractor()]
