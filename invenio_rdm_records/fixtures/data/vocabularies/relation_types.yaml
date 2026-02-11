@@ -7,6 +7,7 @@
      de: Wird zitiert von
      es: Citado por
      cs: Je citován (čím)
+     ar: تم الاستشهاد به بواسطة
 - id: cites
   props:
      datacite: Cites
@@ -16,6 +17,7 @@
      de: Zitiert
      es: Citas
      cs: Cituje (co)
+     ar: يستشهد بـ
 - id: issupplementto
   props:
      datacite: IsSupplementTo
@@ -25,6 +27,7 @@
      de: Ergänzt
      es: Es un suplemento de
      cs: Je doplňkem k (čemu)
+     ar: ملحق لـ  
 - id: issupplementedby
   props:
      datacite: IsSupplementedBy
@@ -34,6 +37,7 @@
      de: Wird ergänzt durch
      es: Es complementado por
      cs: Má doplněk (co)
+     ar: يُستكمل بـ
 - id: iscontinuedby
   props:
      datacite: IsContinuedBy
@@ -43,6 +47,7 @@
      de: Wird fortgesetzt durch
      es: Es continuado por
      cs: Je pokračováním (čeho)
+     ar: استكملت بـ
 - id: continues
   props:
      datacite: Continues
@@ -52,6 +57,7 @@
      de: Setzt fort
      es: Continúa
      cs: Pokračuje (čím)
+     ar: تستكمل
 - id: isdescribedby
   props:
      datacite: IsDescribedBy
@@ -61,6 +67,7 @@
      de: Wird beschrieben von
      es: Es descrito por
      cs: Je popsán (čím)
+     ar: تمّ وصفه بواسطة
 - id: describes
   props:
      datacite: Describes
@@ -70,6 +77,7 @@
      de: Beschreibt
      es: Describe
      cs: Popisuje (co)
+     ar: يصف
 - id: hasmetadata
   props:
      datacite: HasMetadata
@@ -79,6 +87,7 @@
     de: Hat Metadaten in
     es: Tiene metadatos
     cs: Má metadata
+    ar: له ميتاداتا
 - id: ismetadatafor
   props:
      datacite: IsMetadataFor
@@ -88,6 +97,7 @@
     de: Hat Metadaten für
     es: Es metadatos para
     cs: Je metadaty pro
+    ar: هو ميتاداتا لـ
 - id: hasversion
   props:
      datacite: HasVersion
@@ -97,6 +107,7 @@
      de: Hat versionierte Instanz
      es: Tiene versión
      cs: Má verzi
+     ar: له إصدار
 - id: isversionof
   props:
      datacite: IsVersionOf
@@ -106,6 +117,7 @@
      de: Ist eine Version von
      es: Es versión de
      cs: Je verzí (čeho)
+     ar: هو إصدار لـ
 - id: isnewversionof
   props:
      datacite: IsNewVersionOf
@@ -115,6 +127,7 @@
      de: Ist eine neue Version von
      es: Es una nueva versión de
      cs: Je novou verzí (čeho)
+     ar: هو إصدار جديد لـ
 - id: ispreviousversionof
   props:
      datacite: IsPreviousVersionOf
@@ -124,6 +137,7 @@
      de: Ist eine vorherige Version von
      es: Es una versión anterior de
      cs: Je předchozí verzí (čeho)
+     ar: هو إصدار سابق لـ
 - id: ispartof
   props:
      datacite: IsPartOf
@@ -133,6 +147,7 @@
      de: Ist Teil von
      es: Es parte de
      cs: Je součástí (čeho)
+     ar: جزء من
 - id: haspart
   props:
      datacite: HasPart
@@ -142,6 +157,7 @@
      de: Umfasst folgenden Teil
      es: Tiene parte
      cs: Má část/i (co)
+     ar: يحتوي على الجزء التالي
 - id: ispublishedin
   props:
      datacite: IsPublishedIn
@@ -151,6 +167,7 @@
      de: Ist veröffentlicht in
      es: Se publica en
      cs: Je publikován v
+     ar: نشر في
 - id: isreferencedby
   props:
      datacite: IsReferencedBy
@@ -160,6 +177,7 @@
      de: Wird referenziert von
      es: Es referenciado por
      cs: Je na něj odkazováno z (čeho)
+     ar: أعتمد كمرجع بـ
 - id: references
   props:
      datacite: References
@@ -169,6 +187,7 @@
      de: Referenziert
      es: Referencias
      cs: Odkazuje na (co)
+     ar: إعتمد المرجع
 - id: isdocumentedby
   props:
      datacite: IsDocumentedBy
@@ -178,6 +197,7 @@
      de: Wird dokumentiert von
      es: Es documentado por
      cs: Je zdokumentován (čím)
+     ar: تمّ توثيقه بواسطة
 - id: documents
   props:
      datacite: Documents
@@ -187,6 +207,7 @@
      de: Dokumentiert
      es: Documentos
      cs: Dokumentuje (co)
+     ar: وثائق
 - id: iscompiledby
   props:
      datacite: IsCompiledBy
@@ -196,6 +217,7 @@
      de: Kompiliert durch
      es: Es compilado por
      cs: Je kompilován (čím)
+     ar: تمّ تجميعه بواسطة
 - id: compiles
   props:
      datacite: Compiles
@@ -205,6 +227,7 @@
      de: Kompiliert
      es: Compila
      cs: Kompiluje (co)
+     ar: يجمّع
 - id: isvariantformof
   props:
      datacite: IsVariantFormOf
@@ -214,6 +237,7 @@
      de: Ist eine Variante von
      es: Es una forma variante de
      cs: Je variantou (čeho)
+     ar: هو شكل آخر لـ
 - id: isoriginalformof
   props:
      datacite: IsOriginalFormOf
@@ -223,6 +247,7 @@
      de: Ist das Orginal von
      es: Es la forma original de
      cs: Je původní variantou (čeho)
+     ar: هو الشكل الأصلي لـ
 - id: isidenticalto
   props:
      datacite: IsIdenticalTo
@@ -232,6 +257,7 @@
      de: Ist identisch mit
      es: Es idéntico a
      cs: Je identický s (čím)
+     ar: مطابق لـ
 - id: isreviewedby
   props:
      datacite: IsReviewedBy
@@ -241,6 +267,7 @@
      de: Wird begutachtet von
      es: Es revisado por
      cs: Je recenzován (čím)
+     ar: تمت مراجعته بواسطة
 - id: reviews
   props:
      datacite: Reviews
@@ -250,6 +277,7 @@
      de: Begutachtet
      es: Revisiones
      cs: Recenzuje (co)
+     ar: التقييمات
 - id: isderivedfrom
   props:
      datacite: IsDerivedFrom
@@ -259,6 +287,7 @@
      de: Wird abgeleitet von
      es: Se deriva de
      cs: Je odvozen od (čeho)
+     ar: مشتق من
 - id: issourceof
   props:
      datacite: IsSourceOf
@@ -268,6 +297,7 @@
      de: Ist Quelle von
      es: Es fuente de
      cs: Je zdrojem odvozené verze
+     ar: مصدر لـ
 - id: isrequiredby
   props:
      datacite: IsRequiredBy
@@ -277,6 +307,7 @@
      de: Wird gefordert von
      es: Es requerido por
      cs: Je požadován (čím)
+     ar: مطلوب من قبل
 - id: requires
   props:
      datacite: Requires
@@ -286,6 +317,7 @@
      de: Setzt voraus
      es: Requiere
      cs: Požaduje (co)
+     ar: يتطلب
 - id: isobsoletedby
   props:
      datacite: IsObsoletedBy
@@ -295,6 +327,7 @@
      de: Wird ersetzt durch
      es: Está obsoleto por
      cs: Je nahrazen (čím)
+     ar: أصبح متقادمًا بواسطة
 - id: obsoletes
   props:
      datacite: Obsoletes
@@ -304,3 +337,4 @@
      de: Ersetzt
      es: Obsoletos
      cs: Nahrazuje (co)
+     ar: متقادم

@@ -8,6 +8,7 @@
     de: Kontaktperson
     es: Persona de contacto
     cs: Kontaktní osoba
+    ar: مسؤول الاتصال
 - id: datacollector
   props:
     datacite: DataCollector
@@ -18,6 +19,7 @@
     de: DatensammlerIn
     es: Recolector de datos
     cs: Sběratel dat
+    ar: مجمّع البيانات
 - id: datacurator
   props:
     datacite: DataCurator
@@ -28,6 +30,7 @@
     de: DatenkuratorIn
     es: Curador de datos
     cs: Kurátor dat
+    ar: معالج البيانات
 - id: datamanager
   props:
     datacite: DataManager
@@ -38,6 +41,7 @@
     de: DatenmanagerIn
     es: Gestor de datos
     cs: Správce dat
+    ar: مدير البيانات
 - id: distributor
   props:
     datacite: Distributor
@@ -48,6 +52,7 @@
     de: VerteilerIn
     es: Distribuidor
     cs: Distributor
+    ar: الموزّع
 - id: editor
   props:
     datacite: Editor
@@ -58,6 +63,7 @@
     de: EditorIn
     es: Editor
     cs: Editor
+    ar: النّاشر
 - id: hostinginstitution
   props:
     datacite: HostingInstitution
@@ -68,6 +74,7 @@
     de: Bereitstellende Institution
     es: Institución anfitriona
     cs: Hostující instituce
+    ar: المؤسّسة المضيّفة
 - id: producer
   props:
     datacite: Producer
@@ -78,6 +85,7 @@
     de: ProduzentIn
     es: Productor
     cs: Producent
+    ar: المنتج
 - id: projectleader
   props:
     datacite: ProjectLeader
@@ -88,6 +96,7 @@
     de: ProjektleiterIn
     es: Líder de proyecto
     cs: Vedoucí projektu
+    ar: قائد المشروع
 - id: projectmanager
   props:
     datacite: ProjectManager
@@ -98,6 +107,7 @@
     de: ProjektmanagerIn
     es: Gerente de proyecto
     cs: Manažer projektu
+    ar: مدير المشروع
 - id: projectmember
   props:
     datacite: ProjectMember
@@ -108,6 +118,7 @@
     de: Projektmitglied
     es: Miembro del proyecto
     cs: Člen projektu
+    ar: عضو بالمشروع
 - id: registrationagency
   props:
     datacite: RegistrationAgency
@@ -118,6 +129,7 @@
     de: Registrierungsstelle
     es: Agencia de registro
     cs: Registrační agentura
+    ar: وكالة التسجيل
 - id: registrationauthority
   props:
     datacite: RegistrationAuthority
@@ -128,6 +140,7 @@
     de: Registrierungsbehörde
     es: Autoridad de registro
     cs: Registrační autorita
+    ar: هيئة التسجيل
 - id: relatedperson
   props:
     datacite: RelatedPerson
@@ -138,6 +151,7 @@
     de: Verwandte Person
     es: Persona relacionada
     cs: Související osoba
+    ar: الشخص ذو الصلة
 - id: researcher
   props:
     datacite: Researcher
@@ -148,6 +162,7 @@
     de: WissenschaftlerIn
     es: Investigador
     cs: Výzkumník
+    ar: باحث
 - id: researchgroup
   props:
     datacite: ResearchGroup
@@ -158,6 +173,7 @@
     de: Forschungsgruppe
     es: Grupo de investigación
     cs: Výzkumná skupina
+    ar: مجموعة باحثين
 - id: rightsholder
   props:
     datacite: RightsHolder
@@ -168,6 +184,7 @@
     de: RechteinhaberIn
     es: Titular de derechos
     cs: Držitel práv
+    ar: صاحب الحقوق
 - id: sponsor
   props:
     datacite: Sponsor
@@ -178,6 +195,7 @@
     de: Sponsor
     es: Patrocinador
     cs: Sponzor
+    ar: الراعي
 - id: supervisor
   props:
     datacite: Supervisor
@@ -188,6 +206,7 @@
     de: SupervisorIn
     es: Supervisor
     cs: Supervizor
+    ar: مشرف
 - id: translator
   props:
     datacite: Translator
@@ -198,6 +217,7 @@
     de: Übersetzer
     es: Traductor
     cs: Překladatel
+    ar: مترجم
 - id: workpackageleader
   props:
     datacite: WorkPackageLeader
@@ -208,6 +228,7 @@
     de: ArbeitspaketleiterIn
     es: Líder del paquete de trabajo
     cs: Vedoucí pracovního balíku
+    ar: قائد حزمة العمل
 - id: other
   props:
     datacite: Other
@@ -218,3 +239,4 @@
     de: Andere
     es: Otro
     cs: Jiné
+    ar: آخر

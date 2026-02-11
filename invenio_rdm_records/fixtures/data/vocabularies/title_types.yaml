@@ -7,6 +7,7 @@
     de: Alternativer Titel
     es: Título alternativo
     cs: Alternativní název
+    ar: عنوان بديل
 - id: subtitle
   props:
     datacite: Subtitle
@@ -16,6 +17,7 @@
     de: Untertitel
     es: Subtítulo
     cs: Podtitul
+    ar: عنوان فرعي
 - id: translated-title
   props:
     datacite: TranslatedTitle
@@ -25,6 +27,7 @@
     de: Übersetzter Titel
     es: Título traducido
     cs: Přeložený název
+    ar: عنوان مترجم
 - id: other
   props:
     datacite: Other
@@ -34,3 +37,4 @@
     de: Sonstiger Titel
     es: Otro
     cs: Jiný název
+    ar: آخر

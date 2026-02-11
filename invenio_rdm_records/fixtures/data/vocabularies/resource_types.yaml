@@ -114,7 +114,7 @@
     de: Konferenzbeitrag
     es: Ponencia de conferencia
     cs: Konferenční příspěvek
-    ar: مطبوع مؤتمر
+    ar: ورقة بمؤتمر
   tags:
     - depositable
     - linkable
@@ -234,7 +234,7 @@
     de: Patent
     es: Patente
     cs: Patent
-    ar: براء إختراع
+    ar: براءة اختراع
   tags:
     - depositable
     - linkable
@@ -306,7 +306,7 @@
     de: Projektergebnis
     es: Entregable de proyecto
     cs: Výstup projektu
-    ar: مشروع للتسليم
+    ar: مخرجات المشروع
   tags:
     - depositable
     - linkable
@@ -474,7 +474,7 @@
     de: Arbeitspapier
     es: Documento de trabajo
     cs: Pracovní dokument
-    ar: أطروحة
+    ar: ورقة عمل
   tags:
     - depositable
     - linkable
@@ -569,7 +569,7 @@
     de: Sonstige
     es: Otro
     cs: Jiné
-    ar: آخرى منشورات  
+    ar: آخر  
   tags:
     - depositable
     - linkable
@@ -905,7 +905,7 @@
     sv: Audio
     es: Audio
     cs: Audio
-    ar: صوة
+    ar: صوت
   tags:
     - depositable
     - linkable
