@@ -5,6 +5,7 @@
     de: "Organisation"
     es: "Organización"
     cs: "Organizace"
+    ar: "منظّمة"
 - id: "event"
   title:
     en: "Event"
@@ -12,6 +13,7 @@
     de: "Event"
     es: "Evento"
     cs: "Událost"
+    ar: "فعاليّة"
 - id: "topic"
   title:
     en: "Topic"
@@ -19,6 +21,7 @@
     de: "Thema"
     es: "Tópico"
     cs: "Téma"
+    ar: "موضوع"
 - id: "project"
   title:
     en: "Project"
@@ -26,3 +29,4 @@
     de: "Projekt"
     es: "Proyecto"
     cs: "Projekt"
+    ar: "مشروع"
