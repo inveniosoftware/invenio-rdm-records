@@ -7,6 +7,7 @@
     de: Angenommen
     es: Aceptado
     cs: Přijato
+    ar: مقبول
 - id: available
   props:
     datacite: Available
@@ -16,6 +17,7 @@
     de: Verfügbar
     es: Disponible
     cs: Dostupné
+    ar: متاح
 - id: collected
   props:
     datacite: Collected
@@ -25,6 +27,7 @@
     de: Gesammelt
     es: Recolectado
     cs: Sebrané
+    ar: مجمّع
 - id: copyrighted
   props:
     datacite: Copyrighted
@@ -34,6 +37,7 @@
     de: Mit Copyright versehen
     es: Protegido por derechos de autor
     cs: Copyright udělen
+    ar: حقوق الطبع والنشر محفوظة
 - id: created
   props:
     datacite: Created
@@ -43,6 +47,7 @@
     de: Erstellt
     es: Creado
     cs: Vytvořeno
+    ar: مُنْشَأ
 - id: issued
   props:
     datacite: Issued
@@ -52,6 +57,7 @@
     de: Veröffentlicht
     es: Publicado
     cs: Vydáno
+    ar: منشور
 - id: other
   props:
     datacite: Other
@@ -61,6 +67,7 @@
     de: Sonstiges
     es: Otro
     cs: Jiné
+    ar: آخر
 - id: submitted
   props:
     datacite: Submitted
@@ -70,6 +77,7 @@
     de: Eingereicht
     es: Enviado
     cs: Odesláno
+    ar: تمّ تقديمه
 - id: updated
   props:
     datacite: Updated
@@ -79,6 +87,7 @@
     de: Aktualisiert
     es: Actualizado
     cs: Aktualizováno
+    ar: محيّن
 - id: valid
   props:
     datacite: Valid
@@ -88,6 +97,7 @@
     de: Gültig
     es: Válido
     cs: Platnost
+    ar: صالح
 - id: withdrawn
   props:
     datacite: Withdrawn
@@ -97,3 +107,4 @@
     de: Zurückgezogen
     es: Retirado
     cs: Stáhnuto
+    ar: ألغي
