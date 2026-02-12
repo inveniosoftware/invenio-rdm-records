@@ -15,15 +15,15 @@ from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services.uow import UnitOfWork
 from invenio_vcs.errors import CustomVCSReleaseNoRetryError
-from invenio_vcs.models import Release, ReleaseStatus
 from invenio_vcs.service import VCSRelease
-from sqlalchemy import and_, or_
 
 from invenio_rdm_records.notifications.vcs import (
     RepositoryReleaseCommunityRequiredNotificationBuilder,
+    RepositoryReleaseCommunitySubmittedNotificationBuilder,
     RepositoryReleaseFailureNotificationBuilder,
     RepositoryReleaseSuccessNotificationBuilder,
 )
+from invenio_rdm_records.requests.community_submission import CommunitySubmission
 
 from ...proxies import current_rdm_records_service
 from ...resources.serializers.ui import UIJSONSerializer
@@ -162,7 +162,7 @@ class RDMVCSRelease(VCSRelease):
         db.session.commit()
 
         draft_file_service = current_rdm_records_service.draft_files
-        draft_record_model_id = None
+        draft = None
 
         try:
             with UnitOfWork(db.session) as uow:
@@ -177,6 +177,22 @@ class RDMVCSRelease(VCSRelease):
                     identity = self.user_identity
                     draft = current_rdm_records_service.create(identity, data, uow=uow)
                     self._upload_files_to_draft(identity, draft, uow)
+
+                    if self.db_repo.record_community_id is not None:
+                        # Create a review request for the repo's configured community ID if any
+                        # If RDM_COMMUNITY_REQUIRED_TO_PUBLISH is true and no ID is provided, the publish will fail
+                        # and the user will be sent a notification to manually assign a community.
+                        current_rdm_records_service.review.create(
+                            identity,
+                            data={
+                                "receiver": {
+                                    "community": self.db_repo.record_community_id
+                                },
+                                "type": CommunitySubmission.type_id,
+                            },
+                            record=draft._record,
+                            uow=uow,
+                        )
                 else:
                     # Retrieve latest record id and its recid
                     latest_release = self.db_repo.latest_release()
@@ -204,7 +220,6 @@ class RDMVCSRelease(VCSRelease):
                         identity, new_version_draft.id, data, uow=uow
                     )
 
-                draft_record_model_id = draft._record.model.id
                 draft_file_service.commit_file(
                     identity, draft.id, self.release_file_name, uow=uow
                 )
@@ -223,37 +238,56 @@ class RDMVCSRelease(VCSRelease):
 
         try:
             with UnitOfWork(db.session) as uow:
-                record = current_rdm_records_service.publish(
-                    identity, draft.id, uow=uow
-                )
+                if draft._record.parent.review is None:
+                    record = current_rdm_records_service.publish(
+                        identity, draft.id, uow=uow
+                    )
+                    # Update release weak reference and set status to PUBLISHED
+                    self.db_release.record_id = record._record.model.id
+                    self.db_release.record_is_draft = False
+                    self.release_published()
 
-                # Update release weak reference and set status to PUBLISHED
-                self.db_release.record_id = record._record.model.id
-                self.db_release.record_is_draft = False
-                self.release_published()
-
-                uow.register(
-                    NotificationOp(
-                        RepositoryReleaseSuccessNotificationBuilder.build(
-                            provider=self.provider.factory.id,
-                            generic_repository=self.generic_repo,
-                            generic_release=self.generic_release,
-                            record=record,
+                    uow.register(
+                        NotificationOp(
+                            RepositoryReleaseSuccessNotificationBuilder.build(
+                                provider=self.provider.factory.id,
+                                generic_repository=self.generic_repo,
+                                generic_release=self.generic_release,
+                                record=record,
+                            )
                         )
                     )
-                )
+                else:
+                    review_request = current_rdm_records_service.review.submit(
+                        identity, draft.id, uow=uow
+                    )
+
+                    self.db_release.record_id = draft._record.model.id
+                    self.db_release.record_is_draft = True
+                    self.release_pending()
+
+                    uow.register(
+                        NotificationOp(
+                            RepositoryReleaseCommunitySubmittedNotificationBuilder.build(
+                                provider=self.provider.factory.id,
+                                generic_repository=self.generic_repo,
+                                generic_release=self.generic_release,
+                                request=review_request._record,
+                                community=review_request._record.receiver.resolve(),
+                            )
+                        )
+                    )
 
                 # UOW must be committed manually since we're not using the decorator
                 uow.commit()
-                return record
+                return None
         except Exception as ex:
             # Flag release as FAILED and raise the exception
             self.release_failed()
 
             # Store the ID of the draft so we make sure to add a version instead of a whole new record for future releases.
-            if draft_record_model_id is not None:
-                self.db_release.record_id = draft_record_model_id
-                self.db_release.record_is_draft = True
+            self.db_release.record_id = draft._record.model.id
+            self.db_release.record_is_draft = True
 
             # The release publish can fail for a wide range of reasons, each of which have various inconsistent error types.
             # Some errors have a 'message' attribute or a 'description' attribute, which is not the value that gets used
