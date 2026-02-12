@@ -24,10 +24,14 @@ class VCSComponent(ServiceComponent):
         # If this record didn't come from a VCS release or the release originally succeeded, we won't find anything.
         if db_release is None:
             return
-        if db_release.status != ReleaseStatus.FAILED:
-            # This shouldn't happen but we want to make sure it's a previously failed release.
+        if (
+            db_release.status != ReleaseStatus.FAILED
+            and db_release.status != ReleaseStatus.PUBLISH_PENDING
+        ):
             return
 
         # We are now publishing it, so we can correct the release's status
         db_release.status = ReleaseStatus.PUBLISHED
         db_release.record_is_draft = False
+        # We can delete the error that originally happened during publish
+        db_release.errors = None
