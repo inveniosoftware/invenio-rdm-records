@@ -109,3 +109,29 @@ class RepositoryReleaseCommunityRequiredNotificationBuilder(
         return notification
 
     context = [EntityResolve(key="draft")]
+
+
+class RepositoryReleaseCommunitySubmittedNotificationBuilder(
+    RepositoryReleaseNotificationBuilder
+):
+    type = f"{RepositoryReleaseNotificationBuilder.type}.community-submitted"
+
+    @classmethod
+    def build(
+        cls,
+        provider: str,
+        generic_repository: GenericRepository,
+        generic_release: GenericRelease,
+        request,
+        community,
+    ):
+        notification = super().build(provider, generic_repository, generic_release)
+        notification.context["request"] = EntityResolverRegistry.reference_entity(
+            request
+        )
+        notification.context["community"] = EntityResolverRegistry.reference_entity(
+            community
+        )
+        return notification
+
+    context = [EntityResolve(key="request"), EntityResolve(key="community")]

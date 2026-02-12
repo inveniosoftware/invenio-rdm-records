@@ -1,0 +1,26 @@
+{# -*- coding: utf-8 -*-
+
+  This file is part of Invenio.
+  Copyright (C) 2026 CERN.
+
+  Invenio is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+{%- extends "invenio_vcs/settings/repo_switch.html" %}
+
+{%- block repo_switch %}
+  <div class="ui toggle on-off checkbox">
+    <input
+      type="checkbox"
+      class="repo-switch-with-communities"
+      {{ 'checked' if repo.enabled }}
+      data-repo-id="{{ repo_id }}"
+      data-provider="{{ provider }}"
+      data-checked-aria-label="{{ _('Disable') }} {{ repo.name }}"
+      data-unchecked-aria-label="{{ _('Enable') }} {{ repo.name }}"
+      aria-label="{{ 'disable' if repo.enabled else 'enable' }} {{ repo.name }}"
+    />
+    <label aria-hidden="true"></label>
+  </div>
+{%- endblock %}

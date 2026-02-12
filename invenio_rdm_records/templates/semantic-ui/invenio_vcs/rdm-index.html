@@ -1,0 +1,23 @@
+{# -*- coding: utf-8 -*-
+
+  This file is part of Invenio.
+  Copyright (C) 2026 CERN.
+
+  Invenio is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+{%- extends "invenio_vcs/settings/index.html" %}
+
+{%- block settings_content %}
+  {{ super() }}
+  <div
+    id="invenio-vcs-communities-app"
+    data-community-required-to-publish="{{ config.RDM_COMMUNITY_REQUIRED_TO_PUBLISH }}"
+  ></div>
+{%- endblock %}
+
+{%- block javascript %}
+  {{ super() }}
+  {{ webpack['invenio-vcs-with-communities.js'] }}
+{%- endblock %}
