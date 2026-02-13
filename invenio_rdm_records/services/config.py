@@ -6,6 +6,7 @@
 # Copyright (C) 2021-2026 Graz University of Technology.
 # Copyright (C) 2022      Universität Hamburg
 # Copyright (C) 2024      KTH Royal Institute of Technology.
+# Copyright (C) 2025 CESNET i.a.l.e.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -434,6 +435,16 @@ class WithFileLinks(type):
 
     def __init__(cls, *args, **kwargs):
         """Constructor."""
+        cls.container_item_links_item = {
+            "content": EndpointLink(
+                "record_files.extract_container_item",
+                params=["pid_value", "key", "path"],
+                vars=lambda container_item_metadata, variables: variables.update(
+                    {"path": container_item_metadata["key"]}
+                ),
+            ),
+        }
+
         cls.file_links_list = {
             "self": EndpointLink(
                 f"{cls.name_of_file_blueprint}.search", params=["pid_value"]
