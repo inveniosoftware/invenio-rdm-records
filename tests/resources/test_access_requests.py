@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2026 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -345,7 +346,7 @@ def test_access_grant_for_role(
                 {
                     "subject": {
                         "type": "role",
-                        "id": str(role.name),
+                        "id": str(role.id),
                     },
                     "permission": "view",
                 }
