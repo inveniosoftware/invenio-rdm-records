@@ -70,7 +70,7 @@ def test_cant_create_multiple_grants_for_same_role(running_app, minimal_record, 
     grant_payload = {
         "grants": [
             {
-                "subject": {"type": "role", "id": "test"},
+                "subject": {"type": "role", "id": roles[0].id},
                 "permission": "preview",
             }
         ]
@@ -84,7 +84,7 @@ def test_cant_create_multiple_grants_for_same_role(running_app, minimal_record, 
             "hits": [
                 {
                     "permission": "preview",
-                    "subject": {"id": "test", "type": "role"},
+                    "subject": {"id": roles[0].id, "type": "role"},
                     "origin": None,
                     "id": 0,
                 }
@@ -307,7 +307,7 @@ def test_read_grant_by_subjectid_provide_role(running_app, minimal_record, roles
     grant_payload = {
         "grants": [
             {
-                "subject": {"type": "role", "id": "test"},
+                "subject": {"type": "role", "id": roles[0].id},
                 "permission": "preview",
             }
         ]
@@ -418,7 +418,7 @@ def test_delete_grant_by_subjectid_provide_role(running_app, minimal_record, rol
     grant_payload = {
         "grants": [
             {
-                "subject": {"type": "role", "id": "test"},
+                "subject": {"type": "role", "id": roles[0].id},
                 "permission": "preview",
             }
         ]
@@ -469,7 +469,7 @@ def test_read_all_grants_by_subject_found(running_app, minimal_record, users, ro
     grant_payload = {
         "grants": [
             {
-                "subject": {"type": "role", "id": "test"},
+                "subject": {"type": "role", "id": roles[0].id},
                 "permission": "preview",
             }
         ]
@@ -502,7 +502,7 @@ def test_read_all_grants_by_subject_not_found(
     grant_payload = {
         "grants": [
             {
-                "subject": {"type": "role", "id": "test"},
+                "subject": {"type": "role", "id": roles[0].id},
                 "permission": "preview",
             }
         ]
@@ -571,7 +571,7 @@ def test_update_grant_by_subject_not_found(running_app, minimal_record, roles):
     grant_payload = {
         "grants": [
             {
-                "subject": {"type": "role", "id": "test"},
+                "subject": {"type": "role", "id": roles[0].id},
                 "permission": "preview",
                 "origin": "origin",
             }

@@ -74,12 +74,7 @@ class Grant:
             self._subject = self.resolve_subject()
 
             if self._subject is not None:
-                if self._subject_type == "role":
-                    # NOTE: `RoleNeed` objects work with their name rather than ID
-                    #       c.f. `invenio_access.utils:get_identity`
-                    self._subject_id = self._subject.name
-                else:
-                    self._subject_id = str(self._subject.id)
+                self._subject_id = str(self._subject.id)
 
         return self._subject
 
@@ -97,7 +92,7 @@ class Grant:
             with db.session.no_autoflush:
                 subject = current_datastore.get_user_by_id(self._subject_id)
         elif type_ == "role":
-            subject = current_datastore.find_role(self._subject_id)
+            subject = current_datastore.find_role_by_id(self._subject_id)
 
         # check if the subject could be resolved or is a registered system role
         if (type_ in ["user", "role"] and subject is None) or (
@@ -131,7 +126,7 @@ class Grant:
             return self._subject_id
 
         if self.subject_type == "role":
-            return self.subject.name
+            return str(self.subject.id)
 
         return self.subject.id
 

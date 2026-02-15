@@ -100,7 +100,7 @@ def test_grant_creation(users, roles):
 
     grant = Grant("view", "N/A", subject=role)
     assert grant.subject_type == "role"
-    assert grant.subject_id == role.name
+    assert grant.subject_id == role.id
     assert grant.subject == role
 
     grant = Grant(
@@ -148,7 +148,7 @@ def test_grant_to_need(users, roles):
     grant = Grant("view", "N/A", subject=role)
     need = grant.to_need()
     assert need.method == "role"
-    assert need.value == role.name
+    assert need.value == role.id
 
     dict_ = {
         "subject": {"type": "system_role", "id": "authenticated_user"},
