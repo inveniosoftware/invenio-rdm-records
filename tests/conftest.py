@@ -1122,10 +1122,13 @@ def moderator_user(UserFixture, app, database, moderator_role):
 def mod_identity(app, moderator_user):
     """Admin user for requests."""
     idt = Identity(moderator_user.id)
-    REQUESTS_MODERATION_ROLE = app.config["REQUESTS_MODERATION_ROLE"]
-
-    # Add Role user_moderator
-    idt.provides.add(RoleNeed(REQUESTS_MODERATION_ROLE))
+    # Role needs are now keyed by role id.
+    mod_role = next(
+        role
+        for role in moderator_user.user.roles
+        if role.name == app.config["REQUESTS_MODERATION_ROLE"]
+    )
+    idt.provides.add(RoleNeed(mod_role.id))
     # Search requires user to be authenticated
     idt.provides.add(Need(method="system_role", value="authenticated_user"))
     return idt

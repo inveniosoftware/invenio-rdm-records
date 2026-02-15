@@ -345,7 +345,7 @@ def test_access_grant_for_role(
                 {
                     "subject": {
                         "type": "role",
-                        "id": str(role.name),
+                        "id": str(role.id),
                     },
                     "permission": "view",
                 }
