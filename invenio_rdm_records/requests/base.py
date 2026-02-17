@@ -10,6 +10,7 @@
 
 from invenio_records_resources.services import EndpointLink
 from invenio_requests.customizations import RequestType
+from invenio_requests.services.events.config import request_event_anchor
 
 
 class BaseRequest(RequestType):
@@ -20,6 +21,7 @@ class BaseRequest(RequestType):
             "invenio_app_rdm_requests.user_dashboard_request_view",
             params=["request_pid_value"],
             vars=lambda obj, vars: vars.update(request_pid_value=vars["request"].id),
+            anchor=request_event_anchor,
         ),
     }
 
