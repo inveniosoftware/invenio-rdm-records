@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version v24.1.0 (released 2026-02-17)
+
+- feat(facets): add publication date facet
+- fix(request-events): include anchor method in override
+- fix: use role IDs instead of names.
+
 Version v24.0.0 (released 2026-02-03)
 
 - chore(setup): bump dependencies
