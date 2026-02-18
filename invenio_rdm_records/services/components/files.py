@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 
 from flask import current_app
 from invenio_drafts_resources.services.records.components import DraftFilesComponent
+from invenio_i18n import lazy_gettext as _
 from marshmallow import ValidationError
 
 from ...records.api import get_files_quota
@@ -56,8 +57,8 @@ class RDMDraftFilesComponent(DraftFilesComponent):
             modification_period = current_app.config.get("RDM_FILE_MODIFICATION_PERIOD")
             if (datetime.now(timezone.utc) - record.created) > modification_period:
                 raise ValidationError(
-                    current_app.config.get(
-                        "RDM_FILE_MODIFICATION_VALIDATION_ERROR_MESSAGE"
+                    _(
+                        "File modification grace period has passed. Please discard this draft to make any changes."
                     )
                 )
 
