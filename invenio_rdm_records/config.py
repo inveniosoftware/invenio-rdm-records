@@ -268,10 +268,6 @@ RDM_FILE_MODIFICATION_PERIOD = timedelta(days=30 + 15)
 during publish to block people from publishing after this period given the bucket stays open.
 """
 
-RDM_FILE_MODIFICATION_VALIDATION_ERROR_MESSAGE = _(
-    "File modification grace period has passed. Please discard this draft to make any changes."
-)
-
 #
 # Record communities
 #
