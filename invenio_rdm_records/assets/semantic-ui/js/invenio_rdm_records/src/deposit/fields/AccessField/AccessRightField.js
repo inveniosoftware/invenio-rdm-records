@@ -98,7 +98,7 @@ export class AccessRightFieldCmp extends Component {
 }
 
 AccessRightFieldCmp.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.string.isRequired,
   fieldPath: PropTypes.string.isRequired,
   formik: PropTypes.object.isRequired,
   label: PropTypes.string.isRequired,
