@@ -338,3 +338,23 @@
      es: Obsoletos
      cs: Nahrazuje (co)
      ar: متقادم
+- id: istranslationof
+  props:
+     datacite: IsTranslationOf
+  title:
+     en: Is translation of
+- id: hastranslation
+  props:
+     datacite: HasTranslation
+  title:
+     en: Has translation
+- id: iscollectedby
+  props:
+     datacite: IsCollectedBy
+  title:
+     en: Is collected by
+- id: collects
+  props:
+     datacite: Collects
+  title:
+     en: Collects
