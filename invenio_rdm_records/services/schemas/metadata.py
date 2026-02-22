@@ -388,7 +388,7 @@ class MetadataSchema(Schema):
     formats = fields.List(
         SanitizedUnicode(validate=_not_blank(_("Format cannot be a blank string.")))
     )
-    version = SanitizedUnicode()
+    version = SanitizedUnicode(validate=validate.Length(max=191))
     rights = fields.List(fields.Nested(RightsSchema))
     copyright = SanitizedHTML(validate=validate.Length(min=1))
     description = SanitizedHTML(validate=validate.Length(min=3))

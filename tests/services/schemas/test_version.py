@@ -28,3 +28,21 @@ def test_invalid_version(version, app, minimal_record):
 
     with pytest.raises(ValidationError):
         data = MetadataSchema().load(metadata)
+
+
+@pytest.mark.parametrize("version", ["v" + "1" * 190])
+def test_valid_version_max_length(version, app, minimal_record):
+    """Test that a version string of exactly 191 characters is accepted."""
+    metadata = minimal_record["metadata"]
+    metadata["version"] = version
+    data = MetadataSchema().load(metadata)
+    assert data["version"] == metadata["version"]
+
+
+@pytest.mark.parametrize("version", ["v" + "1" * 191])
+def test_invalid_version_too_long(version, app, minimal_record):
+    """Test that a version string exceeding 191 characters is rejected."""
+    metadata = minimal_record["metadata"]
+    metadata["version"] = version
+    with pytest.raises(ValidationError):
+        MetadataSchema().load(metadata)
