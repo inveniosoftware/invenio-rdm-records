@@ -29,7 +29,10 @@ class VersionFieldComponent extends Component {
           {" "}
           semver.org
         </a>
-        {i18next.t(", but any version string is accepted.")}
+        {i18next.t(", but any version string is accepted.")}{" "}
+        {i18next.t(
+          "Maximum 191 characters. For longer descriptions, use 'Additional descriptions' with type 'Note'."
+        )}
       </span>
     );
 
@@ -51,6 +54,7 @@ class VersionFieldComponent extends Component {
           placeholder={placeholder}
           disabled={disabled}
           required={required}
+          maxLength={191}
         />
       </Overridable>
     );
