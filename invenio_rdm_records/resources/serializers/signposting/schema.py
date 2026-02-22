@@ -69,12 +69,20 @@ class LandingPageSchema(Schema):
         # Has to be placed here to prevent circular dependency.
         from invenio_rdm_records.resources.config import record_serializers
 
-        result = [
-            {"href": obj["links"]["self"], "type": mimetype}
-            for mimetype in sorted(record_serializers)
+        result = []
+        for mimetype in sorted(record_serializers):
             # Remove the linkset serializer, so that the linkset does not link to itself.
-            if mimetype != "application/linkset+json"
-        ]
+            if mimetype == "application/linkset+json":
+                continue
+            if ";" in mimetype:
+                media_type, _, params = mimetype.partition(";")
+                entry = {"href": obj["links"]["self"], "type": media_type.strip()}
+                params = params.strip()
+                if params.startswith('profile="') and params.endswith('"'):
+                    entry["profile"] = params[len('profile="'):-1]
+            else:
+                entry = {"href": obj["links"]["self"], "type": mimetype}
+            result.append(entry)
 
         return result or missing
 
