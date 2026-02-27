@@ -10,6 +10,9 @@
 """Record response serializers."""
 
 from babel_edtf import format_edtf
+from flask import request
+from flask_login import current_user
+from invenio_base import invenio_url_for
 from invenio_i18n import get_locale
 from invenio_i18n import gettext as _
 from marshmallow import fields
@@ -68,6 +71,7 @@ class UIObjectAccessStatus(UIAccessStatus):
                 "No files are available for this record."
             ),
         }
+        login_url = invenio_url_for("invenio_accounts.login", next=request.url)
 
         if self.record_access_dict.get("record") == "restricted":
             if self.has_files:
@@ -97,16 +101,22 @@ class UIObjectAccessStatus(UIAccessStatus):
                     }
                 )
         else:
+            if current_user.is_anonymous:
+                restricted_message = _(
+                    "The record is publicly accessible, but files are restricted. "
+                    '<a href="%(login_url)s">Log in</a> to check if you have access.'
+                ) % {"login_url": login_url}
+            else:
+                restricted_message = _(
+                    "The record is publicly accessible, but files are restricted to users with access."
+                )
             options.update(
                 {
                     AccessStatusEnum.EMBARGOED: _(
                         "The files will be made publicly available on %(date)s."
                     )
                     % {"date": self.embargo_date},
-                    AccessStatusEnum.RESTRICTED: _(
-                        "The record is publicly accessible, but files are "
-                        "restricted to users with access."
-                    ),
+                    AccessStatusEnum.RESTRICTED: restricted_message,
                 }
             )
 
