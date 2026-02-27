@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v24.1.1 (released 2026-02-27)
+
+- fix(ui-access-status): show login hint for restricted files
+
 Version v24.1.0 (released 2026-02-17)
 
 - feat(facets): add publication date facet
