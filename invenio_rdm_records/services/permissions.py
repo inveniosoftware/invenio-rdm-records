@@ -3,7 +3,7 @@
 # Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019 Northwestern University.
 # Copyright (C) 2023 TU Wien.
-# Copyright (C) 2024 CESNET.
+# Copyright (C) 2024-2026 CESNET.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -17,6 +17,7 @@ from invenio_records_permissions.generators import (
     AuthenticatedUser,
     Disable,
     IfConfig,
+    SameAs,
     SystemProcess,
 )
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
@@ -80,16 +81,16 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         AccessGrant("manage"),
         SystemProcess(),
     ]
-    can_curate = can_manage + [AccessGrant("edit"), SecretLinks("edit")]
-    can_review = can_curate + [SubmissionReviewer()]
-    can_preview = can_curate + [
+    can_curate = SameAs("can_manage") + [AccessGrant("edit"), SecretLinks("edit")]
+    can_review = SameAs("can_curate") + [SubmissionReviewer()]
+    can_preview = SameAs("can_curate") + [
         AccessGrant("preview"),
         SecretLinks("preview"),
         SubmissionReviewer(),
         RequestReviewers(),
         UserManager,
     ]
-    can_view = can_preview + [
+    can_view = SameAs("can_preview") + [
         AccessGrant("view"),
         SecretLinks("view"),
         SubmissionReviewer(),
@@ -112,11 +113,11 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #  Records
     #
     # Allow searching of records
-    can_search = can_all
+    can_search = SameAs("can_all")
 
     # Allow reading metadata of a record
     can_read = [
-        IfRestricted("record", then_=can_view, else_=can_all),
+        IfRestricted("record", then_=SameAs("can_view"), else_=SameAs("can_all")),
     ]
 
     # Used for search filtering of deleted records
@@ -125,24 +126,24 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_read_deleted = [
         IfRecordDeleted(
             then_=[UserManager, SystemProcess()],
-            else_=can_read,
+            else_=SameAs("can_read"),
         )
     ]
-    can_read_deleted_files = can_read_deleted
-    can_media_read_deleted_files = can_read_deleted_files
+    can_read_deleted_files = SameAs("can_read_deleted")
+    can_media_read_deleted_files = SameAs("can_read_deleted_files")
     # Allow reading the files of a record
     can_read_files = [
-        IfRestricted("files", then_=can_view, else_=can_all),
+        IfRestricted("files", then_=SameAs("can_view"), else_=SameAs("can_all")),
         ResourceAccessToken("read"),
     ]
     can_get_content_files = [
         # note: even though this is closer to business logic than permissions,
         # it was simpler and less coupling to implement this as permission check
-        IfTransferType(LOCAL_TRANSFER_TYPE, can_read_files),
+        IfTransferType(LOCAL_TRANSFER_TYPE, SameAs("can_read_files")),
         SystemProcess(),
     ]
     # Allow submitting new record
-    can_create = can_authenticated
+    can_create = SameAs("can_authenticated")
 
     can_search_revisions = [Administration()]
 
@@ -150,39 +151,39 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Drafts
     #
     # Allow ability to search drafts
-    can_search_drafts = can_authenticated
+    can_search_drafts = SameAs("can_authenticated")
     # Allow reading metadata of a draft
-    can_read_draft = can_preview
+    can_read_draft = SameAs("can_preview")
     # Allow reading files of a draft
-    can_draft_read_files = can_preview + [ResourceAccessToken("read")]
+    can_draft_read_files = SameAs("can_preview") + [ResourceAccessToken("read")]
     # Allow updating metadata of a draft
-    can_update_draft = can_review
+    can_update_draft = SameAs("can_review")
     # Allow uploading, updating and deleting files in drafts
     can_draft_create_files = [
         # review is the same as create_files
-        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
-        IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
+        IfTransferType(LOCAL_TRANSFER_TYPE, SameAs("can_review")),
+        IfTransferType(MULTIPART_TRANSFER_TYPE, SameAs("can_review")),
         SystemProcess(),
     ]
     can_draft_set_content_files = [
         # review is the same as create_files
-        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
-        IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
+        IfTransferType(LOCAL_TRANSFER_TYPE, SameAs("can_review")),
+        IfTransferType(MULTIPART_TRANSFER_TYPE, SameAs("can_review")),
         SystemProcess(),
     ]
     can_draft_get_content_files = [
         # preview is same as read_files
-        IfTransferType(LOCAL_TRANSFER_TYPE, can_draft_read_files),
+        IfTransferType(LOCAL_TRANSFER_TYPE, SameAs("can_draft_read_files")),
         SystemProcess(),
     ]
     can_draft_commit_files = [
         # review is the same as create_files
-        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
-        IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
+        IfTransferType(LOCAL_TRANSFER_TYPE, SameAs("can_review")),
+        IfTransferType(MULTIPART_TRANSFER_TYPE, SameAs("can_review")),
         SystemProcess(),
     ]
-    can_draft_update_files = can_review
-    can_draft_delete_files = can_review
+    can_draft_update_files = SameAs("can_review")
+    can_draft_delete_files = SameAs("can_review")
 
     can_draft_get_file_transfer_metadata = [SystemProcess()]
     can_draft_update_file_transfer_metadata = [SystemProcess()]
@@ -191,7 +192,11 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_manage_files = [
         IfConfig(
             "RDM_ALLOW_METADATA_ONLY_RECORDS",
-            then_=[IfNewRecord(then_=can_authenticated, else_=can_review)],
+            then_=[
+                IfNewRecord(
+                    then_=SameAs("can_authenticated"), else_=SameAs("can_review")
+                )
+            ],
             else_=[SystemProcess()],
         ),
     ]
@@ -199,7 +204,11 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_manage_record_access = [
         IfConfig(
             "RDM_ALLOW_RESTRICTED_RECORDS",
-            then_=[IfNewRecord(then_=can_authenticated, else_=can_review)],
+            then_=[
+                IfNewRecord(
+                    then_=SameAs("can_authenticated"), else_=SameAs("can_review")
+                )
+            ],
             else_=[],
         )
     ]
@@ -207,26 +216,28 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #
     # PIDs
     #
-    can_pid_create = can_review
-    can_pid_register = can_review
-    can_pid_update = can_review
-    can_pid_discard = can_review
-    can_pid_delete = can_review
+    can_pid_create = SameAs("can_review")
+    can_pid_register = SameAs("can_review")
+    can_pid_update = SameAs("can_review")
+    can_pid_discard = SameAs("can_review")
+    can_pid_delete = SameAs("can_review")
     can_pid_manage = [SystemProcess()]
 
     #
     # Actions
     #
     # Allow to put a record in edit mode (create a draft from record)
-    can_edit = [IfDeleted(then_=[Disable()], else_=can_curate)]
+    can_edit = [IfDeleted(then_=[Disable()], else_=SameAs("can_curate"))]
     # Allow deleting/discarding a draft and all associated files
-    can_delete_draft = can_curate
+    can_delete_draft = SameAs("can_curate")
     # Allow creating a new version of an existing published record.
     can_new_version = [
         IfConfig(
             "RDM_ALLOW_EXTERNAL_DOI_VERSIONING",
-            then_=can_curate,
-            else_=[IfExternalDOIRecord(then_=[SystemProcess()], else_=can_curate)],
+            then_=SameAs("can_curate"),
+            else_=[
+                IfExternalDOIRecord(then_=[SystemProcess()], else_=SameAs("can_curate"))
+            ],
         ),
     ]
     # Allow publishing a new record or changes to an existing record.
@@ -235,21 +246,21 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
             "RDM_COMMUNITY_REQUIRED_TO_PUBLISH",
             then_=[
                 IfAtLeastOneCommunity(
-                    then_=can_review,
+                    then_=SameAs("can_review"),
                     else_=[Administration(), SystemProcess()],
                 ),
             ],
-            else_=can_review,
+            else_=SameAs("can_review"),
         )
     ]
     # Allow lifting a record or draft.
-    can_lift_embargo = can_manage
+    can_lift_embargo = SameAs("can_manage")
 
     #
     # Record communities
     #
     # Who can add record to a community
-    can_add_community = can_manage
+    can_add_community = SameAs("can_manage")
     # Who can remove a community from a record
     can_remove_community_from_record_ = [
         IfConfig(
@@ -264,10 +275,10 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
             then_=[
                 IfOneCommunity(
                     then_=[Administration(), SystemProcess()],
-                    else_=can_remove_community_from_record_,
+                    else_=SameAs("can_remove_community_from_record_"),
                 ),
             ],
-            else_=can_remove_community_from_record_,
+            else_=SameAs("can_remove_community_from_record_"),
         ),
     ]
     # Who can remove records from a community
@@ -278,36 +289,36 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #
     # Media files - draft
     #
-    can_draft_media_create_files = can_review
-    can_draft_media_read_files = can_review
+    can_draft_media_create_files = SameAs("can_review")
+    can_draft_media_read_files = SameAs("can_review")
     can_draft_media_set_content_files = [
-        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(LOCAL_TRANSFER_TYPE, SameAs("can_review")),
         SystemProcess(),
     ]
     can_draft_media_get_content_files = [
         # preview is same as read_files
-        IfTransferType(LOCAL_TRANSFER_TYPE, can_preview),
+        IfTransferType(LOCAL_TRANSFER_TYPE, SameAs("can_preview")),
         SystemProcess(),
     ]
     can_draft_media_commit_files = [
         # review is the same as create_files
-        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(LOCAL_TRANSFER_TYPE, SameAs("can_review")),
         SystemProcess(),
     ]
-    can_draft_media_update_files = can_review
-    can_draft_media_delete_files = can_review
+    can_draft_media_update_files = SameAs("can_review")
+    can_draft_media_delete_files = SameAs("can_review")
 
     #
     # Media files - record
     #
     can_media_read_files = [
-        IfRestricted("record", then_=can_view, else_=can_all),
+        IfRestricted("record", then_=SameAs("can_view"), else_=SameAs("can_all")),
         ResourceAccessToken("read"),
     ]
     can_media_get_content_files = [
         # note: even though this is closer to business logic than permissions,
         # it was simpler and less coupling to implement this as permission check
-        IfTransferType(LOCAL_TRANSFER_TYPE, can_read),
+        IfTransferType(LOCAL_TRANSFER_TYPE, SameAs("can_read")),
         SystemProcess(),
     ]
     can_media_create_files = [Disable()]
