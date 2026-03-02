@@ -129,6 +129,7 @@ class InvenioRDMRecords(object):
                 k in supported_configurations
                 or k.startswith("RDM_")
                 or k.startswith("DATACITE_")
+                or k.startswith("CROSSREF_")
                 # TODO: This can likely be moved to a separate module
                 or k.startswith("IIIF_TILES_")
             ):
