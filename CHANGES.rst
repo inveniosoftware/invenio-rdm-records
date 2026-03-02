@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version 23.2.3 (release 2026-03-02)
+
+- fix(ui-access-status): show login hint for restricted files
+
+
 Version 23.2.2 (release 2026-01-27)
 
 - fix(deposit): prevent Enter key from removing array field rows
