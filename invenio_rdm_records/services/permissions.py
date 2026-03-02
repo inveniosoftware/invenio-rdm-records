@@ -83,17 +83,15 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     ]
     can_curate = SameAs("can_manage") + [AccessGrant("edit"), SecretLinks("edit")]
     can_review = SameAs("can_curate") + [SubmissionReviewer()]
-    can_preview = SameAs("can_curate") + [
+    can_preview = SameAs("can_review") + [
         AccessGrant("preview"),
         SecretLinks("preview"),
-        SubmissionReviewer(),
         RequestReviewers(),
         UserManager,
     ]
     can_view = SameAs("can_preview") + [
         AccessGrant("view"),
         SecretLinks("view"),
-        SubmissionReviewer(),
         CommunityInclusionReviewers(),
         RecordCommunitiesAction("view"),
     ]
@@ -192,11 +190,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_manage_files = [
         IfConfig(
             "RDM_ALLOW_METADATA_ONLY_RECORDS",
-            then_=[
-                IfNewRecord(
-                    then_=SameAs("can_authenticated"), else_=SameAs("can_review")
-                )
-            ],
+            then_=[IfNewRecord(then_=SameAs("can_create"), else_=SameAs("can_review"))],
             else_=[SystemProcess()],
         ),
     ]
@@ -204,11 +198,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_manage_record_access = [
         IfConfig(
             "RDM_ALLOW_RESTRICTED_RECORDS",
-            then_=[
-                IfNewRecord(
-                    then_=SameAs("can_authenticated"), else_=SameAs("can_review")
-                )
-            ],
+            then_=[IfNewRecord(then_=SameAs("can_create"), else_=SameAs("can_review"))],
             else_=[],
         )
     ]
@@ -217,10 +207,10 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # PIDs
     #
     can_pid_create = SameAs("can_review")
-    can_pid_register = SameAs("can_review")
-    can_pid_update = SameAs("can_review")
-    can_pid_discard = SameAs("can_review")
-    can_pid_delete = SameAs("can_review")
+    can_pid_register = SameAs("can_pid_create")
+    can_pid_update = SameAs("can_pid_create")
+    can_pid_discard = SameAs("can_pid_create")
+    can_pid_delete = SameAs("can_pid_create")
     can_pid_manage = [SystemProcess()]
 
     #
