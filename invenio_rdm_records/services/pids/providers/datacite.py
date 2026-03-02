@@ -49,12 +49,33 @@ class DataCiteClient:
         config = ChainMap(self._config_overrides, current_app.config)
         return config.get(self.cfgkey(key), default)
 
-    def generate_doi(self, record):
-        """Generate a DOI."""
+    def generate_doi(self, record, **kwargs):
+        """Generate a DOI.
+
+        Uses the optional prefix argument or the default for the prefix.
+        Uses the configured format for the suffix.
+        """
         self.check_credentials()
-        prefix = self.cfg("prefix")
+        prefix = kwargs.get("prefix", self.cfg("prefix"))
         if not prefix:
             raise RuntimeError("Invalid DOI prefix configured.")
+
+        # Validate prefix against allowed prefixes
+        # Always allow the configured default prefix, optionally check against
+        # additional prefixes
+        default_prefix = self.cfg("prefix")
+        additional_prefixes = self.cfg("additional_prefixes")
+        if additional_prefixes is None:
+            allowed_prefixes = [default_prefix]
+        else:
+            allowed_prefixes = [default_prefix] + additional_prefixes
+
+        if prefix not in allowed_prefixes:
+            raise RuntimeError(
+                f"DOI prefix '{prefix}' is not in the list of allowed DataCite prefixes. "
+                f"Allowed prefixes: {', '.join(allowed_prefixes)}"
+            )
+
         doi_format = self.cfg("format", "{prefix}/{id}")
         if callable(doi_format):
             return doi_format(prefix, record)
@@ -144,7 +165,7 @@ class DataCitePIDProvider(PIDProvider):
     def generate_id(self, record, **kwargs):
         """Generate a unique DOI."""
         # Delegate to client
-        return self.client.generate_doi(record)
+        return self.client.generate_doi(record, **kwargs)
 
     @classmethod
     def is_enabled(cls, app):
