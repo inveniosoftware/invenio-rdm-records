@@ -10,6 +10,7 @@
 """RDM service component for metadata."""
 
 from copy import copy
+from datetime import datetime
 
 from invenio_drafts_resources.services.records.components import ServiceComponent
 
@@ -19,6 +20,9 @@ class MetadataComponent(ServiceComponent):
 
     field = "metadata"
     new_version_skip_fields = ["publication_date", "version"]
+    new_version_generated_fields = {
+        "publication_date": lambda draft, record: datetime.today().isoformat(),
+    }
 
     def create(self, identity, data=None, record=None, **kwargs):
         """Inject parsed metadata to the record."""
@@ -42,5 +46,7 @@ class MetadataComponent(ServiceComponent):
         # Remove fields that should not be copied to the new version
         # (publication date and version)
         field_values = getattr(draft, self.field)
-        for f in self.new_version_skip_fields:
-            field_values.pop(f, None)
+        for key in self.new_version_skip_fields:
+            field_values.pop(key, None)
+        for key, func in self.new_version_generated_fields.items():
+            field_values[key] = func(draft, record)
