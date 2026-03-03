@@ -97,3 +97,8 @@
     de: Zurückgezogen
     es: Retirado
     cs: Stáhnuto
+- id: coverage
+  props:
+    datacite: Coverage
+  title:
+    en: Coverage
