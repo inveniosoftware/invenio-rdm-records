@@ -5,6 +5,7 @@
     de: Duplikat eines anderen Eintrags
     es: Duplicado de otro registro
     cs: Duplikát jiného záznamu
+    ar: نظير لتسجيلة أخرى
   tags:
     - "deletion-request"
 - id: retracted
@@ -14,6 +15,7 @@
     de: Widerruf eines Eintrags
     es: Retractación/Retiro de un registro
     cs: Stáhnutí záznamu
+    ar: سحب/إلغاء تسجيلة
   tags:
     - "deletion-request"
 - id: replaced
@@ -23,6 +25,7 @@
     de: Ersetzung
     es: Sustitución
     cs: Nahrazení záznamu
+    ar: استبدال
 - id: spam
   title:
     en: Spam
@@ -30,6 +33,7 @@
     de: Spam
     es: Spam
     cs: Spam
+    ar: سبام/سخام
 - id: test-record
   title:
     en: Test upload of a record
@@ -37,6 +41,7 @@
     de: Test-Upload eines Eintrags
     es: Carga de prueba de un registro
     cs: Testovací nahrání záznamu
+    ar: إختبار تحميل تسجيلة
   tags:
     - "deletion-request"
 - id: copyright
@@ -46,6 +51,7 @@
     de: Urheberrechtsverletzung
     es: Infracción de derechos de autor
     cs: Porušení autorských práv
+    ar: انتهاك حقوق النشر
   tags:
     - "deletion-request"
 - id: personal-data
@@ -55,6 +61,7 @@
     de: Problem mit personenbezogenen Daten
     es: Problema con datos personales
     cs: Problém s osobními údaji
+    ar: مشكلة البيانات الشخصية
   tags:
     - "deletion-request"
 - id: take-down-request
@@ -64,6 +71,7 @@
     de: Deaktivierungsanfrage
     es: Solicitud de eliminación
     cs: Žádost o stažení
+    ar: طلب إزالة المحتوى
 - id: disputed-authorship
   title:
     en: Disputed authorship
@@ -71,6 +79,7 @@
     de: Umstrittene Urheberschaft
     es: Autoría disputada
     cs: Sporné autorství
+    ar: مؤلّف محل نزاع
 - id: misconduct
   title:
     en: Misconduct
@@ -78,6 +87,7 @@
     de: Fehlverhalten
     es: Mala conducta
     cs: Nedovolené jednání
+    ar: سوء السلوك
 - id: fraud
   title:
     en: Fraud
@@ -85,6 +95,7 @@
     de: Betrug
     es: Fraude
     cs: Podvod
+    ar: غش
 - id: out-of-scope
   title:
     en: Content out of scope for repository
@@ -92,3 +103,4 @@
     de: Inhalt außerhalb des Rahmens des Repositoriums
     es: Contenido fuera del alcance del repositorio
     cs: Obsah mimo rozsah určení repozitáře
+    ar: محتوى لا يتطابق مع مجال المستودع
