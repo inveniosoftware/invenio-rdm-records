@@ -11,6 +11,7 @@ from flask import current_app
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_access.utils import get_identity
 from invenio_db import db
+from invenio_drafts_resources.resources.records.errors import DraftNotCreatedError
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services.uow import UnitOfWork
@@ -116,6 +117,18 @@ class RDMVCSRelease(VCSRelease):
                 )
         except RecordDeletedException:
             return None
+        except DraftNotCreatedError:
+            # This error mostly occurs when we tried to read a draft but the record was published.
+            # It can happen when the VCSComponent for handling the record publish fails to run for
+            # whatever reason. To ensure we can recover and keep the DB consistent, we will update
+            # the release here.
+            published_record = current_rdm_records_service.read(
+                system_identity, recid.pid_value
+            )
+            self.db_release.record_is_draft = False
+            self.release_published()
+            db.session.commit()
+            return published_record
 
     def _upload_files_to_draft(self, identity, draft, uow):
         """Upload files to draft."""
