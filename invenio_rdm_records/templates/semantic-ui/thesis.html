@@ -1,0 +1,24 @@
+{% if field_value.get('university') %}
+  <dt class="ui tiny header">{{ _("Awarding university") }}</dt>
+  <dd>{{ field_value.get('university') }}</dd>
+{% endif %}
+
+{% if field_value.get('department') %}
+  <dt class="ui tiny header">{{ _("Awarding department") }}</dt>
+  <dd>{{ field_value.get('department') }}</dd>
+{% endif %}
+
+{% if field_value.get('type') %}
+  <dt class="ui tiny header">{{ _("Thesis type") }}</dt>
+  <dd>{{ field_value.get('type') }}</dd>
+{% endif %}
+
+{% if field_value.get('date_submitted') %}
+  <dt class="ui tiny header">{{ _("Submission date") }}</dt>
+  <dd>{{ field_value.get('date_submitted') }}</dd>
+{% endif %}
+
+{% if field_value.get('date_defended') %}
+  <dt class="ui tiny header">{{ _("Defense date") }}</dt>
+  <dd>{{ field_value.get('date_defended') }}</dd>
+{% endif %}
