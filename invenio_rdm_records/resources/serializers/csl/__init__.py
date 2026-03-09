@@ -55,13 +55,37 @@ def get_citation_string(json, id, style, locale):
         text = re.sub(r"\.\.+", ".", text)
         return text
 
+    def _replace_doi_link(text, doi, new_doi_link):
+        """Replace the citation DOI link with the correct one.
+
+        Citation styles that generate a DOI URL in their citation generate it with the
+        form: "https://doi.org/<prefix>/<suffix>". However, when using a
+        Datacite test account (i.e. when `DATACITE_TEST_MODE = True`) and
+        potentially when using other providers' test accounts, the actual DOI URL is
+        of a different form: "https://handle.test.datacite.org/<prefix>/<suffix> as of
+        writing. By relying on a passed DOI URL instead, we can make sure the
+        correct URL is used. The DOI url is passed in the namespaced entry
+        json["_extras"]["links"]["doi"].
+        """
+        if doi and new_doi_link:
+            return text.replace(f"https://doi.org/{doi}", new_doi_link)
+        else:
+            return text
+
+    extras = json.pop("_extras", {})
     source = CiteProcJSON([json])
     citation_style = CitationStylesStyle(validate=False, style=style, locale=locale)
     bib = CitationStylesBibliography(citation_style, source, formatter.plain)
     citation = Citation([CitationItem(id)])
     bib.register(citation)
 
-    return _clean_result(str(bib.bibliography()[0]))
+    citation_raw = str(bib.bibliography()[0])
+    citation_doi_replaced = _replace_doi_link(
+        citation_raw,
+        json.get("DOI"),
+        extras.get("links", {}).get("doi"),
+    )
+    return _clean_result(citation_doi_replaced)
 
 
 def get_style_location(style):
@@ -113,25 +137,28 @@ class StringCitationSerializer(MarshmallowSerializer):
         self.url_args_retriever = url_args_retriever
 
     def serialize_object(self, record):
-        """Serialize a single record.
+        """Serialize the output of a RecordItem.to_dict() to a citation string.
 
-        :param record: Record instance.
+        :param record: dict from RecordItem.to_dict().
         """
         style, locale = (
             self.url_args_retriever()
             if callable(self.url_args_retriever)
             else self.url_args_retriever
         )
-
         # set defaults if params are not provided
         style = style or self._default_style
         locale = locale or self._default_locale
 
         style_filepath = get_style_location(style)
 
-        return get_citation_string(
-            self.dump_obj(record), record["id"], style_filepath, locale
-        )
+        # Pass the record links under _extras namespace
+        # so that DOI link can be replaced
+        record_dumped = self.dump_obj(record)
+        record_dumped.setdefault("_extras", {})
+        record_dumped["_extras"]["links"] = record.get("links", {})
+
+        return get_citation_string(record_dumped, record["id"], style_filepath, locale)
 
     def serialize_object_list(self, records):
         """Serialize a list of records.

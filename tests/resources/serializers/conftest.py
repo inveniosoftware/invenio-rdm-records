@@ -99,7 +99,7 @@ def full_record_to_dict():
             "archive_media": "https://127.0.0.1:5000/api/records/12345-abcde/media-files-archive",  # noqa
             "communities": "https://127.0.0.1:5000/api/records/12345-abcde/communities",
             "communities-suggestions": "https://127.0.0.1:5000/api/records/12345-abcde/communities-suggestions",  # noqa
-            "doi": "https://handle.stage.datacite.org/10.1234/inveniordm.1234",
+            "doi": "https://handle.test.datacite.org/10.1234/inveniordm.1234",
             "draft": "https://127.0.0.1:5000/api/records/12345-abcde/draft",
             "files": "https://127.0.0.1:5000/api/records/12345-abcde/files",
             "latest": "https://127.0.0.1:5000/api/records/12345-abcde/versions/latest",
@@ -501,7 +501,7 @@ def minimal_record_to_dict():
             "archive_media": "https://127.0.0.1:5000/api/records/67890-fghij/media-files-archive",  # noqa
             "communities": "https://127.0.0.1:5000/api/records/67890-fghij/communities",
             "communities-suggestions": "https://127.0.0.1:5000/api/records/67890-fghij/communities-suggestions",  # noqa
-            "doi": "https://handle.stage.datacite.org/10.1234/67890-fghij",
+            "doi": "https://handle.test.datacite.org/10.1234/67890-fghij",
             "draft": "https://127.0.0.1:5000/api/records/67890-fghij/draft",
             "files": "https://127.0.0.1:5000/api/records/67890-fghij/files",
             "latest": "https://127.0.0.1:5000/api/records/67890-fghij/versions/latest",

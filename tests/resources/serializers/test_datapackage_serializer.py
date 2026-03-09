@@ -24,7 +24,7 @@ def test_data_package_serializer_minimal_record(minimal_record_to_dict):
     serialized_record = serializer.dump_obj(minimal_record_to_dict)
     assert serialized_record == {
         "$schema": "https://datapackage.org/profiles/2.0/datapackage.json",
-        "id": "https://handle.stage.datacite.org/10.1234/67890-fghij",
+        "id": "https://handle.test.datacite.org/10.1234/67890-fghij",
         "name": "67890-fghij",
         "title": "A Romans story",
         "created": "2023-11-14T19:33:09.837080+00:00",
@@ -46,10 +46,12 @@ def test_data_package_serializer_minimal_record(minimal_record_to_dict):
 
 def test_data_package_serializer_full_record(full_record_to_dict):
     serializer = DataPackageSerializer()
+
     serialized_record = serializer.dump_obj(full_record_to_dict)
-    assert serialized_record == {
+
+    expected = {
         "$schema": "https://datapackage.org/profiles/2.0/datapackage.json",
-        "id": "https://handle.stage.datacite.org/10.1234/inveniordm.1234",
+        "id": "https://handle.test.datacite.org/10.1234/inveniordm.1234",
         "name": "12345-abcde",
         "title": "InvenioRDM",
         "description": "<h1>A description</h1> <p>with HTML tags</p>",
@@ -106,3 +108,4 @@ def test_data_package_serializer_full_record(full_record_to_dict):
             },
         ],
     }
+    assert expected == serialized_record

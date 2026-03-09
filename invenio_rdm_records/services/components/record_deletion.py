@@ -29,11 +29,22 @@ class RecordDeletionComponent(ServiceComponent):
             default_citation_style = current_app.config.get(
                 "RDM_CITATION_STYLES_DEFAULT", "apa"
             )
-
             serializer = CSLJSONSerializer()
             style = get_style_location(default_citation_style)
+
+            # We can't rely on the pure citation generated DOI link since it may be
+            # incorrect in test environment for Datacite. So we pass the correct DOI
+            # link (or None if doesn't exist) in the dumped record to
+            # get_citation_string and let it do the replacement appropriately.
+            record_dumped = serializer.dump_obj(record)
+            record_dumped.setdefault("_extras", {})
+            link_for_doi = self.service.links_item_tpl.expand(identity, record).get(
+                "doi"
+            )
+            record_dumped["_extras"]["links"] = {"doi": link_for_doi}
+
             default_citation = get_citation_string(
-                serializer.dump_obj(record),
+                record_dumped,
                 record.pid.pid_value,
                 style,
                 locale=current_i18n.language,
