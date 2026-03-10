@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v25.0.0 (released 2026-03-10)
+
+- change(setup): upgrade invenio-checks and invenio-communities
+
 Version v24.1.1 (released 2026-02-27)
 
 - fix(ui-access-status): show login hint for restricted files
