@@ -12,6 +12,7 @@ import zipfile
 from pathlib import Path
 
 import psutil
+import pytest
 
 from invenio_rdm_records.proxies import current_rdm_records_service
 
@@ -109,7 +110,7 @@ def test_zip_file_extraction(
     # Publish the record
     record = service.publish(identity_simple, draft.id)
 
-    extracted = file_service.extract_from_container(
+    extracted = file_service.extract_container_item(
         identity_simple, draft.id, "test.zip", "test_zip/test1.txt"
     )
     res = extracted.send_file()
@@ -159,7 +160,7 @@ def test_zip_folder_extraction(
     # Publish the record
     record = service.publish(identity_simple, draft.id)
 
-    extracted = file_service.extract_from_container(
+    extracted = file_service.extract_container_item(
         identity_simple,
         draft.id,
         "test_directory_zip.zip",
@@ -234,7 +235,7 @@ def test_large_zip_folder_extraction(
     record = service.publish(identity_simple, draft.id)
 
     # Extract a specific folder from the zip
-    extracted = file_service.extract_from_container(
+    extracted = file_service.extract_container_item(
         identity_simple,
         draft.id,
         "big_test_zip.zip",
@@ -276,7 +277,11 @@ def test_large_zip_memory_usage(
         identity_simple,
         draft.id,
         data=[
-            {"key": "huge_test.zip", "metadata": metadata, "access": {"hidden": False}}
+            {
+                "key": "huge_test.zip",
+                "metadata": metadata,
+                "access": {"hidden": False},
+            }
         ],
     )
 
@@ -300,7 +305,7 @@ def test_large_zip_memory_usage(
     mem_before = process.memory_info().rss
 
     # Perform extraction
-    extracted = file_service.extract_from_container(
+    extracted = file_service.extract_container_item(
         identity_simple,
         draft.id,
         "huge_test.zip",
@@ -391,32 +396,29 @@ def test_zip_listing_resource(
     )
     assert res.status_code == 200
     assert res.json == {
-        "children": {
-            "test_zip": {
-                "children": {
-                    "test1.txt": {
-                        "key": "test1.txt",
-                        "type": "file",
-                        "id": "test_zip/test1.txt",
-                        "size": 12,
-                        "compressed_size": 14,
-                        "mime_type": "text/plain",
-                        "crc": 2962613731,
-                        "links": {
-                            "content": f"https://127.0.0.1:5000/api/records/{draft.id}/files/test.zip/container/test_zip/test1.txt",
-                        },
-                    }
+        "entries": [
+            {
+                "key": "test_zip/test1.txt",
+                "size": 12,
+                "compressed_size": 14,
+                "mimetype": "text/plain",
+                "crc": 2962613731,
+                "links": {
+                    "content": f"https://127.0.0.1:5000/api/records/{draft.id}/files/test.zip/container/test_zip/test1.txt"
                 },
+            }
+        ],
+        "truncated": False,
+        "total": 1,
+        "folders": [
+            {
                 "key": "test_zip",
-                "id": "test_zip",
-                "type": "folder",
                 "links": {
                     "content": f"https://127.0.0.1:5000/api/records/{draft.id}/files/test.zip/container/test_zip"
                 },
+                "entries": ["test_zip/test1.txt"],
             }
-        },
-        "total": 1,
-        "truncated": False,
+        ],
     }
 
 
