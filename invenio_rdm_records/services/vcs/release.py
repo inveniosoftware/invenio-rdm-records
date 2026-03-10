@@ -347,7 +347,7 @@ class RDMVCSRelease(VCSRelease):
             raise CustomVCSReleaseNoRetryError(message=error_message)
 
     def process_release(self):
-        """Processes a github release.
+        """Processes a VCS release.
 
         The release might be first validated, in terms of sender, and then published.
 
