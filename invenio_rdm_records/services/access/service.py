@@ -16,6 +16,7 @@ import arrow
 from flask import current_app
 from flask_login import current_user
 from invenio_access.permissions import authenticated_user, system_identity
+from invenio_audit_logs.services.uow import AuditLogOp
 from invenio_base import invenio_url_for
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
@@ -30,6 +31,14 @@ from invenio_users_resources.proxies import current_user_resources
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
+from invenio_rdm_records.auditlog.actions import (
+    RDMDraftAccessSettingsAuditLog,
+    RDMDraftGrantAuditLog,
+    RDMDraftSecretLinkAuditLog,
+    RDMRecordAccessSettingsAuditLog,
+    RDMRecordGrantAuditLog,
+    RDMRecordSecretLinkAuditLog,
+)
 from invenio_rdm_records.notifications.builders import (
     GrantUserAccessNotificationBuilder,
     GuestAccessRequestTokenCreateNotificationBuilder,
@@ -222,6 +231,22 @@ class RecordAccessService(RecordService):
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
         self._update_parent_request(parent, uow)
 
+        audit_log_builder = (
+            RDMRecordSecretLinkAuditLog
+            if isinstance(record, self.record_cls)
+            else RDMDraftSecretLinkAuditLog
+        )
+        uow.register(
+            AuditLogOp(
+                audit_log_builder.build(
+                    identity,
+                    parent.pid.pid_value,
+                    before={},
+                    after=link.to_dict(),
+                    triggered_by=record,
+                )
+            )
+        )
         return self.link_result_item(
             self,
             identity,
@@ -301,6 +326,7 @@ class RecordAccessService(RecordService):
 
         link_idx = link_ids.index(link_id)
         link = parent.access.links[link_idx].resolve()
+        old_link = link.to_dict()
 
         # Validation
         data, __ = self.schema_secret_link.load(
@@ -323,6 +349,22 @@ class RecordAccessService(RecordService):
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
         self._update_parent_request(parent, uow)
 
+        audit_log_builder = (
+            RDMRecordSecretLinkAuditLog
+            if isinstance(record, self.record_cls)
+            else RDMDraftSecretLinkAuditLog
+        )
+        uow.register(
+            AuditLogOp(
+                audit_log_builder.build(
+                    identity,
+                    parent.pid.pid_value,
+                    before=old_link,
+                    after=link.to_dict(),
+                    triggered_by=record,
+                )
+            )
+        )
         return self.link_result_item(
             self,
             identity,
@@ -353,6 +395,22 @@ class RecordAccessService(RecordService):
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
         self._update_parent_request(parent, uow)
 
+        audit_log_builder = (
+            RDMRecordSecretLinkAuditLog
+            if isinstance(record, self.record_cls)
+            else RDMDraftSecretLinkAuditLog
+        )
+        uow.register(
+            AuditLogOp(
+                audit_log_builder.build(
+                    identity,
+                    parent.pid.pid_value,
+                    before=link.to_dict(),
+                    after={},
+                    triggered_by=record,
+                )
+            )
+        )
         return True
 
     #
@@ -447,6 +505,22 @@ class RecordAccessService(RecordService):
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
         self._update_parent_request(parent, uow)
 
+        audit_log_builder = (
+            RDMRecordGrantAuditLog
+            if isinstance(record, self.record_cls)
+            else RDMDraftGrantAuditLog
+        )
+        uow.register(
+            AuditLogOp(
+                audit_log_builder.build(
+                    identity,
+                    parent.pid.pid_value,
+                    before=[],
+                    after=[g.to_dict() for g in new_grants],
+                    triggered_by=record,
+                )
+            )
+        )
         return self.grants_result_list(
             self,
             identity,
@@ -542,6 +616,22 @@ class RecordAccessService(RecordService):
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
         self._update_parent_request(parent, uow)
 
+        audit_log_builder = (
+            RDMRecordGrantAuditLog
+            if isinstance(record, self.record_cls)
+            else RDMDraftGrantAuditLog
+        )
+        uow.register(
+            AuditLogOp(
+                audit_log_builder.build(
+                    identity,
+                    parent.pid.pid_value,
+                    before=[old_grant.to_dict()],
+                    after=[new_grant.to_dict()],
+                    triggered_by=record,
+                )
+            )
+        )
         return self.grant_result_item(
             self,
             identity,
@@ -596,11 +686,27 @@ class RecordAccessService(RecordService):
             raise PermissionDeniedError()
 
         # Deletion
-        parent.access.grants.pop(grant_id)
+        deleted_grant = parent.access.grants.pop(grant_id)
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
         self._update_parent_request(parent, uow)
 
+        audit_log_builder = (
+            RDMRecordGrantAuditLog
+            if isinstance(record, self.record_cls)
+            else RDMDraftGrantAuditLog
+        )
+        uow.register(
+            AuditLogOp(
+                audit_log_builder.build(
+                    identity,
+                    parent.pid.pid_value,
+                    before=[deleted_grant.to_dict()],
+                    after=[],
+                    triggered_by=record,
+                )
+            )
+        )
         return True
 
     def _exists(self, created_by, record_id, request_type):
@@ -844,9 +950,27 @@ class RecordAccessService(RecordService):
         )
 
         # Update
+        old_settings = parent.access.settings.dump()
         setattr(parent.access, "settings", data)
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
+
+        audit_log_builder = (
+            RDMRecordAccessSettingsAuditLog
+            if isinstance(record, self.record_cls)
+            else RDMDraftAccessSettingsAuditLog
+        )
+        uow.register(
+            AuditLogOp(
+                audit_log_builder.build(
+                    identity,
+                    parent.pid.pid_value,
+                    before=old_settings,
+                    after=parent.access.settings.dump(),
+                    triggered_by=record,
+                )
+            )
+        )
 
         return self.result_item(
             self,
@@ -964,6 +1088,22 @@ class RecordAccessService(RecordService):
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
         self._update_parent_request(parent, uow)
 
+        audit_log_builder = (
+            RDMRecordGrantAuditLog
+            if isinstance(record, self.record_cls)
+            else RDMDraftGrantAuditLog
+        )
+        uow.register(
+            AuditLogOp(
+                audit_log_builder.build(
+                    identity,
+                    parent.pid.pid_value,
+                    before=[old_grant.to_dict()],
+                    after=[new_grant.to_dict()],
+                    triggered_by=record,
+                )
+            )
+        )
         return self.grant_result_item(
             self,
             identity,
@@ -995,4 +1135,20 @@ class RecordAccessService(RecordService):
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
         self._update_parent_request(parent, uow)
 
+        audit_log_builder = (
+            RDMRecordGrantAuditLog
+            if isinstance(record, self.record_cls)
+            else RDMDraftGrantAuditLog
+        )
+        uow.register(
+            AuditLogOp(
+                audit_log_builder.build(
+                    identity,
+                    parent.pid.pid_value,
+                    before=[result.to_dict()],
+                    after=[],
+                    triggered_by=record,
+                )
+            )
+        )
         return True
