@@ -28,18 +28,6 @@ def init_file(client, recid, key, headers):
 
 
 @pytest.fixture(scope="function")
-def db(database):
-    """Overrides the `pytest_invenio.db` to force db recreation.
-
-    Scope: function
-
-    Force the recreation of the database as nested sessions are misbehaving with
-    sqlalchemy-continuum.
-    """
-    yield database
-
-
-@pytest.fixture(scope="function")
 def app_with_allowed_edits(running_app):
     """This app allows the edit of files after publish.
 
