@@ -18,7 +18,7 @@ from marshmallow import Schema, ValidationError
 from mistune import markdown
 
 if TYPE_CHECKING:
-    from invenio_rdm_records.services.github.release import RDMVCSRelease
+    from invenio_rdm_records.services.vcs.release import RDMVCSRelease
 
 
 class RDMReleaseMetadata(object):
