@@ -1,0 +1,43 @@
+{# -*- coding: utf-8 -*-
+
+  This file is part of Invenio.
+  Copyright (C) 2026 CERN.
+
+  Invenio is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+{%- extends "invenio_vcs/settings/release_item.html" %}
+
+{%- block release_full_name %}
+  {%- if release.record %}{{ release.record.data["metadata"]["title"] }}{%- endif %}
+{%- endblock %}
+
+{%- block release_link %}
+  {%- if release.record %}
+    {%- set release_doi = release.record.pids.get('doi', {}).get('identifier') %}
+
+    {%- if release_doi %}
+      <p class="mt-5">
+        <a href={{release.record_url}}>
+          <i class="barcode icon tab-menu-accordion" aria-hidden="true"></i> DOI: {{ release_doi }}
+        </a>
+      </p>
+    {%- elif release.record_url and release.db_release.status.name != "PROCESSING" %}
+      <p class="mt-5 mb-0">
+        <a href={{release.record_url}}>
+          {%- if release.db_release.record_is_draft and release.db_release.status.name == "FAILED" %}
+            {{ _("Edit record") }}
+          {%- else %}
+            {{ _("View record") }}
+          {%- endif %}
+        </a>
+      </p>
+      {%- if not release.db_release.record_is_draft %}
+        <p class="font-small text-muted">
+          {{ _("This release does not have a DOI. To request one, click 'View record', then click 'Edit'.") }}
+        </p>
+      {%- endif %}
+    {%- endif %}
+  {%- endif %}
+{%- endblock %}

@@ -125,7 +125,7 @@ CommunitySelectionModalComponent.propTypes = {
   modalOpen: PropTypes.bool,
   apiConfigs: PropTypes.object,
   handleClose: PropTypes.func.isRequired,
-  record: PropTypes.object.isRequired,
+  record: PropTypes.object,
   isInitialSubmission: PropTypes.bool,
 };
 
@@ -139,6 +139,7 @@ CommunitySelectionModalComponent.defaultProps = {
   trigger: undefined,
   apiConfigs: undefined,
   isInitialSubmission: true,
+  record: null,
 };
 
 const mapStateToProps = (state) => ({
