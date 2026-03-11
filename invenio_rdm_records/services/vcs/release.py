@@ -74,12 +74,9 @@ class RDMVCSRelease(VCSRelease):
                 }
             )
 
-        # Add default license if not yet added
-        if not output.get("rights"):
-            default_license = "cc-by-4.0"
-            if metadata.repo_license:
-                default_license = metadata.repo_license.lower()
-            output.update({"rights": [{"id": default_license}]})
+        # Add license if not yet added and available from the repo.
+        if not output.get("rights") and metadata.repo_license:
+            output.update({"rights": [{"id": metadata.repo_license.lower()}]})
         return output
 
     def get_custom_fields(self):
