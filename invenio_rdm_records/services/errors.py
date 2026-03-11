@@ -220,3 +220,21 @@ class CannotRemoveCommunityError(Exception):
     """Error thrown when the last community is being removed from the record."""
 
     description = _("A record should be part of at least 1 community.")
+
+
+class IdentifierShapeException(ValueError):
+    """Error denoting that an identifier did not match an expected shape."""
+
+    def __init__(self, identifier, expected_shape):
+        """Constructor."""
+        self.identifier = identifier
+        self.expected_shape = expected_shape
+
+    @property
+    def description(self):
+        """Exception description."""
+        return _(
+            "The identifier '%(id)s' did not match the expected shape '%(shape)s'",
+            id=self.identifier,
+            shape=self.expected_shape,
+        )
