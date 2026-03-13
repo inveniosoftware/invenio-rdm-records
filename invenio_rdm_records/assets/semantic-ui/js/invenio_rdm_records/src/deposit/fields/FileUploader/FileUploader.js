@@ -21,6 +21,7 @@ import { FileUploaderArea } from "./FileUploaderArea";
 import { FileUploaderToolbar } from "./FileUploaderToolbar";
 import { NewVersionButton } from "../../controls/NewVersionButton";
 import { EditFilesAccordion } from "./EditFilesAccordion";
+import { QuotaManager } from "./QuotaManager/QuotaManager";
 import { humanReadableBytes } from "react-invenio-forms";
 import Overridable from "react-overridable";
 import { getFilesList } from "./utils";
@@ -56,6 +57,8 @@ export const FileUploaderComponent = ({
 
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const [warningMsg, setWarningMsg] = useState();
+  const [showQuotaSection, setShowQuotaSection] = useState(false);
+  const [additionalQuota, _setAdditionalQuota] = useState(0);
   const lockFileUploader = !isDraftRecord && filesLocked;
   const dropzoneParams = {
     preventDropOnDocument: true,
@@ -175,6 +178,20 @@ export const FileUploaderComponent = ({
   const displayImportBtn =
     filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
 
+  const toggleQuotaSection = () => {
+    setShowQuotaSection(!showQuotaSection);
+  };
+
+  const setAdditionalQuota = (value) => {
+    if (0 <= value && value <= 150) {
+      _setAdditionalQuota(value);
+    } else if (value > 150) {
+      _setAdditionalQuota(150);
+    } else if (isNaN(value)) {
+      _setAdditionalQuota(0);
+    }
+  };
+
   return (
     <Overridable
       id="InvenioRdmRecords.DepositForm.FileUploader.Container"
@@ -205,7 +222,7 @@ export const FileUploaderComponent = ({
     >
       <>
         <Grid className="file-uploader">
-          <Grid.Row className="pt-10 pb-5">
+          <Grid.Row className="pt-5 pb-10">
             {!lockFileUploader && (
               <FileUploaderToolbar
                 {...uiProps}
@@ -215,6 +232,8 @@ export const FileUploaderComponent = ({
                 filesSize={filesSize}
                 quota={quota}
                 decimalSizeDisplay={decimalSizeDisplay}
+                additionalQuota={additionalQuota}
+                toggleQuotaSection={toggleQuotaSection}
               />
             )}
           </Grid.Row>
@@ -252,6 +271,16 @@ export const FileUploaderComponent = ({
               </Grid.Row>
             )}
           </Overridable>
+
+          {showQuotaSection && (
+            <Grid.Row className="pt-0">
+              <QuotaManager
+                toggleQuotaSection={toggleQuotaSection}
+                additionalQuota={additionalQuota}
+                setAdditionalQuota={setAdditionalQuota}
+              />
+            </Grid.Row>
+          )}
 
           <Overridable
             id="InvenioRdmRecords.DepositForm.FileUploader.UploadArea"

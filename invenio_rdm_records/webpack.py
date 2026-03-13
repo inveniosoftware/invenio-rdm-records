@@ -61,6 +61,11 @@ theme = WebpackThemeBundle(
                 "query-string": "^7.0.0",
                 "semantic-ui-css": "^2.4.0",
                 "semantic-ui-react": "^2.1.0",
+                "@visx/group": "^3.12.0",
+                "@visx/responsive": "^3.12.0",
+                "@visx/scale": "^3.12.0",
+                "@visx/shape": "^3.12.0",
+                "@visx/text": "^3.12.0",
             },
             aliases={
                 # Define Semantic-UI theme configuration needed by
