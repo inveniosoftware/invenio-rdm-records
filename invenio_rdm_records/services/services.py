@@ -145,7 +145,6 @@ class RDMRecordService(RecordService):
             "lift_embargo", identity, draft=draft, record=record, uow=uow
         )
 
-        self._pids.pid_manager.create_and_reserve(record)
         uow.register(RecordCommitOp(record, indexer=self.indexer))
         uow.register(TaskOp(register_or_update_pid, record["id"], "doi", parent=False))
         # If the record was previously public it will still keep the parent PID
