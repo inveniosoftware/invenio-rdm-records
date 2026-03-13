@@ -358,3 +358,8 @@
      datacite: Collects
   title:
      en: Collects
+- id: other
+  props:
+     datacite: Other
+  title:
+     en: Other
