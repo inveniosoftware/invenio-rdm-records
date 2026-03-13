@@ -236,7 +236,7 @@ class ModificationModalComponent extends Component {
                 />
                 {error && (
                   <ErrorMessage
-                    header={i18next.t("Unable to unlock files.")}
+                    header={i18next.t("Unable to unlock files")}
                     content={i18next.t(error)}
                     icon="exclamation"
                     className="text-align-left"
