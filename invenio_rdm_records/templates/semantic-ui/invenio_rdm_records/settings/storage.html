@@ -1,0 +1,23 @@
+{# -*- coding: utf-8 -*-
+
+  This file is part of Invenio.
+  Copyright (C) 2026 CERN.
+
+  Invenio is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+{%- extends config.ACCOUNTS_SETTINGS_TEMPLATE %}
+
+{% set panel_title = _('Storage') %}
+{% set panel_icon = 'hdd icon' %}
+
+
+{% block settings_form %}
+<div id="storage-overview-root" data-storage='{{ storage | tojson }}'>
+</div>
+{% endblock %}
+{% block javascript %}
+  {{ super() }}
+  {{ webpack['storage_overview.js'] }}
+{% endblock %}
