@@ -12,8 +12,10 @@
 
 from types import SimpleNamespace
 
-from flask import Blueprint
+from flask import Blueprint, abort, current_app, render_template
+from flask_login import current_user, login_required
 from invenio_records_resources.services.files.transfer import constants
+from .proxies import current_rdm_records_storage_service
 
 blueprint = Blueprint("invenio_rdm_records_ext", __name__)
 
@@ -123,3 +125,49 @@ def file_transfer_type():
     }
 
     return {"transfer_types": file_transfer_type_constants}
+
+def _format_storage(data):
+    """Format storage data for UI."""
+    BYTES_TO_GB = 1e9
+    rows = []
+
+    for e in data["entries"]:
+        item = e["item"]
+        record = e["record"]
+
+        rows.append({
+            "title": item.get("metadata", {}).get("title", "Empty title"),
+            "url": item["links"]["self_html"],
+            "additional_quota": round(e["extra_quota"] / BYTES_TO_GB, 1),
+            "used": round(e["used_bytes"] / BYTES_TO_GB, 1),
+            "total": round((data["default_quota"] + e["extra_quota"]) / BYTES_TO_GB, 1),
+            "date": item.get("metadata", {}).get("publication_date", ""),
+            "status": "Draft" if not record.is_published else "Published",
+        })
+
+    return {
+        "default_quota": round(data["default_quota"] / BYTES_TO_GB, 1),
+        "total_allowed_quota": round(data["max_additional_quota"] / BYTES_TO_GB, 1),
+        "additional_granted_quota": round(data["total_extra"] / BYTES_TO_GB, 1),
+        "additional_used_quota": round(data["total_used"] / BYTES_TO_GB, 1),
+        "additional_available_quota": round(
+            max(data["max_additional_quota"] - data["total_extra"], 0) / BYTES_TO_GB, 1
+        ),
+        "records": rows,
+    }
+
+@blueprint.route("/account/settings/quota/", endpoint="storage_settings")
+@login_required
+def storage_settings():
+    """User storage page."""
+    if not getattr(current_user, "verified_at", None):
+        abort(404)
+
+    result = current_rdm_records_storage_service.get_user_storage_usage(current_user)
+
+    storage = _format_storage(result)
+
+    return render_template(
+        "invenio_rdm_records/settings/storage.html",
+        storage=storage,
+    )

@@ -44,3 +44,13 @@ current_community_collections_service = LocalProxy(
     lambda: current_app.extensions["invenio-rdm-records"].community_collections_service
 )
 """Helper proxy to get the current Communities collection service extension."""
+
+current_community_collections_service = LocalProxy(
+    lambda: current_app.extensions["invenio-rdm-records"].community_collections_service
+)
+"""Helper proxy to get the current Communities collection service extension."""
+
+current_rdm_records_storage_service = LocalProxy(
+    lambda: current_app.extensions["invenio-rdm-records"].storage_service
+)
+"""Helper proxy to get the current RDM-Records storage service."""

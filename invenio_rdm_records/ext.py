@@ -16,10 +16,13 @@ from warnings import warn
 
 from flask import Blueprint
 from flask_iiif import IIIF
+from flask_menu import current_menu
 from flask_principal import identity_loaded
+from flask_security import current_user
 from invenio_collections.resources.resource import CollectionsResource
 from invenio_collections.services.config import CollectionServiceConfig
 from invenio_collections.services.service import CollectionsService
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.resources.files import FileResource
 
 from . import config
@@ -75,6 +78,7 @@ from .services.config import (
 from .services.files import RDMFileService
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
+from .services.storage.service import StorageService
 from .utils import verify_token
 
 
@@ -185,6 +189,7 @@ class InvenioRDMRecords(object):
             pids_service=PIDsService(service_configs.record, PIDManager),
             review_service=ReviewService(service_configs.record),
         )
+        self.storage_service = StorageService(records_service=self.records_service)
 
         self.records_media_files_service = RDMRecordService(
             service_configs.record_with_media_files,
@@ -319,12 +324,27 @@ class InvenioRDMRecords(object):
                 app.config[config_item] = str(app.config[config_item])
 
 
+def init_menu(app):
+    """Init menu."""
+    user_profile_menu = current_menu.submenu("settings.quota")
+    user_profile_menu.register(
+        endpoint="invenio_rdm_records_ext.storage_settings",
+        text=_(
+            "%(icon)s Storage",
+            icon="<i class='hdd icon'></i>",
+        ),
+        order=7,
+        visible_when=lambda: getattr(current_user, "verified_at", False),
+    )
+
+
 def finalize_app(app):
     """Finalize app.
 
     NOTE: replace former @record_once decorator
     """
     init(app)
+    init_menu(app)
 
 
 def api_finalize_app(app):
