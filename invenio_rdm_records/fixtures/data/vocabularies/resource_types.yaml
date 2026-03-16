@@ -577,8 +577,8 @@
   icon: columns
   props:
     csl: graphic
-    datacite_general: Text
-    datacite_type: Poster
+    datacite_general: Poster
+    datacite_type: ""
     openaire_resourceType: "0004"
     openaire_type: publication
     eurepo: info:eu-repo/semantics/conferencePoster
@@ -601,8 +601,8 @@
   icon: group
   props:
     csl: speech
-    datacite_general: Text
-    datacite_type: Presentation
+    datacite_general: Presentation
+    datacite_type: ""
     openaire_resourceType: "0004"
     openaire_type: publication
     eurepo: info:eu-repo/semantics/lecture
