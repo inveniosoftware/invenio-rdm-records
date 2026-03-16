@@ -21,6 +21,7 @@ theme = WebpackThemeBundle(
             entry={
                 "invenio-oai-pmh-details": "./js/invenio_rdm_records/oaipmh/details/index.js",
                 "invenio-oai-pmh-search": "./js/invenio_rdm_records/oaipmh/search/index.js",
+                "storage-overview": "./js/invenio_rdm_records/src/deposit/components/StorageSettings/index.js",
                 "invenio-vcs-with-communities": "./js/invenio_rdm_records/vcs/index.js",
             },
             dependencies={
