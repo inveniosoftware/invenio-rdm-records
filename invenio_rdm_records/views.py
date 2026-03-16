@@ -12,7 +12,8 @@
 
 from types import SimpleNamespace
 
-from flask import Blueprint
+from flask import Blueprint, abort, current_app, render_template
+from flask_login import current_user, login_required
 from invenio_records_resources.services.files.transfer import constants
 
 blueprint = Blueprint("invenio_rdm_records_ext", __name__)
@@ -117,3 +118,21 @@ def file_transfer_type():
     }
 
     return {"transfer_types": file_transfer_type_constants}
+
+
+@blueprint.route("/account/settings/quota/", endpoint="storage_settings")
+@login_required
+def storage_settings():
+    """User storage page."""
+    # Don't allow unverified users to access
+    if not getattr(current_user, "verified_at", None):
+        abort(404)
+
+    storage_service = current_app.extensions["invenio-rdm-records"].storage_service
+
+    storage = storage_service.get_user_storage(current_user)
+
+    return render_template(
+        "invenio_rdm_records/settings/storage.html",
+        storage=storage,
+    )
