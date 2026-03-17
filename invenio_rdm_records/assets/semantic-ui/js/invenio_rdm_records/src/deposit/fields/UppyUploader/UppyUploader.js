@@ -21,6 +21,16 @@ import { UploadState } from "../../state/reducers/files";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { getFilesList, FilesListTable, FileUploaderToolbar } from "../FileUploader";
 import { useUppyLocale } from "./locale";
+import {
+  defaultAllowedMetaFields,
+  getMetaFieldsRenderers,
+  onBeforeUploadProcessMetaFields,
+} from "./utils";
+import {
+  UPPY_EVENTS,
+  getUppyDashboardEventsProps,
+  useUppyFileEditSaveSync,
+} from "./events";
 
 const defaultDashboardProps = {
   showRemoveButtonAfterComplete: false,
@@ -43,8 +53,10 @@ const normalizeFileName = (name) =>
 const defaultOnBeforeFileAdded = (currentFile, currentFiles = {}) =>
   !Object.hasOwn(currentFiles, currentFile.id);
 
-const createDuplicateFileChecker = (uppy, filesList) => {
+const createDuplicateFileChecker = (uppy, filesList, startEvent) => {
   return (file, files) => {
+    if (startEvent?.event === UPPY_EVENTS.EDIT_FILE) return true;
+
     const normalizedName = normalizeFileName(file.name);
     if (!normalizedName) {
       return defaultOnBeforeFileAdded(file, files);
@@ -92,6 +104,9 @@ export const UppyUploaderComponent = ({
   decimalSizeDisplay,
   filesLocked,
   allowEmptyFiles,
+  allowedMetaFields = [],
+  modifyExistingFiles,
+  startEvent,
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
@@ -99,6 +114,7 @@ export const UppyUploaderComponent = ({
   const { filesList } = getFilesList(files ?? {});
   const hasError = (errors.files || initialErrors?.files) && files;
   const locale = useUppyLocale();
+  const activeAllowedMetaFields = config?.allowedMetaFields || allowedMetaFields || defaultAllowedMetaFields;
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const filesSize = filesList.reduce((totalSize, file) => (totalSize += file.size), 0);
   const lockFileUploader = !isDraftRecord && filesLocked;
@@ -122,10 +138,10 @@ export const UppyUploaderComponent = ({
   const restrictions = React.useMemo(
     () => ({
       minFileSize: allowEmptyFiles ? 0 : 1,
-      maxNumberOfFiles: quota.maxFiles - filesList.length,
+      maxNumberOfFiles: startEvent?.event === UPPY_EVENTS.EDIT_FILE ? 1 : quota.maxFiles - filesList.length,
       maxTotalFileSize: quota.maxStorage - filesSize,
     }),
-    [allowEmptyFiles, quota, filesList, filesSize]
+    [allowEmptyFiles, quota, filesList, filesSize, startEvent]
   );
 
   const isTransferSupported = React.useCallback(
@@ -165,9 +181,19 @@ export const UppyUploaderComponent = ({
   }, [uppy]);
 
   React.useEffect(() => {
-    const onBeforeFileAdded = createDuplicateFileChecker(uppy, filesList);
+    const onBeforeFileAdded = createDuplicateFileChecker(uppy, filesList, startEvent);
     uppy.setOptions({ onBeforeFileAdded });
-  }, [uppy, filesList]);
+  }, [uppy, filesList, startEvent]);
+
+  React.useEffect(() => {
+    uppy.setOptions({
+      onBeforeUpload: (files) => {
+        return activeAllowedMetaFields && activeAllowedMetaFields.length > 0 
+          ? onBeforeUploadProcessMetaFields(files, activeAllowedMetaFields)
+          : files;
+      }
+    });
+  }, [uppy, activeAllowedMetaFields]);
 
   React.useEffect(() => {
     const uploaderPlugin = uppy.getPlugin("RDMUppyUploaderPlugin");
@@ -176,6 +202,8 @@ export const UppyUploaderComponent = ({
       uploaderPlugin.draftRecord = formikDraft;
     }
   }, [uppy, formikDraft]);
+
+  useUppyFileEditSaveSync(uppy, startEvent);
 
   React.useEffect(() => {
     // Synchronize uppy locale with i18next
@@ -304,10 +332,12 @@ export const UppyUploaderComponent = ({
                     disabled={!filesLeft || lockFileUploader}
                     // `null` means "do not display a Done button in a status bar"
                     doneButtonHandler={null}
-                    note={i18next.t(
+                    note={modifyExistingFiles ? i18next.t("Select existing files to modify metadata.") : i18next.t(
                       "File addition, removal or modification are not allowed after you have published your upload."
                     )}
+                    metaFields={activeAllowedMetaFields && activeAllowedMetaFields.length > 0 ? getMetaFieldsRenderers(activeAllowedMetaFields) : undefined}
                     {...defaultDashboardProps}
+                    {...getUppyDashboardEventsProps(startEvent, modifyExistingFiles)}
                     {...uiProps}
                   />
                 )}
@@ -388,6 +418,22 @@ UppyUploaderComponent.propTypes = {
   filesLocked: PropTypes.bool,
   permissions: PropTypes.object,
   allowEmptyFiles: PropTypes.bool,
+  allowedMetaFields: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      defaultValue: PropTypes.any,
+      isUserInput: PropTypes.bool,
+      name: PropTypes.string,
+      placeholder: PropTypes.string,
+      render: PropTypes.func,
+      condition: PropTypes.func,
+    })
+  ),
+  startEvent: PropTypes.shape({
+    event: PropTypes.oneOf(Object.values(UPPY_EVENTS)),
+    file: PropTypes.object,
+  }),
+  modifyExistingFiles: PropTypes.bool,
 };
 
 UppyUploaderComponent.defaultProps = {
@@ -408,4 +454,7 @@ UppyUploaderComponent.defaultProps = {
   decimalSizeDisplay: true,
   filesLocked: false,
   allowEmptyFiles: true,
+  allowedMetaFields: undefined,
+  startEvent: undefined,
+  modifyExistingFiles: false,
 };
