@@ -250,7 +250,7 @@ class PIDsService(RecordService):
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_discard", record=draft, scheme=scheme)
         identifier = draft.pids.get(scheme, {}).get("identifier")
-        self._manager.discard(scheme, identifier, provider)
+        self._manager.discard(scheme, identifier, provider, record=draft)
         draft.pids.pop(scheme)
 
         uow.register(RecordCommitOp(draft, indexer=self.indexer))
