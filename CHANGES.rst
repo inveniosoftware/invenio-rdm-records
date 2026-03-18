@@ -12,6 +12,14 @@
 Changes
 =======
 
+Version v26.0.0 (released 2026-03-18)
+
+- change(setup): upgrade invenio-checks and invenio-communities
+- feat(contrib): add thesis field display template
+- feat(permissions): add RDM_ALLOW_OWNERS_REMOVE_COMMUNITY_FROM_RECORD
+- feat(translations): add Arabic language
+- fix(accordion): get accordion data-label instead of the label
+
 Version v25.0.0 (released 2026-03-10)
 
 - change(setup): upgrade invenio-checks and invenio-communities
