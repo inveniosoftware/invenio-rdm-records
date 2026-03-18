@@ -15,8 +15,8 @@ from invenio_drafts_resources.resources.records.errors import DraftNotCreatedErr
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services.uow import UnitOfWork
+from invenio_vcs.api import VCSRelease
 from invenio_vcs.errors import CustomVCSReleaseNoRetryError
-from invenio_vcs.service import VCSRelease
 
 from invenio_rdm_records.notifications.vcs import (
     RepositoryReleaseCommunityRequiredNotificationBuilder,
@@ -38,6 +38,22 @@ def _get_user_identity(user):
     identity = get_identity(user)
     identity.provides.add(authenticated_user)
     return identity
+
+
+def _format_error_message(ex):
+    """Format an exception into a user-readable message."""
+    if hasattr(ex, "message"):
+        # Some errors have a 'message' attribute or a 'description' attribute, which is not the value that gets used
+        # when the error is stringified.
+        # Need to stringify the LazyString, otherwise serialisation will fail
+        return str(ex.message)
+    elif hasattr(ex, "description"):
+        return str(ex.description)
+    elif str(ex) != "":
+        return str(ex)
+    else:
+        # Some errors might not have any accessible message, so we use the class name as a last resort.
+        return type(ex).__name__
 
 
 class RDMVCSRelease(VCSRelease):
@@ -129,8 +145,8 @@ class RDMVCSRelease(VCSRelease):
 
     def _upload_files_to_draft(self, identity, draft, uow):
         """Upload files to draft."""
-        # Validate the release files are fetchable
-        self.test_zipball()
+        # Validate the release files are fetchable before initialising the draft files.
+        self.resolve_zipball_url()
 
         draft_file_service = current_rdm_records_service.draft_files
 
@@ -239,6 +255,20 @@ class RDMVCSRelease(VCSRelease):
         except Exception as ex:
             # Flag release as FAILED and raise the exception
             self.release_failed()
+
+            with UnitOfWork(db.session) as uow:
+                # Send a notification of the failed draft save.
+                # This almost always will be because of a problem with the repository's contents or
+                # metadata, and so the user needs to change something and then publish a new release.
+                notification = RepositoryReleaseFailureNotificationBuilder.build(
+                    provider=self.provider.factory.id,
+                    generic_repository=self.generic_repo,
+                    generic_release=self.generic_release,
+                    error_message=_format_error_message(ex),
+                )
+                uow.register(NotificationOp(notification))
+                uow.commit()
+
             # Commit the FAILED state, other changes were already rollbacked by the UOW
             db.session.commit()
             raise ex
@@ -300,18 +330,7 @@ class RDMVCSRelease(VCSRelease):
             self.db_release.record_is_draft = True
 
             # The release publish can fail for a wide range of reasons, each of which have various inconsistent error types.
-            # Some errors have a 'message' attribute or a 'description' attribute, which is not the value that gets used
-            # when the error is stringified.
-            # Some errors might not have any accessible message, so we use the class name as a last resort.
-            error_message = str(ex)
-            if not error_message:
-                if hasattr(ex, "message"):
-                    # Need to stringify the LazyString, otherwise serialisation will fail
-                    error_message = str(ex.message)
-                elif hasattr(ex, "description"):
-                    error_message = str(ex.description)
-                else:
-                    error_message = type(ex).__name__
+            error_message = _format_error_message(ex)
 
             if isinstance(ex, CommunityRequiredError):
                 # Use a special case notification for record's without a community (on mandatory-community instances).

@@ -4,7 +4,7 @@
 {% set error_message = notification.context.error_message %}
 
 {% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
-{% set draft_link = draft["links"]["self_html"] %}
+{% set draft_link = none if draft is none else draft["links"]["self_html"] %}
 
 {%- block subject -%}
     {{ _("There was a problem publishing a release from %(repository_name)s", repository_name=repository_full_name) }}
@@ -20,7 +20,11 @@
         <td>{{ _("Reason:") }} <strong>{{ error_message }}</strong></td>
     </tr>
     <tr>
-        <td>{{ _("For more details and to fix any errors,") }} <a href="{{ draft_link }}" class="button">{{ _("view the unpublished draft record.") }}</a></td>
+        {% if draft is none %}
+            <td>{{ _("Please fix any errors and then create a new release to retry publishing.") }}</td>
+        {% else %}
+            <td>{{ _("For more details and to fix any errors,") }} <a href="{{ draft_link }}" class="button">{{ _("view the unpublished draft record.") }}</a></td>
+        {% endif %}
     </tr>
     <tr>
         <td><strong>_</strong></td>
@@ -36,7 +40,11 @@
 
 {{ _("Reason:") }} {{error_message}}
 
-{{ _("For more details and to fix any errors,") }} [{{ _("view the unpublished draft record.") }}]({{ draft_link }})
+{% if draft is none %}
+    {{ _("Please fix any errors and then create a new release to retry publishing.") }}
+{% else %}
+    {{ _("For more details and to fix any errors,") }} [{{ _("view the unpublished draft record.") }}]({{ draft_link }})
+{% endif %}
 
 {{ _("This is an auto-generated message. To manage notifications, visit your account settings") }}
 {%- endblock plain_body -%}
@@ -47,7 +55,11 @@
 
 {{ _("Reason:") }} {{error_message}}
 
-{{ _("For more details and to fix any errors,") }} [{{ _("view the unpublished draft record.") }}]({{ draft_link }})
+{% if draft is none %}
+    {{ _("Please fix any errors and then create a new release to retry publishing.") }}
+{% else %}
+    {{ _("For more details and to fix any errors,") }} [{{ _("view the unpublished draft record.") }}]({{ draft_link }})
+{% endif %}
 
 {{ _("This is an auto-generated message. To manage notifications, visit your account settings")}}
 {%- endblock md_body -%}

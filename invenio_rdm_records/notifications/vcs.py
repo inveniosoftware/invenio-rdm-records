@@ -30,6 +30,7 @@ class RepositoryReleaseNotificationBuilder(NotificationBuilder):
         generic_repository: GenericRepository,
         generic_release: GenericRelease,
     ):
+        """Build the notification."""
         return Notification(
             type=cls.type,
             context={
@@ -62,6 +63,7 @@ class RepositoryReleaseSuccessNotificationBuilder(RepositoryReleaseNotificationB
         generic_release: GenericRelease,
         record,
     ):
+        """Build the notification."""
         notification = super().build(provider, generic_repository, generic_release)
         notification.context["record"] = EntityResolverRegistry.reference_entity(record)
         return notification
@@ -70,7 +72,12 @@ class RepositoryReleaseSuccessNotificationBuilder(RepositoryReleaseNotificationB
 
 
 class RepositoryReleaseFailureNotificationBuilder(RepositoryReleaseNotificationBuilder):
-    """Notification builder for failed repository release events."""
+    """
+    Notification builder for failed repository release events.
+
+    The failure might occur before or after a draft has been successfully saved, so `draft` is allowed
+    to be `None`. The notification message should include a link to edit the draft if it's available.
+    """
 
     type = f"{RepositoryReleaseNotificationBuilder.type}.failure"
 
@@ -80,12 +87,18 @@ class RepositoryReleaseFailureNotificationBuilder(RepositoryReleaseNotificationB
         provider: str,
         generic_repository: GenericRepository,
         generic_release: GenericRelease,
-        draft,
         error_message: str,
+        draft=None,
     ):
+        """Build the notification."""
         notification = super().build(provider, generic_repository, generic_release)
-        notification.context["draft"] = EntityResolverRegistry.reference_entity(draft)
         notification.context["error_message"] = error_message
+        if draft is not None:
+            notification.context["draft"] = EntityResolverRegistry.reference_entity(
+                draft
+            )
+        else:
+            notification.context["draft"] = None
         return notification
 
     context = [EntityResolve(key="draft")]
@@ -94,6 +107,11 @@ class RepositoryReleaseFailureNotificationBuilder(RepositoryReleaseNotificationB
 class RepositoryReleaseCommunityRequiredNotificationBuilder(
     RepositoryReleaseNotificationBuilder
 ):
+    """
+    Notification builder for when a release is saved as a draft but fails to be published because the
+    user needs to manually select a community for the draft.
+    """
+
     type = f"{RepositoryReleaseNotificationBuilder.type}.community-required"
 
     @classmethod
@@ -104,6 +122,7 @@ class RepositoryReleaseCommunityRequiredNotificationBuilder(
         generic_release: GenericRelease,
         draft,
     ):
+        """Build the notification."""
         notification = super().build(provider, generic_repository, generic_release)
         notification.context["draft"] = EntityResolverRegistry.reference_entity(draft)
         return notification
@@ -114,6 +133,8 @@ class RepositoryReleaseCommunityRequiredNotificationBuilder(
 class RepositoryReleaseCommunitySubmittedNotificationBuilder(
     RepositoryReleaseNotificationBuilder
 ):
+    """Notification builder for when a release is submitted for review by a community."""
+
     type = f"{RepositoryReleaseNotificationBuilder.type}.community-submitted"
 
     @classmethod
@@ -125,6 +146,7 @@ class RepositoryReleaseCommunitySubmittedNotificationBuilder(
         request,
         community,
     ):
+        """Build the notification."""
         notification = super().build(provider, generic_repository, generic_release)
         notification.context["request"] = EntityResolverRegistry.reference_entity(
             request
