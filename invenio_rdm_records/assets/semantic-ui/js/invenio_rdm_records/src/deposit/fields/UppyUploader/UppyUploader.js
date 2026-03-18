@@ -25,7 +25,7 @@ import {
   defaultAllowedMetaFields,
   getMetaFieldsRenderers,
   onBeforeUploadProcessMetaFields,
-} from "./utils";
+} from "./metaFields";
 import {
   UPPY_EVENTS,
   getUppyDashboardEventsProps,
@@ -91,6 +91,7 @@ export const UppyUploaderComponent = ({
   permissions,
   record,
   initializeFileUpload,
+  updateFileMetadata,
   finalizeUpload,
   deleteFile,
   uploadPart,
@@ -104,8 +105,7 @@ export const UppyUploaderComponent = ({
   decimalSizeDisplay,
   filesLocked,
   allowEmptyFiles,
-  allowedMetaFields = [],
-  modifyExistingFiles,
+  allowedMetaFields,
   startEvent,
   ...uiProps
 }) => {
@@ -163,6 +163,7 @@ export const UppyUploaderComponent = ({
         quota,
         // Bind Redux file actions to the uploader plugin
         initializeFileUpload,
+        updateFileMetadata,
         finalizeUpload,
         saveAndFetchDraft,
         setUploadProgress,
@@ -332,12 +333,10 @@ export const UppyUploaderComponent = ({
                     disabled={!filesLeft || lockFileUploader}
                     // `null` means "do not display a Done button in a status bar"
                     doneButtonHandler={null}
-                    note={modifyExistingFiles ? i18next.t("Select existing files to modify metadata.") : i18next.t(
-                      "File addition, removal or modification are not allowed after you have published your upload."
-                    )}
+                    note={i18next.t("File addition, removal or modification are not allowed after you have published your upload.")}
                     metaFields={activeAllowedMetaFields && activeAllowedMetaFields.length > 0 ? getMetaFieldsRenderers(activeAllowedMetaFields) : undefined}
                     {...defaultDashboardProps}
-                    {...getUppyDashboardEventsProps(startEvent, modifyExistingFiles)}
+                    {...(startEvent && getUppyDashboardEventsProps(startEvent))}
                     {...uiProps}
                   />
                 )}
@@ -409,6 +408,7 @@ UppyUploaderComponent.propTypes = {
   isFileImportInProgress: PropTypes.bool,
   importParentFiles: PropTypes.func.isRequired,
   initializeFileUpload: PropTypes.func.isRequired,
+  updateFileMetadata: PropTypes.func.isRequired,
   finalizeUpload: PropTypes.func.isRequired,
   uploadPart: PropTypes.func.isRequired,
   setUploadProgress: PropTypes.func.isRequired,
@@ -422,7 +422,6 @@ UppyUploaderComponent.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       defaultValue: PropTypes.any,
-      isUserInput: PropTypes.bool,
       name: PropTypes.string,
       placeholder: PropTypes.string,
       render: PropTypes.func,
@@ -433,7 +432,6 @@ UppyUploaderComponent.propTypes = {
     event: PropTypes.oneOf(Object.values(UPPY_EVENTS)),
     file: PropTypes.object,
   }),
-  modifyExistingFiles: PropTypes.bool,
 };
 
 UppyUploaderComponent.defaultProps = {
@@ -456,5 +454,4 @@ UppyUploaderComponent.defaultProps = {
   allowEmptyFiles: true,
   allowedMetaFields: undefined,
   startEvent: undefined,
-  modifyExistingFiles: false,
 };

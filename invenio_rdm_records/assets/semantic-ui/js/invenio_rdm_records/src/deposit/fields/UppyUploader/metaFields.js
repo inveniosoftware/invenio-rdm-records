@@ -14,27 +14,51 @@ export const defaultAllowedMetaFields = [
   { 
     id: "caption", 
     defaultValue: "", 
-    isUserInput: true,
+    name: i18next.t("Caption"),
+    placeholder: i18next.t("Set the Caption here"),
     condition: (file) => file.type && file.type.startsWith("image/") 
   },
   { 
     id: "featured", 
     defaultValue: false, 
-    isUserInput: true,
+    name: i18next.t("Feature Image"),
+    render: ({ value, onChange, required, form }, h) => {
+      return h("input", {
+        type: "checkbox",
+        onChange: (ev) => onChange(ev.target.checked),
+        checked: value,
+        defaultChecked: value,
+        required,
+        form,
+      });
+    },
     condition: (file) => file.type && file.type.startsWith("image/") 
   },
-  { id: "fileNote", defaultValue: "", isUserInput: true },
-  { id: "fileType", defaultValue: "", isUserInput: false },
+  { 
+    id: "fileNote", 
+    defaultValue: "", 
+    name: i18next.t("File Note"),
+    placeholder: i18next.t("Set the file Note here"),
+  },
+  { 
+    id: "fileType", 
+    defaultValue: (file) => {
+      if (file.type) {
+        if (file.type.startsWith("image/")) return "image";
+      }
+      return "other";
+    },
+  },
 ];
 
 /**
  * Higher-order function that generates a metaFields configuration function for Uppy Dashboard.
- * It combines standard built-in renderers ("fileNote", "caption", "featured") with any custom
- * fields passed in `allowedMetaFields`.
+ * Evaluates custom fields passed in `allowedMetaFields` to render them.
  * 
  * @param {Array<Object>} allowedMetaFields - Configuration for allowed meta fields. 
- * Expected shape: `{ id, defaultValue, isUserInput, name?, placeholder?, render?, condition? }`.
+ * Expected shape: `{ id, defaultValue, name?, placeholder?, render?, condition? }`.
  * Users can provide custom UI fields by explicitly setting `name` and/or `render` attributes.
+ * `defaultValue` can either be a static mapped value, or a dynamic function `(file) => any`.
  * 
  * @returns {Function} Function `(file) => Array<Object>` required by Uppy Dashboard `metaFields` prop.
  */
@@ -42,7 +66,7 @@ export const getMetaFieldsRenderers = (allowedMetaFields) => {
   return (file) => {
     const fields = [];
     (allowedMetaFields || []).forEach((field) => {
-      // 1) Evaluate if field has custom rendering properties (name, render).
+      // Evaluate if field has rendering properties (name, render).
       if (field.name || field.render) {
         const shouldRender = typeof field.condition === "function" ? field.condition(file) : true;
         if (shouldRender) {
@@ -52,39 +76,6 @@ export const getMetaFieldsRenderers = (allowedMetaFields) => {
             placeholder: field.placeholder || "",
             // Render is optional, if missing Uppy falls back to standard text input
             ...(field.render && { render: field.render }),
-          });
-        }
-        return; // Skip default handling
-      }
-
-      // 2) Default handlers for built-in known fields
-      if (field.id === "fileNote") {
-        fields.push({
-          id: "fileNote",
-          name: i18next.t("File Note"),
-          placeholder: i18next.t("Set the file Note here"),
-        });
-      } else if (file.type && file.type.startsWith("image/")) {
-        if (field.id === "caption") {
-          fields.push({
-            id: "caption",
-            name: i18next.t("Caption"),
-            placeholder: i18next.t("Set the Caption here"),
-          });
-        } else if (field.id === "featured") {
-          fields.push({
-            id: "featured",
-            name: i18next.t("Feature Image"),
-            render: ({ value, onChange, required, form }, h) => {
-              return h("input", {
-                type: "checkbox",
-                onChange: (ev) => onChange(ev.target.checked),
-                checked: value,
-                defaultChecked: value,
-                required,
-                form,
-              });
-            },
           });
         }
       }
@@ -108,19 +99,20 @@ export const onBeforeUploadProcessMetaFields = (files, allowedMetaFields) => {
   
   Object.keys(files).forEach((fileID) => {
     const file = files[fileID];
-    const metaDefaults = {};
+    file.meta["metadata"] = file.meta?.metadata || {};
+    const metadataDefaults = {};
 
     (allowedMetaFields || []).forEach((field) => {
       // Determine if this field should apply defaults to this file
-      let isApplicable = true;
-      if (typeof field.condition === "function") {
-        isApplicable = field.condition(file);
-      } else if (field.id === "caption" || field.id === "featured") {
-        isApplicable = file.type && file.type.startsWith("image/");
-      } // built-in 'fileNote' or any custom field without 'condition' is applicable universally
+      const isApplicable = typeof field.condition === "function" ? field.condition(file) : true;
 
       if (isApplicable) {
-        metaDefaults[field.id] = file.meta?.[field.id] ?? field.defaultValue;
+        if (file.meta.metadata?.[field.id] === undefined && file.meta?.[field.id] === undefined) {
+          const value = typeof field.defaultValue === "function" ? field.defaultValue(file) : field?.defaultValue;
+          metadataDefaults[field.id] = value;
+          return;
+        }
+        metadataDefaults[field.id] = file.meta.metadata?.[field.id] || file.meta?.[field.id];
       }
     });
 
@@ -128,7 +120,10 @@ export const onBeforeUploadProcessMetaFields = (files, allowedMetaFields) => {
       ...file,
       meta: {
         ...file.meta,
-        ...metaDefaults,
+        metadata: {
+          ...file.meta.metadata,
+          ...metadataDefaults,
+        }
       }
     };
   });

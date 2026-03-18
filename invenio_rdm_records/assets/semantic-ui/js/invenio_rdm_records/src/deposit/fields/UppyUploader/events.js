@@ -6,6 +6,7 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import React from "react";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 /**
  * Enumeration of possible supported Uppy dashboard events.
@@ -22,26 +23,18 @@ export const UPPY_EVENTS = {
  * Computes conditional UI properties for the Uppy Dashboard based on the active event state.
  *
  * @param {Object} startEvent - The currently active event, if any (e.g. { event: UPPY_EVENTS.EDIT_FILE }).
- * @param {boolean} modifyExistingFiles - Flag specifying if existing files in the record are allowed to be modified.
  * @returns {Object} A dictionary of props specifically mapped to the `<Dashboard />` component dynamically.
  */
-export const getUppyDashboardEventsProps = (startEvent, modifyExistingFiles) => {
-  if (!startEvent) {
-    return {
-      autoOpen: null,
-      hideUploadButton: false,
-      disableLocalFiles: modifyExistingFiles || false,
-      showSelectedFiles: true,
-      hideCancelButton: false,
-    };
-  }
+export const getUppyDashboardEventsProps = (startEvent) => {
+  const isEditEvent = startEvent?.event === UPPY_EVENTS.EDIT_FILE;
 
   return {
-    autoOpen: startEvent.event === UPPY_EVENTS.EDIT_FILE ? "metaEditor" : null,
-    hideUploadButton: startEvent.event === UPPY_EVENTS.EDIT_FILE ? true : false,
-    disableLocalFiles: modifyExistingFiles || false,
+    autoOpen: isEditEvent ? "metaEditor" : null,
+    hideUploadButton: isEditEvent ? true : false,
+    disableLocalFiles: isEditEvent ? true : false,
     showSelectedFiles: startEvent.event === UPPY_EVENTS.UPLOAD_FILE_WITHOUT_EDIT ? false : true,
-    hideCancelButton: startEvent.event === UPPY_EVENTS.EDIT_FILE ? true : false,
+    hideCancelButton: isEditEvent ? true : false,
+    ...(isEditEvent && { note: i18next.t("Select existing files to modify metadata.") }),
   };
 };
 
