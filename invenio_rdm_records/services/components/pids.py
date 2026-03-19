@@ -262,7 +262,9 @@ class PIDsComponent(ServiceComponent):
     def delete_record(self, identity, data=None, record=None, uow=None):
         """Process pids on delete record."""
         record_pids = copy(record.get("pids", {}))
-        self.service.pids.pid_manager.discard_all(record_pids, soft_delete=True, record=record)
+        self.service.pids.pid_manager.discard_all(
+            record_pids, soft_delete=True, record=record
+        )
 
     def restore_record(self, identity, record=None, uow=None):
         """Restore previously invalidated pids."""

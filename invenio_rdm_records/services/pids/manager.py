@@ -236,7 +236,9 @@ class PIDManager:
 
         provider.register(pid, record=record, url=url)
 
-    def discard(self, scheme, identifier, provider_name=None, soft_delete=False, record=None):
+    def discard(
+        self, scheme, identifier, provider_name=None, soft_delete=False, record=None
+    ):
         """Discard a PID."""
         provider = self._get_provider(scheme, provider_name)
         pid = provider.get(identifier)
