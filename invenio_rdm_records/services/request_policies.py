@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2025 CERN.
+# Copyright (C) 2026 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -134,6 +134,38 @@ class FileModificationAdminPolicy(BasePolicy):
         return True
 
 
+class QuotaIncreasePolicy(BasePolicy):
+    """Quota increase policy."""
+
+    id = "quota-increase-policy-v1"
+    description = ""
+
+    def is_allowed(self, identity, record):
+        """Only owners can increase the quota."""
+        is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
+        return is_record_owner
+
+    def evaluate(self, identity, record):
+        """TODO check for if the record is valid."""
+        return True
+
+
+class QuotaIncreaseAdminPolicy(BasePolicy):
+    """Quota increase policy which allows admins to also increase quotas for users."""
+
+    id = "file-modification-admin-v1"
+    description = ""
+
+    def is_allowed(self, identity, record):
+        """Admins are allowed."""
+        is_admin = administration_permission.allows(identity)
+        return is_admin
+
+    def evaluate(self, identity, record):
+        """All records are valid."""
+        return True
+
+
 class PolicyEvaluator:
     """Base class for policy evaluator classes."""
 
@@ -228,6 +260,28 @@ class FileModificationPolicyEvaluator(PolicyEvaluator):
             "immediate_file_modification": cls.evaluate_policies(
                 "RDM_IMMEDIATE_FILE_MODIFICATION_ENABLED",
                 "RDM_IMMEDIATE_FILE_MODIFICATION_POLICIES",
+                identity,
+                record,
+            ),
+        }
+
+
+class QuotaIncreasePolicyEvaluator(PolicyEvaluator):
+    """Quota increase policy."""
+
+    @classmethod
+    def evaluate(cls, identity, record):
+        """Evaluate file modification for an identity and record."""
+        if authenticated_user not in identity.provides:
+            # only authenticated users can modify files of records
+            return {
+                "immediate_quota_increase": cls.Result(False),
+            }
+
+        return {
+            "immediate_quota_increase": cls.evaluate_policies(
+                "RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED",
+                "RDM_IMMEDIATE_QUOTA_INCREASE_POLICIES",
                 identity,
                 record,
             ),

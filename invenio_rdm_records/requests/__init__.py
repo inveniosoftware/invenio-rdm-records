@@ -11,6 +11,7 @@ from .access import GuestAccessRequest, UserAccessRequest
 from .community_inclusion import CommunityInclusion
 from .community_submission import CommunitySubmission
 from .file_modification import FileModification
+from .quota_increase import QuotaIncrease
 from .record_deletion import RecordDeletion
 
 __all__ = (
@@ -20,4 +21,5 @@ __all__ = (
     "UserAccessRequest",
     "RecordDeletion",
     "FileModification",
+    "QuotaIncrease",
 )

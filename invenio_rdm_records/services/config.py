@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2025 CERN.
+# Copyright (C) 2020-2026 CERN.
 # Copyright (C) 2020-2025 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C) 2021-2026 Graz University of Technology.
@@ -79,7 +79,11 @@ from .customizations import (
     FromConfigRequiredPIDs,
 )
 from .permissions import RDMRecordPermissionPolicy
-from .request_policies import FileModificationPolicyEvaluator, RDMRecordDeletionPolicy
+from .request_policies import (
+    FileModificationPolicyEvaluator,
+    QuotaIncreasePolicyEvaluator,
+    RDMRecordDeletionPolicy,
+)
 from .result_items import GrantItem, GrantList, SecretLinkItem, SecretLinkList
 from .results import RDMRecordList, RDMRecordRevisionsList
 from .schemas import RDMParentSchema, RDMRecordSchema
@@ -582,6 +586,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     file_modification_policy = FromConfig(
         "RDM_FILE_MODIFICATION_POLICY", default=FileModificationPolicyEvaluator
     )
+    quota_increase_policy = FromConfig(
+        "RDM_QUOTA_INCREASE_POLICY", default=QuotaIncreasePolicyEvaluator
+    )
 
     # Result classes
     link_result_item_cls = SecretLinkItem
@@ -807,6 +814,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "file_modification": RecordEndpointLink(
             "records.file_modification", when=is_published
         ),
+        "quota_increase": RecordEndpointLink("records.quota_increase"),
         # Requests
         # Unfortunately `record_pid`` was used in `RDMRecordRequestsResourceConfig``
         # instead of `pid_value`, so we have to pass a bespoke vars func

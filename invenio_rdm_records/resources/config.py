@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2025 CERN.
+# Copyright (C) 2020-2026 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2023 Graz University of Technology.
@@ -261,6 +261,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     routes["item-revision"] = "/<pid_value>/revisions/<revision_id>"
     routes["request-deletion"] = "/<pid_value>/request-deletion"
     routes["file-modification"] = "/<pid_value>/file-modification"
+    routes["quota-increase"] = "/<pid_value>/quota-increase"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),

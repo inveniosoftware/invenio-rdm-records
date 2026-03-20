@@ -275,6 +275,7 @@ export const FileUploaderComponent = ({
           {showQuotaSection && (
             <Grid.Row className="pt-0">
               <QuotaManager
+                quotaIncreaseEndpoint={record.links?.quota_increase}
                 toggleQuotaSection={toggleQuotaSection}
                 additionalQuota={additionalQuota}
                 setAdditionalQuota={setAdditionalQuota}
