@@ -40,6 +40,7 @@ from .services.request_policies import (
     FileModificationAdminPolicy,
     FileModificationPolicyEvaluator,
     GracePeriodPolicy,
+    QuotaIncreasePolicyEvaluator,
     RDMRecordDeletionPolicy,
     RequestDeletionPolicy,
 )
@@ -271,6 +272,39 @@ during publish to block people from publishing after this period given the bucke
 RDM_FILE_MODIFICATION_VALIDATION_ERROR_MESSAGE = _(
     "File modification grace period has passed. Please discard this draft to make any changes."
 )
+
+#
+# Quota increase by users
+#
+RDM_QUOTA_INCREASE_POLICY = QuotaIncreasePolicyEvaluator
+"""Policy class which evaluates whether published files can be modified by a user."""
+
+RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED = False
+"""Allow editing of user quota increase."""
+
+RDM_IMMEDIATE_QUOTA_INCREASE_POLICIES = []
+"""List of policies for user's increasing their quota.
+
+To enable users to modify the files of their records, configure as:
+
+.. code-block:: python
+
+    from invenio_rdm_records.services.request_policies import (
+        TODO
+    )
+    RDM_IMMEDIATE_QUOTA_INCREASE_POLICIES = [
+        TODO
+    ]
+
+Policies are executed in order and the first one to return True is used
+as the policy for the record. As such, policies should be specified from most
+to least specific.
+
+To update a policy, create a duplicate of it and add a check on creation date to
+both. When your policy comes into effect on a date in the future it will be used,
+and this is the date which you will use to check whether the new or old policy
+will apply.
+"""
 
 #
 # Record communities

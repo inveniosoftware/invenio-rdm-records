@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2025 CERN.
+# Copyright (C) 2020-2026 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021-2023 TU Wien.
 # Copyright (C) 2021-2025 Graz University of Technology.
@@ -38,6 +38,7 @@ from sqlalchemy.exc import NoResultFound
 
 from invenio_rdm_records.records.models import RDMRecordQuota, RDMUserQuota
 from invenio_rdm_records.requests.file_modification import FileModification
+from invenio_rdm_records.requests.quota_increase import QuotaIncrease
 from invenio_rdm_records.requests.record_deletion import RecordDeletion
 from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
@@ -341,6 +342,51 @@ class RDMRecordService(RecordService):
             request = requests_service.execute_action(
                 # NOTE: We use the system identity to accept the request, since
                 # technically the system-defined file modification policy was
+                # checked above
+                system_identity,
+                request.id,
+                "accept",
+                send_notification=False,
+                uow=uow,
+            )
+
+        return request
+
+    @unit_of_work()
+    def quota_increase(self, identity, id_, data=None, uow=None, **kwargs):
+        """Quota increase of a record."""
+        try:
+            record = self.record_cls.pid.resolve(id_)
+        except:
+            record = self.draft_cls.pid.resolve(id_, registered_only=False)
+
+        policy_result = self.config.quota_increase_policy.evaluate(identity, record)
+
+        immediate_quota_increase = policy_result["immediate_quota_increase"]
+
+        disabled = not immediate_quota_increase.enabled
+        forbidden = not immediate_quota_increase.allowed
+        if disabled or forbidden:  # bail early
+            raise PermissionDeniedError()
+
+        request = requests_service.create(
+            identity,
+            request_type=QuotaIncrease,
+            topic=record,
+            creator=identity.user,
+            receiver=None,
+            data={"payload": data},
+            uow=uow,
+        )
+
+        request = requests_service.execute_action(
+            identity, request.id, "submit", uow=uow
+        )
+
+        if immediate_quota_increase.allowed:
+            request = requests_service.execute_action(
+                # NOTE: We use the system identity to accept the request, since
+                # technically the system-defined quota increase policy was
                 # checked above
                 system_identity,
                 request.id,
