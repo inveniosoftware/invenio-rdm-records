@@ -33,6 +33,32 @@ import {
   SET_DOI_NEEDED,
 } from "../types";
 
+const cleanErrors = (obj) => {
+  if (!obj || typeof obj !== "object") return obj;
+  for (const key in obj) {
+    const v = obj[key];
+    // Flatten the specific invenio-checks {message, severity} object
+    if (v?.message && typeof v === "object" && !Array.isArray(v)) {
+      obj[key] = v.message;
+    } else if (typeof v === "object") {
+      cleanErrors(v); // Search deeper
+      // Nuclear fallback for nested arrays of objects
+      if (key === "messages" && Array.isArray(v)) {
+          obj[key] = v.map(item => typeof item === "object" ? JSON.stringify(item) : item);
+      }
+    }
+  }
+  return obj;
+};
+
+// Helper to reliably extract backend errors from Axios responses
+const extractRawErrors = (error) => {
+  if (error.response && error.response.data) {
+      return error.response.data.errors || error.response.data.message || error.response.data;
+  }
+  return error.errors || "An unknown error occurred.";
+};
+
 async function changeURLAfterCreation(draftURL) {
   window.history.replaceState(undefined, "", draftURL);
 }
@@ -117,24 +143,10 @@ async function _saveDraft(
     throw error;
   }
 
-  const clean = (obj) => {
-    if (!obj || typeof obj !== "object") return obj;
-    for (const key in obj) {
-      const v = obj[key];
-      // If we find the {message, severity, description} object:
-      if (v?.message && typeof v === "object") {
-        obj[key] = v.message;
-      } else if (typeof v === "object") {
-        clean(v); // Search deeper
-      }
-    }
-    return obj;
-  };
-
   // Clean both the direct errors and any errors embedded in data
-  response.errors = clean(response.errors);
+  response.errors = cleanErrors(response.errors);
   if (response.data?.errors) {
-    response.data.errors = clean(response.data.errors);
+    response.data.errors = cleanErrors(response.data.errors);
   }
 
   const draftHasValidationErrors = showOnlyValidationErrorsWithSeverityError
@@ -253,9 +265,10 @@ export const publish = (draft, { removeSelectedCommunity = false }) => {
       window.location.replace(recordURL);
     } catch (error) {
       console.error("Error publishing draft", error, draft);
+      const rawErrors = extractRawErrors(error);
       dispatch({
         type: DRAFT_PUBLISH_FAILED,
-        payload: { errors: error.errors },
+        payload: { errors: cleanErrors(rawErrors) },
       });
       throw error;
     }
@@ -292,9 +305,10 @@ export const submitReview = (draft, { reviewComment, directPublish }) => {
       window.location.replace(nextURL);
     } catch (error) {
       console.error("Error submitting review", error, draft);
+      const rawErrors = extractRawErrors(error);
       dispatch({
         type: DRAFT_SUBMIT_REVIEW_FAILED,
-        payload: { errors: error.errors },
+        payload: { errors: cleanErrors(rawErrors) },
       });
       throw error;
     }
