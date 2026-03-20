@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v27.0.0 (released 2026-03-20)
+
+- change(setup): upgrade invenio-checks
+
 Version v26.0.0 (released 2026-03-18)
 
 - change(setup): upgrade invenio-checks and invenio-communities
