@@ -56,11 +56,7 @@ const cleanErrors = (obj) => {
 // Helper to reliably extract backend errors from Axios responses
 const extractRawErrors = (error) => {
   if (error.response && error.response.data) {
-    return (
-      error.response.data.errors ||
-      error.response.data.message ||
-      error.response.data
-    );
+    return error.response.data.errors || error.response.data.message || error.response.data;
   }
   return error.errors || "An unknown error occurred.";
 };
