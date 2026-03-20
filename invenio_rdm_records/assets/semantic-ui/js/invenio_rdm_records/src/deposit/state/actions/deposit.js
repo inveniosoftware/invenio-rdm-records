@@ -44,7 +44,9 @@ const cleanErrors = (obj) => {
       cleanErrors(v); // Search deeper
       // Nuclear fallback for nested arrays of objects
       if (key === "messages" && Array.isArray(v)) {
-          obj[key] = v.map(item => typeof item === "object" ? JSON.stringify(item) : item);
+        obj[key] = v.map((item) =>
+          typeof item === "object" ? JSON.stringify(item) : item
+        );
       }
     }
   }
@@ -54,7 +56,11 @@ const cleanErrors = (obj) => {
 // Helper to reliably extract backend errors from Axios responses
 const extractRawErrors = (error) => {
   if (error.response && error.response.data) {
-      return error.response.data.errors || error.response.data.message || error.response.data;
+    return (
+      error.response.data.errors ||
+      error.response.data.message ||
+      error.response.data
+    );
   }
   return error.errors || "An unknown error occurred.";
 };
