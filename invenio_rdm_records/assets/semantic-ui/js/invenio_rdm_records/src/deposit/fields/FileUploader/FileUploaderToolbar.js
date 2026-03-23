@@ -55,8 +55,8 @@ export const FileUploaderToolbar = (props) => {
       decimalSizeDisplay={decimalSizeDisplay}
       handleOnChangeMetadataOnly={handleOnChangeMetadataOnly}
     >
-      <Grid.Column className="flex justify-space-between" width={16}>
-        <Grid.Column>
+      <>
+        <Grid.Column verticalAlign="middle" mobile={16} tablet={4} computer={4}>
           <Overridable
             id="InvenioRdmRecords.DepositForm.FileUploaderToolbar.MetadataOnlyToggle"
             filesList={filesList}
@@ -74,7 +74,7 @@ export const FileUploaderToolbar = (props) => {
                     checked={!filesEnabled}
                   />
                 </List.Item>
-                <List.Item>
+                <List.Item className="ml-5">
                   <Popup
                     trigger={
                       <Icon name="question circle outline" className="neutral" />
@@ -96,7 +96,7 @@ export const FileUploaderToolbar = (props) => {
           decimalSizeDisplay={decimalSizeDisplay}
         >
           {filesEnabled && (
-            <Grid.Column className="storage-col">
+            <Grid.Column mobile={16} tablet={12} computer={12} className="storage-col">
               <Header size="tiny" className="mr-10">
                 {i18next.t("Storage available")}
               </Header>
@@ -121,30 +121,32 @@ export const FileUploaderToolbar = (props) => {
                     {humanReadableBytes(filesSize, decimalSizeDisplay)}{" "}
                     {i18next.t("out of")}{" "}
                     {humanReadableBytes(
-                      quota.maxStorage + additionalQuota * 1000000000,
+                      quota.defaultStorage + additionalQuota * Math.pow(10, 9),
                       decimalSizeDisplay
                     )}
                   </Label>
                 </List.Item>
-                <List.Item>
-                  <Button
-                    type="button"
-                    // color="green"
-                    size="tiny"
-                    compact
-                    labelPosition="left"
-                    icon="cog"
-                    content="Manage storage"
-                    onClick={() => {
-                      toggleQuotaSection();
-                    }}
-                  />
-                </List.Item>
+                {quota.quotaIncrease?.enabled && quota.quotaIncrease?.valid_user && (
+                  <List.Item>
+                    <Button
+                      type="button"
+                      // color="green"
+                      size="tiny"
+                      compact
+                      labelPosition="left"
+                      icon="cog"
+                      content="Manage storage"
+                      onClick={() => {
+                        toggleQuotaSection();
+                      }}
+                    />
+                  </List.Item>
+                )}
               </List>
             </Grid.Column>
           )}
         </Overridable>
-      </Grid.Column>
+      </>
     </Overridable>
   );
 };

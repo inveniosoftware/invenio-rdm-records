@@ -9,11 +9,8 @@
 
 from invenio_access.permissions import system_identity
 from invenio_i18n import lazy_gettext as _
-from invenio_records_resources.services.uow import ModelCommitOp
 from invenio_requests.customizations import RequestType, actions
-from invenio_requests.proxies import current_requests_service
-from invenio_search.api import dsl
-from marshmallow import ValidationError, fields, validate
+from marshmallow import fields
 
 from invenio_rdm_records.proxies import current_rdm_records_service as records_service
 
@@ -23,9 +20,11 @@ class CreateAction(actions.CreateAction):
 
     def execute(self, identity, uow):
         """Verify request preconditions and create the request."""
-        # record = self.request.topic.resolve()
+        record = self.request.topic.resolve()
 
-        self.request["title"] = "Quota increase request"
+        self.request["title"] = _('Quota increase request for "{record_title}"').format(
+            record_title=record.metadata.get("title", "Empty draft title")
+        )
 
         super().execute(identity, uow)
 
@@ -38,7 +37,7 @@ class AcceptAction(actions.AcceptAction):
         DRAFT = int(self.request.get("topic", {}).get("record"))
         QUOTA_SIZE = int(self.request.get("payload", {}).get("quota_size"))
         data = {
-            "notes": str(self.request.id),
+            "notes": f"request_id:{str(self.request.id)}",
             "quota_size": QUOTA_SIZE * 1000000000,
             "max_file_size": QUOTA_SIZE * 1000000000,
         }

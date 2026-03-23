@@ -169,7 +169,7 @@ class RDMRecordQuota(db.Model, db.Timestamp):
 
     """Parent record id."""
 
-    user_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, index=True)
     """User associated with the parent record via parent.access.owned_by.
 
     This can be useful for e.g. quickly finding all per-record quota increases

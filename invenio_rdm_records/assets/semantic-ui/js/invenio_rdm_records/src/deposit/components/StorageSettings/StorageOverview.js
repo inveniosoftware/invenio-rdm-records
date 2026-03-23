@@ -36,7 +36,7 @@ export default function StorageOverview({ storage }) {
         {/* Need to link to help guide.*/}
       </p>
 
-      <Grid columns={3} stackable className="rel-mb-1">
+      <Grid doubling columns={3} stackable className="rel-mb-1">
         <Grid.Column>
           <Message
             icon="hdd"

@@ -5,13 +5,18 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
+"""Storage Service."""
+
 import logging
+
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_search.engine import dsl
+
 from invenio_rdm_records.records.models import RDMRecordQuota
 
 logger = logging.getLogger(__name__)
+
 
 class StorageService:
     """Service providing per-user storage quota information."""
@@ -28,7 +33,10 @@ class StorageService:
     @property
     def max_additional_quota(self):
         """Get the maximum additional quota allowed per user."""
-        return current_app.config.get("RDM_FILES_DEFAULT_MAX_ADDITIONAL_QUOTA_SIZE") or 150 * 10**9
+        return (
+            current_app.config.get("RDM_FILES_DEFAULT_MAX_ADDITIONAL_QUOTA_SIZE")
+            or 150 * 10**9
+        )
 
     def _search_user_resources(self, user, drafts=False):
         """Fetch user records or drafts."""
@@ -47,7 +55,9 @@ class StorageService:
 
     def _resolve_records_and_quotas(self, items, draft=False):
         """Resolve search hits and fetch quotas."""
-        cls = self.records_service.draft_cls if draft else self.records_service.record_cls
+        cls = (
+            self.records_service.draft_cls if draft else self.records_service.record_cls
+        )
 
         records = []
         parent_ids = set()
@@ -90,14 +100,16 @@ class StorageService:
             total_extra += extra_quota
             total_used += additional_used
 
-            results.append({
-                "item": item,
-                "record": record,
-                "quota": quota,
-                "used_bytes": used_bytes,
-                "extra_quota": extra_quota,
-                "additional_used": additional_used,
-            })
+            results.append(
+                {
+                    "item": item,
+                    "record": record,
+                    "quota": quota,
+                    "used_bytes": used_bytes,
+                    "extra_quota": extra_quota,
+                    "additional_used": additional_used,
+                }
+            )
 
         return results, total_extra, total_used
 
@@ -115,8 +127,7 @@ class StorageService:
         draft_data, extra_d, used_d = [], 0, 0
         if include_drafts:
             draft_data, extra_d, used_d = self._process_resources(
-                self._search_user_resources(user, drafts=True),
-                draft=True
+                self._search_user_resources(user, drafts=True), draft=True
             )
 
         return {

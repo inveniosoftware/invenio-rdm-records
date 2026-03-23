@@ -58,7 +58,9 @@ export const FileUploaderComponent = ({
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const [warningMsg, setWarningMsg] = useState();
   const [showQuotaSection, setShowQuotaSection] = useState(false);
-  const [additionalQuota, _setAdditionalQuota] = useState(0);
+  const [additionalQuota, _setAdditionalQuota] = useState(
+    quota.additionalStorage / Math.pow(10, 9)
+  );
   const lockFileUploader = !isDraftRecord && filesLocked;
   const dropzoneParams = {
     preventDropOnDocument: true,
@@ -182,13 +184,34 @@ export const FileUploaderComponent = ({
     setShowQuotaSection(!showQuotaSection);
   };
 
+  // rescale quota from bytes to GB, as user input requires GB
+  const quotaInGB = Object.keys(quota).reduce((obj, key) => {
+    if (key === "maxFiles") {
+      obj[key] = quota[key];
+    } else {
+      obj[key] = quota[key] / Math.pow(10, 9);
+    }
+    return obj;
+  }, {});
+
   const setAdditionalQuota = (value) => {
-    if (0 <= value && value <= 150) {
+    // TODO this should take into account all versions of the record instead
+    // this is how much files they have uploaded so that they can't request less than uploaded
+    const alreadyUsedAdditional =
+      Math.ceil(filesSize / Math.pow(10, 9)) - quotaInGB.defaultStorage;
+    //
+    const maxAllowed = Math.min(
+      quotaInGB.maxAdditionalStorage,
+      quotaInGB.remainingStorage
+    );
+    if (value < alreadyUsedAdditional) {
+      _setAdditionalQuota(alreadyUsedAdditional);
+    } else if (0 <= value && value <= maxAllowed) {
       _setAdditionalQuota(value);
-    } else if (value > 150) {
-      _setAdditionalQuota(150);
+    } else if (value > maxAllowed) {
+      _setAdditionalQuota(maxAllowed);
     } else if (isNaN(value)) {
-      _setAdditionalQuota(0);
+      _setAdditionalQuota(Math.max(alreadyUsedAdditional, 0));
     }
   };
 
@@ -275,7 +298,9 @@ export const FileUploaderComponent = ({
           {showQuotaSection && (
             <Grid.Row className="pt-0">
               <QuotaManager
-                quotaIncreaseEndpoint={record.links?.quota_increase}
+                draft={formikDraft}
+                quota={quotaInGB}
+                decimalSizeDisplay={decimalSizeDisplay}
                 toggleQuotaSection={toggleQuotaSection}
                 additionalQuota={additionalQuota}
                 setAdditionalQuota={setAdditionalQuota}
@@ -409,6 +434,10 @@ FileUploaderComponent.propTypes = {
   quota: PropTypes.shape({
     maxStorage: PropTypes.number,
     maxFiles: PropTypes.number,
+    defaultStorage: PropTypes.number,
+    additionalStorage: PropTypes.number,
+    maxAdditionalStorage: PropTypes.number,
+    remainingStorage: PropTypes.number,
   }),
   record: PropTypes.object,
   uploadButtonIcon: PropTypes.string,

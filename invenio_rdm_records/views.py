@@ -15,6 +15,7 @@ from types import SimpleNamespace
 from flask import Blueprint, abort, current_app, render_template
 from flask_login import current_user, login_required
 from invenio_records_resources.services.files.transfer import constants
+
 from .proxies import current_rdm_records_storage_service
 
 blueprint = Blueprint("invenio_rdm_records_ext", __name__)
@@ -126,6 +127,7 @@ def file_transfer_type():
 
     return {"transfer_types": file_transfer_type_constants}
 
+
 def _format_storage(data):
     """Format storage data for UI."""
     BYTES_TO_GB = 1e9
@@ -135,15 +137,19 @@ def _format_storage(data):
         item = e["item"]
         record = e["record"]
 
-        rows.append({
-            "title": item.get("metadata", {}).get("title", "Empty title"),
-            "url": item["links"]["self_html"],
-            "additional_quota": round(e["extra_quota"] / BYTES_TO_GB, 1),
-            "used": round(e["used_bytes"] / BYTES_TO_GB, 1),
-            "total": round((data["default_quota"] + e["extra_quota"]) / BYTES_TO_GB, 1),
-            "date": item.get("metadata", {}).get("publication_date", ""),
-            "status": "Draft" if not record.is_published else "Published",
-        })
+        rows.append(
+            {
+                "title": item.get("metadata", {}).get("title", "Empty title"),
+                "url": item["links"]["self_html"],
+                "additional_quota": round(e["extra_quota"] / BYTES_TO_GB, 1),
+                "used": round(e["used_bytes"] / BYTES_TO_GB, 1),
+                "total": round(
+                    (data["default_quota"] + e["extra_quota"]) / BYTES_TO_GB, 1
+                ),
+                "date": item.get("metadata", {}).get("publication_date", ""),
+                "status": "Draft" if not record.is_published else "Published",
+            }
+        )
 
     return {
         "default_quota": round(data["default_quota"] / BYTES_TO_GB, 1),
@@ -155,6 +161,7 @@ def _format_storage(data):
         ),
         "records": rows,
     }
+
 
 @blueprint.route("/account/settings/quota/", endpoint="storage_settings")
 @login_required

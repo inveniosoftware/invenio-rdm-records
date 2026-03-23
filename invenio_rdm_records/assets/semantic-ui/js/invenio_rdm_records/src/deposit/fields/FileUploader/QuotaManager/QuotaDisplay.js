@@ -7,7 +7,7 @@ import { Text } from "@visx/text";
 import { Label } from "semantic-ui-react";
 
 export const QuotaDisplay = (props) => {
-  const { width, height, defaultQuota = 50, additionalQuota, maxQuota = 200 } = props;
+  const { width, height, additionalQuota, quota } = props;
 
   // Colors for the bar segments
   const colors = {
@@ -20,9 +20,9 @@ export const QuotaDisplay = (props) => {
   const data = [
     {
       category: "Storage",
-      default: defaultQuota,
+      default: quota.defaultStorage,
       additional: additionalQuota,
-      available: maxQuota - defaultQuota - additionalQuota,
+      available: quota.remainingStorage - additionalQuota,
     },
   ];
 
@@ -36,8 +36,7 @@ export const QuotaDisplay = (props) => {
   });
 
   const valueScale = scaleLinear({
-    domain: [0, maxQuota],
-    nice: true,
+    domain: [0, quota.defaultStorage + quota.remainingStorage],
   });
 
   const colorScale = scaleOrdinal({
@@ -53,10 +52,10 @@ export const QuotaDisplay = (props) => {
     <>
       <div className="flex align-items-center justify-space-between">
         <div>0 GB</div>
-        <div>{maxQuota} GB</div>
+        <div>{quota.defaultStorage + quota.remainingStorage} GB</div>
       </div>
       {/* Storage Visualization */}
-      <div className="mb-25">
+      <div>
         {/* Bar Stack */}
         <svg width={width} height={height}>
           <Group left={0} top={0}>
@@ -124,7 +123,7 @@ export const QuotaDisplay = (props) => {
           <div className="flex">
             <div className="flex align-items-center">
               <Label circular color="blue" empty key="blue" />
-              <span className="ml-5">Default ({defaultQuota}&nbsp;GB)</span>
+              <span className="ml-5">Default ({quota.defaultStorage}&nbsp;GB)</span>
             </div>
             <div className="flex align-items-center ml-10">
               <Label circular color="green" empty key="green" />
@@ -133,12 +132,13 @@ export const QuotaDisplay = (props) => {
             <div className="flex align-items-center ml-10">
               <Label circular color="grey" empty key="grey" />
               <span className="ml-5">
-                Available ({maxQuota - defaultQuota - additionalQuota}&nbsp;GB)
+                Available ({quota.remainingStorage - additionalQuota}&nbsp;GB)
               </span>
             </div>
           </div>
           <div>
-            See your <a href="/">storage settings</a> for usage across all records
+            See your <a href="/account/settings/quota">storage settings</a> for usage
+            across all records
           </div>
         </div>
       </div>
@@ -149,7 +149,17 @@ export const QuotaDisplay = (props) => {
 QuotaDisplay.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
-  defaultQuota: PropTypes.number.isRequired,
   additionalQuota: PropTypes.number.isRequired,
-  maxQuota: PropTypes.number.isRequired,
+  quota: PropTypes.object,
+};
+
+QuotaDisplay.defaultProps = {
+  quota: {
+    maxFiles: 5,
+    maxStorage: 10,
+    defaultStorage: 10,
+    additionalStorage: 0,
+    maxAdditionalStorage: 0,
+    remainingStorage: 0,
+  },
 };

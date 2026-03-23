@@ -138,12 +138,21 @@ class QuotaIncreasePolicy(BasePolicy):
     """Quota increase policy."""
 
     id = "quota-increase-policy-v1"
-    description = ""
+    description = _("You can increase the quota of your drafts.")
 
     def is_allowed(self, identity, record):
         """Only owners can increase the quota."""
-        is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
-        return is_record_owner
+        if identity.user.verified_at:
+            if record:
+                is_record_owner = (
+                    identity.user.id == record.parent.access.owned_by.owner_id
+                )
+                return is_record_owner
+            else:
+                # unsaved drafts are always valid as you are the owner
+                # i.e. you can't share an unsaved draft to someone else
+                return True
+        return False
 
     def evaluate(self, identity, record):
         """TODO check for if the record is valid."""
@@ -153,8 +162,8 @@ class QuotaIncreasePolicy(BasePolicy):
 class QuotaIncreaseAdminPolicy(BasePolicy):
     """Quota increase policy which allows admins to also increase quotas for users."""
 
-    id = "file-modification-admin-v1"
-    description = ""
+    id = "quota-increase-admin-v1"
+    description = _("You can increase the quota of a draft as you are an admin.")
 
     def is_allowed(self, identity, record):
         """Admins are allowed."""
