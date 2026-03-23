@@ -121,7 +121,7 @@ export const FileUploaderToolbar = (props) => {
                     {humanReadableBytes(filesSize, decimalSizeDisplay)}{" "}
                     {i18next.t("out of")}{" "}
                     {humanReadableBytes(
-                      quota.maxStorage + additionalQuota * 1000000000,
+                      quota.defaultStorage + additionalQuota * Math.pow(10, 9),
                       decimalSizeDisplay
                     )}
                   </Label>

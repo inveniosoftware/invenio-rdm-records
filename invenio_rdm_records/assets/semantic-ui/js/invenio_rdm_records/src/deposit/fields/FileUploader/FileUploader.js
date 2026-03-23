@@ -58,7 +58,9 @@ export const FileUploaderComponent = ({
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const [warningMsg, setWarningMsg] = useState();
   const [showQuotaSection, setShowQuotaSection] = useState(false);
-  const [additionalQuota, _setAdditionalQuota] = useState(0);
+  const [additionalQuota, _setAdditionalQuota] = useState(
+    quota.additionalStorage / Math.pow(10, 9)
+  );
   const lockFileUploader = !isDraftRecord && filesLocked;
   const dropzoneParams = {
     preventDropOnDocument: true,
@@ -182,11 +184,21 @@ export const FileUploaderComponent = ({
     setShowQuotaSection(!showQuotaSection);
   };
 
+  // rescale quota from bytes to GB, as user input requires GB
+  const quotaInGB = Object.keys(quota).reduce((obj, key) => {
+    if (key === "maxFiles") {
+      obj[key] = quota[key];
+    } else {
+      obj[key] = quota[key] / Math.pow(10, 9);
+    }
+    return obj;
+  }, {});
+
   const setAdditionalQuota = (value) => {
-    if (0 <= value && value <= 150) {
+    if (0 <= value && value <= quotaInGB.maxAdditionalStorage) {
       _setAdditionalQuota(value);
-    } else if (value > 150) {
-      _setAdditionalQuota(150);
+    } else if (value > quotaInGB.maxAdditionalStorage) {
+      _setAdditionalQuota(quotaInGB.maxAdditionalStorage);
     } else if (isNaN(value)) {
       _setAdditionalQuota(0);
     }
@@ -275,6 +287,8 @@ export const FileUploaderComponent = ({
           {showQuotaSection && (
             <Grid.Row className="pt-0">
               <QuotaManager
+                quota={quotaInGB}
+                decimalSizeDisplay={decimalSizeDisplay}
                 quotaIncreaseEndpoint={record.links?.quota_increase}
                 toggleQuotaSection={toggleQuotaSection}
                 additionalQuota={additionalQuota}
@@ -409,6 +423,10 @@ FileUploaderComponent.propTypes = {
   quota: PropTypes.shape({
     maxStorage: PropTypes.number,
     maxFiles: PropTypes.number,
+    defaultStorage: PropTypes.number,
+    additionalStorage: PropTypes.number,
+    maxAdditionalStorage: PropTypes.number,
+    remainingStorage: PropTypes.number,
   }),
   record: PropTypes.object,
   uploadButtonIcon: PropTypes.string,
