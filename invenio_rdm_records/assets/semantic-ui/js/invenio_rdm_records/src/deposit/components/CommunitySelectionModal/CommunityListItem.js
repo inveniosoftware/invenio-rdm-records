@@ -27,7 +27,7 @@ export const CommunityListItem = ({ result, record, isInitialSubmission }) => {
   const itemSelected = getChosenCommunity()?.id === result.id;
   const userMembership = userCommunitiesMemberships[result["id"]];
   const invalidPermissionLevel =
-    record.access.record === "public" && result.access.visibility === "restricted";
+    record?.access.record === "public" && result.access.visibility === "restricted";
   const canSubmitRecord = result.ui.permissions.can_submit_record;
   const hasTheme = get(result, "theme.enabled");
   const dedicatedUpload = isInitialSubmission && hasTheme;
@@ -126,10 +126,11 @@ export const CommunityListItem = ({ result, record, isInitialSubmission }) => {
 
 CommunityListItem.propTypes = {
   result: PropTypes.object.isRequired,
-  record: PropTypes.object.isRequired,
+  record: PropTypes.object,
   isInitialSubmission: PropTypes.bool,
 };
 
 CommunityListItem.defaultProps = {
   isInitialSubmission: true,
+  record: null,
 };

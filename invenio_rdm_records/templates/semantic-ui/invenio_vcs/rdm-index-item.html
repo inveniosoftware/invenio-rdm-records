@@ -1,0 +1,22 @@
+{# -*- coding: utf-8 -*-
+
+  This file is part of Invenio.
+  Copyright (C) 2026 CERN.
+
+  Invenio is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+{%- extends "invenio_vcs/settings/index_item.html" %}
+{%- from "invenio_vcs/doi-badge.html" import doi_badge with context -%}
+
+{%- block repository_item_extra_info %}
+  {%- if release and release.record %}
+    {%- set release_record_doi = release.record.pids.get('doi', {}).get('identifier') %}
+    {%- set conceptid_doi_url = release.record.links.parent_doi %}
+  {%- endif %}
+
+  {%- if release_record_doi %}
+    {{ doi_badge(release_record_doi, doi_url=conceptid_doi_url, provider=provider, provider_id=repo_id) }}
+  {%- endif %}
+{%- endblock %}

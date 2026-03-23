@@ -25,7 +25,7 @@ export class CommunitySelectionModalComponent extends Component {
     this.contextValue = {
       setLocalCommunity: this.setCommunity,
       getChosenCommunity: this.getChosenCommunity,
-      userCommunitiesMemberships,
+      userCommunitiesMemberships: userCommunitiesMemberships ?? {},
       displaySelected,
     };
   }
@@ -117,7 +117,7 @@ CommunitySelectionModalComponent.propTypes = {
   chosenCommunity: PropTypes.object,
   onCommunityChange: PropTypes.func.isRequired,
   trigger: PropTypes.object,
-  userCommunitiesMemberships: PropTypes.object.isRequired,
+  userCommunitiesMemberships: PropTypes.object,
   extraContentComponents: PropTypes.node,
   modalHeader: PropTypes.string,
   onModalChange: PropTypes.func,
@@ -125,7 +125,7 @@ CommunitySelectionModalComponent.propTypes = {
   modalOpen: PropTypes.bool,
   apiConfigs: PropTypes.object,
   handleClose: PropTypes.func.isRequired,
-  record: PropTypes.object.isRequired,
+  record: PropTypes.object,
   isInitialSubmission: PropTypes.bool,
 };
 
@@ -139,6 +139,7 @@ CommunitySelectionModalComponent.defaultProps = {
   trigger: undefined,
   apiConfigs: undefined,
   isInitialSubmission: true,
+  record: null,
 };
 
 const mapStateToProps = (state) => ({
