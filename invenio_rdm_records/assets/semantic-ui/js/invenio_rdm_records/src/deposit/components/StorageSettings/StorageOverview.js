@@ -30,53 +30,47 @@ export default function StorageOverview({ storage }) {
       </Header>
       <p className="text-muted mb-4">
         {i18next.t(
-          'Use the "Manage storage" button in any record\'s draft to allocate additional storage.'
+          "You can now manage your record storage by assigning additional quota as needed."
         )}{" "}
-        <a href="./">{i18next.t("Learn more.")}</a>
+        <a href="./">{i18next.t("Find out more.")}</a>
       </p>
 
-      <Grid columns={3} stackable className="mb-4">
+      <Grid columns={3} stackable className="rel-mb-1">
         <Grid.Column>
-          <Message size="small" className="text-center">
-            <Message.Content>
-              <p>{i18next.t("Default")}</p>
-              <Header as="h3">{storage.default_quota} GB</Header>
-              <p>{i18next.t("per record")}</p>
-            </Message.Content>
-          </Message>
+          <Message
+            icon="hdd"
+            size="tiny"
+            header={<Header as="h4">{storage.default_quota} GB</Header>}
+            content={i18next.t("Default quota per record")}
+            className="rel-p-2"
+          />
         </Grid.Column>
 
         <Grid.Column>
           <Message
-            size="small"
-            className="text-center"
+            icon="server"
+            size="tiny"
             positive={storage.additional_available_quota > 5}
             warning={storage.additional_available_quota < 5}
-          >
-            <Message.Content>
-              <p>{i18next.t("Available additional")}</p>
-              <Header as="h3">{storage.additional_available_quota} GB</Header>
-              <p>
-                {i18next.t("of {{total}} GB allowance", {
-                  total: storage.total_allowed_quota,
-                })}
-              </p>
-            </Message.Content>
-          </Message>
+            header={<Header as="h4">{storage.additional_available_quota} GB</Header>}
+            content={i18next.t("Available of {{total}} GB allowance", {
+              total: storage.total_allowed_quota,
+            })}
+            className="rel-p-2"
+          />
         </Grid.Column>
 
         <Grid.Column>
-          <Message info size="small" className="text-center">
-            <Message.Content>
-              <p>{i18next.t("Granted additional")}</p>
-              <Header as="h3">{storage.additional_granted_quota} GB</Header>
-              <p>
-                {i18next.t("across {{count}} records", {
-                  count: storage.records.length,
-                })}
-              </p>
-            </Message.Content>
-          </Message>
+          <Message
+            icon="sitemap"
+            size="tiny"
+            info
+            header={<Header as="h4">{storage.additional_granted_quota} GB</Header>}
+            content={i18next.t("Quota granted across {{count}} records", {
+              count: storage.records.length,
+            })}
+            className="rel-p-2"
+          />
         </Grid.Column>
       </Grid>
 
@@ -84,10 +78,10 @@ export default function StorageOverview({ storage }) {
         <Grid>
           <Grid.Row columns={2}>
             <Grid.Column textAlign="left">
-              <Label className="large rel-mb-1">0 GB</Label>
+              <Label className="medium rel-mb-1">0 GB</Label>
             </Grid.Column>
             <Grid.Column textAlign="right">
-              <Label className=" large  rel-mb-1">
+              <Label className="medium  rel-mb-1">
                 {storage.total_allowed_quota} GB
               </Label>
             </Grid.Column>
@@ -103,16 +97,18 @@ export default function StorageOverview({ storage }) {
 
       {/* Storage Allocations Table */}
       <Header as="h5" className="mb-2">
-        <strong>{i18next.t("Storage allocations")}</strong>
+        <strong>{i18next.t("Allocated storage")}</strong>
       </Header>
       <Table size="small" padded>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell>{i18next.t("Record")}</Table.HeaderCell>
-            <Table.HeaderCell>{i18next.t("Additional quota")}</Table.HeaderCell>
-            <Table.HeaderCell>{i18next.t("Usage")}</Table.HeaderCell>
-            <Table.HeaderCell>{i18next.t("Date")}</Table.HeaderCell>
-            <Table.HeaderCell>{i18next.t("Status")}</Table.HeaderCell>
+            <Table.HeaderCell width={7}>{i18next.t("Record")}</Table.HeaderCell>
+            <Table.HeaderCell width={2}>
+              {i18next.t("Additional quota")}
+            </Table.HeaderCell>
+            <Table.HeaderCell width={4}>{i18next.t("Usage")}</Table.HeaderCell>
+            <Table.HeaderCell width={2}>{i18next.t("Date")}</Table.HeaderCell>
+            <Table.HeaderCell width={1}>{i18next.t("Status")}</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
@@ -137,7 +133,7 @@ export default function StorageOverview({ storage }) {
 
                 <Table.Cell>
                   <Grid verticalAlign="middle" columns="equal">
-                    <Grid.Column width={10}>
+                    <Grid.Column width={9}>
                       <Progress
                         value={record.used}
                         total={record.total}
@@ -145,7 +141,7 @@ export default function StorageOverview({ storage }) {
                         size="tiny"
                       />
                     </Grid.Column>
-                    <Grid.Column width={6} textAlign="left">
+                    <Grid.Column width={7} textAlign="left">
                       <p className="text-muted">
                         {record.used} / {record.total} GB
                       </p>

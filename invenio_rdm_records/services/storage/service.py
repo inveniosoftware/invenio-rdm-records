@@ -12,17 +12,23 @@ from invenio_search.engine import dsl
 
 from invenio_rdm_records.records.models import RDMRecordQuota
 
-DEFAULT_TOTAL_ALLOWED_QUOTA = 150 * 10**9  # 150 GB
 
 class StorageService:
     """Service providing per-user storage quota information."""
 
     def __init__(self, records_service):
+        """Constructor."""
         self.records_service = records_service
 
     @property
     def default_quota(self):
+        """Get the default quota size from config."""
         return current_app.config.get("RDM_FILES_DEFAULT_QUOTA_SIZE", 50 * 10**9)
+
+    @property
+    def max_additional_quota(self):
+        """Get the maximum additional quota allowed per user."""
+        return current_app.config.get("RDM_USER_MAXIMUM_ADDITIONAL_QUOTA", 150 * 10**9)
 
     def _search_user_items(self, user, drafts=False):
         """Get all records or drafts for a user."""
@@ -32,20 +38,18 @@ class StorageService:
             filters.append(dsl.Q("term", is_published=False))
             combined_filter = dsl.Q("bool", must=filters)
             return self.records_service.search_drafts(
-                system_identity,
-                extra_filter=combined_filter,
-                size=1000
+                system_identity, extra_filter=combined_filter, size=1000
             )
 
         combined_filter = dsl.Q("bool", must=filters)
         return self.records_service.search(
-            system_identity,
-            extra_filter=combined_filter,
-            size=1000
+            system_identity, extra_filter=combined_filter, size=1000
         )
 
     def _get_entities_and_quotas(self, items, draft=False):
-        cls = self.records_service.draft_cls if draft else self.records_service.record_cls
+        cls = (
+            self.records_service.draft_cls if draft else self.records_service.record_cls
+        )
         results = []
         parent_ids = []
 
@@ -58,9 +62,12 @@ class StorageService:
                 continue
 
         # fetch all quotas in one go
-        quotas = {q.parent_id: q.quota_size for q in RDMRecordQuota.query.filter(
-            RDMRecordQuota.parent_id.in_(parent_ids)
-        ).all()}
+        quotas = {
+            q.parent_id: q.quota_size
+            for q in RDMRecordQuota.query.filter(
+                RDMRecordQuota.parent_id.in_(parent_ids)
+            ).all()
+        }
 
         return results, quotas
 
@@ -81,20 +88,24 @@ class StorageService:
             total_extra += extra_quota
             total_used += additional_used
 
-            rows.append({
-                "title": item.get("metadata", {}).get("title", "Empty title"),
-                "url": item["links"]["self_html"],
-                "additional_quota": round(extra_quota / 1e9, 2),
-                "used": round(used_bytes / 1e9, 2),
-                "total": round((default_quota + extra_quota) / 1e9, 2),
-                "date": item.get("metadata", {}).get("publication_date", ""),
-                "status": "Draft" if not entity.is_published else "Published"
-            })
+            rows.append(
+                {
+                    "title": item.get("metadata", {}).get("title", "Empty title"),
+                    "url": item["links"]["self_html"],
+                    "additional_quota": round(extra_quota / 1e9, 2),
+                    "used": round(used_bytes / 1e9, 2),
+                    "total": round((default_quota + extra_quota) / 1e9, 2),
+                    "date": item.get("metadata", {}).get("publication_date", ""),
+                    "status": "Draft" if not entity.is_published else "Published",
+                }
+            )
 
         return rows, total_extra, total_used
 
     def get_user_storage(self, user=None):
-        user = user or current_user
+        """Get storage information for a user."""
+
+        maximum_additional_quota = self.max_additional_quota
 
         records = self._search_user_items(user)
         drafts = self._search_user_items(user, drafts=True)
@@ -102,7 +113,9 @@ class StorageService:
         record_entities, record_quotas = self._get_entities_and_quotas(records)
         draft_entities, draft_quotas = self._get_entities_and_quotas(drafts, draft=True)
 
-        record_rows, extra_r, used_r = self._calculate_rows(record_entities, record_quotas)
+        record_rows, extra_r, used_r = self._calculate_rows(
+            record_entities, record_quotas
+        )
         draft_rows, extra_d, used_d = self._calculate_rows(draft_entities, draft_quotas)
 
         total_extra = extra_r + extra_d
@@ -110,9 +123,11 @@ class StorageService:
 
         return {
             "default_quota": round(self.default_quota / 1e9, 2),
-            "total_allowed_quota": round(DEFAULT_TOTAL_ALLOWED_QUOTA / 1e9, 2),
+            "total_allowed_quota": round(maximum_additional_quota / 1e9, 2),
             "additional_granted_quota": round(total_extra / 1e9, 2),
-            "additional_used_quota": round(total_used / 1e9, 2),
-            "additional_available_quota": round((DEFAULT_TOTAL_ALLOWED_QUOTA - total_extra) / 1e9, 2),
-            "records": record_rows + draft_rows
+            "additional_used_quota": round(total_used / 1e9, 1),
+            "additional_available_quota": round(
+                max(maximum_additional_quota - total_extra, 0.0) / 1e9, 2
+            ),
+            "records": record_rows + draft_rows,
         }

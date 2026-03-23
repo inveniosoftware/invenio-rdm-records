@@ -317,7 +317,7 @@ def init_menu(app):
         endpoint="invenio_rdm_records_ext.storage_settings",
         text=_(
             "%(icon)s Storage",
-            icon=LazyString(lambda: f'<i class="{current_theme_icons.storage}"></i>'),
+            icon="<i class='hdd icon'></i>",
         ),
         order=7,
         visible_when=lambda: getattr(current_user, "verified_at", False),

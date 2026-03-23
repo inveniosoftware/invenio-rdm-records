@@ -787,6 +787,9 @@ RDM_FILES_DEFAULT_QUOTA_SIZE = None
 RDM_FILES_DEFAULT_MAX_FILE_SIZE = None
 """Default maximum file size for a bucket in bytes for files."""
 
+RDM_USER_MAXIMUM_ADDITIONAL_QUOTA = None
+"""Default total allowed quota for a user in bytes."""
+
 
 RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
 """Priority of funder identifiers types to be used for DataCite serialization."""
