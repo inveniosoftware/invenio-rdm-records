@@ -32,20 +32,26 @@ class RDMDraftFilesComponent(DraftFilesComponent):
 
     def publish(self, identity, draft=None, record=None, errors=None):
         """Check if files modified can be published."""
-        # Check if modified files are being published after modification period
         can_manage_files = self.service.check_permission(
             identity, "manage_files", record=draft
+        )
+        can_modify_locked_files = self.service.check_permission(
+            identity, "modify_locked_files", record=draft
         )
         file_mod_enabled = current_app.config.get(
             "RDM_IMMEDIATE_FILE_MODIFICATION_ENABLED"
         )
-        modification_period = current_app.config.get("RDM_FILE_MODIFICATION_PERIOD")
         if (
             file_mod_enabled
             and record.is_published  # Draft should be of a published record
-            and not can_manage_files  # This allows admins to bypass the check
+            and not (
+                # These two permissions allow users to bypass the check
+                can_manage_files or can_modify_locked_files
+            )
             and not draft.files.bucket.locked  # Only if the bucket is still unlocked
         ):
+            # Check if modified files are being published after the modification period
+            modification_period = current_app.config.get("RDM_FILE_MODIFICATION_PERIOD")
             if (datetime.utcnow() - record.created) > modification_period:
                 raise ValidationError(
                     current_app.config.get(
