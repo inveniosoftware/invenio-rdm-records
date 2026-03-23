@@ -1,0 +1,37 @@
+{# -*- coding: utf-8 -*-
+
+  This file is part of Invenio.
+  Copyright (C) 2026 CERN.
+
+  Invenio is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+{%- extends "invenio_vcs/settings/view.html" %}
+{%- from "invenio_vcs/doi-badge.html" import doi_badge with context -%}
+
+{%- block settings_content %}
+  {{ super() }}
+  <div
+    id="invenio-vcs-communities-app"
+    data-community-required-to-publish="{{ config.RDM_COMMUNITY_REQUIRED_TO_PUBLISH }}"
+  ></div>
+{%- endblock %}
+
+{%- block repo_details_header_extra_info %}
+  <div>
+    {%- if latest_release.record %}
+      {%- set latest_release_record_doi = latest_release.record.pids.get('doi', {}).get('identifier') %}
+      {%- set conceptid_doi_url = latest_release.record.links.parent_doi %}
+    {%- endif %}
+
+    {%- if latest_release_record_doi %}
+      {{ doi_badge(latest_release_record_doi, doi_url=conceptid_doi_url, provider=provider, provider_id=repo.provider_id) }}
+    {%- endif %}
+  </div>
+{%- endblock %}
+
+{%- block javascript %}
+  {{ super() }}
+  {{ webpack['invenio-vcs-with-communities.js'] }}
+{%- endblock %}
