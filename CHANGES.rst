@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version v22.7.4 (released 2026-03-23)
+
+- fix(file-modification): consider `can_modify_locked_files` permission
+    * Take the old `can_modify_locked_files` permission into account when
+      perofrming the publish check for editing files after publishing.
+
 Version v22.7.3 (released 2026-01-29)
 
 - fix(access_requests_ui): Fix view for guest when receiver isnt community
