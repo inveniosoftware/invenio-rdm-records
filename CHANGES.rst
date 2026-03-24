@@ -12,6 +12,28 @@
 Changes
 =======
 
+Version v20.2.1 (released 2026-03-24)
+
+- chore: reformat with black v26
+- fix(setup): pin setuptools for the removed pkg_resources
+- fix(deposit): rename conflicting prop func
+- fix(schema): take the list of allowed tags and attrs from the app config
+- i18n: pulled translations
+- fix(services): Make 'notes' parameter optional in _update_quota
+- community-records: Adds service component calls to RecordCommunitiesService
+- fix: showing all available suggestions in lang picker
+- fix: duplicate uploads from resetting progress
+- tests: disable warnings entirely on maint branch
+- i18n: pulled translations (#2182)
+- fix(setup): temporarily tighten commonmeta-py pin
+- fix(oai-pmh): handle broader permission denied errors
+- chore(js-tests): upgrade react-overridable major version
+- setup: remove unused ftfy pin to remove pkg-resources usage
+- fix(CreatibutorsModal): get identifier scheme from recent suggestions
+- fix(datacite test link): update Datacite test DOI link
+- bug: invalid datacite test mode link
+- i18n: pulled translations
+
 Version v20.2.0 (released 2025-09-16)
 
 - **feat(deposit-form)!: added `react-overridable` support more consistently across all deposit form fields**
