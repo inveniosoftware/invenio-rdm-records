@@ -138,7 +138,8 @@ export const QuotaDisplay = (props) => {
             </div>
           </div>
           <div>
-            See your <a href="/">storage settings</a> for usage across all records
+            See your <a href="/account/settings/quota">storage settings</a> for usage
+            across all records
           </div>
         </div>
       </div>
