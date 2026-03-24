@@ -98,7 +98,7 @@ export const QuotaManagerComponent = (props) => {
           value={additionalQuota}
           onChange={(e, { k, value }) => setAdditionalQuota(parseInt(value))}
           min={0}
-          max={quota.maxAdditionalStorage}
+          max={Math.min(quota.maxAdditionalStorage, quota.remainingStorage)}
           name="quota"
           step={1}
           type="range"
@@ -108,7 +108,7 @@ export const QuotaManagerComponent = (props) => {
         <div className="flex align-items-center justify-space-between pb-20">
           <div>0 GB</div>
           <div>New total: {quota.defaultStorage + additionalQuota} GB</div>
-          <div>{quota.maxAdditionalStorage} GB</div>
+          <div>{quota.remainingStorage} GB</div>
         </div>
         {error && (
           <ErrorMessage

@@ -22,7 +22,7 @@ export const QuotaDisplay = (props) => {
       category: "Storage",
       default: quota.defaultStorage,
       additional: additionalQuota,
-      available: quota.maxAdditionalStorage - additionalQuota,
+      available: quota.remainingStorage - additionalQuota,
     },
   ];
 
@@ -36,7 +36,7 @@ export const QuotaDisplay = (props) => {
   });
 
   const valueScale = scaleLinear({
-    domain: [0, quota.defaultStorage + quota.maxAdditionalStorage],
+    domain: [0, quota.defaultStorage + quota.remainingStorage],
     nice: true,
   });
 
@@ -53,7 +53,7 @@ export const QuotaDisplay = (props) => {
     <>
       <div className="flex align-items-center justify-space-between">
         <div>0 GB</div>
-        <div>{quota.maxStorage + quota.remainingStorage} GB</div>
+        <div>{quota.defaultStorage + quota.remainingStorage} GB</div>
       </div>
       {/* Storage Visualization */}
       <div className="mb-25">

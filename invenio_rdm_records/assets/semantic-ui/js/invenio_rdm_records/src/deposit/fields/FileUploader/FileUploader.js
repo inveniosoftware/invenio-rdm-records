@@ -195,12 +195,23 @@ export const FileUploaderComponent = ({
   }, {});
 
   const setAdditionalQuota = (value) => {
-    if (0 <= value && value <= quotaInGB.maxAdditionalStorage) {
+    // TODO this should take into account all versions of the record instead
+    // this is how much files they have uploaded so that they can't request less than uploaded
+    const alreadyUsedAdditional =
+      Math.ceil(filesSize / Math.pow(10, 9)) - quotaInGB.defaultStorage;
+    //
+    const maxAllowed = Math.min(
+      quotaInGB.maxAdditionalStorage,
+      quotaInGB.remainingStorage
+    );
+    if (value < alreadyUsedAdditional) {
+      _setAdditionalQuota(alreadyUsedAdditional);
+    } else if (0 <= value && value <= maxAllowed) {
       _setAdditionalQuota(value);
-    } else if (value > quotaInGB.maxAdditionalStorage) {
-      _setAdditionalQuota(quotaInGB.maxAdditionalStorage);
+    } else if (value > maxAllowed) {
+      _setAdditionalQuota(maxAllowed);
     } else if (isNaN(value)) {
-      _setAdditionalQuota(0);
+      _setAdditionalQuota(Math.max(alreadyUsedAdditional, 0));
     }
   };
 

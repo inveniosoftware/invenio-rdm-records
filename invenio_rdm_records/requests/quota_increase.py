@@ -38,7 +38,7 @@ class AcceptAction(actions.AcceptAction):
         DRAFT = int(self.request.get("topic", {}).get("record"))
         QUOTA_SIZE = int(self.request.get("payload", {}).get("quota_size"))
         data = {
-            "notes": str(self.request.id),
+            "notes": f"request_id:{str(self.request.id)}",
             "quota_size": QUOTA_SIZE * 1000000000,
             "max_file_size": QUOTA_SIZE * 1000000000,
         }
