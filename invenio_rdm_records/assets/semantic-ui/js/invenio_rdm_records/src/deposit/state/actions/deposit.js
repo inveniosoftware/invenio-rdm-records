@@ -35,7 +35,6 @@ import {
 
 const cleanErrors = (obj) => {
   if (!obj || typeof obj !== "object") return obj;
-  if (Array.isArray(obj)) return obj;
   for (const key in obj) {
     const v = obj[key];
     // Flatten the specific invenio-checks {message, severity} object
@@ -133,6 +132,17 @@ async function _saveDraft(
 
   try {
     response = await saveDraftWithUrlUpdate(draft, draftsService, failType);
+
+    if (response.errors || (response.data && response.data.errors)) {
+      console.log("🔍 RAW REPRODUCTION OF CURATION ERRORS:");
+      console.log("Direct Response Errors:", JSON.parse(JSON.stringify(response.errors || {})));
+      console.log("Data-Nested Errors:", JSON.parse(JSON.stringify(response.data?.errors || {})));
+      
+      // Check if the error is an object (which causes the React #31 crash)
+      const firstError = (response.errors?.[0] || response.data?.errors?.[0]);
+      console.log("Is the error a React-breaking Object?", typeof firstError === 'object');
+    }
+    
     console.log("DEBUG: Save Success Payload:", response.data);
     const currentState = getState();
     console.log("DEBUG: Full Deposit State on Success:", getState()?.deposit);
