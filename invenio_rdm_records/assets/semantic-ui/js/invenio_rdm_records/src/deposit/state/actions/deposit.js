@@ -132,7 +132,6 @@ async function _saveDraft(
 
   try {
     response = await saveDraftWithUrlUpdate(draft, draftsService, failType);
-
     if (response.errors || response.data?.errors) {
       console.log(
         "Direct Response Errors:",
@@ -148,7 +147,6 @@ async function _saveDraft(
         typeof firstError === "object"
       );
     }
-    
     console.log("DEBUG: Save Success Payload:", response.data);
     const currentState = getState();
     console.log("DEBUG: Full Deposit State on Success:", getState()?.deposit);
