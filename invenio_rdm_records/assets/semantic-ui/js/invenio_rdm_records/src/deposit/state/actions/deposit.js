@@ -35,6 +35,7 @@ import {
 
 const cleanErrors = (obj) => {
   if (!obj || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj;
   for (const key in obj) {
     const v = obj[key];
     // Flatten the specific invenio-checks {message, severity} object
