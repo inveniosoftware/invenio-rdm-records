@@ -8,7 +8,6 @@
 
 """Module tests."""
 
-
 from invenio_base import invenio_url_for
 
 

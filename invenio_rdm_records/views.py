@@ -9,6 +9,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Views."""
+
 from types import SimpleNamespace
 
 from flask import Blueprint

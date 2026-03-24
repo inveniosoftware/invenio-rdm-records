@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Tests for the service Metadata component."""
+
 from copy import deepcopy
 
 from invenio_rdm_records.proxies import current_rdm_records

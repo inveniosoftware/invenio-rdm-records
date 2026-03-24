@@ -7,7 +7,6 @@
 
 """Signposting resource tests."""
 
-
 from tests.helpers import login_user, logout_user
 
 
