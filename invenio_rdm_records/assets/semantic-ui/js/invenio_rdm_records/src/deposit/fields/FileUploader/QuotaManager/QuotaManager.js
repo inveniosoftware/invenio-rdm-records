@@ -5,18 +5,26 @@ import { ParentSize } from "@visx/responsive";
 import { QuotaDisplay } from "./QuotaDisplay";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { ErrorMessage, http, withCancel } from "react-invenio-forms";
+import { saveAndFetchDraft } from "../../../state/actions";
+import { connect } from "react-redux";
 
-export const QuotaManager = (props) => {
-  const { quota, toggleQuotaSection, additionalQuota, setAdditionalQuota } = props;
+export const QuotaManagerComponent = (props) => {
+  const { draft, quota, toggleQuotaSection, additionalQuota, setAdditionalQuota } =
+    props;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async () => {
     setLoading(true);
-    const { quotaIncreaseEndpoint, additionalQuota, quota } = props;
+    const { additionalQuota, quota, saveAndFetchDraftAction } = props;
     const payload = {
       quota_size: (quota.defaultStorage + additionalQuota).toString(),
     };
+
+    const savedDraft = await saveAndFetchDraftAction(draft); // we require the recid to be reserved
+
+    const quotaIncreaseEndpoint = savedDraft.links?.quota_increase;
+
     if (!quotaIncreaseEndpoint) {
       setLoading(false);
       setError("Could not submit the quota increase request");
@@ -128,15 +136,16 @@ export const QuotaManager = (props) => {
   );
 };
 
-QuotaManager.propTypes = {
+QuotaManagerComponent.propTypes = {
+  draft: PropTypes.object.isRequired,
   quota: PropTypes.object,
-  quotaIncreaseEndpoint: PropTypes.string.isRequired,
   toggleQuotaSection: PropTypes.func.isRequired,
   additionalQuota: PropTypes.number.isRequired,
   setAdditionalQuota: PropTypes.func.isRequired,
+  saveAndFetchDraftAction: PropTypes.func.isRequired,
 };
 
-QuotaManager.defaultProps = {
+QuotaManagerComponent.defaultProps = {
   quota: {
     maxFiles: 5,
     maxStorage: 10,
@@ -146,3 +155,9 @@ QuotaManager.defaultProps = {
     remainingStorage: 0,
   },
 };
+
+const mapDispatchToProps = (dispatch) => ({
+  saveAndFetchDraftAction: (values) => dispatch(saveAndFetchDraft(values)),
+});
+
+export const QuotaManager = connect(null, mapDispatchToProps)(QuotaManagerComponent);
