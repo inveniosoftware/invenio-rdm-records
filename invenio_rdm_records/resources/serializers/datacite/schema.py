@@ -14,6 +14,7 @@ from babel_edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
+from idutils import is_ror
 from invenio_access.permissions import system_identity
 from invenio_base import invenio_url_for
 from invenio_i18n import lazy_gettext as _
@@ -625,6 +626,10 @@ class DataCite43Schema(BaseSerializerSchema):
             funder = funding.get("funder", {})
             funding_ref["funderName"] = funder["name"]
             identifiers = funder.get("identifiers", [])
+            # We can see if we need to add the id as a ROR identifier
+            id_value = funder.get("id")
+            if id_value and is_ror(id_value):
+                identifiers.append({"identifier": id_value, "scheme": "ror"})
             if identifiers:
                 identifier = get_preferred_identifier(FUNDER_ID_TYPES_PREF, identifiers)
                 if not identifier:
@@ -1103,6 +1108,10 @@ class DataCite45Schema(BaseSerializerSchema):
             funder = funding.get("funder", {})
             funding_ref["funderName"] = funder["name"]
             identifiers = funder.get("identifiers", [])
+            # We can see if we need to add the id as a ROR identifier
+            id_value = funder.get("id")
+            if id_value and is_ror(id_value):
+                identifiers.append({"identifier": id_value, "scheme": "ror"})
             if identifiers:
                 identifier = get_preferred_identifier(FUNDER_ID_TYPES_PREF, identifiers)
                 if not identifier:

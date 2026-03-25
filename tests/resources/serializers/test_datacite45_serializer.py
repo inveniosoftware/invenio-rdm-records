@@ -175,6 +175,8 @@ def test_datacite45_serializer(running_app, full_record_to_dict):
                 "awardNumber": "111023",
                 "awardTitle": "Launching of the research program on meaning processing",
                 "awardURI": "https://sandbox.zenodo.org/",
+                "funderIdentifier": "00k4n6c32",
+                "funderIdentifierType": "ROR",
                 "funderName": "European Commission",
             }
         ],
@@ -369,6 +371,7 @@ def test_datacite45_xml_serializer(running_app, full_record_to_dict):
         "  <fundingReferences>\n"
         "    <fundingReference>\n"
         "      <funderName>European Commission</funderName>\n"
+        '      <funderIdentifier funderIdentifierType="ROR">00k4n6c32</funderIdentifier>\n'
         "      <awardNumber>111023</awardNumber>\n"
         "      <awardTitle>Launching of the research program on meaning "
         "processing</awardTitle>\n"
