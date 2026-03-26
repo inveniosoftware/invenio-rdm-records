@@ -5,50 +5,65 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { i18next } from "@translations/invenio_rdm_records/i18next";
-
 /**
  * Default allowed metadata fields configuration.
+ * @example
+ * [
+ *   { 
+ *     id: "caption", 
+ *     defaultValue: "", 
+ *     name: i18next.t("Caption"),
+ *     placeholder: i18next.t("Set the Caption here"),
+ *     condition: (file) => file.type && file.type.startsWith("image/") 
+ *   },
+ *   { 
+ *     id: "featured", 
+ *     defaultValue: false, 
+ *     name: i18next.t("Feature Image"),
+ *     render: ({ value, onChange, required, form }, h) => {
+ *       return h("input", {
+ *         type: "checkbox",
+ *         onChange: (ev) => onChange(ev.target.checked),
+ *         checked: value,
+ *         defaultChecked: value,
+ *         required,
+ *         form,
+ *       });
+ *     },
+ *     condition: (file) => file.type && file.type.startsWith("image/") 
+ *   },
+ *   { 
+ *     id: "fileNote", 
+ *     defaultValue: "", 
+ *     name: i18next.t("File Note"),
+ *     placeholder: i18next.t("Set the file Note here"),
+ *   },
+ *   { 
+ *     id: "fileType", 
+ *     defaultValue: (file) => {
+ *       if (file.type) {
+ *         if (file.type.startsWith("image/")) return "image";
+ *       }
+ *       return "other";
+ *     },
+ *   },
+ * ]
+ * 
+ * @type {Object[]} metaFields - Array of metadata field configuration objects. Each object defines how a specific metadata field should be handled and rendered in the Uppy Dashboard.
+ * @property {string} metaFields[].id - The unique identifier of the metadata field. Used as the key in the file.meta.metadata dictionary.
+ * @property {any|function(Object): any} [metaFields[].defaultValue] - Default value or a function resolving a default value based on the file object.
+ * @property {string} [metaFields[].name] - Optional display name of the field. If provided, it will be used to render a standard input field, otherwise it won't be editable in UI.
+ * @property {string} [metaFields[].placeholder] - Optional placeholder text for the input UI.
+ * @property {function(Object, Function): Object} [metaFields[].render] - Optional custom render function for advanced UI rendering of the field using Preact `h` function. If not provided, a standard text input will be rendered when `name` is set. See {@link https://uppy.io/docs/dashboard/#metafields|Uppy Dashboard metaFields documentation}.
+ * @property {function(Object): Boolean} [metaFields[].condition] - Optional function to conditionally attach or render the field based on the respective file properties (e.g. file.type).
  */
 export const defaultAllowedMetaFields = [
-  { 
-    id: "caption", 
-    defaultValue: "", 
-    name: i18next.t("Caption"),
-    placeholder: i18next.t("Set the Caption here"),
-    condition: (file) => file.type && file.type.startsWith("image/") 
-  },
-  { 
-    id: "featured", 
-    defaultValue: false, 
-    name: i18next.t("Feature Image"),
-    render: ({ value, onChange, required, form }, h) => {
-      return h("input", {
-        type: "checkbox",
-        onChange: (ev) => onChange(ev.target.checked),
-        checked: value,
-        defaultChecked: value,
-        required,
-        form,
-      });
-    },
-    condition: (file) => file.type && file.type.startsWith("image/") 
-  },
-  { 
-    id: "fileNote", 
-    defaultValue: "", 
-    name: i18next.t("File Note"),
-    placeholder: i18next.t("Set the file Note here"),
-  },
-  { 
-    id: "fileType", 
-    defaultValue: (file) => {
-      if (file.type) {
-        if (file.type.startsWith("image/")) return "image";
-      }
-      return "other";
-    },
-  },
+  // { 
+  //   id: "description",
+  //   defaultValue: "",
+  //   name: i18next.t("Description"),
+  //   placeholder: i18next.t("Set the file description here"),
+  // },
 ];
 
 /**

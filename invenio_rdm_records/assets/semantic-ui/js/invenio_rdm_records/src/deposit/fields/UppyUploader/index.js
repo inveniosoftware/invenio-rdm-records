@@ -48,3 +48,6 @@ export const UppyUploader = connect(
   mapStateToProps,
   mapDispatchToProps
 )(UppyUploaderComponent);
+
+export { UPPY_EVENTS } from "./events";
+export { defaultAllowedMetaFields } from "./metaFields";

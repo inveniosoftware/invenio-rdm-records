@@ -29,7 +29,6 @@ import {
 import {
   UPPY_EVENTS,
   getUppyDashboardEventsProps,
-  useUppyFileEditSaveSync,
 } from "./events";
 
 const defaultDashboardProps = {
@@ -53,10 +52,8 @@ const normalizeFileName = (name) =>
 const defaultOnBeforeFileAdded = (currentFile, currentFiles = {}) =>
   !Object.hasOwn(currentFiles, currentFile.id);
 
-const createDuplicateFileChecker = (uppy, filesList, startEvent) => {
+const createDuplicateFileChecker = (uppy, filesList) => {
   return (file, files) => {
-    if (startEvent?.event === UPPY_EVENTS.EDIT_FILE) return true;
-
     const normalizedName = normalizeFileName(file.name);
     if (!normalizedName) {
       return defaultOnBeforeFileAdded(file, files);
@@ -138,10 +135,10 @@ export const UppyUploaderComponent = ({
   const restrictions = React.useMemo(
     () => ({
       minFileSize: allowEmptyFiles ? 0 : 1,
-      maxNumberOfFiles: startEvent?.event === UPPY_EVENTS.EDIT_FILE ? 1 : quota.maxFiles - filesList.length,
+      maxNumberOfFiles: quota.maxFiles - filesList.length,
       maxTotalFileSize: quota.maxStorage - filesSize,
     }),
-    [allowEmptyFiles, quota, filesList, filesSize, startEvent]
+    [allowEmptyFiles, quota, filesList, filesSize]
   );
 
   const isTransferSupported = React.useCallback(
@@ -182,9 +179,9 @@ export const UppyUploaderComponent = ({
   }, [uppy]);
 
   React.useEffect(() => {
-    const onBeforeFileAdded = createDuplicateFileChecker(uppy, filesList, startEvent);
+    const onBeforeFileAdded = createDuplicateFileChecker(uppy, filesList);
     uppy.setOptions({ onBeforeFileAdded });
-  }, [uppy, filesList, startEvent]);
+  }, [uppy, filesList]);
 
   React.useEffect(() => {
     uppy.setOptions({
@@ -203,8 +200,6 @@ export const UppyUploaderComponent = ({
       uploaderPlugin.draftRecord = formikDraft;
     }
   }, [uppy, formikDraft]);
-
-  useUppyFileEditSaveSync(uppy, startEvent);
 
   React.useEffect(() => {
     // Synchronize uppy locale with i18next
@@ -429,8 +424,8 @@ UppyUploaderComponent.propTypes = {
     })
   ),
   startEvent: PropTypes.shape({
-    event: PropTypes.oneOf(Object.values(UPPY_EVENTS)),
-    file: PropTypes.object,
+    event: PropTypes.oneOf(Object.values(UPPY_EVENTS)).isRequired,
+    payload: PropTypes.object,
   }),
 };
 
