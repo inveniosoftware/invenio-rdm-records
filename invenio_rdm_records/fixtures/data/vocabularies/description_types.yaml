@@ -7,6 +7,7 @@
     de: Abstract
     es: Resumen
     cs: Abstrakt
+    ar: ملخّص
 - id: methods
   props:
     datacite: Methods
@@ -16,6 +17,7 @@
     de: Methoden
     es: Métodos
     cs: Metody
+    ar: منهجيّات
 - id: series-information
   props:
     datacite: SeriesInformation
@@ -25,6 +27,7 @@
     de: Informationen zur Reihe
     es: Información de la serie
     cs: Informace o sérii
+    ar: سلاسل معلومات
 - id: table-of-contents
   props:
     datacite: TableOfContents
@@ -34,6 +37,7 @@
     de: Inhaltsverzeichnis
     es: Tabla de contenido
     cs: Obsah
+    ar: قائمة محتوى
 - id: technical-info
   props:
     datacite: TechnicalInfo
@@ -43,6 +47,7 @@
     de: Technische Informationen
     es: Información técnica
     cs: Technické informace
+    ar: معلومات تقنيّة
 - id: other
   props:
     datacite: Other
@@ -52,3 +57,4 @@
     de: Sonstige
     es: Otro
     cs: Jiné
+    ar: آخر

@@ -12,6 +12,26 @@
 Changes
 =======
 
+Version v27.0.0 (released 2026-03-20)
+
+- change(setup): upgrade invenio-checks
+
+Version v26.0.0 (released 2026-03-18)
+
+- change(setup): upgrade invenio-checks and invenio-communities
+- feat(contrib): add thesis field display template
+- feat(permissions): add RDM_ALLOW_OWNERS_REMOVE_COMMUNITY_FROM_RECORD
+- feat(translations): add Arabic language
+- fix(accordion): get accordion data-label instead of the label
+
+Version v25.0.0 (released 2026-03-10)
+
+- change(setup): upgrade invenio-checks and invenio-communities
+
+Version v24.1.1 (released 2026-02-27)
+
+- fix(ui-access-status): show login hint for restricted files
+
 Version v24.1.0 (released 2026-02-17)
 
 - feat(facets): add publication date facet
