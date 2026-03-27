@@ -724,7 +724,7 @@
     csl: software
     datacite_general: ComputationalNotebook
     datacite_type: ""
-    openaire_resourceType: "40"
+    openaire_resourceType: "0040"
     openaire_type: software
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/SoftwareSourceCode
