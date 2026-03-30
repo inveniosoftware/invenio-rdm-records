@@ -680,8 +680,7 @@ def test_review_submit_notification(
         assert len(outbox) == 2
         sent_mail = outbox[0]
         sent_mail_2 = outbox[1]
-        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
-        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert req["links"]["self_html"] in sent_mail.html
         assert community_owner.email in sent_mail.recipients
         assert (
             uploader.email not in sent_mail.recipients
@@ -727,8 +726,7 @@ def test_review_accept_notification(
         assert mock_build.called
         assert len(outbox) == 1
         sent_mail = outbox[0]
-        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
-        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert req["links"]["self_html"] in sent_mail.html
         assert uploader.email in sent_mail.recipients
         assert curator.email not in sent_mail.recipients
 
@@ -771,8 +769,7 @@ def test_review_cancel_notification(
         assert len(outbox) == 2
         sent_mail = outbox[0]
         sent_mail_2 = outbox[1]
-        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
-        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert req["links"]["self_html"] in sent_mail.html
         assert (
             uploader.email not in sent_mail.recipients
             and uploader.email not in sent_mail_2.recipients
@@ -817,8 +814,7 @@ def test_review_decline_notification(
         assert mock_build.called
         assert len(outbox) == 1
         sent_mail = outbox[0]
-        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
-        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert req["links"]["self_html"] in sent_mail.html
         assert uploader.email in sent_mail.recipients
         assert curator.email not in sent_mail.recipients
 
@@ -859,8 +855,7 @@ def test_review_expire_notification(
         assert mock_build.called
         assert len(outbox) == 1
         sent_mail = outbox[0]
-        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
-        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert req["links"]["self_html"] in sent_mail.html
         assert uploader.email in sent_mail.recipients
         assert curator.email not in sent_mail.recipients
 

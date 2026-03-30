@@ -111,8 +111,7 @@ def test_simple_guest_access_request_flow(running_app, client, users, minimal_re
             "Your access request was submitted successfully"
             in guest_submit_message.subject
         )
-        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
-        assert "/me/requests/{}".format(request.id) in guest_submit_message.html
+        assert request["links"]["self_html"] in guest_submit_message.html
         # Following is a 1-off test of invenio_url_for in Jinja settings + dynamic
         # blueprint route registration (decorator style within a function). Good to keep
         # as a smoke test.
@@ -207,13 +206,10 @@ def test_simple_user_access_request_flow(running_app, client, users, minimal_rec
         )
         assert response.status_code == 200
         request_id = response.json["id"]
-        # this tests pre-existing functionality although /me/requests/{} could
-        # work as well semantically
-        assert f"/access/requests/{request_id}" in response.json["links"]["self_html"]
+        assert f"/me/requests/{request_id}" in response.json["links"]["self_html"]
         assert len(outbox) == 1
         submit_message = outbox[0]
-        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
-        assert "/me/requests/{}".format(request_id) in submit_message.html
+        assert response.json["links"]["self_html"] in submit_message.html
 
         # The record owner approves the access request
         current_requests_service.execute_action(identity, request_id, "accept", data={})
