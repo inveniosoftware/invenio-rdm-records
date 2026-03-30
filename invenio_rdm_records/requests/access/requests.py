@@ -12,16 +12,16 @@
 from datetime import datetime, timedelta, timezone
 
 import marshmallow as ma
-from flask import g
-from invenio_access.permissions import authenticated_user, system_identity
+from invenio_access.permissions import system_identity
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import gettext as t
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services import ConditionalLink, EndpointLink
 from invenio_requests import current_events_service
-from invenio_requests.customizations import RequestType, actions
+from invenio_requests.customizations import actions
 from invenio_requests.customizations.event_types import CommentEventType
+from invenio_requests.services.events.config import request_event_anchor
 from marshmallow import ValidationError, fields, validates
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
@@ -36,6 +36,7 @@ from invenio_rdm_records.notifications.builders import (
     UserAccessRequestDeclineNotificationBuilder,
     UserAccessRequestSubmitNotificationBuilder,
 )
+from invenio_rdm_records.requests.base import BaseRequest
 
 from ...proxies import current_rdm_records_service as service
 
@@ -242,10 +243,31 @@ class UserAcceptAction(actions.AcceptAction):
         super().execute(identity, uow)
 
 
+def _is_created_by_current_user(request, vars):
+    """Check if the current identity is the creator of the request."""
+    creator_ref = request.created_by.reference_dict
+    identity = vars.get("identity")
+
+    if not identity:
+        return False
+
+    creator_id = creator_ref.get("user")
+    if creator_id:
+        return str(identity.id) == str(creator_id)
+
+    # fallback for anonymous users
+    creator_email = creator_ref.get("email")
+    if not creator_email:
+        return False
+
+    payload = request.get("payload") or {}
+    return str(payload.get("email")) == str(creator_email)
+
+
 #
 # Requests
 #
-class UserAccessRequest(RequestType):
+class UserAccessRequest(BaseRequest):
     """Access request type coming from a user."""
 
     type_id = "user-access-request"
@@ -258,14 +280,12 @@ class UserAccessRequest(RequestType):
     allowed_topic_ref_types = ["record"]
 
     links_item = {
-        # Note that this keeps the original logic whereby
-        # the route associated with read_request is always returned
-        # even though the user is typically authenticated
         "self_html": EndpointLink(
-            "invenio_app_rdm_requests.read_request",
+            "invenio_app_rdm_requests.user_dashboard_request_view",
             params=["request_pid_value"],
-            vars=lambda obj, vars: (vars.update(request_pid_value=vars["request"].id)),
-        ),
+            vars=lambda obj, vars: vars.update(request_pid_value=vars["request"].id),
+            anchor=request_event_anchor,
+        )
     }
 
     available_actions = {
@@ -284,13 +304,7 @@ class UserAccessRequest(RequestType):
     }
 
 
-def _is_authenticated(obj, context):
-    """Check if authenticated."""
-    identity = getattr(g, "identity", None)
-    return identity and authenticated_user in identity.provides
-
-
-class GuestAccessRequest(RequestType):
+class GuestAccessRequest(BaseRequest):
     """Access request type coming from a guest."""
 
     type_id = "guest-access-request"
@@ -303,24 +317,23 @@ class GuestAccessRequest(RequestType):
     allowed_topic_ref_types = ["record"]
 
     links_item = {
-        # Note that this tries to keep the original logic whereby an authenticated user
-        # gets the route associated with user_dashboard_request_view, while an
-        # unauthenticated user gets the one associated with read_request
         "self_html": ConditionalLink(
-            cond=_is_authenticated,
+            cond=_is_created_by_current_user,
             if_=EndpointLink(
-                "invenio_app_rdm_requests.user_dashboard_request_view",
-                params=["request_pid_value"],
-                vars=lambda obj, vars: (
-                    vars.update(request_pid_value=vars["request"].id)
-                ),
-            ),
-            else_=EndpointLink(
                 "invenio_app_rdm_requests.read_request",
                 params=["request_pid_value"],
-                vars=lambda obj, vars: (
-                    vars.update(request_pid_value=vars["request"].id)
+                vars=lambda obj, vars: vars.update(
+                    request_pid_value=vars["request"].id
                 ),
+                anchor=request_event_anchor,
+            ),
+            else_=EndpointLink(
+                "invenio_app_rdm_requests.user_dashboard_request_view",
+                params=["request_pid_value"],
+                vars=lambda obj, vars: vars.update(
+                    request_pid_value=vars["request"].id
+                ),
+                anchor=request_event_anchor,
             ),
         )
     }
