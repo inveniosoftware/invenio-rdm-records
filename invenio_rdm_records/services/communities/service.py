@@ -10,6 +10,7 @@
 """RDM Record Communities Service."""
 
 from flask import current_app
+from flask_principal import AnonymousIdentity
 from invenio_access.permissions import system_identity
 from invenio_communities.proxies import current_communities
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
@@ -34,7 +35,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from ...notifications.builders import CommunityInclusionSubmittedNotificationBuilder
 from ...proxies import current_rdm_records, current_rdm_records_service
-from ...requests import CommunityInclusion
+from ...requests import CommunityInclusion, CommunitySubmission
 from ..errors import (
     CannotRemoveCommunityError,
     CommunityAlreadyExists,
@@ -493,3 +494,55 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                 )
             )
         return errors
+
+    def get_record_requests(self, identity, record):
+        """
+        Get all accepted community requests of the given record.
+
+        :param identity: The identity performing the action.
+        :param record: The record (RecordItem) to get the community requests for.
+
+        Output: {<Community-UUID>: <Request-UUID>}
+        """
+        self.require_permission(identity, "review", record=record._record)
+        if type(identity) is AnonymousIdentity:
+            return {}  # secret link users do not have permissions to search requests
+
+        # Get all accepted requests that led to the record being added to the community
+        parent = record._record.parent
+        community_requests = parent.communities.get_requests()
+        community_requests = {
+            str(request.community_id): str(request.request_id)
+            for request in community_requests
+        }
+
+        # Get the requests that concern only the current record, i.e. submission or inclusion regardless of their status
+        # This takes precedence over only considering accepted requests because there may be an unaccepted request in this
+        # version of the record that should be shown instead of the accepted request.
+        record_requests = current_requests_service.search(
+            identity,
+            extra_filter=dsl.Q(
+                "bool",
+                must=[
+                    dsl.Q("term", **{"topic.record": record.id}),
+                    dsl.Q(
+                        "terms",
+                        **{
+                            "type": [
+                                CommunityInclusion.type_id,
+                                CommunitySubmission.type_id,
+                            ]
+                        },
+                    ),
+                ],
+            ),
+            params={"sort": "oldest"},
+        )
+        record_requests = {
+            request["receiver"]["community"]: request["id"]
+            for request in record_requests
+        }
+
+        community_requests.update(record_requests)
+        # Return a dictionary with the community id mapped to the request id
+        return community_requests
