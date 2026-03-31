@@ -202,7 +202,7 @@ CommunitySelectionSearch.defaultProps = {
         },
       },
       appId: "ReactInvenioDeposit.CommunitySelectionSearch.AllCommunities",
-      toggleText: "Search in all communities",
+      toggleText: i18next.t("Search in all communities"),
     },
     myCommunities: {
       initialQueryState: { size: 5, page: 1, sortBy: "bestmatch" },
@@ -213,7 +213,7 @@ CommunitySelectionSearch.defaultProps = {
         },
       },
       appId: "ReactInvenioDeposit.CommunitySelectionSearch.MyCommunities",
-      toggleText: "Search in my communities",
+      toggleText: i18next.t("Search in my communities"),
     },
   },
 };
