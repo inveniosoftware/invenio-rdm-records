@@ -13,12 +13,13 @@ import json
 from flask import g
 from flask_resources import HTTPJSONException as _HTTPJSONException
 from flask_resources.serializers.json import JSONEncoder
+from invenio_i18n import lazy_gettext as _
 
 
 class HTTPJSONValidationWithMessageAsListException(_HTTPJSONException):
     """HTTP exception serializing to JSON where errors are in a list."""
 
-    description = "A validation error occurred."
+    description = _("A validation error occurred.")
 
     def __init__(self, exception):
         """Constructor."""
