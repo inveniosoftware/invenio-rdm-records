@@ -130,7 +130,7 @@ def file_transfer_type():
 
 def _format_storage(data):
     """Format storage data for UI."""
-    BYTES_TO_GB = 1e9
+    BYTES_TO_GB = 10**9
     rows = []
 
     for e in data["entries"]:
@@ -167,7 +167,9 @@ def _format_storage(data):
 @login_required
 def storage_settings():
     """User storage page."""
-    if not getattr(current_user, "verified_at", None):
+    if not current_app.config.get(
+        "RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED", False
+    ) or not getattr(current_user, "verified_at", None):
         abort(404)
 
     result = current_rdm_records_storage_service.get_user_storage_usage(current_user)

@@ -120,22 +120,24 @@ export const FileUploaderToolbar = (props) => {
                   >
                     {humanReadableBytes(filesSize, decimalSizeDisplay)}{" "}
                     {i18next.t("out of")}{" "}
-                    {humanReadableBytes(
-                      quota.defaultStorage + additionalQuota * Math.pow(10, 9),
-                      decimalSizeDisplay
-                    )}
+                    {quota.quotaIncrease.enabled && quota.quotaIncrease.valid_user
+                      ? humanReadableBytes(
+                          quota.quotaIncrease.defaultStorage +
+                            additionalQuota * Math.pow(10, 9),
+                          decimalSizeDisplay
+                        )
+                      : humanReadableBytes(quota.maxStorage, decimalSizeDisplay)}
                   </Label>
                 </List.Item>
                 {quota.quotaIncrease?.enabled && quota.quotaIncrease?.valid_user && (
                   <List.Item>
                     <Button
                       type="button"
-                      // color="green"
                       size="tiny"
                       compact
                       labelPosition="left"
                       icon="cog"
-                      content="Manage storage"
+                      content={i18next.t("Manage storage")}
                       onClick={() => {
                         toggleQuotaSection();
                       }}

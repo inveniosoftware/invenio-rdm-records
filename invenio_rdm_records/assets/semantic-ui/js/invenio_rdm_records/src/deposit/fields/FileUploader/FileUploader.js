@@ -59,7 +59,7 @@ export const FileUploaderComponent = ({
   const [warningMsg, setWarningMsg] = useState();
   const [showQuotaSection, setShowQuotaSection] = useState(false);
   const [additionalQuota, _setAdditionalQuota] = useState(
-    quota.additionalStorage / Math.pow(10, 9)
+    quota.quotaIncrease.additionalStorage / Math.pow(10, 9) || 0
   );
   const lockFileUploader = !isDraftRecord && filesLocked;
   const dropzoneParams = {
@@ -185,33 +185,27 @@ export const FileUploaderComponent = ({
   };
 
   // rescale quota from bytes to GB, as user input requires GB
-  const quotaInGB = Object.keys(quota).reduce((obj, key) => {
-    if (key === "maxFiles") {
-      obj[key] = quota[key];
+  const quotaInGB = Object.keys(quota["quotaIncrease"]).reduce((obj, key) => {
+    if (typeof quota["quotaIncrease"][key] === "number") {
+      obj[key] = quota["quotaIncrease"][key] / Math.pow(10, 9);
     } else {
-      obj[key] = quota[key] / Math.pow(10, 9);
+      obj[key] = quota["quotaIncrease"][key];
     }
     return obj;
   }, {});
 
   const setAdditionalQuota = (value) => {
-    // TODO this should take into account all versions of the record instead
-    // this is how much files they have uploaded so that they can't request less than uploaded
-    const alreadyUsedAdditional =
-      Math.ceil(filesSize / Math.pow(10, 9)) - quotaInGB.defaultStorage;
-    //
-    const maxAllowed = Math.min(
-      quotaInGB.maxAdditionalStorage,
-      quotaInGB.remainingStorage
-    );
-    if (value < alreadyUsedAdditional) {
-      _setAdditionalQuota(alreadyUsedAdditional);
-    } else if (0 <= value && value <= maxAllowed) {
+    const minAdditional = quotaInGB["minAdditionalQuotaValue"];
+    const maxAdditional = quotaInGB["maxAdditionalQuotaValue"];
+
+    if (value < minAdditional) {
+      _setAdditionalQuota(minAdditional);
+    } else if (minAdditional <= value && value <= maxAdditional) {
       _setAdditionalQuota(value);
-    } else if (value > maxAllowed) {
-      _setAdditionalQuota(maxAllowed);
+    } else if (value > maxAdditional) {
+      _setAdditionalQuota(maxAdditional);
     } else if (isNaN(value)) {
-      _setAdditionalQuota(Math.max(alreadyUsedAdditional, 0));
+      _setAdditionalQuota(minAdditional);
     }
   };
 
@@ -434,10 +428,7 @@ FileUploaderComponent.propTypes = {
   quota: PropTypes.shape({
     maxStorage: PropTypes.number,
     maxFiles: PropTypes.number,
-    defaultStorage: PropTypes.number,
-    additionalStorage: PropTypes.number,
-    maxAdditionalStorage: PropTypes.number,
-    remainingStorage: PropTypes.number,
+    quotaIncrease: PropTypes.object,
   }),
   record: PropTypes.object,
   uploadButtonIcon: PropTypes.string,

@@ -279,23 +279,28 @@ RDM_FILE_MODIFICATION_VALIDATION_ERROR_MESSAGE = _(
 # Quota increase by users
 #
 RDM_QUOTA_INCREASE_POLICY = QuotaIncreasePolicyEvaluator
-"""Policy class which evaluates whether published files can be modified by a user."""
+"""Policy class which evaluates whether the quota for drafts can be increased."""
 
 RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED = False
-"""Allow editing of user quota increase."""
+"""Allow increasing of draft's quota from a user's additional quota.
+
+RDM_FILES_DEFAULT_MAX_ADDITIONAL_QUOTA_SIZE controls how much each user has
+available across their records"""
 
 RDM_IMMEDIATE_QUOTA_INCREASE_POLICIES = []
-"""List of policies for user's increasing their quota.
+"""List of policies for user's increasing their quota for a draft.
 
-To enable users to modify the files of their records, configure as:
+To enable users and admins to increase the quota for drafts, configure as:
 
 .. code-block:: python
 
     from invenio_rdm_records.services.request_policies import (
-        TODO
+        QuotaIncreaseAdminPolicy,
+        QuotaIncreasePolicy,
     )
     RDM_IMMEDIATE_QUOTA_INCREASE_POLICIES = [
-        TODO
+        QuotaIncreasePolicy(),
+        QuotaIncreaseAdminPolicy(),
     ]
 
 Policies are executed in order and the first one to return True is used

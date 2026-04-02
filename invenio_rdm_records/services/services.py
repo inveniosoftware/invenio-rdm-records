@@ -353,51 +353,6 @@ class RDMRecordService(RecordService):
         return request
 
     @unit_of_work()
-    def quota_increase(self, identity, id_, data=None, uow=None, **kwargs):
-        """Quota increase of a record."""
-        try:
-            record = self.record_cls.pid.resolve(id_)
-        except:
-            record = self.draft_cls.pid.resolve(id_, registered_only=False)
-
-        policy_result = self.config.quota_increase_policy.evaluate(identity, record)
-
-        immediate_quota_increase = policy_result["immediate_quota_increase"]
-
-        disabled = not immediate_quota_increase.enabled
-        forbidden = not immediate_quota_increase.allowed
-        if disabled or forbidden:  # bail early
-            raise PermissionDeniedError()
-
-        request = requests_service.create(
-            identity,
-            request_type=QuotaIncrease,
-            topic=record,
-            creator=identity.user,
-            receiver=None,
-            data={"payload": data},
-            uow=uow,
-        )
-
-        request = requests_service.execute_action(
-            identity, request.id, "submit", uow=uow
-        )
-
-        if immediate_quota_increase.allowed:
-            request = requests_service.execute_action(
-                # NOTE: We use the system identity to accept the request, since
-                # technically the system-defined quota increase policy was
-                # checked above
-                system_identity,
-                request.id,
-                "accept",
-                send_notification=False,
-                uow=uow,
-            )
-
-        return request
-
-    @unit_of_work()
     def update_tombstone(self, identity, id_, data, expand=False, uow=None):
         """Update the tombstone information for the (soft) deleted record."""
         record = self.record_cls.pid.resolve(id_)
@@ -884,6 +839,53 @@ class RDMRecordService(RecordService):
         db.session.add(user_quota)
 
         return True
+
+    @unit_of_work()
+    def quota_increase(self, identity, id_, data=None, uow=None, **kwargs):
+        """Quota increase of a record."""
+        try:
+            record = self.record_cls.pid.resolve(id_)
+        except:
+            record = self.draft_cls.pid.resolve(id_, registered_only=False)
+
+        policy_result = self.config.quota_increase_policy.evaluate(
+            identity, record
+        )  # TODO pass data["quota_size"]
+
+        immediate_quota_increase = policy_result["immediate_quota_increase"]
+
+        disabled = not immediate_quota_increase.enabled
+        forbidden = not immediate_quota_increase.allowed
+        if disabled or forbidden:  # bail early
+            raise PermissionDeniedError()
+
+        if immediate_quota_increase.allowed:
+            request = requests_service.create(
+                identity,
+                request_type=QuotaIncrease,
+                topic=record,
+                creator=identity.user,
+                receiver=None,
+                data={"payload": data},
+                uow=uow,
+            )
+
+            request = requests_service.execute_action(
+                identity, request.id, "submit", uow=uow
+            )
+
+            request = requests_service.execute_action(
+                # NOTE: We use the system identity to accept the request, since
+                # technically the system-defined quota increase policy was
+                # checked above
+                system_identity,
+                request.id,
+                "accept",
+                send_notification=False,
+                uow=uow,
+            )
+
+            return request
 
     def search_revisions(self, identity, id_):
         """Return a list of record revisions."""

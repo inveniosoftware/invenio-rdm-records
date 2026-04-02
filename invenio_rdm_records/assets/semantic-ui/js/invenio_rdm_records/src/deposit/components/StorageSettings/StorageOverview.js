@@ -41,7 +41,7 @@ export default function StorageOverview({ storage }) {
           <Message
             icon="hdd"
             size="tiny"
-            header={<Header as="h4">{storage.default_quota} GB</Header>}
+            header={<Header as="h4">{storage.default_quota}&nbsp;GB</Header>}
             content={i18next.t("Default quota per record")}
             className="rel-p-2"
           />
@@ -53,7 +53,9 @@ export default function StorageOverview({ storage }) {
             size="tiny"
             positive={storage.additional_available_quota > 5}
             warning={storage.additional_available_quota < 5}
-            header={<Header as="h4">{storage.additional_available_quota} GB</Header>}
+            header={
+              <Header as="h4">{storage.additional_available_quota}&nbsp;GB</Header>
+            }
             content={i18next.t("Available of {{total}} GB allowance", {
               total: storage.total_allowed_quota,
             })}
@@ -66,7 +68,7 @@ export default function StorageOverview({ storage }) {
             icon="sitemap"
             size="tiny"
             info
-            header={<Header as="h4">{storage.additional_granted_quota} GB</Header>}
+            header={<Header as="h4">{storage.additional_granted_quota}&nbsp;GB</Header>}
             content={i18next.t("Quota granted across {{count}} records", {
               count: storage.records.length,
             })}
@@ -79,11 +81,11 @@ export default function StorageOverview({ storage }) {
         <Grid>
           <Grid.Row columns={2}>
             <Grid.Column textAlign="left">
-              <Label className="medium rel-mb-1">0 GB</Label>
+              <Label className="medium rel-mb-1">0&nbsp;GB</Label>
             </Grid.Column>
             <Grid.Column textAlign="right">
               <Label className="medium  rel-mb-1">
-                {storage.total_allowed_quota} GB
+                {storage.total_allowed_quota}&nbsp;GB
               </Label>
             </Grid.Column>
           </Grid.Row>
@@ -127,7 +129,7 @@ export default function StorageOverview({ storage }) {
                   </Table.Cell>
 
                   <Table.Cell>
-                    <strong>+{record.additional_quota} GB</strong>
+                    <strong>+{record.additional_quota}&nbsp;GB</strong>
                     <div className="ui tiny text-muted">
                       (
                       {i18next.t("{{total}} GB total", {
@@ -149,7 +151,7 @@ export default function StorageOverview({ storage }) {
                       </Grid.Column>
                       <Grid.Column width={7} textAlign="left">
                         <p className="text-muted">
-                          {record.used} / {record.total} GB
+                          {record.used} / {record.total}&nbsp;GB
                         </p>
                       </Grid.Column>
                     </Grid>

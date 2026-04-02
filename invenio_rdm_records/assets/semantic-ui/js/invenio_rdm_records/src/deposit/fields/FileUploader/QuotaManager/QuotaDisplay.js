@@ -5,9 +5,12 @@ import { BarStackHorizontal } from "@visx/shape";
 import { scaleBand, scaleLinear, scaleOrdinal } from "@visx/scale";
 import { Text } from "@visx/text";
 import { Label } from "semantic-ui-react";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
+import { Trans } from "react-i18next";
 
 export const QuotaDisplay = (props) => {
   const { width, height, additionalQuota, quota } = props;
+  const { defaultStorage, remainingStorage } = quota;
 
   // Colors for the bar segments
   const colors = {
@@ -20,9 +23,9 @@ export const QuotaDisplay = (props) => {
   const data = [
     {
       category: "Storage",
-      default: quota.defaultStorage,
+      default: defaultStorage,
       additional: additionalQuota,
-      available: quota.remainingStorage - additionalQuota,
+      available: remainingStorage - additionalQuota,
     },
   ];
 
@@ -36,7 +39,7 @@ export const QuotaDisplay = (props) => {
   });
 
   const valueScale = scaleLinear({
-    domain: [0, quota.defaultStorage + quota.remainingStorage],
+    domain: [0, defaultStorage + remainingStorage],
   });
 
   const colorScale = scaleOrdinal({
@@ -52,7 +55,7 @@ export const QuotaDisplay = (props) => {
     <>
       <div className="flex align-items-center justify-space-between">
         <div>0 GB</div>
-        <div>{quota.defaultStorage + quota.remainingStorage} GB</div>
+        <div>{defaultStorage + remainingStorage} GB</div>
       </div>
       {/* Storage Visualization */}
       <div>
@@ -123,22 +126,29 @@ export const QuotaDisplay = (props) => {
           <div className="flex">
             <div className="flex align-items-center">
               <Label circular color="blue" empty key="blue" />
-              <span className="ml-5">Default ({quota.defaultStorage}&nbsp;GB)</span>
+              <span className="ml-5">
+                {i18next.t("Default")} ({defaultStorage}&nbsp;GB)
+              </span>
             </div>
             <div className="flex align-items-center ml-10">
               <Label circular color="green" empty key="green" />
-              <span className="ml-5">Additional (+{additionalQuota}&nbsp;GB)</span>
+              <span className="ml-5">
+                {i18next.t("Additional")} (+{additionalQuota}&nbsp;GB)
+              </span>
             </div>
             <div className="flex align-items-center ml-10">
               <Label circular color="grey" empty key="grey" />
               <span className="ml-5">
-                Available ({quota.remainingStorage - additionalQuota}&nbsp;GB)
+                {i18next.t("Available")} ({remainingStorage - additionalQuota}
+                &nbsp;GB)
               </span>
             </div>
           </div>
           <div>
-            See your <a href="/account/settings/quota">storage settings</a> for usage
-            across all records
+            <Trans>
+              See your <a href="/account/settings/quota">storage settings</a> for usage
+              across all records
+            </Trans>
           </div>
         </div>
       </div>
@@ -150,16 +160,5 @@ QuotaDisplay.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   additionalQuota: PropTypes.number.isRequired,
-  quota: PropTypes.object,
-};
-
-QuotaDisplay.defaultProps = {
-  quota: {
-    maxFiles: 5,
-    maxStorage: 10,
-    defaultStorage: 10,
-    additionalStorage: 0,
-    maxAdditionalStorage: 0,
-    remainingStorage: 0,
-  },
+  quota: PropTypes.object.isRequired,
 };

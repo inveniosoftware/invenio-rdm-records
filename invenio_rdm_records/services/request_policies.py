@@ -155,7 +155,9 @@ class QuotaIncreasePolicy(BasePolicy):
         return False
 
     def evaluate(self, identity, record):
-        """TODO check for if the record is valid."""
+        """TODO check for if the record is valid.
+
+        Only used on backend. The frontend evaluates is allowed in setAdditionalQuota"""
         return True
 
 

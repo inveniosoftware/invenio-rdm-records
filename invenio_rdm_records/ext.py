@@ -14,7 +14,7 @@
 
 from warnings import warn
 
-from flask import Blueprint
+from flask import Blueprint, current_app
 from flask_iiif import IIIF
 from flask_menu import current_menu
 from flask_principal import identity_loaded
@@ -322,7 +322,10 @@ def init_menu(app):
             icon="<i class='hdd icon'></i>",
         ),
         order=7,
-        visible_when=lambda: getattr(current_user, "verified_at", False),
+        visible_when=lambda: (
+            current_app.config.get("RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED", False)
+            and getattr(current_user, "verified_at", False)
+        ),
     )
 
 
