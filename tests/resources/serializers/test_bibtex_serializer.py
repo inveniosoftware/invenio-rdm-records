@@ -123,6 +123,7 @@ def test_bibtex_serializer_record_all_versions(running_app, updated_full_record)
         ("publication-taxonomictreatment"),
         ("publication-datapaper"),
         ("publication-dissertation"),
+        ("publication-thesis"),
         ("publication-standard"),
         ("publication-other"),
         ("poster"),
@@ -434,14 +435,14 @@ def test_serialize_publication_preprint(running_app, updated_minimal_record):
     assert serialized_record == expected_data
 
 
-def test_serialize_publication_thesis(running_app, updated_minimal_record):
-    """Test bibtex formatter for thesis.
+def test_serialize_publication_dissertation(running_app, updated_minimal_record):
+    """Test bibtex formatter for dissertation.
 
     It serializes into 'phdthesis'.
     """
     updated_minimal_record["metadata"]["resource_type"][
         "id"
-    ] = "publication-dissertation"  # Previously publication-thesis
+    ] = "publication-dissertation"
 
     updated_minimal_record.update(
         {"custom_fields": {"thesis:university": "A university"}}
@@ -453,6 +454,38 @@ def test_serialize_publication_thesis(running_app, updated_minimal_record):
     expected_data = "\n".join(
         [
             "@phdthesis{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
+            "                  Troy Inc.},",
+            "  title        = {A Romans story},",
+            "  school       = {A university},",
+            "  year         = 2023,",
+            "  month        = mar,",
+            "}",
+        ]
+    )
+
+    assert serialized_record == expected_data
+
+
+def test_serialize_publication_thesis(running_app, updated_minimal_record):
+    """Test bibtex formatter for thesis.
+
+    It serializes into 'mastersthesis'.
+    """
+    updated_minimal_record["metadata"]["resource_type"][
+        "id"
+    ] = "publication-thesis"
+
+    updated_minimal_record.update(
+        {"custom_fields": {"thesis:university": "A university"}}
+    )
+
+    serializer = BibtexSerializer()
+    serialized_record = serializer.serialize_object(updated_minimal_record)
+
+    expected_data = "\n".join(
+        [
+            "@mastersthesis{brown_2023_abcde-fghij,",
             "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",

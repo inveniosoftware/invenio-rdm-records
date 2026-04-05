@@ -121,12 +121,19 @@ class BibTexFormatter:
     }
     """A work with an author and a title which has not been formally published."""
 
-    thesis = {
+    phdthesis = {
         "name": "phdthesis",
         "req_fields": ["author", "title", "school", "year"],
         "opt_fields": ["address", "month", "note", "doi", "url"],
     }
-    """A thesis written for an educational institution."""
+    """The phdthesis entry type is intended to be used for a PhD thesis."""
+
+    mastersthesis = {
+        "name": "mastersthesis",
+        "req_fields": ["author", "title", "school", "year"],
+        "opt_fields": ["type", "address", "month", "note", "doi", "url"],
+    }
+    """The mastersthesis entry type is intended to be used for a Master's thesis."""
 
     manual = {
         "name": "manual",
