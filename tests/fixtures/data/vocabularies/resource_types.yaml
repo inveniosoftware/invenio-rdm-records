@@ -505,7 +505,7 @@
 - id: publication-dissertation
   icon: file alternate
   props:
-    csl: article
+    csl: thesis
     datacite_general: Dissertation
     datacite_type: ""
     openaire_resourceType: "0044"
@@ -513,6 +513,29 @@
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/Thesis
     subtype: publication-dissertation
+    type: publication
+    marc21_type: publication
+    marc21_subtype: dissertation
+  title:
+    en: Thesis
+    sv: Avhandling
+    de: Abschlussarbeit
+    cs: Závěrečná práce
+    ar: أطروحة
+  tags:
+    - depositable
+    - linkable
+- id: publication-thesis
+  icon: file alternate
+  props:
+    csl: thesis
+    datacite_general: Dissertation
+    datacite_type: Thesis
+    openaire_resourceType: "0044"
+    openaire_type: publication
+    eurepo: info:eu-repo/semantics/other
+    schema.org: https://schema.org/Thesis
+    subtype: publication-thesis
     type: publication
     marc21_type: publication
     marc21_subtype: dissertation
