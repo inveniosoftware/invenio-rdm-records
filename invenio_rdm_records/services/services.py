@@ -841,16 +841,22 @@ class RDMRecordService(RecordService):
         return True
 
     @unit_of_work()
-    def quota_increase(self, identity, id_, data=None, uow=None, **kwargs):
+    def quota_increase(self, identity, id_, data={}, uow=None, **kwargs):
         """Quota increase of a record."""
         try:
             record = self.record_cls.pid.resolve(id_)
         except:
             record = self.draft_cls.pid.resolve(id_, registered_only=False)
 
-        policy_result = self.config.quota_increase_policy.evaluate(
-            identity, record
-        )  # TODO pass data["quota_size"]
+        # The policy checks if the bucket's quota is allowed, so we temporarily
+        # set the bucket quota, evaluate the policy and restore the bucket quota
+        # before the new quota is actually applied when we accept the request below
+        original_quota = record.bucket.quota_size
+        record.bucket.quota_size = int(data.get("quota_size", 0)) * 10**9
+
+        policy_result = self.config.quota_increase_policy.evaluate(identity, record)
+
+        record.bucket.quota_size = original_quota
 
         immediate_quota_increase = policy_result["immediate_quota_increase"]
 

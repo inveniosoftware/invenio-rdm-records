@@ -14,7 +14,7 @@ from invenio_requests.services.events.config import request_event_anchor
 
 
 class BaseRequest(RequestType):
-    """Base class for all RDM requests."""
+    """Base class for all RDM requests rendered via UI."""
 
     links_item = {
         "self_html": EndpointLink(

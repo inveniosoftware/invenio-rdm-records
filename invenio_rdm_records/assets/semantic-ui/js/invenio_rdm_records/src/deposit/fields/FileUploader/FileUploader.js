@@ -195,7 +195,14 @@ export const FileUploaderComponent = ({
   }, {});
 
   const setAdditionalQuota = (value) => {
-    const minAdditional = quotaInGB["minAdditionalQuotaValue"];
+    // if a user uploads a file without publishing, we can't get the minAdditional
+    // from the backend, so we use the filesSize directly in this case
+    const additionalFilesSize =
+      Math.ceil(filesSize / Math.pow(10, 9)) - quotaInGB["defaultStorage"];
+    const minAdditional = Math.max(
+      quotaInGB["minAdditionalQuotaValue"],
+      additionalFilesSize
+    );
     const maxAdditional = quotaInGB["maxAdditionalQuotaValue"];
 
     if (value < minAdditional) {

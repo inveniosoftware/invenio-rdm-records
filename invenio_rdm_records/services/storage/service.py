@@ -19,6 +19,7 @@ from invenio_search.engine import dsl
 from sqlalchemy import func
 
 from invenio_rdm_records.records.models import (
+    RDMDraftMetadata,
     RDMRecordMetadata,
     RDMRecordQuota,
     RDMUserQuota,
@@ -58,22 +59,24 @@ class StorageService:
         """Current quota for a draft."""
         return record.bucket.quota_size
 
-    def record_draft_used_quota(self, record):
-        """Maximum used quota across all versions of record."""
-        total_bytes = (
-            db.session.query(
-                func.coalesce(func.sum(Bucket.size), 0).label("total_bytes")
-            )
-            .select_from(Bucket)
-            .join(
-                RDMRecordMetadata,
-                Bucket.id == RDMRecordMetadata.bucket_id,
-            )
-            .filter(RDMRecordMetadata.parent_id == record.parent.id)
+    def _get_max_bucket_size(self, parent_id, metadata_model):
+        """Get maximum bucket size for given parent and metadata model."""
+        result = (
+            db.session.query(func.coalesce(func.max(Bucket.size), 0))
+            .join(metadata_model, Bucket.id == metadata_model.bucket_id)
+            .filter(metadata_model.parent_id == parent_id)
             .scalar()
         )
+        return int(result) if result else 0
 
-        return int(total_bytes) or 0
+    def record_draft_used_quota(self, record):
+        """Calculate maximum used quota across all versions of a record and its drafts."""
+        parent_id = record.parent.id
+
+        return max(
+            self._get_max_bucket_size(parent_id, RDMRecordMetadata),
+            self._get_max_bucket_size(parent_id, RDMDraftMetadata),
+        )
 
     def additional_storage(self, user_id, record):
         """Additional quota for a specific draft."""

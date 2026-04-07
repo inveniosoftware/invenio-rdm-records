@@ -18,8 +18,6 @@ from marshmallow import ValidationError, fields, validate
 from invenio_rdm_records.proxies import current_rdm_records_service as records_service
 from invenio_rdm_records.requests.base import BaseRequest
 
-from ..requests.base import BaseRequest
-
 
 class CreateAction(actions.CreateAction):
     """Create action."""
