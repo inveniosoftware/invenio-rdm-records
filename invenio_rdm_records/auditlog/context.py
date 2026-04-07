@@ -38,3 +38,12 @@ class ResourceDataContext(object):
             "type": "draft" if isinstance(resource, RDMDraft) else "record",
         }
         dict_set(data, "metadata.triggered_by", triggered_by)
+
+
+class FileContext(object):
+    """Payload generator for setting file data."""
+
+    def __call__(self, data, **kwargs):
+        """Update data with file data."""
+        file_key = kwargs.get("file_key", None)
+        dict_set(data, "metadata.file_key", file_key)

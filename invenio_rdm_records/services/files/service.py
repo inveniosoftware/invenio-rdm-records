@@ -7,8 +7,14 @@
 
 """File Service API."""
 
+from invenio_audit_logs.services.uow import AuditLogOp
 from invenio_records_resources.services import FileService
+from invenio_records_resources.services.uow import unit_of_work
 
+from invenio_rdm_records.auditlog.actions import (
+    FileCreateAuditLog,
+    FileDeleteAuditLog,
+)
 from invenio_rdm_records.services.errors import RecordDeletedException
 
 
@@ -32,3 +38,23 @@ class RDMFileService(FileService):
         self._check_record_deleted_permissions(record, identity)
 
         return record
+
+    @unit_of_work()
+    def commit_file(self, identity, id_, file_key, uow=None):
+        """Commit a file upload."""
+        result = super().commit_file(identity, id_, file_key, uow=uow)
+
+        uow.register(
+            AuditLogOp(FileCreateAuditLog.build(identity, id_, file_key=file_key))
+        )  # Added here as audit logs can't be added to invenio-records-resources
+        return result
+
+    @unit_of_work()
+    def delete_file(self, identity, id_, file_key, uow=None):
+        """Delete a file."""
+        result = super().delete_file(identity, id_, file_key, uow=uow)
+
+        uow.register(
+            AuditLogOp(FileDeleteAuditLog.build(identity, id_, file_key=file_key))
+        )  # Added here as audit logs can't be added to invenio-records-resources
+        return result
