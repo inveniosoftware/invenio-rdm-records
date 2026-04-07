@@ -9,6 +9,7 @@
 """Invenio RDM module to create REST APIs."""
 
 from .config import (
+    RDMCollectionsResourceConfig,
     RDMCommunityRecordsResourceConfig,
     RDMDraftFilesResourceConfig,
     RDMGrantGroupAccessResourceConfig,
@@ -32,6 +33,7 @@ from .resources import (
 
 __all__ = (
     "IIIFResource",
+    "RDMCollectionsResourceConfig",
     "IIIFResourceConfig",
     "RDMCommunityRecordsResource",
     "RDMCommunityRecordsResourceConfig",

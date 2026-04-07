@@ -23,6 +23,7 @@ from flask_resources import (
     create_error_handler,
     resource_requestctx,
 )
+from invenio_collections.resources.config import CollectionsResourceConfig
 from invenio_communities.communities.resources import CommunityResourceConfig
 from invenio_communities.communities.resources.config import community_error_handlers
 from invenio_drafts_resources.resources import RecordResourceConfig
@@ -628,4 +629,15 @@ class RDMRecordRequestsResourceConfig(ResourceConfig, ConfiguratorMixin):
             "application/json"
         ],
         **ResourceConfig.response_handlers,
+    }
+
+
+class RDMCollectionsResourceConfig(CollectionsResourceConfig):
+    """RDM-specific collections resource config with UI serializer."""
+
+    response_handlers = {
+        "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers),
+        "application/vnd.inveniordm.v1+json": ResponseHandler(
+            UIJSONSerializer(), headers=etag_headers
+        ),
     }

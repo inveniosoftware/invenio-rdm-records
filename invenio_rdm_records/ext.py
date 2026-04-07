@@ -17,6 +17,9 @@ from warnings import warn
 from flask import Blueprint
 from flask_iiif import IIIF
 from flask_principal import identity_loaded
+from invenio_collections.resources.resource import CollectionsResource
+from invenio_collections.services.config import CollectionServiceConfig
+from invenio_collections.services.service import CollectionsService
 from invenio_records_resources.resources.files import FileResource
 
 from . import config
@@ -27,6 +30,7 @@ from .oaiserver.services.services import OAIPMHServerService
 from .resources import (
     IIIFResource,
     IIIFResourceConfig,
+    RDMCollectionsResourceConfig,
     RDMCommunityRecordsResource,
     RDMCommunityRecordsResourceConfig,
     RDMDraftFilesResourceConfig,
@@ -210,6 +214,12 @@ class InvenioRDMRecords(object):
             config=service_configs.oaipmh_server,
         )
 
+        # Community collections
+        self.community_collections_service = CollectionsService(
+            config=CollectionServiceConfig.build(app),
+            records_service=self.community_records_service,
+        )
+
     def init_resource(self, app):
         """Initialize resources."""
         self.records_resource = RDMRecordResource(
@@ -290,6 +300,12 @@ class InvenioRDMRecords(object):
             config=IIIFResourceConfig.build(app),
         )
 
+        # Community collections
+        self.community_collections_resource = CollectionsResource(
+            service=self.community_collections_service,
+            config=RDMCollectionsResourceConfig.build(app),
+        )
+
     def fix_datacite_configs(self, app):
         """Make sure that the DataCite config items are strings."""
         datacite_config_items = [
@@ -335,6 +351,9 @@ def init(app):
     )
     sregistry.register(ext.oaipmh_server_service, service_id="oaipmh-server")
     sregistry.register(ext.iiif_service, service_id="rdm-iiif")
+    sregistry.register(
+        ext.community_collections_service, service_id="community-collections"
+    )
     # Register indexers
     iregistry = app.extensions["invenio-indexer"].registry
     iregistry.register(ext.records_service.indexer, indexer_id="records")
