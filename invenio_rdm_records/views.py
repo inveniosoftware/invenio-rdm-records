@@ -107,6 +107,12 @@ def create_iiif_bp(app):
     return ext.iiif_resource.as_blueprint()
 
 
+def create_community_collections_bp(app):
+    """Create community collections blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.community_collections_resource.as_blueprint()
+
+
 @blueprint.app_context_processor
 def file_transfer_type():
     """Injects all *_TRANSFER_TYPE constants into templates as `file_transfer_type`, accessible via dot notation."""
