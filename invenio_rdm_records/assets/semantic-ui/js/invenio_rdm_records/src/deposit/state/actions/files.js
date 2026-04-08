@@ -96,17 +96,17 @@ export const initializeFileUpload = (draft, file) => {
   };
 };
 
-export const updateFileMetadata = (draft, serverFile, file) => {
+export const updateFileMetadata = (draft, file) => {
   return async (dispatch, _, config) => {
     try {
-      const updateUrl = serverFile.links.self;
+      const updateUrl = file.meta.links.self;
       const newFileMetadata = {
         metadata: file.meta.metadata,
       };
       return await config.service.files.updateFileMetadata(updateUrl, newFileMetadata);
     } catch (error) {
       const axiosError = error?.t0 && error.t0.isAxiosError ? error.t0 : error;
-      console.error("Error updating file metadata", axiosError, draft, serverFile);
+      console.error("Error updating file metadata", axiosError, draft, file);
       const errorMessage =
         axiosError?.response?.data?.message || axiosError?.message || "Metadata update failed";
       throw new Error(errorMessage);

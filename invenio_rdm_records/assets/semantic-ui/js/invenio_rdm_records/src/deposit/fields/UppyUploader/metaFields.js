@@ -105,38 +105,40 @@ export const getMetaFieldsRenderers = (allowedMetaFields) => {
  * This ensures that required parameters are not lost and metadata is 
  * consistently structured before uploading.
  *
- * @param {Object} files - The Uppy files object dictionary.
+ * @param {Object} uppyFiles - The Uppy files object dictionary.
+ * @param {Object} invenioFiles - The files object from Invenio.
  * @param {Array<Object>} allowedMetaFields - Configuration for metadata fields.
  * @returns {Object} Updated files dictionary.
  */
-export const onBeforeUploadProcessMetaFields = (files, allowedMetaFields) => {
+export const onBeforeUploadProcessMetaFields = (uppyFiles, invenioFiles, allowedMetaFields) => {
   const updatedFiles = {};
   
-  Object.keys(files).forEach((fileID) => {
-    const file = files[fileID];
-    file.meta["metadata"] = file.meta?.metadata || {};
+  Object.keys(uppyFiles).forEach((fileID) => {
+    const uppyFile = uppyFiles[fileID];
+    const invenioFile = invenioFiles[uppyFile.meta?.file_id ?? uppyFile.id] || {};
+    uppyFile.meta["metadata"] = uppyFile.meta?.metadata || invenioFile?.metadata || {};
     const metadataDefaults = {};
 
     (allowedMetaFields || []).forEach((field) => {
       // Determine if this field should apply defaults to this file
-      const isApplicable = typeof field.condition === "function" ? field.condition(file) : true;
+      const isApplicable = typeof field.condition === "function" ? field.condition(uppyFile) : true;
 
       if (isApplicable) {
-        if (file.meta.metadata?.[field.id] === undefined && file.meta?.[field.id] === undefined) {
-          const value = typeof field.defaultValue === "function" ? field.defaultValue(file) : field?.defaultValue;
+        if (uppyFile.meta.metadata?.[field.id] === undefined && uppyFile.meta?.[field.id] === undefined) {
+          const value = typeof field.defaultValue === "function" ? field.defaultValue(uppyFile) : field?.defaultValue;
           metadataDefaults[field.id] = value;
           return;
         }
-        metadataDefaults[field.id] = file.meta.metadata?.[field.id] || file.meta?.[field.id];
+        metadataDefaults[field.id] = uppyFile.meta.metadata?.[field.id] || uppyFile.meta?.[field.id];
       }
     });
 
     updatedFiles[fileID] = {
-      ...file,
+      ...uppyFile,
       meta: {
-        ...file.meta,
+        ...uppyFile.meta,
         metadata: {
-          ...file.meta.metadata,
+          ...uppyFile.meta.metadata,
           ...metadataDefaults,
         }
       }

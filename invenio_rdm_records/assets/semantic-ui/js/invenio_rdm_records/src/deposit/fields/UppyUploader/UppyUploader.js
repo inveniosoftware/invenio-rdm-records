@@ -185,10 +185,10 @@ export const UppyUploaderComponent = ({
 
   React.useEffect(() => {
     uppy.setOptions({
-      onBeforeUpload: (files) => {
+      onBeforeUpload: (uppyFiles) => {
         return activeAllowedMetaFields && activeAllowedMetaFields.length > 0 
-          ? onBeforeUploadProcessMetaFields(files, activeAllowedMetaFields)
-          : files;
+          ? onBeforeUploadProcessMetaFields(uppyFiles, files, activeAllowedMetaFields)
+          : uppyFiles;
       }
     });
   }, [uppy, activeAllowedMetaFields]);

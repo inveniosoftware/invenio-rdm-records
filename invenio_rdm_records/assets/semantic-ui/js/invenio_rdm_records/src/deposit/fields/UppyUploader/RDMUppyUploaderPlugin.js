@@ -398,10 +398,10 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
    *  - The default implementation calls out to Companion’s S3 signing endpoints.
    */
   async completeMultipartUpload(file) {
-    const response = await this.opts.finalizeUpload(file);
     if (file.meta?.metadata && Object.keys(file.meta.metadata).length > 0 && this.opts.updateFileMetadata) {
-      await this.opts.updateFileMetadata(this.draftRecord, response, file);
+      await this.opts.updateFileMetadata(this.draftRecord, file);
     }
+    const response = await this.opts.finalizeUpload(file);
     return response.links.content;
   }
 
