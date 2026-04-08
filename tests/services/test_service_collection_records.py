@@ -168,14 +168,12 @@ def test_preview_collection_records_invalid_query(
     assert "Invalid search query" in str(errors)
 
 
-def test_namespace_id_resolution_by_slug(
-    db,
-    community,
-):
+def test_namespace_id_resolution_by_slug(db, community, community_owner, running_app):
     """Test that namespace_id can be resolved from community slug."""
+    running_app.app.config["COMMUNITIES_COLLECTIONS_ENABLED"] = True
     community_slug = community._record.get("slug", community.id)
     tree = current_community_collections_service.create_tree(
-        identity=system_identity,
+        identity=community_owner.identity,
         namespace_id=community_slug,
         data={
             "slug": "test-slug-resolution",
@@ -186,3 +184,5 @@ def test_namespace_id_resolution_by_slug(
 
     assert tree._tree.slug == "test-slug-resolution"
     assert str(tree._tree.namespace_id) == str(community.id)
+
+    running_app.app.config["COMMUNITIES_COLLECTIONS_ENABLED"] = False
