@@ -11,6 +11,7 @@ from celery import shared_task
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_db import db
+
 from ..proxies import current_community_collections_service
 
 
