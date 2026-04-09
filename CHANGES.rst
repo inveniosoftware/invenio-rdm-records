@@ -12,6 +12,14 @@
 Changes
 =======
 
+Version v28.2.0 (released 2026-04-09)
+
+- feat(storage-quota): settings integration
+- feat(storage-quota): implement self-served quota increases
+- chore: deprecate FILES_REST in favour of RDM_FILES
+    This was deprecated in RDM records in August 2024
+    https://github.com/inveniosoftware/invenio-rdm-records/pull/1789/changes
+
 Version v28.1.0 (released 2026-04-09)
 - fix: switch to accordion data-label
 
