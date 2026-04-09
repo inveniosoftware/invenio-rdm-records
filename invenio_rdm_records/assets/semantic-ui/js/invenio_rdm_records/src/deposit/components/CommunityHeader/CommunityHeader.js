@@ -82,6 +82,7 @@ class CommunityHeaderComponent extends Component {
                         this.setState({ modalOpen: false });
                       }}
                       onModalChange={(value) => this.setState({ modalOpen: value })}
+                      handleClose={() => this.setState({ modalOpen: false })}
                       modalOpen={modalOpen}
                       chosenCommunity={community}
                       displaySelected
