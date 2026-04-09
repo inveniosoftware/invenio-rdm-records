@@ -35,6 +35,7 @@ class CommunityHeaderComponent extends Component {
       record,
       showCommunityHeader,
       apiConfigs,
+      overriddenComponents,
     } = this.props;
     const { modalOpen } = this.state;
 
@@ -88,6 +89,7 @@ class CommunityHeaderComponent extends Component {
                       displaySelected
                       record={record}
                       apiConfigs={apiConfigs}
+                      overriddenComponents={overriddenComponents}
                       trigger={
                         <Overridable id="InvenioRdmRecords.CommunityHeader.CommunitySelectionButton.Container">
                           <Button
@@ -145,11 +147,13 @@ CommunityHeaderComponent.propTypes = {
   record: PropTypes.object.isRequired,
   userCanManageRecord: PropTypes.bool.isRequired,
   apiConfigs: PropTypes.object,
+  overriddenComponents: PropTypes.object,
 };
 
 CommunityHeaderComponent.defaultProps = {
   community: undefined,
   apiConfigs: undefined,
+  overriddenComponents: undefined,
 };
 
 const mapStateToProps = (state) => ({
