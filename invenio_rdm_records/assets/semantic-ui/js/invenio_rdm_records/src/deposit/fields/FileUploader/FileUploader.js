@@ -59,7 +59,7 @@ export const FileUploaderComponent = ({
   const [warningMsg, setWarningMsg] = useState();
   const [showQuotaSection, setShowQuotaSection] = useState(false);
   const [additionalQuota, _setAdditionalQuota] = useState(
-    quota.quotaIncrease.additionalStorage / Math.pow(10, 9) || 0
+    quota.quotaIncrease?.additionalStorage / Math.pow(10, 9) || 0
   );
   const lockFileUploader = !isDraftRecord && filesLocked;
   const dropzoneParams = {
@@ -185,7 +185,7 @@ export const FileUploaderComponent = ({
   };
 
   // rescale quota from bytes to GB, as user input requires GB
-  const quotaInGB = Object.keys(quota["quotaIncrease"]).reduce((obj, key) => {
+  const quotaInGB = Object.keys(quota.quotaIncrease).reduce((obj, key) => {
     if (typeof quota["quotaIncrease"][key] === "number") {
       obj[key] = quota["quotaIncrease"][key] / Math.pow(10, 9);
     } else {
@@ -271,7 +271,7 @@ export const FileUploaderComponent = ({
             {...uiProps}
           >
             {displayImportBtn && (
-              <Grid.Row className="pb-5 pt-5">
+              <Grid.Row className="pt-5 pb-5">
                 <Grid.Column width={16}>
                   <Message visible info>
                     <div className="right-floated display-inline-block">
@@ -381,7 +381,7 @@ export const FileUploaderComponent = ({
                         className="right-floated"
                         disabled={!permissions.can_new_version}
                       />
-                      <p className="mt-5 display-inline-block">
+                      <p className="display-inline-block mt-5">
                         <Icon name="info circle" size="large" />
                         {i18next.t(
                           "You must create a new version to add, modify or delete files."

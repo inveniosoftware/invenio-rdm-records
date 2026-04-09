@@ -55,9 +55,12 @@ class StorageService:
             "RDM_FILES_DEFAULT_QUOTA_SIZE", 10 * 10**9
         )
 
-    def record_draft_quota_size(self, record):
+    def record_draft_quota_size(self, record, user_id):
         """Current quota for a draft."""
-        return record.bucket.quota_size
+        if record:
+            return record.bucket.quota_size
+        else:
+            return(self.default_quota(user_id))
 
     def _get_max_bucket_size(self, parent_id, metadata_model):
         """Get maximum bucket size for given parent and metadata model."""
@@ -71,17 +74,20 @@ class StorageService:
 
     def record_draft_used_quota(self, record):
         """Calculate maximum used quota across all versions of a record and its drafts."""
-        parent_id = record.parent.id
+        if record:
+            parent_id = record.parent.id
 
-        return max(
-            self._get_max_bucket_size(parent_id, RDMRecordMetadata),
-            self._get_max_bucket_size(parent_id, RDMDraftMetadata),
-        )
+            return max(
+                self._get_max_bucket_size(parent_id, RDMRecordMetadata),
+                self._get_max_bucket_size(parent_id, RDMDraftMetadata),
+            )
+        else:
+            return 0
 
     def additional_storage(self, user_id, record):
         """Additional quota for a specific draft."""
         return max(
-            self.record_draft_quota_size(record) - self.default_quota(user_id), 0
+            self.record_draft_quota_size(record, user_id) - self.default_quota(user_id), 0
         )
 
     def min_additional_quota_value(self, user_id, record=None):

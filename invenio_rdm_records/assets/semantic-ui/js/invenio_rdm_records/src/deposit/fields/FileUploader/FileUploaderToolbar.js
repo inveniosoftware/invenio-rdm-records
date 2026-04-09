@@ -120,7 +120,7 @@ export const FileUploaderToolbar = (props) => {
                   >
                     {humanReadableBytes(filesSize, decimalSizeDisplay)}{" "}
                     {i18next.t("out of")}{" "}
-                    {quota.quotaIncrease.enabled && quota.quotaIncrease.valid_user
+                    {quota.quotaIncrease?.enabled && quota.quotaIncrease?.valid_user
                       ? humanReadableBytes(
                           quota.quotaIncrease.defaultStorage +
                             additionalQuota * Math.pow(10, 9),
