@@ -12,6 +12,9 @@
 Changes
 =======
 
+Version v28.1.0 (released 2026-04-09)
+- fix: switch to accordion data-label
+
 Version v28.0.0 (released 2026-04-08)
 
 - fix: user access request routing
