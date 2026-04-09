@@ -7,7 +7,7 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import React, { Component } from "react";
-import { OverridableContext, parametrize } from "react-overridable";
+import Overridable, { OverridableContext, parametrize } from "react-overridable";
 import {
   EmptyResults,
   Error,
@@ -52,6 +52,7 @@ export class CommunitySelectionSearch extends Component {
       pagination,
       myCommunitiesEnabled,
       autofocus,
+      overriddenComponents: extraOverriddenComponents,
     } = this.props;
 
     const searchApi = new InvenioSearchApi(selectedSearchApi);
@@ -60,6 +61,7 @@ export class CommunitySelectionSearch extends Component {
         record,
         isInitialSubmission,
       }),
+      ...extraOverriddenComponents,
     };
 
     return (
@@ -74,51 +76,60 @@ export class CommunitySelectionSearch extends Component {
         >
           <>
             <Modal.Content as={Grid} className="m-0 pb-0 centered">
-              {myCommunitiesEnabled && (
-                <Grid.Column
-                  mobile={16}
-                  tablet={8}
-                  computer={8}
-                  textAlign="left"
-                  floated="left"
-                  className="pt-0 pl-0"
-                >
-                  <Menu role="tablist" className="theme-primary-menu" compact>
-                    <Menu.Item
-                      as="button"
-                      role="tab"
-                      id="all-communities-tab"
-                      aria-selected={selectedAppId === allCommunities.appId}
-                      aria-controls={allCommunities.appId}
-                      name="All"
-                      active={selectedAppId === allCommunities.appId}
-                      onClick={() =>
-                        this.setState({
-                          selectedConfig: allCommunities,
-                        })
-                      }
-                    >
-                      {i18next.t("All")}
-                    </Menu.Item>
-                    <Menu.Item
-                      as="button"
-                      role="tab"
-                      id="my-communities-tab"
-                      aria-selected={selectedAppId === myCommunities.appId}
-                      aria-controls={myCommunities.appId}
-                      name="My communities"
-                      active={selectedAppId === myCommunities.appId}
-                      onClick={() =>
-                        this.setState({
-                          selectedConfig: myCommunities,
-                        })
-                      }
-                    >
-                      {i18next.t("My communities")}
-                    </Menu.Item>
-                  </Menu>
-                </Grid.Column>
-              )}
+              <Overridable
+                id="InvenioRdmRecords.CommunityHeader.CommunitySelectionSearch.TabMenu.Container"
+                allCommunities={allCommunities}
+                myCommunities={myCommunities}
+                selectedAppId={selectedAppId}
+                onSelectConfig={(config) => this.setState({ selectedConfig: config })}
+                myCommunitiesEnabled={myCommunitiesEnabled}
+              >
+                {myCommunitiesEnabled && (
+                  <Grid.Column
+                    mobile={16}
+                    tablet={8}
+                    computer={8}
+                    textAlign="left"
+                    floated="left"
+                    className="pt-0 pl-0"
+                  >
+                    <Menu role="tablist" className="theme-primary-menu" compact>
+                      <Menu.Item
+                        as="button"
+                        role="tab"
+                        id="all-communities-tab"
+                        aria-selected={selectedAppId === allCommunities.appId}
+                        aria-controls={allCommunities.appId}
+                        name="All"
+                        active={selectedAppId === allCommunities.appId}
+                        onClick={() =>
+                          this.setState({
+                            selectedConfig: allCommunities,
+                          })
+                        }
+                      >
+                        {i18next.t("All")}
+                      </Menu.Item>
+                      <Menu.Item
+                        as="button"
+                        role="tab"
+                        id="my-communities-tab"
+                        aria-selected={selectedAppId === myCommunities.appId}
+                        aria-controls={myCommunities.appId}
+                        name="My communities"
+                        active={selectedAppId === myCommunities.appId}
+                        onClick={() =>
+                          this.setState({
+                            selectedConfig: myCommunities,
+                          })
+                        }
+                      >
+                        {i18next.t("My communities")}
+                      </Menu.Item>
+                    </Menu>
+                  </Grid.Column>
+                )}
+              </Overridable>
               <Grid.Column
                 mobile={16}
                 tablet={8}
@@ -184,6 +195,7 @@ CommunitySelectionSearch.propTypes = {
   pagination: PropTypes.bool,
   myCommunitiesEnabled: PropTypes.bool,
   autofocus: PropTypes.bool,
+  overriddenComponents: PropTypes.object,
 };
 
 CommunitySelectionSearch.defaultProps = {
@@ -193,6 +205,7 @@ CommunitySelectionSearch.defaultProps = {
   autofocus: true,
   CommunityListItem: CommunityListItem,
   record: null,
+  overriddenComponents: undefined,
   apiConfigs: {
     allCommunities: {
       initialQueryState: { size: 5, page: 1, sortBy: "bestmatch" },
