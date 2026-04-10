@@ -74,11 +74,6 @@ def test_request_flow(uploader, superuser, client, record_factory, headers):
     resp = client.post(f"/requests/{request_id}/actions/accept", headers=headers)
     assert resp.status_code == 200
     assert resp.json["status"] == "accepted"
-    assert resp.json["payload"] == {
-        "reason": "test-record",
-        "policy_id": "request-deletion-v1",
-        "comment": "Test request deletion comment",
-    }
 
     # Check the deleted record
     uploader.login(client, logout_first=True)

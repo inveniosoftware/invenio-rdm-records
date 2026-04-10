@@ -86,7 +86,6 @@ def test_request_deletion_request_only(record_factory, search_clear, uploader):
     assert request["status"] == "submitted"
     assert request["payload"] == {
         "reason": "test-record",
-        "policy_id": "request-deletion-v1",
         "comment": "Test request deletion comment",
     }
     assert request["created_by"] == {"user": str(uploader.id)}

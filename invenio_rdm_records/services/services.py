@@ -281,8 +281,8 @@ class RDMRecordService(RecordService):
             raise PermissionDeniedError()
 
         # Keep track of the immediate deletion policy ID
-        if deletion_policy := (immediate_deletion.policy or request_deletion.policy):
-            data["policy_id"] = deletion_policy.get("id")
+        if immediate_deletion.policy:
+            data["policy_id"] = immediate_deletion.policy.get("id")
 
         request = requests_service.create(
             identity,
