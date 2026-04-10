@@ -87,7 +87,7 @@ class AcceptAction(actions.AcceptAction):
 
         # For immediate deletions, we track the deletion policy ID in the tombstone
         policy_id = self.request.get("payload", {}).get("policy_id")
-        if policy_id:
+        if policy_id and policy_id not in ("request-deletion-v1",):
             # NOTE: Deletion policies are not a vocabulary, but we follow the same
             # format for consistency and potential extensions.
             tombstone_data["deletion_policy"] = {"id": policy_id}
