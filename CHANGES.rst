@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v28.3.0 (released 2026-04-13)
+
+- feat: add new RDMSubCommunity request class
+- fix: remove duplicate definition of collections service proxy
+
 Version v28.2.0 (released 2026-04-09)
 
 - feat(storage-quota): settings integration
