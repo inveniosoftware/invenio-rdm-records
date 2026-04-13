@@ -13,6 +13,7 @@ from .community_submission import CommunitySubmission
 from .file_modification import FileModification
 from .quota_increase import QuotaIncrease
 from .record_deletion import RecordDeletion
+from .subcommunities import RDMSubCommunityInvitationRequest, RDMSubCommunityRequest
 
 __all__ = (
     "CommunityInclusion",
@@ -22,4 +23,6 @@ __all__ = (
     "RecordDeletion",
     "FileModification",
     "QuotaIncrease",
+    "RDMSubCommunityInvitationRequest",
+    "RDMSubCommunityRequest",
 )
