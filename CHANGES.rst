@@ -76,9 +76,9 @@ Version v20.0.3 (released 2025-09-03)
 
 Version v20.0.2 (released 2025-09-01)
 
-- fix(optional-doi): show correctly showed value on form initialization
-    * uses published record doi to check if the managed DOI can be unreserved.
-    * `shouldCheckForExplicitDOIReservation` condition is evaluated against pids.doi because
+- fix(optional-doi): show correctly showed value on form initialization 
+    * uses published record doi to check if the managed DOI can be unreserved. 
+    * `shouldCheckForExplicitDOIReservation` condition is evaluated against pids.doi because 
       before it was taking into account only the pids object and there more pids could be present e.g. oai
 - fix(iiif): add error handler for `MultimediaImageNotFound`
 
@@ -107,7 +107,7 @@ Version v20.0.0 (released 2025-08-01)
   - Remove deprecated approve action
   - Add comprehensive tests for reviewer assignment
   - Include configuration validation for reviewer settings
-- setup: bump major versions of invenio-communities and invenio-checks
+- setup: bump major versions of invenio-communties and invenio-checks
   - needed to isolate the new request reviewers functionality
 
 Version v19.5.3 (released 2025-07-31)
