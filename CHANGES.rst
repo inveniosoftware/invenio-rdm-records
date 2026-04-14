@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v28.3.1 (released 2026-04-14)
+
+- fix: display DOI validation errors in deposit form
+
 Version v28.3.0 (released 2026-04-13)
 
 - feat: add new RDMSubCommunity request class
