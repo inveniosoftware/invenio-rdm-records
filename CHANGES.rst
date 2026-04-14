@@ -1,5 +1,6 @@
 
 ..
+    Copyright (C) 2026      California Institute of Technology.
     Copyright (C) 2019-2025 CERN.
     Copyright (C) 2019-2024 Northwestern University.
     Copyright (C) 2024      KTH Royal Institute of Technology.
@@ -11,6 +12,15 @@
 
 Changes
 =======
+
+Version v20.3.0 (released 2026-04-16)
+
+- setup: pin invenio-vocabularies to 9.0.x series
+- fix: get accordion data-label instead of the label
+- chore: black formatting python3.9 compatability
+- fix(tests): update wikidata identifier
+- fix(tests): make logic to restore last revision more robust
+- fix(tests): use valid WikiData IDs and Geonames in fixtures
 
 Version v20.2.1 (released 2026-03-24)
 
