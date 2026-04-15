@@ -17,6 +17,7 @@ import {
   FILE_UPLOAD_ADDED,
   FILE_UPLOAD_FINISHED,
   FILE_UPLOAD_FAILED,
+  FILE_UPLOAD_INITIALIZED,
 } from "../types";
 import { saveDraftWithUrlUpdate } from "./deposit";
 
@@ -82,7 +83,18 @@ export const initializeFileUpload = (draft, file) => {
           filename: file.name,
         },
       });
-      return await config.service.files.initializeUpload(draft.links.files, file);
+      const response = await config.service.files.initializeUpload(
+        draft.links.files,
+        file
+      );
+      dispatch({
+        type: FILE_UPLOAD_INITIALIZED,
+        payload: {
+          filename: file.name,
+          links: response.links,
+        },
+      });
+      return response;
     } catch (error) {
       const axiosError = error?.t0 && error.t0.isAxiosError ? error.t0 : error;
 

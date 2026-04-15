@@ -11,6 +11,7 @@ import {
   FILE_UPLOAD_CANCELLED,
   FILE_UPLOAD_FAILED,
   FILE_UPLOAD_FINISHED,
+  FILE_UPLOAD_INITIALIZED,
   FILE_UPLOAD_IN_PROGRESS,
   FILE_UPLOAD_SET_CANCEL_FUNCTION,
 } from "../../state/types";
@@ -22,6 +23,17 @@ export class RDMUploadProgressNotifier extends UploadProgressNotifier {
         type: FILE_UPLOAD_ADDED,
         payload: {
           filename: filename,
+        },
+      });
+  }
+
+  onUploadInitialized(filename, links) {
+    this.dispatcher &&
+      this.dispatcher({
+        type: FILE_UPLOAD_INITIALIZED,
+        payload: {
+          filename: filename,
+          links: links,
         },
       });
   }

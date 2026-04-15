@@ -15,6 +15,7 @@ import {
   FILE_UPLOAD_CANCELLED,
   FILE_UPLOAD_FAILED,
   FILE_UPLOAD_FINISHED,
+  FILE_UPLOAD_INITIALIZED,
   FILE_UPLOAD_IN_PROGRESS,
   FILE_UPLOAD_SAVE_DRAFT_FAILED,
   FILE_UPLOAD_SET_CANCEL_FUNCTION,
@@ -49,6 +50,18 @@ const fileReducer = (state = initialState, action) => {
             checksum: null,
             links: null,
             cancelUploadFn: null,
+          },
+        },
+        actionState: action.type,
+      };
+    case FILE_UPLOAD_INITIALIZED:
+      return {
+        ...state,
+        entries: {
+          ...state.entries,
+          [remoteFileName]: {
+            ...state.entries[remoteFileName],
+            links: action.payload.links,
           },
         },
         actionState: action.type,
