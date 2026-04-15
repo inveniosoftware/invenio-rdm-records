@@ -9,6 +9,7 @@
 """Record deletion request."""
 
 from invenio_access.permissions import system_identity
+from invenio_i18n import gettext
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -40,7 +41,7 @@ class CreateAction(actions.CreateAction):
             )
 
         self._verify_removal_reason()
-        self.request["title"] = _(
+        self.request["title"] = gettext(
             'Deletion request for "%(record_title)s"',
             record_title=record.metadata["title"],
         )
