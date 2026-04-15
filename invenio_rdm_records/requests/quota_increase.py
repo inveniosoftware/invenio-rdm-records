@@ -9,6 +9,7 @@
 """Quota increase request."""
 
 from invenio_access.permissions import system_identity
+from invenio_i18n import gettext
 from invenio_i18n import lazy_gettext as _
 from invenio_requests.customizations import actions
 from marshmallow import fields
@@ -26,13 +27,12 @@ class CreateAction(actions.CreateAction):
         record_title = record.metadata.get("title")
 
         if record_title:
-            self.request["title"] = _(
+            self.request["title"] = gettext(
                 'Quota increase request for "%(record_title)s"',
                 record_title=record_title,
             )
         else:
-            # We branched here for i18n purposes
-            self.request["title"] = _("Quota increase request for Empty draft title")
+            self.request["title"] = gettext("Quota increase request")
 
         super().execute(identity, uow)
 
