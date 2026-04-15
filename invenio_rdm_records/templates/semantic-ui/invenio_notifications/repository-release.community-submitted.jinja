@@ -2,6 +2,8 @@
 {% set release_tag = notification.context.release_tag %}
 {% set community_title = notification.context.community["metadata"]["title"] %}
 {% set request_link = notification.context.request["links"]["self_html"] %}
+{% set warnings = notification.context.warnings %}
+{% set has_warnings = warnings|length != 0 %}
 
 {% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
 
@@ -18,6 +20,22 @@
     <tr>
         <td>{{ _("No further action is needed right now. This only needs to be done for your repository's first release.") }}</td>
     </tr>
+
+    {% if has_warnings %}
+        <tr>
+            <td><strong>{{ _("However, some warnings were encountered during processing:") }}</strong></td>
+        </tr>
+        <tr>
+            <td>
+                <ul>
+                    {% for warning in warnings %}
+                        <li>{{ warning }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    {% endif %}
+
     <tr>
         <td><a href="{{ request_link }}" class="button">{{ _("View the review request") }}</a> {{ _("for more details.") }}</td>
     </tr>
@@ -35,6 +53,14 @@
 
 {{ _("No further action is needed right now. This only needs to be done for your repository's first release.") }}
 
+{% if has_warnings %}
+**{{ _("However, some warnings were encountered during processing:") }}**
+
+{% for warning in warnings %}
+- {{ warning }}
+{% endfor %}
+{% endif %}
+
 [{{ _("View the review request") }}]({{ request_link }}) {{ _("for more details.") }}
 
 {{ _("This is an auto-generated message. To manage notifications, visit your account settings") }}
@@ -45,6 +71,14 @@
 {{ _("Release %(release_tag)s of %(repository_name)s has been submitted for review to %(community_title)s.", release_tag=release_tag, repository_name=repository_full_name, community_title=community_title) }}
 
 {{ _("No further action is needed right now. This only needs to be done for your repository's first release.") }}
+
+{% if has_warnings %}
+**{{ _("However, some warnings were encountered during processing:") }}**
+
+{% for warning in warnings %}
+- {{ warning }}
+{% endfor %}
+{% endif %}
 
 [{{ _("View the review request") }}]({{ request_link }}) {{ _("for more details.") }}
 

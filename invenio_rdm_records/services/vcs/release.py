@@ -7,6 +7,8 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 """VCS release API implementation."""
 
+from __future__ import annotations
+
 from flask import current_app
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_access.utils import get_identity
@@ -14,10 +16,14 @@ from invenio_db import db
 from invenio_drafts_resources.resources.records.errors import DraftNotCreatedError
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
+from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.services.uow import UnitOfWork
 from invenio_vcs.api import VCSRelease
 from invenio_vcs.errors import CustomVCSReleaseNoRetryError
-from invenio_vcs.models import ReleaseStatus
+from invenio_vcs.models import Release, ReleaseStatus
+from invenio_vcs.providers import RepositoryServiceProvider
+from invenio_vocabularies.proxies import current_service as current_vocabularies_service
+from sqlalchemy.exc import NoResultFound
 
 from invenio_rdm_records.notifications.vcs import (
     RepositoryReleaseCommunityRequiredNotificationBuilder,
@@ -62,22 +68,35 @@ class RDMVCSRelease(VCSRelease):
 
     metadata_cls = RDMReleaseMetadata
 
-    @property
-    def metadata(self):
+    def __init__(self, release: Release, provider: RepositoryServiceProvider):
+        """Constructor."""
+        super().__init__(release, provider)
+        self.warnings = []
+
+    def add_warning(self, warning: str):
+        """Add a new non-fatal warning."""
+        self.warnings.append(warning)
+
+    def build_metadata(self):
         """Extracts metadata to create an RDM draft."""
         metadata = self.metadata_cls(self)
-        output = metadata.default_metadata
+        output: dict = metadata.default_metadata
         output.update(metadata.extra_metadata)
-        output.update(metadata.citation_metadata)
+        citation_metadata = metadata.citation_metadata
+        if citation_metadata is not None:
+            output.update(citation_metadata)
 
         if not output.get("creators"):
-            # Get owner from Github API
             owner = self.get_owner()
             if owner:
                 output.update({"creators": [owner]})
 
         # Default to "Unkwnown"
         if not output.get("creators"):
+            self.add_warning(
+                "No contributors were found for the repository. "
+                "The record has been created without a list of creators; please edit it to specify them manually."
+            )
             output.update(
                 {
                     "creators": [
@@ -92,8 +111,9 @@ class RDMVCSRelease(VCSRelease):
             )
 
         # Add license if not yet added and available from the repo.
-        if not output.get("rights") and metadata.repo_license:
-            output.update({"rights": [{"id": metadata.repo_license.lower()}]})
+        license_pid = self.get_license_pid()
+        if not output.get("rights") and license_pid:
+            output.update({"rights": [{"id": license_pid}]})
         return output
 
     def get_custom_fields(self):
@@ -104,16 +124,35 @@ class RDMVCSRelease(VCSRelease):
         return ret
 
     def get_owner(self):
-        """Retrieves repository owner and its affiliation, if any."""
+        """Retrieves repository owner and its affiliation from the VCS API, if any."""
         # `owner.name` is not required, `owner.login` is.
         output = None
         if self.owner:
-            name = getattr(self.owner, "name", self.owner.login)
+            name = getattr(self.owner, "name", self.owner.path_name)
             company = getattr(self.owner, "company", None)
             output = {"person_or_org": {"type": "personal", "family_name": name}}
             if company:
                 output.update({"affiliations": [{"name": company}]})
         return output
+
+    def get_license_pid(self) -> str | None:
+        """Returns whether the repository's license SPDX (as returned by the VCS) is a valid RDM license."""
+        license_spdx_id = self.generic_repo.license_spdx
+        if license_spdx_id is None:
+            return None
+
+        try:
+            # Try reading from the vocab list; it may not exist since the VCS IDs do not map 1-to-1 with the vocabulary IDs
+            license_vocab = current_vocabularies_service.read(
+                identity=self.user_identity, id_=("licenses", license_spdx_id.lower())
+            )
+            return license_vocab.pid.id
+        except (PIDDoesNotExistError, NoResultFound):
+            self.add_warning(
+                f"The repository's license '{license_spdx_id}' is not recognised. The record has been created without "
+                "a license; please edit it to select one manually.",
+            )
+            return None
 
     def resolve_record(self):
         """Resolves an RDM record from a release."""
@@ -190,7 +229,7 @@ class RDMVCSRelease(VCSRelease):
         try:
             with UnitOfWork(db.session) as uow:
                 data = {
-                    "metadata": self.metadata,
+                    "metadata": self.build_metadata(),
                     "access": {"record": "public", "files": "public"},
                     "files": {"enabled": True},
                     "custom_fields": self.get_custom_fields(),
@@ -291,6 +330,7 @@ class RDMVCSRelease(VCSRelease):
                                 generic_repository=self.generic_repo,
                                 generic_release=self.generic_release,
                                 record=record,
+                                warnings=self.warnings,
                             )
                         )
                     )
@@ -311,6 +351,7 @@ class RDMVCSRelease(VCSRelease):
                                 generic_release=self.generic_release,
                                 request=review_request._record,
                                 community=review_request._record.receiver.resolve(),
+                                warnings=self.warnings,
                             )
                         )
                     )

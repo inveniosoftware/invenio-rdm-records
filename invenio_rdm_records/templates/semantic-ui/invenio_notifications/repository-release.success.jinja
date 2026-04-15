@@ -1,20 +1,43 @@
 {% set repository_full_name = notification.context.repository_full_name %}
 {% set release_tag = notification.context.release_tag %}
 {% set record = notification.context.record %}
+{% set warnings = notification.context.warnings %}
+{% set has_warnings = warnings|length != 0 %}
 
 {% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
 {% set record_link = record["links"]["self_html"] %}
 
 {%- block subject -%}
-    {{ _("A release from %(repository_name)s was published successfully", repository_name=repository_full_name) }}
+    {% if has_warnings %}
+        {{ _("A release from %(repository_name)s was published with warning(s)", repository_name=repository_full_name) }}
+    {% else %}
+        {{ _("A release from %(repository_name)s was published successfully", repository_name=repository_full_name) }}
+    {% endif %}
 {%- endblock subject -%}
 
 {%- block html_body -%}
 <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
     <tr>
-        <td>{{ _("Release %(release_tag)s of %(repository_name)s has been received and published successfully.", release_tag=release_tag, repository_name=repository_full_name) }}
+        <td>
+            {{ _("Release %(release_tag)s of %(repository_name)s has been received and published.", release_tag=release_tag, repository_name=repository_full_name) }}
         </td>
     </tr>
+
+    {% if has_warnings %}
+        <tr>
+            <td><strong>{{ _("Some warnings were encountered during processing:") }}</strong></td>
+        </tr>
+        <tr>
+            <td>
+                <ul>
+                    {% for warning in warnings %}
+                        <li>{{ warning }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    {% endif %}
+
     <tr>
         <td>{{ _("For more details,")}} <a href="{{ record_link }}" class="button">{{ _("view the published record.") }}</a></td>
     </tr>
@@ -28,7 +51,15 @@
 {%- endblock html_body -%}
 
 {%- block plain_body -%}
-{{ _("Release %(release_tag)s of %(repository_name)s has been received and published successfully.", release_tag=release_tag, repository_name=repository_full_name) }}
+{{ _("Release %(release_tag)s of %(repository_name)s has been received and published.", release_tag=release_tag, repository_name=repository_full_name) }}
+
+{% if has_warnings %}
+**{{ _("Some warnings were encountered during processing:") }}**
+
+{% for warning in warnings %}
+- {{ warning }}
+{% endfor %}
+{% endif %}
 
 {{ _("For more details,") }} [{{ _("view the published record.") }}]({{ record_link }})
 
@@ -37,7 +68,15 @@
 
 {# Markdown for Slack/Mattermost/chat #}
 {%- block md_body -%}
-{{ _("Release %(release_tag)s of %(repository_name)s has been received and published successfully.", release_tag=release_tag, repository_name=repository_full_name) }}
+{{ _("Release %(release_tag)s of %(repository_name)s has been received and published.", release_tag=release_tag, repository_name=repository_full_name) }}
+
+{% if has_warnings %}
+**{{ _("Some warnings were encountered during processing:") }}**
+
+{% for warning in warnings %}
+- {{ warning }}
+{% endfor %}
+{% endif %}
 
 {{ _("For more details,") }} [{{ _("view the published record.") }}]({{ record_link }})
 
