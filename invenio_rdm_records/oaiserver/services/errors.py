@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2022-2023 Graz University of Technology.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -27,9 +28,8 @@ class OAIPMHSetDoesNotExistError(OAIPMHError):
         """Initialise error."""
         super().__init__(
             description=_(
-                "A set where {query_arguments} does not exist.".format(
-                    query_arguments=query_arguments
-                )
+                "A set where %(query_arguments)s does not exist.",
+                query_arguments=query_arguments,
             )
         )
 
@@ -39,9 +39,7 @@ class OAIPMHSetIDDoesNotExistError(OAIPMHError):
 
     def __init__(self, id):
         """Initialise error."""
-        super().__init__(
-            description=_("A set with id {id} does not exist.".format(id=id))
-        )
+        super().__init__(description=_("A set with id %(id)s does not exist.", id=id))
 
 
 class OAIPMHSetSpecAlreadyExistsError(OAIPMHError):
@@ -50,7 +48,7 @@ class OAIPMHSetSpecAlreadyExistsError(OAIPMHError):
     def __init__(self, spec):
         """Initialise error."""
         super().__init__(
-            description=_("A set with spec '{spec}' already exists.".format(spec=spec))
+            description=_("A set with spec '%(spec)s' already exists.", spec=spec)
         )
 
 
@@ -60,5 +58,5 @@ class OAIPMHSetNotEditable(OAIPMHError):
     def __init__(self, id):
         """Initialise error."""
         super().__init__(
-            description=_("The set with id {id} is not editable.".format(id=id))
+            description=_("The set with id %(id)s is not editable.", id=id)
         )

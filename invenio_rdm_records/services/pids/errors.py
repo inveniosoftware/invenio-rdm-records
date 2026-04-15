@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021-2024 CERN.
-# Copyright (C) 2024 KTH Royal Institute of Technology.
+# Copyright (C) 2024-2026 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -19,7 +19,7 @@ class PIDSchemeNotSupportedError(RDMRecordsException):
     def __init__(self, schemes):
         """Initialise error."""
         super().__init__(
-            _("No configuration defined for PIDs {schemes}".format(schemes=schemes))
+            _("No configuration defined for PIDs %(schemes)s", schemes=schemes)
         )
 
 
