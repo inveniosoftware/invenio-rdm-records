@@ -53,6 +53,9 @@ export class UploadProgressNotifier {
   onUploadAdded(filename) {
     throw new Error("Not implemented.");
   }
+  onUploadInitialized(filename, links) {
+    throw new Error("Not implemented.");
+  }
   onUploadStarted(filename, cancelFunc) {
     throw new Error("Not implemented.");
   }
@@ -165,6 +168,10 @@ export class RDMDepositFilesService extends DepositFilesService {
     let initializedFileMetadata;
     try {
       initializedFileMetadata = await this._initializeUpload(initializeUploadURL, file);
+      this.progressNotifier.onUploadInitialized(
+        file.name,
+        initializedFileMetadata.links
+      );
     } catch (error) {
       this._onError(file);
       return;
