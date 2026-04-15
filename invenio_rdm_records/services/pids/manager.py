@@ -83,7 +83,7 @@ class PIDManager:
                     errors.append(
                         {
                             "field": f"pids.{scheme}",
-                            "messages": [_("Invalid {scheme}").format(scheme=label)],
+                            "messages": [_("Invalid %(scheme)s", scheme=label)],
                         }
                     )
                 else:
@@ -159,8 +159,8 @@ class PIDManager:
         else:
             if draft.pids.get(scheme):
                 raise ValidationError(
-                    message=_("A PID already exists for type {scheme}").format(
-                        scheme=scheme
+                    message=_(
+                        "A PID already exists for type %(scheme)s", scheme=scheme
                     ),
                     field_name=f"pids.{scheme}",
                 )
@@ -201,7 +201,7 @@ class PIDManager:
         pid_attrs = record.pids.get(scheme, None)
         if not pid_attrs:
             raise ValidationError(
-                message=_("PID not found for type {scheme}").format(scheme=scheme),
+                message=_("PID not found for type %(scheme)s", scheme=scheme),
                 field_name="pids",
             )
 
@@ -227,7 +227,7 @@ class PIDManager:
         pid_attrs = record.pids.get(scheme, None)
         if not pid_attrs:
             raise ValidationError(
-                message=_("PID not found for type {scheme}").format(scheme=scheme),
+                message=_("PID not found for type %(scheme)s", scheme=scheme),
                 field_name="pids",
             )
 

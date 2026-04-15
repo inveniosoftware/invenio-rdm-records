@@ -3,6 +3,7 @@
 # Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021-2025 Graz University of Technology.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -90,11 +91,11 @@ class PersonOrOrganizationSchema(Schema):
         required=True,
         validate=validate.OneOf(
             choices=NAMES,
-            error=_("Invalid value. Choose one of {NAMES}.").format(NAMES=NAMES),
+            error=_("Invalid value. Choose one of %(names)s.", names=NAMES),
         ),
         error_messages={
             # [] needed to mirror error message above
-            "required": [_("Invalid value. Choose one of {NAMES}.").format(NAMES=NAMES)]
+            "required": [_("Invalid value. Choose one of %(names)s.", names=NAMES)]
         },
     )
     name = SanitizedUnicode()

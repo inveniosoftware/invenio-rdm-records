@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2023 CERN.
 # Copyright (C) 2025 Graz University of Technology.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -33,9 +34,8 @@ class CommunityRecordsSchema(Schema):
         if max_number < len(value):
             raise ValidationError(
                 _(
-                    "Too many records passed, {max_number} max allowed.".format(
-                        max_number=max_number
-                    )
+                    "Too many records passed, %(max_number)s max allowed.",
+                    max_number=max_number,
                 )
             )
 
@@ -50,5 +50,5 @@ class CommunityRecordsSchema(Schema):
 
         if duplicated:
             raise ValidationError(
-                _("Duplicated records {rec_ids}.".format(rec_ids=duplicated))
+                _("Duplicated records %(rec_ids)s.", rec_ids=duplicated)
             )

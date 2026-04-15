@@ -4,6 +4,7 @@
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2021-2025 Graz University of Technology.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -64,8 +65,9 @@ class AccessSchema(Schema):
         """Check that the protection value is valid."""
         if value not in ["public", "restricted"]:
             raise ValidationError(
-                _("'{field_name}' must be either 'public' or 'restricted'").format(
-                    field_name=field_name
+                _(
+                    "'%(field_name)s' must be either 'public' or 'restricted'",
+                    field_name=field_name,
                 ),
                 "record",
             )

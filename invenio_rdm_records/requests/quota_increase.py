@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2026 CERN.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -22,10 +23,16 @@ class CreateAction(actions.CreateAction):
     def execute(self, identity, uow):
         """Verify request preconditions and create the request."""
         record = self.request.topic.resolve()
+        record_title = record.metadata.get("title")
 
-        self.request["title"] = _('Quota increase request for "{record_title}"').format(
-            record_title=record.metadata.get("title", "Empty draft title")
-        )
+        if record_title:
+            self.request["title"] = _(
+                'Quota increase request for "%(record_title)s"',
+                record_title=record_title,
+            )
+        else:
+            # We branched here for i18n purposes
+            self.request["title"] = _("Quota increase request for Empty draft title")
 
         super().execute(identity, uow)
 
