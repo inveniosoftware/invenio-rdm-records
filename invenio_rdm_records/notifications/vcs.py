@@ -64,10 +64,12 @@ class RepositoryReleaseSuccessNotificationBuilder(RepositoryReleaseNotificationB
         generic_repository: GenericRepository,
         generic_release: GenericRelease,
         record,
+        warnings: list[str],
     ):
         """Build the notification."""
         notification = super().build(provider, generic_repository, generic_release)
         notification.context["record"] = EntityResolverRegistry.reference_entity(record)
+        notification.context["warnings"] = warnings
         return notification
 
     context = [EntityResolve(key="record")]
@@ -150,6 +152,7 @@ class RepositoryReleaseCommunitySubmittedNotificationBuilder(
         generic_release: GenericRelease,
         request,
         community,
+        warnings: list[str],
     ):
         """Build the notification."""
         notification = super().build(provider, generic_repository, generic_release)
@@ -159,6 +162,7 @@ class RepositoryReleaseCommunitySubmittedNotificationBuilder(
         notification.context["community"] = EntityResolverRegistry.reference_entity(
             community
         )
+        notification.context["warnings"] = warnings
         return notification
 
     context = [EntityResolve(key="request"), EntityResolve(key="community")]

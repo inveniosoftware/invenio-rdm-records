@@ -85,15 +85,10 @@ class RDMReleaseMetadata(object):
             title=self.title,
             resource_type={"id": "software"},
             creators=self.contributors,
-            publisher=current_app.config.get("APP_RDM_DEPOSIT_FORM_DEFAULTS").get(
+            publisher=current_app.config.get("APP_RDM_DEPOSIT_FORM_DEFAULTS", {}).get(
                 "publisher", "CERN"
             ),
         )
-
-    @property
-    def repo_license(self):
-        """Get license from repository, if any."""
-        return self.rdm_release.generic_repo.license_spdx
 
     @property
     def contributors(self):
