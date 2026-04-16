@@ -30,11 +30,11 @@ def on_block(user_id, uow=None, **kwargs):
     of an HTTP request!
     """
     user_id = str(user_id)
-    tombstone_data = {"note": "User was blocked"}
+    tombstone_data = {"note": kwargs.get("note") or "User was blocked"}
 
-    # set the removal reason if the vocabulary item exists
+    # Set the removal reason if the vocabulary item exists
     try:
-        removal_reason_id = kwargs.get("removal_reason_id", "spam")
+        removal_reason_id = kwargs.get("removal_reason_id") or "spam"
         vocab = current_service.read(
             identity=system_identity, id_=("removalreasons", removal_reason_id)
         )
@@ -42,7 +42,13 @@ def on_block(user_id, uow=None, **kwargs):
     except PIDDoesNotExistError:
         pass
 
-    # soft-delete all the published records of that user
+    # Use the actor who triggered the block on the tombstone; without
+    # this tombstones would attribute the removal to the system (identity).
+    actor_id = kwargs.get("actor_id")
+    if actor_id is not None:
+        tombstone_data["removed_by"] = {"user": str(actor_id)}
+
+    # Soft-delete all the published records of that user
     for recid in get_user_records(user_id):
         uow.register(TaskOp(delete_record, recid=recid, tombstone_data=tombstone_data))
 
