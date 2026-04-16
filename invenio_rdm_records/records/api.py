@@ -418,6 +418,11 @@ class RDMDraft(CommonFieldsMixin, Draft):
         delete=False,
     )
 
+    review = RelatedRecord(
+        Request,
+        keys=["type", "receiver", "status"],
+    )
+
     has_draft = HasDraftCheckField()
 
     status = DraftStatus()
