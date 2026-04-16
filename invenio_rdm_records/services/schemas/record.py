@@ -10,20 +10,18 @@
 
 """RDM record schemas."""
 
-from datetime import datetime, timezone
 from functools import partial
 
 from flask import current_app
 from invenio_drafts_resources.services.records.schema import RecordSchema
 from invenio_i18n import lazy_gettext as _
-from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 from invenio_records_resources.services.custom_fields import CustomFieldsSchema
-from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_dump, pre_load
+from invenio_requests.services.schemas import GenericRequestSchema
+from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_dump
 from marshmallow_utils.fields import (
     EDTFDateTimeString,
     NestedAttribute,
     SanitizedUnicode,
-    TZDateTime,
 )
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
@@ -34,6 +32,7 @@ from .metadata import MetadataSchema
 from .parent import RDMParentSchema
 from .parent.access import Agent
 from .pids import PIDSchema
+from .review import CleanReviewMixin
 from .stats import StatsSchema
 from .tombstone import DeletionStatusSchema, TombstoneSchema
 from .versions import VersionsSchema
@@ -59,7 +58,7 @@ class InternalNoteSchema(Schema):
         unknown = EXCLUDE
 
 
-class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
+class RDMRecordSchema(RecordSchema, FieldPermissionsMixin, CleanReviewMixin):
     """Record schema."""
 
     class Meta:
@@ -93,6 +92,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     deletion_status = fields.Nested(DeletionStatusSchema, dump_only=True)
     internal_notes = fields.List(fields.Nested(InternalNoteSchema))
     stats = NestedAttribute(StatsSchema, dump_only=True)
+    review = fields.Nested(GenericRequestSchema, allow_none=False)
     # schema_version = fields.Integer(dump_only=True)
 
     field_dump_permissions = {
