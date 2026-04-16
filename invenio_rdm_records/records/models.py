@@ -9,7 +9,6 @@
 """Record and draft database models."""
 
 import uuid
-from datetime import datetime, timezone
 
 from invenio_accounts.models import User
 from invenio_communities.records.records.models import CommunityRelationMixin
