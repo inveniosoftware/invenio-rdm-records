@@ -14,7 +14,11 @@ from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
-from invenio_records_resources.services.uow import RecordIndexOp, unit_of_work
+from invenio_records_resources.services.uow import (
+    RecordCommitOp,
+    RecordIndexOp,
+    unit_of_work,
+)
 from invenio_requests import current_request_type_registry, current_requests_service
 from invenio_requests.resolvers.registry import ResolverRegistry
 from marshmallow import ValidationError
@@ -59,12 +63,25 @@ class ReviewService(RecordService):
         return type_
 
     @unit_of_work()
-    def create(self, identity, data, record, uow=None):
-        """Create a new review request in draft state (to be completed."""
-        if record.parent.review is not None:
+    def create(self, identity, data, record, uow=None, assign_request_to_record=False):
+        """
+        Create a new review request in draft state (to be completed).
+
+        By default, a review can only be created for a first-version unpublished draft of a new
+        parent record. Attempting to create a review for a new version draft will raise a `ReviewStateError`.
+
+        If `assign_request_to_record` is `True`, however, new versions can also have reviews created.
+        For first versions, the review is always stored in `record.parent.review`, and for new versions it is
+        stored in `record.review`.
+        """
+        if record.review is not None or record.parent.review is not None:
             raise ReviewExistsError(_("A review already exists for this record"))
         # Validate that record has not been published.
-        if record.is_published or record.versions.index > 1:
+        # Additionally, either `assign_request_to_record` must be true, or the record must be
+        # the first version.
+        if record.is_published or (
+            record.versions.index != 1 and not assign_request_to_record
+        ):
             raise ReviewStateError(
                 _("You cannot create a review for an already published record.")
             )
@@ -87,9 +104,17 @@ class ReviewService(RecordService):
             uow=uow,
         )
 
-        # Set the request on the record and commit the record
-        record.parent.review = request_item._request
-        uow.register(ParentRecordCommitOp(record.parent))
+        # Set the request on the record/parent and commit
+        if record.versions.index == 1:
+            # If this is the first version (i.e. the parent record is not yet published),
+            # we set the review on the parent.
+            record.parent.review = request_item._request
+            uow.register(ParentRecordCommitOp(record.parent))
+            uow.register(RecordIndexOp(record, indexer=self.indexer))
+        else:
+            # If this is a new version draft, we set the review on the record/draft itself.
+            record.review = request_item._request
+            uow.register(RecordCommitOp(record, indexer=self.indexer))
 
         return request_item
 
@@ -99,26 +124,46 @@ class ReviewService(RecordService):
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "read_draft", record=draft)
 
-        if draft.parent.review is None:
+        review = draft.get_own_or_parent_review()
+        if review:
             raise ReviewNotFoundError()
 
-        request_type = draft.parent.review.get_object()["type"]
+        request_type = review.get_object()["type"]
         self._validate_request_type(request_type)
 
-        return current_requests_service.read(identity, draft.parent.review.id)
+        return current_requests_service.read(identity, review.id)
 
     @unit_of_work()
-    def update(self, identity, id_, data, revision_id=None, uow=None):
-        """Create or update an existing review."""
+    def update(
+        self,
+        identity,
+        id_,
+        data,
+        revision_id=None,
+        uow=None,
+        assign_request_to_record=False,
+    ):
+        """
+        Create or update an existing review.
+
+        For details on the behaviour of `assign_request_to_record`, see the `create` method.
+        """
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "manage", record=draft)
 
         # If an existing review exists, delete it.
-        if draft.parent.review is not None:
+        review = draft.get_own_or_parent_review()
+        if review is not None:
             self.delete(identity, id_, uow=uow)
             draft = self.draft_cls.pid.resolve(id_, registered_only=False)
 
-        return self.create(identity, data, draft, uow=uow)
+        return self.create(
+            identity,
+            data,
+            draft,
+            uow=uow,
+            assign_request_to_record=assign_request_to_record,
+        )
 
     @unit_of_work()
     def delete(self, identity, id_, revision_id=None, uow=None):
@@ -127,9 +172,10 @@ class ReviewService(RecordService):
         self.require_permission(identity, "manage", record=draft)
 
         # Preconditions
-        if draft.parent.review is None:
+        review = draft.get_own_or_parent_review()
+        if review is None:
             raise ReviewNotFoundError()
-        request_type = draft.parent.review.get_object()["type"]
+        request_type = review.get_object()["type"]
         self._validate_request_type(request_type)
 
         if draft.is_published:
@@ -140,18 +186,23 @@ class ReviewService(RecordService):
                 )
             )
 
-        if draft.parent.review.is_open:
+        if review.is_open:
             raise ReviewStateError(_("An open review cannot be deleted."))
 
         # Keep the request when not open or not closed so that the user can see
         # the request's events. The request is deleted only when in `draft`
         # status
-        if not (draft.parent.review.is_closed or draft.parent.review.is_open):
-            current_requests_service.delete(identity, draft.parent.review.id, uow=uow)
+        if not (review.is_closed or review.is_open):
+            current_requests_service.delete(identity, review.id, uow=uow)
+
         # Unset on record
-        draft.parent.review = None
-        uow.register(ParentRecordCommitOp(draft.parent))
-        uow.register(RecordIndexOp(draft, indexer=self.indexer))
+        if draft.review is not None:
+            draft.review = None
+        elif draft.parent.review is not None:
+            draft.parent.review = None
+            uow.register(ParentRecordCommitOp(draft.parent))
+        uow.register(RecordCommitOp(draft, indexer=self.indexer))
+
         return True
 
     @request_next_link()
@@ -165,22 +216,21 @@ class ReviewService(RecordService):
             )
 
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+        review = draft.get_own_or_parent_review()
         # Preconditions
-        if draft.parent.review is None:
+        if review is None:
             raise ReviewNotFoundError()
 
-        request_type = draft.parent.review.get_object()["type"]
+        request_type = review.get_object()["type"]
         self._validate_request_type(request_type)
 
         # since it is submit review action, assume the receiver is community
-        community = draft.parent.review.receiver.resolve()
+        community = review.receiver.resolve()
 
         # Check permission
         self.require_permission(identity, "manage", record=draft)
 
-        community_id = (
-            draft.parent.review.get_object().get("receiver", {}).get("community", "")
-        )
+        community_id = review.get_object().get("receiver", {}).get("community", "")
         can_submit_record = current_communities.service.config.permission_policy_cls(
             "submit_record",
             community_id=community_id,
@@ -195,16 +245,20 @@ class ReviewService(RecordService):
 
         # create review request
         request_item = current_rdm_records.community_inclusion_service.submit(
-            identity, draft, community, draft.parent.review, data, uow
+            identity, draft, community, review, data, uow
         )
         request = request_item._request
 
         # This shouldn't be required BUT because of the caching mechanism
         # in the review systemfield, the review should be set with the updated
         # request object
-        draft.parent.review = request
-        uow.register(ParentRecordCommitOp(draft.parent))
-        uow.register(RecordIndexOp(draft, indexer=self.indexer))
+        if draft.review is not None:
+            draft.review = request
+            uow.register(RecordCommitOp(draft, indexer=self.indexer))
+        elif draft.parent.review is not None:
+            draft.parent.review = request
+            uow.register(ParentRecordCommitOp(draft.parent))
+            uow.register(RecordIndexOp(draft, indexer=self.indexer))
 
         if not require_review:
             request_item = current_rdm_records.community_inclusion_service.include(

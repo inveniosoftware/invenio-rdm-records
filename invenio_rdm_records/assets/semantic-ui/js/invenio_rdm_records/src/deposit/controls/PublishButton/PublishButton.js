@@ -92,6 +92,7 @@ class PublishButtonComponent extends Component {
       publishModalExtraContent,
       noINeedDOI,
       isDOIRequired,
+      disabled,
       ...ui
     } = this.props;
     const { isConfirmModalOpen } = this.state;
@@ -106,7 +107,7 @@ class PublishButtonComponent extends Component {
     return (
       <>
         <Button
-          disabled={this.isDisabled(values, isSubmitting, filesState)}
+          disabled={disabled || this.isDisabled(values, isSubmitting, filesState)}
           name="publish"
           onClick={this.openConfirmModal}
           positive
@@ -142,6 +143,7 @@ PublishButtonComponent.propTypes = {
   doiReservationCheck: PropTypes.func.isRequired,
   isDOIRequired: PropTypes.bool,
   noINeedDOI: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
 
 PublishButtonComponent.defaultProps = {
@@ -152,6 +154,7 @@ PublishButtonComponent.defaultProps = {
   filesState: undefined,
   isDOIRequired: undefined,
   noINeedDOI: undefined,
+  disabled: false,
 };
 
 const mapStateToProps = (state) => ({

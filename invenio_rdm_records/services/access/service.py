@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2024 CERN.
+# Copyright (C) 2020-2026 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2023-2025 Graz University of Technology.
@@ -118,11 +118,11 @@ class RecordAccessService(RecordService):
     # Update parent request on access changes
     #
 
-    def _update_parent_request(self, parent, uow):
-        """Update the parent record request."""
-        if parent.review:
-            request = parent.review.get_object()
-            uow.register(RecordCommitOp(request, indexer=self.indexer))
+    def _update_record_request(self, record, uow):
+        """Update the review request on the record or its parent."""
+        request = record.get_own_or_parent_review()
+        if request is not None:
+            uow.register(RecordCommitOp(request.get_object(), indexer=self.indexer))
 
     #
     # Secret links
@@ -229,7 +229,7 @@ class RecordAccessService(RecordService):
             )
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
-        self._update_parent_request(parent, uow)
+        self._update_record_request(record, uow)
 
         audit_log_builder = (
             RDMRecordSecretLinkAuditLog
@@ -347,7 +347,7 @@ class RecordAccessService(RecordService):
         link.description = data.get("description", link.description)
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
-        self._update_parent_request(parent, uow)
+        self._update_record_request(record, uow)
 
         audit_log_builder = (
             RDMRecordSecretLinkAuditLog
@@ -393,7 +393,7 @@ class RecordAccessService(RecordService):
         link.revoke()
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
-        self._update_parent_request(parent, uow)
+        self._update_record_request(record, uow)
 
         audit_log_builder = (
             RDMRecordSecretLinkAuditLog
@@ -503,7 +503,7 @@ class RecordAccessService(RecordService):
             new_grants.append(new_grant)
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
-        self._update_parent_request(parent, uow)
+        self._update_record_request(record, uow)
 
         audit_log_builder = (
             RDMRecordGrantAuditLog
@@ -614,7 +614,7 @@ class RecordAccessService(RecordService):
         parent.access.grants[grant_id] = new_grant
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
-        self._update_parent_request(parent, uow)
+        self._update_record_request(record, uow)
 
         audit_log_builder = (
             RDMRecordGrantAuditLog
@@ -689,7 +689,7 @@ class RecordAccessService(RecordService):
         deleted_grant = parent.access.grants.pop(grant_id)
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
-        self._update_parent_request(parent, uow)
+        self._update_record_request(record, uow)
 
         audit_log_builder = (
             RDMRecordGrantAuditLog
@@ -1086,7 +1086,7 @@ class RecordAccessService(RecordService):
         parent.access.grants[grant_index] = new_grant
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
-        self._update_parent_request(parent, uow)
+        self._update_record_request(record, uow)
 
         audit_log_builder = (
             RDMRecordGrantAuditLog
@@ -1133,7 +1133,7 @@ class RecordAccessService(RecordService):
             raise LookupError(subject_id)
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
-        self._update_parent_request(parent, uow)
+        self._update_record_request(record, uow)
 
         audit_log_builder = (
             RDMRecordGrantAuditLog

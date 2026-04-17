@@ -319,7 +319,7 @@ class RDMVCSRelease(VCSRelease):
 
         try:
             with UnitOfWork(db.session) as uow:
-                if draft._record.parent.review is None:
+                if draft._record.get_own_or_parent_review() is None:
                     record = current_rdm_records_service.publish(
                         identity, draft.id, uow=uow
                     )

@@ -94,10 +94,8 @@ class RDMParent(ParentRecordBase):
         keys=["type", "receiver", "status"],
     )
     """
-    Deprecated: We have now moved to storing the review on the draft record, in order to support reviews per-record-version.
-    This field is retained for backward-compatibility.
-
-    The field will remain for existing records but will not be set for new ones.
+    This is only used for the review of the first version of a record being submitted to its default community.
+    If subsequent versions of the record undergo a review, that is stored directly on `record.review`.
     """
 
     communities = CommunitiesField(models.RDMParentCommunity)
@@ -295,17 +293,21 @@ class CommonFieldsMixin:
         Request,
         keys=["type", "receiver", "status"],
     )
+    """
+    If this record/draft is the new version of an already-published record, the corresponding community submission
+    request for the default community is stored in this field.
+    """
 
     def get_own_or_parent_review(self):
         """
-        We used to store the review relation on the parent record, and we still do for existing/old records.
+        We store the review on the parent record for new unpublished records, and on the record for new versions of
+        already published records.
 
-        New records store it on the draft directly.
-        This method returns the review on the draft, or on the parent if it doesn't exist.
+        This method returns the review on the parent, or on the draft/record if it doesn't exist.
 
-        If the review does not exist on the record or the parent, None is returned.
+        If the review does not exist on the parent or the record, None is returned.
         """
-        return self.review if self.review is not None else self.parent.review
+        return self.parent.review if self.parent.review is not None else self.review
 
 
 #

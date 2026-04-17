@@ -353,6 +353,20 @@ class TombstoneSchema(Schema):
         return RDMRecordDeletionPolicy.get_policy_description(policy_id)
 
 
+def set_community_ui_permissions(community):
+    """Set the `ui.permissions` field of a community."""
+    can_include_directly = _community_permission_check(
+        "include_directly",
+        community=community,
+        identity=g.identity,
+    )
+    # use `ui` key to indicate that the extra information is injected only on
+    # UIJSONSerializer
+    community.setdefault("ui", {})["permissions"] = {
+        "can_include_directly": can_include_directly
+    }
+
+
 class UIRecordSchema(BaseObjectSchema):
     """Schema for dumping extra information for the UI."""
 
@@ -449,20 +463,23 @@ class UIRecordSchema(BaseObjectSchema):
 
     @pre_dump
     def add_communities_permissions_and_roles(self, obj, **kwargs):
-        """Inject current user's permission to community receiver."""
-        receiver = (
-            obj.get("expanded", {}).get("parent", {}).get("review", {}).get("receiver")
-        )
-        if receiver:
-            can_include_directly = _community_permission_check(
-                "include_directly", community=receiver, identity=g.identity
-            )
+        """Inject current user's permission to community receiver and the parent default community."""
+        receiver = obj.get("expanded", {}).get("parent", {}).get("review", {}).get(
+            "receiver"
+        ) or obj.get("expanded", {}).get("review", {}).get("receiver")
 
-            # use `ui` key to indicate that the extra information is injected only on
-            # UIJSONSerializer
-            receiver.setdefault("ui", {})["permissions"] = {
-                "can_include_directly": can_include_directly
-            }
+        if receiver:
+            set_community_ui_permissions(receiver)
+
+        parent_default_community = (
+            obj.get("expanded", {})
+            .get("parent", {})
+            .get("communities", {})
+            .get("default")
+        )
+        if parent_default_community:
+            set_community_ui_permissions(parent_default_community)
+
         return obj
 
     @post_dump
