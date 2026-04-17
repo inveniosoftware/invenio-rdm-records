@@ -267,6 +267,9 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
         serializedDefault: {},
         vocabularyFields: this.customFieldVocabularies,
       }),
+      review: new Field({
+        fieldpath: "review",
+      }),
     };
   }
 
@@ -326,6 +329,7 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
       "created",
       "updated",
       "revision_id",
+      "review",
     ]);
 
     // FIXME: move logic in a more sophisticated PIDField that allows empty values

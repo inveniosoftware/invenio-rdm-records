@@ -69,6 +69,7 @@ from requests import Request
 from werkzeug.local import LocalProxy
 
 from invenio_rdm_records.records.processors.tiles import TilesProcessor
+from invenio_rdm_records.services.review.policy import NewRecordVersionReviewPolicy
 
 from ..records import RDMDraft, RDMRecord
 from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
@@ -108,8 +109,8 @@ from .sort import VerifiedRecordsSortParam
 
 
 def is_draft_and_has_review(record, ctx):
-    """Determine if draft has doi."""
-    return is_draft(record, ctx) and record.parent.review is not None
+    """Determine if draft has a review."""
+    return is_draft(record, ctx) and record.get_review()
 
 
 def is_record_and_has_doi(record, ctx):
@@ -613,6 +614,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     )
     quota_increase_policy = FromConfig(
         "RDM_QUOTA_INCREASE_POLICY", default=QuotaIncreasePolicyEvaluator
+    )
+    new_version_review_policy = FromConfig(
+        "RDM_NEW_RECORD_VERSION_REVIEW_POLICY", default=NewRecordVersionReviewPolicy
     )
 
     # Result classes

@@ -8,7 +8,7 @@
 """Policy configuration to define which versions of records require community review."""
 
 
-class RecordVersionReviewPolicy:
+class NewRecordVersionReviewPolicy:
     """
     Base class for defining a policy for whether new versions of records require community review.
 

@@ -98,6 +98,7 @@ class RDMRecordService(RecordService):
         Expand community field to return community details.
         """
         return [
+            EntityResolverExpandableField("review.receiver"),
             EntityResolverExpandableField("parent.review.receiver"),
             ParentCommunitiesExpandableField("parent.communities.default"),
             EntityResolverExpandableField("parent.access.owned_by"),
