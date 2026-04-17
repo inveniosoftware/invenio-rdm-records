@@ -275,13 +275,13 @@ class SubmissionReviewer(Generator):
 
     def needs(self, record=None, **kwargs):
         """Set of Needs granting permission."""
-        if record is None or record.parent.review is None:
+        request = record.get_own_or_parent_review()
+        if record is None or request is None:
             return []
 
         # we only expect submission review requests here
         # and as such, we expect the receiver to be a community
         # and the topic to be a record
-        request = record.parent.review
         receiver = request.receiver
         if receiver is not None:
             return receiver.get_needs(ctx=request.type.needs_context)
@@ -301,11 +301,11 @@ class RequestReviewers(Generator):
         if not self._reviewers_enabled():
             return []
 
-        if record is None or record.parent.review is None:
+        request = record.get_own_or_parent_review()
+        if record is None or request is None:
             return []
 
         _needs = []
-        request = record.parent.review
         reviewers = request.reviewers
         if reviewers is not None:
             for reviewer in reviewers:

@@ -466,6 +466,9 @@
       "items": {
         "type": "string"
       }
+    },
+    "review": {
+      "$ref": "local://requests/request-v1.0.0.json"
     }
   }
 }

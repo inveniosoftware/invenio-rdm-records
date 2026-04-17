@@ -110,7 +110,7 @@ const mapStateToProps = (state) => ({
   depositStatus: state.deposit.record.status,
   depositReview:
     state.deposit.record.status !== DepositStatus.DRAFT &&
-    state.deposit.record.parent.review,
+    (state.deposit.record.review ?? state.deposit.record.parent.review),
 });
 
 export const DepositStatusBox = connect(

@@ -57,7 +57,6 @@ export class DepositStatus {
   static disallowsSubmitForReviewStates = [
     DepositStatus.PUBLISHED,
     DepositStatus.IN_REVIEW,
-    DepositStatus.NEW_VERSION_DRAFT,
   ];
 }
 
@@ -69,7 +68,9 @@ function getSelectedCommunityMetadata(record, selectedCommunity) {
   switch (selectedCommunity) {
     case undefined: {
       // when `undefined`, retrieve the community from the record, if previously selected
-      const reviewCommunityId = record.parent?.review?.receiver?.community;
+      const reviewCommunityId =
+        record.review?.receiver?.community ??
+        record.parent?.review?.receiver?.community;
       const defaultCommunityId = record.parent?.communities?.default;
       const hasCommunity = reviewCommunityId || defaultCommunityId;
       if (!hasCommunity) {
@@ -85,7 +86,7 @@ function getSelectedCommunityMetadata(record, selectedCommunity) {
       // record should be expanded
       return alreadyPublished
         ? record.expanded.parent.communities.default
-        : record.expanded.parent.review.receiver;
+        : record.review?.receiver ?? record.expanded.parent.review?.receiver;
     }
     case null:
       // when value is `null`, the selected community was deselected
@@ -111,10 +112,15 @@ function getSelectedCommunityMetadata(record, selectedCommunity) {
  *     - user has deselected a community
  *     - the draft status is one of `DepositStatus.allowsReviewDeletionStates`
  * - `actions.communityStateMustBeChecked`: true if one of the `shouldUpdateReview` or `shouldDeleteReview` is true
- * - `ui.showSubmitForReviewButton`: true if all of the following are true:
- *     - user has selected a community
- *     - the associated review for the selected community is not declined/expired
- *     - the record is not published
+ * - `ui.showSubmitForReviewButton`:
+ *     - true if all of the following are true:
+ *         - user has selected a community
+ *         - the associated review for the selected community is not declined/expired
+ *         - the record is not published
+ *     - OR true if all of the following are true:
+ *         - parent record belongs to a community
+ *         - record is a new version draft
+ *         - user does not have permission to skip community review for a new record version
  * - `ui.showDirectPublishButton`: true if all of the following are true:
  *     - user has selected a community
  *     - user can direct publish to a community
@@ -138,7 +144,11 @@ function getSelectedCommunityMetadata(record, selectedCommunity) {
  * @param {object} selectedCommunity: the selected community, `null` to deselect.
  * @returns a new state for the deposit form
  */
-export function computeDepositState(record, selectedCommunity = undefined) {
+export function computeDepositState(
+  record,
+  permissions,
+  selectedCommunity = undefined
+) {
   const depositStatusAllowsReviewDeletion = hasStatus(
     record,
     DepositStatus.allowsReviewDeletionStates
@@ -156,17 +166,17 @@ export function computeDepositState(record, selectedCommunity = undefined) {
   const _selectedCommunity = getSelectedCommunityMetadata(record, selectedCommunity);
   const communityIsSelected = !_isEmpty(_selectedCommunity);
 
-  const draftReview = record?.parent?.review;
+  const draftReview = record?.expanded?.review ?? record?.expanded?.parent?.review;
 
   // check if the selected community has a request created
   const isReviewForSelectedCommunityCreated =
     hasStatus(record, [DepositStatus.DRAFT_WITH_REVIEW]) &&
-    draftReview?.receiver?.community === _selectedCommunity?.id;
+    draftReview?.receiver?.id === _selectedCommunity?.id;
 
   // check if the selected community has a declined or expired request
   const isReviewForSelectedCommunityDeclinedOrExpired =
     hasStatus(record, [DepositStatus.DECLINED, DepositStatus.EXPIRED]) &&
-    draftReview?.receiver?.community === _selectedCommunity?.id;
+    draftReview?.receiver?.id === _selectedCommunity?.id;
 
   // check if the record is published without a community selected
   const isGhostCommunity = _selectedCommunity?.is_ghost === true;
@@ -182,11 +192,17 @@ export function computeDepositState(record, selectedCommunity = undefined) {
     !hasStatus(record, [DepositStatus.PUBLISHED, DepositStatus.NEW_VERSION_DRAFT]) &&
     _selectedCommunity.ui.permissions.can_include_directly;
 
+  const isRecordNewVersionDraftWithReview =
+    communityIsSelected &&
+    hasStatus(record, [DepositStatus.NEW_VERSION_DRAFT]) &&
+    draftReview?.receiver?.id === _selectedCommunity?.id;
+
   // show submit for review button conditions extracted to be reused
   const _showSubmitReviewButton =
-    communityIsSelected &&
-    !isReviewForSelectedCommunityDeclinedOrExpired &&
-    !hasStatus(record, [DepositStatus.PUBLISHED, DepositStatus.NEW_VERSION_DRAFT]);
+    (communityIsSelected &&
+      !isReviewForSelectedCommunityDeclinedOrExpired &&
+      !hasStatus(record, [DepositStatus.PUBLISHED, DepositStatus.NEW_VERSION_DRAFT])) ||
+    isRecordNewVersionDraftWithReview;
 
   // show community selection button conditions extracted to be reused
   const _showCommunitySelectionButton = !hasStatus(record, [
@@ -264,6 +280,7 @@ const depositReducer = (state = {}, action) => {
         },
         editorState: computeDepositState(
           action.payload.data,
+          state.permissions,
           state.editorState.selectedCommunity
         ),
         errors: {},
@@ -280,6 +297,7 @@ const depositReducer = (state = {}, action) => {
         },
         editorState: computeDepositState(
           action.payload.data,
+          state.permissions,
           state.editorState.selectedCommunity
         ),
         errors: {},
@@ -297,6 +315,7 @@ const depositReducer = (state = {}, action) => {
         },
         editorState: computeDepositState(
           action.payload.data,
+          state.permissions,
           state.editorState.selectedCommunity
         ),
         errors: { ...action.payload.errors },
@@ -336,7 +355,11 @@ const depositReducer = (state = {}, action) => {
       return {
         ...state,
         record: recordCopy,
-        editorState: computeDepositState(recordCopy, action.payload.community),
+        editorState: computeDepositState(
+          recordCopy,
+          state.permissions,
+          action.payload.community
+        ),
       };
     }
     case SET_DOI_NEEDED: {

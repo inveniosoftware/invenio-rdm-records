@@ -12,6 +12,10 @@ from invenio_drafts_resources.services.records.components import ServiceComponen
 from invenio_i18n import lazy_gettext as _
 from invenio_requests import current_requests_service
 
+from invenio_rdm_records.services.review.policy import RecordVersionReviewPolicy
+
+from ...proxies import current_rdm_records_service
+from ...requests.community_submission import CommunitySubmission
 from ..errors import ReviewExistsError, ReviewStateError
 
 
@@ -20,13 +24,15 @@ class ReviewComponent(ServiceComponent):
 
     def create(self, identity, data=None, record=None, **kwargs):
         """Create the review if requested."""
-        data = data.get("parent", {}).get("review")
+        record_review = data.get("review")
+        parent_review = data.get("parent", {}).get("review")
+        data = record_review or parent_review
         if data is not None:
             self.service.review.create(identity, data, record, uow=self.uow)
 
     def delete_draft(self, identity, draft=None, record=None, force=False):
         """Delete a draft."""
-        review = draft.parent.review
+        review = draft.get_own_or_parent_review()
         if review is None:
             return
         # TODO: once draft status has been changed to not be considered open
@@ -39,16 +45,14 @@ class ReviewComponent(ServiceComponent):
                 )
             )
 
-        # Delete draft request's. A request in any other state is left as-is,
+        # Delete draft's request. A request in any other state is left as-is,
         # to allow users to see the request even if it was removed.
         if review.status == "created":
-            current_requests_service.delete(
-                identity, draft.parent.review.id, uow=self.uow
-            )
+            current_requests_service.delete(identity, review.id, uow=self.uow)
 
     def publish(self, identity, draft=None, record=None, **kwargs):
         """Block publishing if required.."""
-        review = draft.parent.review
+        review = draft.get_own_or_parent_review()
         if review is None:
             return
         if getattr(review.type, "block_publish", True) and not review.is_closed:
@@ -57,3 +61,30 @@ class ReviewComponent(ServiceComponent):
                     "You cannot publish a draft with an open review request. Please cancel the review request first."
                 )
             )
+
+    def new_version(self, identity, draft=None, record=None):
+        """
+        Create a review for a new record version if required for the identity.
+
+        If the identity does not have the `skip_review_for_new_version` permission, each new version of existing published records
+        they create must go through a review by the parent record's default community.
+        """
+        assert draft is not None and record is not None
+        record = current_rdm_records_service.read(identity, id_=record.get("id"))
+        # If the parent record does not have a default community, we do not need to create a review.
+        default_community = record._record.parent.communities.default
+        if default_community is None:
+            return
+
+        policy: RecordVersionReviewPolicy = self.service.config.version_review_policy
+        if policy.requires_review(identity, draft):
+            request = current_requests_service.create(
+                identity,
+                request_type=CommunitySubmission,
+                topic=draft,
+                creator=identity.user,
+                receiver=default_community,
+                data={},
+                uow=self.uow,
+            )
+            draft.review = request._request

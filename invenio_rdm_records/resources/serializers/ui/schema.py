@@ -450,9 +450,10 @@ class UIRecordSchema(BaseObjectSchema):
     @pre_dump
     def add_communities_permissions_and_roles(self, obj, **kwargs):
         """Inject current user's permission to community receiver."""
-        receiver = (
-            obj.get("expanded", {}).get("parent", {}).get("review", {}).get("receiver")
-        )
+        receiver = obj.get("expanded", {}).get("review", {}).get("receiver") or obj.get(
+            "expanded", {}
+        ).get("parent", {}).get("review", {}).get("receiver")
+
         if receiver:
             can_include_directly = _community_permission_check(
                 "include_directly", community=receiver, identity=g.identity
