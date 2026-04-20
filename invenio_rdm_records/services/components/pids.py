@@ -170,7 +170,7 @@ class PIDsComponent(ServiceComponent):
             changed_pids = {
                 scheme: draft_pids[scheme] for scheme in draft_schemes - common_schemes
             }
-        self.service.pids.pid_manager.discard_all(changed_pids)
+        self.service.pids.pid_manager.discard_all(changed_pids, record=draft)
         draft.pids = {}
 
     def publish(self, identity, draft=None, record=None):
@@ -210,7 +210,7 @@ class PIDsComponent(ServiceComponent):
 
         self.service.pids.pid_manager.validate_restriction_level(draft)
 
-        self.service.pids.pid_manager.discard_all(changed_pids)
+        self.service.pids.pid_manager.discard_all(changed_pids, record=draft)
 
         # Determine schemes which are required, but not yet created.
         missing_required_schemes = required_schemes - record_schemes - draft_schemes
@@ -262,12 +262,14 @@ class PIDsComponent(ServiceComponent):
     def delete_record(self, identity, data=None, record=None, uow=None):
         """Process pids on delete record."""
         record_pids = copy(record.get("pids", {}))
-        self.service.pids.pid_manager.discard_all(record_pids, soft_delete=True)
+        self.service.pids.pid_manager.discard_all(
+            record_pids, soft_delete=True, record=record
+        )
 
     def restore_record(self, identity, record=None, uow=None):
         """Restore previously invalidated pids."""
         record_pids = copy(record.get("pids", {}))
-        self.service.pids.pid_manager.restore_all(record_pids)
+        self.service.pids.pid_manager.restore_all(record_pids, record=record)
 
 
 class ParentPIDsComponent(ServiceComponent):
@@ -332,7 +334,7 @@ class ParentPIDsComponent(ServiceComponent):
         parent_pids = copy(record.parent.get("pids", {}))
         if record_cls.next_latest_published_record_by_parent(record.parent) is None:
             self.service.pids.parent_pid_manager.discard_all(
-                parent_pids, soft_delete=True
+                parent_pids, soft_delete=True, record=record
             )
 
         # Async register/update tasks after transaction commit.
@@ -344,7 +346,7 @@ class ParentPIDsComponent(ServiceComponent):
     def restore_record(self, identity, record=None, uow=None):
         """Restore previously invalidated pids."""
         parent_pids = copy(record.parent.get("pids", {}))
-        self.service.pids.parent_pid_manager.restore_all(parent_pids)
+        self.service.pids.parent_pid_manager.restore_all(parent_pids, record=record)
 
         # Async register/update tasks after transaction commit.
         for scheme in parent_pids.keys():

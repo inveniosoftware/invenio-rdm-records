@@ -236,7 +236,9 @@ class PIDManager:
 
         provider.register(pid, record=record, url=url)
 
-    def discard(self, scheme, identifier, provider_name=None, soft_delete=False):
+    def discard(
+        self, scheme, identifier, provider_name=None, soft_delete=False, record=None
+    ):
         """Discard a PID."""
         provider = self._get_provider(scheme, provider_name)
         pid = provider.get(identifier)
@@ -256,15 +258,15 @@ class PIDManager:
             )
 
         # the provider should check the conditions of deletion
-        provider.delete(pid, soft_delete=soft_delete)
+        provider.delete(pid, soft_delete=soft_delete, record=record)
 
-    def restore(self, scheme, identifier, provider_name=None):
+    def restore(self, scheme, identifier, provider_name=None, record=None):
         """Restore previously invalidated DOI."""
         provider = self._get_provider(scheme, provider_name)
         pid = provider.get(identifier)
-        provider.restore(pid)
+        provider.restore(pid, record=record)
 
-    def restore_all(self, pids):
+    def restore_all(self, pids, record=None):
         """Restore all pids."""
         for scheme, pid_attrs in pids.items():
             try:
@@ -272,11 +274,12 @@ class PIDManager:
                     scheme,
                     pid_attrs["identifier"],
                     pid_attrs["provider"],
+                    record=record,
                 )
             except PIDDoesNotExistError:
                 pass  # might not have been saved to DB yet
 
-    def discard_all(self, pids, soft_delete=False):
+    def discard_all(self, pids, soft_delete=False, record=None):
         """Discard all PIDs."""
         for scheme, pid_attrs in pids.items():
             try:
@@ -285,6 +288,7 @@ class PIDManager:
                     pid_attrs.get("identifier"),
                     pid_attrs.get("provider"),
                     soft_delete=soft_delete,
+                    record=record,
                 )
             except PIDDoesNotExistError:
                 pass  # might not have been saved to DB yet
