@@ -274,6 +274,9 @@ def full_record_to_dict():
                         "name": "European Commission",
                     },
                 },
+                {
+                    "funder": {"name": "Caltech Library"},
+                },
             ],
             "identifiers": [
                 {
