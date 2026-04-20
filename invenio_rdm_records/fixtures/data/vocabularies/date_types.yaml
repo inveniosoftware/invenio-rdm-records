@@ -108,3 +108,8 @@
     es: Retirado
     cs: Stáhnuto
     ar: ألغي
+- id: coverage
+  props:
+    datacite: Coverage
+  title:
+    en: Coverage

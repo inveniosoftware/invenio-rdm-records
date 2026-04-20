@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2026 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C)      2021 Graz University of Technology.
 // Copyright (C)      2022 TU Wien.
@@ -9,7 +9,16 @@
 
 import { useFormikContext } from "formik";
 import React from "react";
-import { Header, Checkbox, Grid, Icon, Label, List, Popup } from "semantic-ui-react";
+import {
+  Button,
+  Header,
+  Checkbox,
+  Grid,
+  Icon,
+  Label,
+  List,
+  Popup,
+} from "semantic-ui-react";
 import { humanReadableBytes } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
@@ -25,6 +34,8 @@ export const FileUploaderToolbar = (props) => {
     showMetadataOnlyToggle,
     quota,
     decimalSizeDisplay,
+    additionalQuota,
+    toggleQuotaSection,
   } = props;
   const { setFieldValue } = useFormikContext();
 
@@ -45,13 +56,7 @@ export const FileUploaderToolbar = (props) => {
       handleOnChangeMetadataOnly={handleOnChangeMetadataOnly}
     >
       <>
-        <Grid.Column
-          verticalAlign="middle"
-          floated="left"
-          mobile={16}
-          tablet={6}
-          computer={6}
-        >
+        <Grid.Column verticalAlign="middle" mobile={16} tablet={4} computer={4}>
           <Overridable
             id="InvenioRdmRecords.DepositForm.FileUploaderToolbar.MetadataOnlyToggle"
             filesList={filesList}
@@ -69,7 +74,7 @@ export const FileUploaderToolbar = (props) => {
                     checked={!filesEnabled}
                   />
                 </List.Item>
-                <List.Item>
+                <List.Item className="ml-5">
                   <Popup
                     trigger={
                       <Icon name="question circle outline" className="neutral" />
@@ -91,7 +96,7 @@ export const FileUploaderToolbar = (props) => {
           decimalSizeDisplay={decimalSizeDisplay}
         >
           {filesEnabled && (
-            <Grid.Column mobile={16} tablet={10} computer={10} className="storage-col">
+            <Grid.Column mobile={16} tablet={12} computer={12} className="storage-col">
               <Header size="tiny" className="mr-10">
                 {i18next.t("Storage available")}
               </Header>
@@ -115,9 +120,30 @@ export const FileUploaderToolbar = (props) => {
                   >
                     {humanReadableBytes(filesSize, decimalSizeDisplay)}{" "}
                     {i18next.t("out of")}{" "}
-                    {humanReadableBytes(quota.maxStorage, decimalSizeDisplay)}
+                    {quota.quotaIncrease?.enabled && quota.quotaIncrease?.valid_user
+                      ? humanReadableBytes(
+                          quota.quotaIncrease.defaultStorage +
+                            additionalQuota * Math.pow(10, 9),
+                          decimalSizeDisplay
+                        )
+                      : humanReadableBytes(quota.maxStorage, decimalSizeDisplay)}
                   </Label>
                 </List.Item>
+                {quota.quotaIncrease?.enabled && quota.quotaIncrease?.valid_user && (
+                  <List.Item>
+                    <Button
+                      type="button"
+                      size="tiny"
+                      compact
+                      labelPosition="left"
+                      icon="cog"
+                      content={i18next.t("Manage storage")}
+                      onClick={() => {
+                        toggleQuotaSection();
+                      }}
+                    />
+                  </List.Item>
+                )}
               </List>
             </Grid.Column>
           )}
@@ -134,6 +160,8 @@ FileUploaderToolbar.propTypes = {
   quota: PropTypes.object,
   decimalSizeDisplay: PropTypes.bool,
   showMetadataOnlyToggle: PropTypes.bool,
+  additionalQuota: PropTypes.number.isRequired,
+  toggleQuotaSection: PropTypes.func.isRequired,
 };
 
 FileUploaderToolbar.defaultProps = {

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2025 CERN.
+# Copyright (C) 2025-2026 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,7 +11,7 @@ from invenio_access.permissions import system_identity
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_pidstore.errors import PIDDoesNotExistError
-from invenio_requests.customizations import RequestType, actions
+from invenio_requests.customizations import actions
 from invenio_requests.proxies import current_requests_service
 from invenio_search.api import dsl
 from invenio_vocabularies.proxies import current_service as current_vocabularies_service

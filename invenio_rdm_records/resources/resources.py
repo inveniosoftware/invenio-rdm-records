@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2025 CERN.
+# Copyright (C) 2020-2026 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2021 data-futures.
@@ -98,6 +98,7 @@ class RDMRecordResource(RecordResource):
             route("GET", p(routes["item-revision"]), self.read_revision),
             route("POST", p(routes["request-deletion"]), self.request_deletion),
             route("POST", p(routes["file-modification"]), self.file_modification),
+            route("POST", p(routes["quota-increase"]), self.quota_increase),
         ]
 
         return url_rules
@@ -245,6 +246,21 @@ class RDMRecordResource(RecordResource):
     def file_modification(self):
         """Read the related review request."""
         item = self.service.file_modification(
+            g.identity,
+            resource_requestctx.view_args["pid_value"],
+            resource_requestctx.data,
+        )
+
+        resp_code = 200
+
+        return item.to_dict(), resp_code
+
+    @request_headers
+    @request_view_args
+    @request_data
+    def quota_increase(self):
+        """Read the related review request."""
+        item = self.service.quota_increase(
             g.identity,
             resource_requestctx.view_args["pid_value"],
             resource_requestctx.data,

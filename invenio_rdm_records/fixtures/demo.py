@@ -63,7 +63,8 @@ class CachedVocabularies:
             res_types = cls._read_vocabulary("resourcetypes")
 
             for res in res_types:
-                cls._resource_type_ids.append(res["id"])
+                if "depositable" in res.get("tags", []):
+                    cls._resource_type_ids.append(res["id"])
 
         random_id = random.choice(cls._resource_type_ids)
         return {"id": random_id}

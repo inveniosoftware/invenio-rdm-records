@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2024 CERN.
+# Copyright (C) 2019-2026 CERN.
 # Copyright (C) 2019-2021 Northwestern University.
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2023-2024 Graz University of Technology.
@@ -14,9 +14,15 @@
 
 from warnings import warn
 
-from flask import Blueprint
+from flask import Blueprint, current_app
 from flask_iiif import IIIF
+from flask_menu import current_menu
 from flask_principal import identity_loaded
+from flask_security import current_user
+from invenio_collections.resources.resource import CollectionsResource
+from invenio_collections.services.config import CollectionServiceConfig
+from invenio_collections.services.service import CollectionsService
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.resources.files import FileResource
 
 from . import config
@@ -27,6 +33,7 @@ from .oaiserver.services.services import OAIPMHServerService
 from .resources import (
     IIIFResource,
     IIIFResourceConfig,
+    RDMCollectionsResourceConfig,
     RDMCommunityRecordsResource,
     RDMCommunityRecordsResourceConfig,
     RDMDraftFilesResourceConfig,
@@ -71,6 +78,7 @@ from .services.config import (
 from .services.files import RDMFileService
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
+from .services.storage.service import StorageService
 from .utils import verify_token
 
 
@@ -130,18 +138,6 @@ class InvenioRDMRecords(object):
         if not app.config.get("COMMUNITIES_NAMESPACES"):
             app.config["COMMUNITIES_NAMESPACES"] = app.config["RDM_NAMESPACES"]
 
-        if not app.config.get("RDM_FILES_DEFAULT_QUOTA_SIZE"):
-            warn(
-                "The configuration value 'RDM_FILES_DEFAULT_QUOTA_SIZE' is not set. In future, please set it "
-                "explicitly to define your quota size, or be aware that the default value used i.e. FILES_REST_DEFAULT_QUOTA_SIZE will be 10 * (10**9) (10 GB).",
-                DeprecationWarning,
-            )
-        if not app.config.get("RDM_FILES_DEFAULT_MAX_FILE_SIZE"):
-            warn(
-                "The configuration value 'RDM_FILES_DEFAULT_MAX_FILE_SIZE' is not set. In future, please set it "
-                "explicitly to define your max file size, or be aware that the default value used i.e. FILES_REST_DEFAULT_MAX_FILE_SIZE will be 10 * (10**9) (10 GB).",
-                DeprecationWarning,
-            )
         if app.config.get("APP_RDM_DEPOSIT_FORM_PUBLISH_MODAL_EXTRA"):
             warn(
                 "The configuration value 'APP_RDM_DEPOSIT_FORM_PUBLISH_MODAL_EXTRA' is deprecated and will be removed in a future release. Use Overridables for "
@@ -181,6 +177,7 @@ class InvenioRDMRecords(object):
             pids_service=PIDsService(service_configs.record, PIDManager),
             review_service=ReviewService(service_configs.record),
         )
+        self.storage_service = StorageService(records_service=self.records_service)
 
         self.records_media_files_service = RDMRecordService(
             service_configs.record_with_media_files,
@@ -208,6 +205,12 @@ class InvenioRDMRecords(object):
 
         self.oaipmh_server_service = OAIPMHServerService(
             config=service_configs.oaipmh_server,
+        )
+
+        # Community collections
+        self.community_collections_service = CollectionsService(
+            config=CollectionServiceConfig.build(app),
+            records_service=self.community_records_service,
         )
 
     def init_resource(self, app):
@@ -290,6 +293,12 @@ class InvenioRDMRecords(object):
             config=IIIFResourceConfig.build(app),
         )
 
+        # Community collections
+        self.community_collections_resource = CollectionsResource(
+            service=self.community_collections_service,
+            config=RDMCollectionsResourceConfig.build(app),
+        )
+
     def fix_datacite_configs(self, app):
         """Make sure that the DataCite config items are strings."""
         datacite_config_items = [
@@ -303,12 +312,30 @@ class InvenioRDMRecords(object):
                 app.config[config_item] = str(app.config[config_item])
 
 
+def init_menu(app):
+    """Init menu."""
+    user_profile_menu = current_menu.submenu("settings.quota")
+    user_profile_menu.register(
+        endpoint="invenio_rdm_records_ext.storage_settings",
+        text=_(
+            "%(icon)s Storage",
+            icon="<i class='hdd icon'></i>",
+        ),
+        order=7,
+        visible_when=lambda: (
+            current_app.config.get("RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED", False)
+            and getattr(current_user, "verified_at", False)
+        ),
+    )
+
+
 def finalize_app(app):
     """Finalize app.
 
     NOTE: replace former @record_once decorator
     """
     init(app)
+    init_menu(app)
 
 
 def api_finalize_app(app):
@@ -335,6 +362,9 @@ def init(app):
     )
     sregistry.register(ext.oaipmh_server_service, service_id="oaipmh-server")
     sregistry.register(ext.iiif_service, service_id="rdm-iiif")
+    sregistry.register(
+        ext.community_collections_service, service_id="community-collections"
+    )
     # Register indexers
     iregistry = app.extensions["invenio-indexer"].registry
     iregistry.register(ext.records_service.indexer, indexer_id="records")

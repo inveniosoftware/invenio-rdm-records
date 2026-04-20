@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2024 CERN.
+# Copyright (C) 2020-2026 CERN.
 # Copyright (C) 2026 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -169,7 +169,7 @@ class RDMRecordQuota(db.Model, db.Timestamp):
 
     """Parent record id."""
 
-    user_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, index=True)
     """User associated with the parent record via parent.access.owned_by.
 
     This can be useful for e.g. quickly finding all per-record quota increases

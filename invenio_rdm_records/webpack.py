@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2025 CERN.
+# Copyright (C) 2019-2026 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
 # Copyright (C)      2022 TU Wien.
 # Copyright (C)      2022 Graz University of Technology.
@@ -21,6 +21,8 @@ theme = WebpackThemeBundle(
             entry={
                 "invenio-oai-pmh-details": "./js/invenio_rdm_records/oaipmh/details/index.js",
                 "invenio-oai-pmh-search": "./js/invenio_rdm_records/oaipmh/search/index.js",
+                "storage-overview": "./js/invenio_rdm_records/src/deposit/components/StorageSettings/index.js",
+                "invenio-vcs-with-communities": "./js/invenio_rdm_records/vcs/index.js",
             },
             dependencies={
                 "@babel/runtime": "^7.9.0",
@@ -38,6 +40,7 @@ theme = WebpackThemeBundle(
                 "hash-wasm": "^4.12.0",
                 "i18next": "^20.3.0",
                 "i18next-browser-languagedetector": "^6.1.0",
+                "jquery": "^3.2.1",
                 "luxon": "^1.23.0",
                 "path": "^0.12.7",
                 "prop-types": "^15.7.2",
@@ -61,6 +64,11 @@ theme = WebpackThemeBundle(
                 "query-string": "^7.0.0",
                 "semantic-ui-css": "^2.4.0",
                 "semantic-ui-react": "^2.1.0",
+                "@visx/group": "^3.12.0",
+                "@visx/responsive": "^3.12.0",
+                "@visx/scale": "^3.12.0",
+                "@visx/shape": "^3.12.0",
+                "@visx/text": "^3.12.0",
             },
             aliases={
                 # Define Semantic-UI theme configuration needed by

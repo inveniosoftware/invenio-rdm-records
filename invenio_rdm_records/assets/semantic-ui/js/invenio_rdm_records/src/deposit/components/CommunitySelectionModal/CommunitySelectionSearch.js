@@ -57,8 +57,8 @@ export class CommunitySelectionSearch extends Component {
     const searchApi = new InvenioSearchApi(selectedSearchApi);
     const overriddenComponents = {
       [`${selectedAppId}.ResultsList.item`]: parametrize(CommunityListItem, {
-        record: record,
-        isInitialSubmission: isInitialSubmission,
+        record,
+        isInitialSubmission,
       }),
     };
 
@@ -178,7 +178,7 @@ CommunitySelectionSearch.propTypes = {
       searchApi: PropTypes.object.isRequired,
     }),
   }),
-  record: PropTypes.object.isRequired,
+  record: PropTypes.object,
   isInitialSubmission: PropTypes.bool,
   CommunityListItem: PropTypes.elementType,
   pagination: PropTypes.bool,
@@ -192,6 +192,7 @@ CommunitySelectionSearch.defaultProps = {
   myCommunitiesEnabled: true,
   autofocus: true,
   CommunityListItem: CommunityListItem,
+  record: null,
   apiConfigs: {
     allCommunities: {
       initialQueryState: { size: 5, page: 1, sortBy: "bestmatch" },
@@ -202,7 +203,7 @@ CommunitySelectionSearch.defaultProps = {
         },
       },
       appId: "ReactInvenioDeposit.CommunitySelectionSearch.AllCommunities",
-      toggleText: "Search in all communities",
+      toggleText: i18next.t("Search in all communities"),
     },
     myCommunities: {
       initialQueryState: { size: 5, page: 1, sortBy: "bestmatch" },
@@ -213,7 +214,7 @@ CommunitySelectionSearch.defaultProps = {
         },
       },
       appId: "ReactInvenioDeposit.CommunitySelectionSearch.MyCommunities",
-      toggleText: "Search in my communities",
+      toggleText: i18next.t("Search in my communities"),
     },
   },
 };

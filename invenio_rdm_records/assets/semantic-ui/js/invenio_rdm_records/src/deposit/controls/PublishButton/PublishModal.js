@@ -15,6 +15,7 @@ import {
   PublishCheckboxComponent,
   ensureUniqueProps,
 } from "./PublishCheckboxComponent";
+import { PreviewButton } from "../PreviewButton";
 
 class PublishModalComponent extends Component {
   constructor(props) {
@@ -55,6 +56,7 @@ class PublishModalComponent extends Component {
       extraCheckboxes,
       beforeContent,
       afterContent,
+      depositFormHandleSubmit,
     } = this.props;
     return (
       <Formik
@@ -107,6 +109,7 @@ class PublishModalComponent extends Component {
                 <Button onClick={onClose} floated="left">
                   {i18next.t("Cancel")}
                 </Button>
+                <PreviewButton depositFormHandleSubmit={depositFormHandleSubmit} />
                 <Button
                   name="publish"
                   onClick={(event) => {
@@ -138,6 +141,7 @@ PublishModalComponent.propTypes = {
   ),
   beforeContent: PropTypes.func,
   afterContent: PropTypes.func,
+  depositFormHandleSubmit: PropTypes.func,
 };
 
 PublishModalComponent.defaultProps = {
@@ -146,6 +150,7 @@ PublishModalComponent.defaultProps = {
   extraCheckboxes: [],
   beforeContent: () => undefined,
   afterContent: () => undefined,
+  depositFormHandleSubmit: undefined,
 };
 
 export const PublishModal = Overridable.component(

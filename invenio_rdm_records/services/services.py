@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2025 CERN.
+# Copyright (C) 2020-2026 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021-2023 TU Wien.
 # Copyright (C) 2021-2025 Graz University of Technology.
@@ -38,6 +38,7 @@ from sqlalchemy.exc import NoResultFound
 
 from invenio_rdm_records.records.models import RDMRecordQuota, RDMUserQuota
 from invenio_rdm_records.requests.file_modification import FileModification
+from invenio_rdm_records.requests.quota_increase import QuotaIncrease
 from invenio_rdm_records.requests.record_deletion import RecordDeletion
 from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
@@ -838,6 +839,59 @@ class RDMRecordService(RecordService):
         db.session.add(user_quota)
 
         return True
+
+    @unit_of_work()
+    def quota_increase(self, identity, id_, data={}, uow=None, **kwargs):
+        """Quota increase of a record."""
+        try:
+            record = self.record_cls.pid.resolve(id_)
+        except:
+            record = self.draft_cls.pid.resolve(id_, registered_only=False)
+
+        # The policy checks if the bucket's quota is allowed, so we temporarily
+        # set the bucket quota, evaluate the policy and restore the bucket quota
+        # before the new quota is actually applied when we accept the request below
+        original_quota = record.bucket.quota_size
+        record.bucket.quota_size = int(data.get("quota_size", 0)) * 10**9
+
+        policy_result = self.config.quota_increase_policy.evaluate(identity, record)
+
+        record.bucket.quota_size = original_quota
+
+        immediate_quota_increase = policy_result["immediate_quota_increase"]
+
+        disabled = not immediate_quota_increase.enabled
+        forbidden = not immediate_quota_increase.allowed
+        if disabled or forbidden:  # bail early
+            raise PermissionDeniedError()
+
+        if immediate_quota_increase.allowed:
+            request = requests_service.create(
+                identity,
+                request_type=QuotaIncrease,
+                topic=record,
+                creator=identity.user,
+                receiver=None,
+                data={"payload": data},
+                uow=uow,
+            )
+
+            request = requests_service.execute_action(
+                identity, request.id, "submit", uow=uow
+            )
+
+            request = requests_service.execute_action(
+                # NOTE: We use the system identity to accept the request, since
+                # technically the system-defined quota increase policy was
+                # checked above
+                system_identity,
+                request.id,
+                "accept",
+                send_notification=False,
+                uow=uow,
+            )
+
+            return request
 
     def search_revisions(self, identity, id_):
         """Return a list of record revisions."""

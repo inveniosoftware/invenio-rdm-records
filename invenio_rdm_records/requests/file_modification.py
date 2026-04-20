@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2025 CERN.
+# Copyright (C) 2025-2026 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -17,8 +17,6 @@ from marshmallow import ValidationError, fields, validate
 
 from invenio_rdm_records.proxies import current_rdm_records_service as records_service
 from invenio_rdm_records.requests.base import BaseRequest
-
-from ..requests.base import BaseRequest
 
 
 class CreateAction(actions.CreateAction):

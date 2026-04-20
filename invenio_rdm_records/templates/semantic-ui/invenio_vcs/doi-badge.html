@@ -1,0 +1,56 @@
+{# -*- coding: utf-8 -*-
+
+  This file is part of Invenio.
+  Copyright (C) 2026 CERN.
+
+  Invenio is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+{% from "semantic-ui/invenio_formatter/macros/badges.html" import badges_formats_list %}
+
+{%- macro doi_badge(doi, doi_url, provider_id, provider) %}
+  {%- block doi_badge scoped %}
+    {% set image_url = url_for('invenio_vcs_badge.index', provider=provider, repo_provider_id=provider_id, _external=True) %}
+    <img
+      role="button"
+      tabindex="0"
+      id="modal-{{ provider_id }}-trigger"
+      aria-controls="modal-{{ provider_id }}"
+      aria-expanded="false"
+      class="doi-modal-trigger block m-0"
+      src="{{ image_url }}"
+      alt="DOI: {{ doi }}"
+    />
+
+    <div
+      id="modal-{{ provider_id }}"
+      role="dialog"
+      aria-modal="true"
+      class="ui modal segments fade doi-badge-modal"
+    >
+      <div class="ui segment header">
+        <h2>{{ _("DOI Badge") }}</h2>
+      </div>
+
+      <div class="ui segment content">
+        <small>
+          {{ _("This badge points to the latest released version of your repository. If you want a DOI badge for a specific release, please follow the DOI link for one of the specific releases and view the badge from its record.") }}
+        </small>
+      </div>
+
+      <div class="ui segment content">
+        <h3 class="ui small header">{{ _("DOI") }}</h3>
+        <pre>{{ doi }}</pre>
+
+        {{ badges_formats_list(image_url, doi_url) }}
+      </div>
+
+      <div class="ui segment actions">
+        <button class="ui close button">
+          {{ _("Close") }}
+        </button>
+      </div>
+    </div>
+  {%- endblock %}
+{%- endmacro %}

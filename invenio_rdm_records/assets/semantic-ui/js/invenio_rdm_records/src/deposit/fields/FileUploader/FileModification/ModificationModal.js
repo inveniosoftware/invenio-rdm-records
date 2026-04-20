@@ -1,5 +1,5 @@
 // This file is part of InvenioRDM
-// Copyright (C) 2025 CERN
+// Copyright (C) 2025-2026 CERN
 //
 // Invenio-rdm-records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -236,7 +236,7 @@ class ModificationModalComponent extends Component {
                 />
                 {error && (
                   <ErrorMessage
-                    header={i18next.t("Unable to unlock files.")}
+                    header={i18next.t("Unable to unlock files")}
                     content={i18next.t(error)}
                     icon="exclamation"
                     className="text-align-left"

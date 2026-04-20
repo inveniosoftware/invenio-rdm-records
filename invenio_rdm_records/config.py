@@ -40,6 +40,7 @@ from .services.request_policies import (
     FileModificationAdminPolicy,
     FileModificationPolicyEvaluator,
     GracePeriodPolicy,
+    QuotaIncreasePolicyEvaluator,
     RDMRecordDeletionPolicy,
     RequestDeletionPolicy,
 )
@@ -94,6 +95,7 @@ RDM_RECORDS_IDENTIFIERS_SCHEMES = {
         "validator": always_valid,
         "datacite": "Crossref Funder ID",
     },
+    "cstr": {"label": _("CSTR"), "validator": idutils.is_cstr, "datacite": "CSTR"},
     "doi": {"label": _("DOI"), "validator": idutils.is_doi, "datacite": "DOI"},
     "ean13": {"label": _("EAN13"), "validator": idutils.is_ean13, "datacite": "EAN13"},
     "eissn": {"label": _("EISSN"), "validator": idutils.is_issn, "datacite": "EISSN"},
@@ -112,6 +114,7 @@ RDM_RECORDS_IDENTIFIERS_SCHEMES = {
     "lsid": {"label": _("LSID"), "validator": idutils.is_lsid, "datacite": "LSID"},
     "pmid": {"label": _("PMID"), "validator": idutils.is_pmid, "datacite": "PMID"},
     "purl": {"label": _("PURL"), "validator": idutils.is_purl, "datacite": "PURL"},
+    "rrid": {"label": _("RRID"), "validator": idutils.is_rrid, "datacite": "RRID"},
     "upc": {"label": _("UPC"), "validator": always_valid, "datacite": "UPC"},
     "url": {"label": _("URL"), "validator": idutils.is_url, "datacite": "URL"},
     "urn": {"label": _("URN"), "validator": idutils.is_urn, "datacite": "URN"},
@@ -268,9 +271,43 @@ RDM_FILE_MODIFICATION_PERIOD = timedelta(days=30 + 15)
 during publish to block people from publishing after this period given the bucket stays open.
 """
 
-RDM_FILE_MODIFICATION_VALIDATION_ERROR_MESSAGE = _(
-    "File modification grace period has passed. Please discard this draft to make any changes."
-)
+#
+# Quota increase by users
+#
+RDM_QUOTA_INCREASE_POLICY = QuotaIncreasePolicyEvaluator
+"""Policy class which evaluates whether the quota for drafts can be increased."""
+
+RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED = False
+"""Allow increasing of draft's quota from a user's additional quota.
+
+RDM_FILES_DEFAULT_MAX_ADDITIONAL_QUOTA_SIZE controls how much each user has
+available across their records"""
+
+RDM_IMMEDIATE_QUOTA_INCREASE_POLICIES = []
+"""List of policies for user's increasing their quota for a draft.
+
+To enable users and admins to increase the quota for drafts, configure as:
+
+.. code-block:: python
+
+    from invenio_rdm_records.services.request_policies import (
+        QuotaIncreaseAdminPolicy,
+        QuotaIncreasePolicy,
+    )
+    RDM_IMMEDIATE_QUOTA_INCREASE_POLICIES = [
+        QuotaIncreasePolicy(),
+        QuotaIncreaseAdminPolicy(),
+    ]
+
+Policies are executed in order and the first one to return True is used
+as the policy for the record. As such, policies should be specified from most
+to least specific.
+
+To update a policy, create a duplicate of it and add a check on creation date to
+both. When your policy comes into effect on a date in the future it will be used,
+and this is the date which you will use to check whether the new or old policy
+will apply.
+"""
 
 #
 # Record communities
@@ -778,15 +815,14 @@ RDM_MEDIA_FILES_DEFAULT_QUOTA_SIZE = 10 * (10**9)  # 10 GB
 RDM_MEDIA_FILES_DEFAULT_MAX_FILE_SIZE = 10 * (10**9)  # 10 GB
 """Default maximum file size for a bucket in bytes for media files."""
 
-# For backwards compatibility,
-# FILES_REST_DEFAULT_QUOTA_SIZE & FILES_REST_DEFAULT_MAX_FILE_SIZE
-# are used respectively instead
-RDM_FILES_DEFAULT_QUOTA_SIZE = None
+RDM_FILES_DEFAULT_QUOTA_SIZE = 10 * (10**9)  # 10 GB
 """Default size for a bucket in bytes for files."""
 
-RDM_FILES_DEFAULT_MAX_FILE_SIZE = None
+RDM_FILES_DEFAULT_MAX_FILE_SIZE = 10 * (10**9)  # 10 GB
 """Default maximum file size for a bucket in bytes for files."""
 
+RDM_FILES_DEFAULT_MAX_ADDITIONAL_QUOTA_SIZE = 0
+"""Default additional quota size for a bucket in bytes for files."""
 
 RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
 """Priority of funder identifiers types to be used for DataCite serialization."""

@@ -6,6 +6,7 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 import _isEmpty from "lodash/isEmpty";
 import React, { Component } from "react";
 import { Label } from "semantic-ui-react";
@@ -61,9 +62,7 @@ export class FormFeedbackSummary extends Component {
         if (fields.some((field) => path.startsWith(field))) {
           const sectionElement = document.getElementById(section);
           const label =
-            sectionElement?.getAttribute("data-label") ||
-            sectionElement?.getAttribute("label") ||
-            "Unknown section";
+            sectionElement?.getAttribute("data-label") || i18next.t("Unknown section");
           errorSections.set(section, {
             label,
             count: (errorSections.get(section)?.count || 0) + 1,
@@ -86,9 +85,7 @@ export class FormFeedbackSummary extends Component {
       if (sectionElement) {
         const sectionId = sectionElement.id;
         const label =
-          sectionElement.getAttribute("data-label") ||
-          sectionElement.getAttribute("label") ||
-          "Unknown section";
+          sectionElement.getAttribute("data-label") || i18next.t("Unknown section");
         errorSections.set(sectionId, {
           label,
           count: (errorSections.get(sectionId)?.count || 0) + 1,

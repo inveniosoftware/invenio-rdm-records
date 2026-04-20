@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2025 CERN.
+// Copyright (C) 2020-2026 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C)      2022 Graz University of Technology.
 // Copyright (C)      2022 TU Wien.
@@ -21,6 +21,7 @@ import { FileUploaderArea } from "./FileUploaderArea";
 import { FileUploaderToolbar } from "./FileUploaderToolbar";
 import { NewVersionButton } from "../../controls/NewVersionButton";
 import { EditFilesAccordion } from "./EditFilesAccordion";
+import { QuotaManager } from "./QuotaManager/QuotaManager";
 import { humanReadableBytes } from "react-invenio-forms";
 import Overridable from "react-overridable";
 import { getFilesList } from "./utils";
@@ -56,6 +57,10 @@ export const FileUploaderComponent = ({
 
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const [warningMsg, setWarningMsg] = useState();
+  const [showQuotaSection, setShowQuotaSection] = useState(false);
+  const [additionalQuota, _setAdditionalQuota] = useState(
+    quota.quotaIncrease?.additionalStorage / Math.pow(10, 9) || 0
+  );
   const lockFileUploader = !isDraftRecord && filesLocked;
   const dropzoneParams = {
     preventDropOnDocument: true,
@@ -175,6 +180,42 @@ export const FileUploaderComponent = ({
   const displayImportBtn =
     filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
 
+  const toggleQuotaSection = () => {
+    setShowQuotaSection(!showQuotaSection);
+  };
+
+  // rescale quota from bytes to GB, as user input requires GB
+  const quotaInGB = Object.keys(quota.quotaIncrease).reduce((obj, key) => {
+    if (typeof quota["quotaIncrease"][key] === "number") {
+      obj[key] = quota["quotaIncrease"][key] / Math.pow(10, 9);
+    } else {
+      obj[key] = quota["quotaIncrease"][key];
+    }
+    return obj;
+  }, {});
+
+  const setAdditionalQuota = (value) => {
+    // if a user uploads a file without publishing, we can't get the minAdditional
+    // from the backend, so we use the filesSize directly in this case
+    const additionalFilesSize =
+      Math.ceil(filesSize / Math.pow(10, 9)) - quotaInGB["defaultStorage"];
+    const minAdditional = Math.max(
+      quotaInGB["minAdditionalQuotaValue"],
+      additionalFilesSize
+    );
+    const maxAdditional = quotaInGB["maxAdditionalQuotaValue"];
+
+    if (value < minAdditional) {
+      _setAdditionalQuota(minAdditional);
+    } else if (minAdditional <= value && value <= maxAdditional) {
+      _setAdditionalQuota(value);
+    } else if (value > maxAdditional) {
+      _setAdditionalQuota(maxAdditional);
+    } else if (isNaN(value)) {
+      _setAdditionalQuota(minAdditional);
+    }
+  };
+
   return (
     <Overridable
       id="InvenioRdmRecords.DepositForm.FileUploader.Container"
@@ -205,7 +246,7 @@ export const FileUploaderComponent = ({
     >
       <>
         <Grid className="file-uploader">
-          <Grid.Row className="pt-10 pb-5">
+          <Grid.Row className="pt-5 pb-10">
             {!lockFileUploader && (
               <FileUploaderToolbar
                 {...uiProps}
@@ -215,6 +256,8 @@ export const FileUploaderComponent = ({
                 filesSize={filesSize}
                 quota={quota}
                 decimalSizeDisplay={decimalSizeDisplay}
+                additionalQuota={additionalQuota}
+                toggleQuotaSection={toggleQuotaSection}
               />
             )}
           </Grid.Row>
@@ -228,7 +271,7 @@ export const FileUploaderComponent = ({
             {...uiProps}
           >
             {displayImportBtn && (
-              <Grid.Row className="pb-5 pt-5">
+              <Grid.Row className="pt-5 pb-5">
                 <Grid.Column width={16}>
                   <Message visible info>
                     <div className="right-floated display-inline-block">
@@ -252,6 +295,19 @@ export const FileUploaderComponent = ({
               </Grid.Row>
             )}
           </Overridable>
+
+          {showQuotaSection && (
+            <Grid.Row className="pt-0">
+              <QuotaManager
+                draft={formikDraft}
+                quota={quotaInGB}
+                decimalSizeDisplay={decimalSizeDisplay}
+                toggleQuotaSection={toggleQuotaSection}
+                additionalQuota={additionalQuota}
+                setAdditionalQuota={setAdditionalQuota}
+              />
+            </Grid.Row>
+          )}
 
           <Overridable
             id="InvenioRdmRecords.DepositForm.FileUploader.UploadArea"
@@ -325,7 +381,7 @@ export const FileUploaderComponent = ({
                         className="right-floated"
                         disabled={!permissions.can_new_version}
                       />
-                      <p className="mt-5 display-inline-block">
+                      <p className="display-inline-block mt-5">
                         <Icon name="info circle" size="large" />
                         {i18next.t(
                           "You must create a new version to add, modify or delete files."
@@ -379,6 +435,7 @@ FileUploaderComponent.propTypes = {
   quota: PropTypes.shape({
     maxStorage: PropTypes.number,
     maxFiles: PropTypes.number,
+    quotaIncrease: PropTypes.object,
   }),
   record: PropTypes.object,
   uploadButtonIcon: PropTypes.string,

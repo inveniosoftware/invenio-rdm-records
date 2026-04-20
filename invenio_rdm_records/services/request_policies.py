@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2025 CERN.
+# Copyright (C) 2025-2026 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -15,6 +15,8 @@ from flask import current_app
 from invenio_access.permissions import authenticated_user, system_permission
 from invenio_administration.permissions import administration_permission
 from invenio_i18n import lazy_gettext as _
+
+from invenio_rdm_records.proxies import current_rdm_records_storage_service
 
 
 class BasePolicy:
@@ -134,6 +136,64 @@ class FileModificationAdminPolicy(BasePolicy):
         return True
 
 
+class QuotaIncreasePolicy(BasePolicy):
+    """Quota increase policy."""
+
+    id = "quota-increase-policy-v1"
+    description = _("You can increase the quota of your drafts.")
+
+    def is_allowed(self, identity, record):
+        """Only owners can increase the quota."""
+        if record:
+            is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
+            return is_record_owner
+        else:
+            # unsaved drafts are always valid as you are the owner
+            # i.e. you can't share an unsaved draft to someone else
+            return True
+
+    def evaluate(self, identity, record):
+        """Check if record can be increased by specific additional quota for this user.
+
+        Only used on backend. The frontend evaluates is allowed in setAdditionalQuota.
+        """
+        min_additional_quota_value = (
+            current_rdm_records_storage_service.min_additional_quota_value(
+                identity.id, record
+            )
+        )
+        additional_storage = current_rdm_records_storage_service.additional_storage(
+            identity.id, record
+        )
+        max_additional_quota_value = (
+            current_rdm_records_storage_service.max_additional_quota_value(
+                identity.id, record
+            )
+        )
+
+        return (
+            min_additional_quota_value
+            <= additional_storage
+            <= max_additional_quota_value
+        )
+
+
+class QuotaIncreaseAdminPolicy(BasePolicy):
+    """Quota increase policy which allows admins to also increase quotas for users."""
+
+    id = "quota-increase-admin-v1"
+    description = _("You can increase the quota of a draft as you are an admin.")
+
+    def is_allowed(self, identity, record):
+        """Admins are allowed."""
+        is_admin = administration_permission.allows(identity)
+        return is_admin
+
+    def evaluate(self, identity, record):
+        """All records are valid."""
+        return True
+
+
 class PolicyEvaluator:
     """Base class for policy evaluator classes."""
 
@@ -228,6 +288,28 @@ class FileModificationPolicyEvaluator(PolicyEvaluator):
             "immediate_file_modification": cls.evaluate_policies(
                 "RDM_IMMEDIATE_FILE_MODIFICATION_ENABLED",
                 "RDM_IMMEDIATE_FILE_MODIFICATION_POLICIES",
+                identity,
+                record,
+            ),
+        }
+
+
+class QuotaIncreasePolicyEvaluator(PolicyEvaluator):
+    """Quota increase policy."""
+
+    @classmethod
+    def evaluate(cls, identity, record):
+        """Evaluate file modification for an identity and record."""
+        if authenticated_user not in identity.provides:
+            # only authenticated users can modify files of records
+            return {
+                "immediate_quota_increase": cls.Result(False),
+            }
+
+        return {
+            "immediate_quota_increase": cls.evaluate_policies(
+                "RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED",
+                "RDM_IMMEDIATE_QUOTA_INCREASE_POLICIES",
                 identity,
                 record,
             ),

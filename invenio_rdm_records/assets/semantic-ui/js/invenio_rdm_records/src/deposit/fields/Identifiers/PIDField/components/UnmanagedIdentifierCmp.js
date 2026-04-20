@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2025 CERN.
+// Copyright (C) 2020-2026 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -46,15 +46,19 @@ export class UnmanagedIdentifierCmp extends Component {
     const { localIdentifier } = this.state;
     const { form, fieldPath, helpText, pidPlaceholder, disabled } = this.props;
     const fieldError = getFieldErrors(form, fieldPath);
+    const displayError =
+      fieldError && typeof fieldError === "object" && fieldError.message
+        ? fieldError.message
+        : fieldError;
     return (
       <>
-        <Form.Field width={8} error={fieldError}>
+        <Form.Field width={8} error={displayError}>
           <Form.Input
             onChange={(e, { value }) => this.onChange(value)}
             value={localIdentifier}
             placeholder={pidPlaceholder}
             width={16}
-            error={fieldError}
+            error={displayError}
             disabled={disabled}
           />
         </Form.Field>

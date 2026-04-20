@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2025 CERN.
+# Copyright (C) 2020-2026 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2023 Graz University of Technology.
@@ -23,6 +23,7 @@ from flask_resources import (
     create_error_handler,
     resource_requestctx,
 )
+from invenio_collections.resources.config import CollectionsResourceConfig
 from invenio_communities.communities.resources import CommunityResourceConfig
 from invenio_communities.communities.resources.config import community_error_handlers
 from invenio_drafts_resources.resources import RecordResourceConfig
@@ -260,6 +261,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     routes["item-revision"] = "/<pid_value>/revisions/<revision_id>"
     routes["request-deletion"] = "/<pid_value>/request-deletion"
     routes["file-modification"] = "/<pid_value>/file-modification"
+    routes["quota-increase"] = "/<pid_value>/quota-increase"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
@@ -587,6 +589,10 @@ class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin)
         default=record_serializers,
     )
 
+    request_search_args = FromConfig(
+        "RDM_SEARCH_ARGS_SCHEMA", default=RDMSearchRequestArgsSchema
+    )
+
 
 class RDMRecordCommunitiesResourceConfig(CommunityResourceConfig, ConfiguratorMixin):
     """Record communities resource config."""
@@ -628,4 +634,15 @@ class RDMRecordRequestsResourceConfig(ResourceConfig, ConfiguratorMixin):
             "application/json"
         ],
         **ResourceConfig.response_handlers,
+    }
+
+
+class RDMCollectionsResourceConfig(CollectionsResourceConfig):
+    """RDM-specific collections resource config with UI serializer."""
+
+    response_handlers = {
+        "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers),
+        "application/vnd.inveniordm.v1+json": ResponseHandler(
+            UIJSONSerializer(), headers=etag_headers
+        ),
     }

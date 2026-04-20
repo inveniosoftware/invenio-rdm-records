@@ -12,6 +12,43 @@
 Changes
 =======
 
+Version v28.3.1 (released 2026-04-14)
+
+- fix: display DOI validation errors in deposit form
+
+Version v28.3.0 (released 2026-04-13)
+
+- feat: add new RDMSubCommunity request class
+- fix: remove duplicate definition of collections service proxy
+
+Version v28.2.0 (released 2026-04-09)
+
+- feat(storage-quota): settings integration
+- feat(storage-quota): implement self-served quota increases
+- chore: deprecate FILES_REST in favour of RDM_FILES
+    This was deprecated in RDM records in August 2024
+    https://github.com/inveniosoftware/invenio-rdm-records/pull/1789/changes
+
+Version v28.1.0 (released 2026-04-09)
+- fix: switch to accordion data-label
+
+Version v28.0.0 (released 2026-04-08)
+
+- fix: user access request routing
+- chore: upgrade invenio-communities
+- feat(community-records-collections): initialize and wire CollectionsService with community_records_service
+- fix(file-modification): consider `can_modify_locked_files` permission
+- feat(auditlog): Add audit logs for share access
+- vocabs: add resource_types for datacite 4.5
+- vocabs: update resource_types to datacite 4.7
+- resource_types: fix OpenAIRE resource type for computational notebook
+- vocabularies: add datacite 4.7 relationType
+- vocabularies: add datacite 4.6 date types
+- vocabularies: add datacite 4.6 relation types
+- feat(vcs): support for new VCS integration
+- ui(translations): mark message as translatable
+- ui(translations): mark strings as translatable
+
 Version v27.0.0 (released 2026-03-20)
 
 - change(setup): upgrade invenio-checks

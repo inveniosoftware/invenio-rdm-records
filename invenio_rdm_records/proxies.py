@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019 CERN.
+# Copyright (C) 2019-2026 CERN.
 # Copyright (C) 2019 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -39,3 +39,13 @@ current_community_records_service = LocalProxy(
     lambda: current_app.extensions["invenio-rdm-records"].community_records_service
 )
 """Helper proxy to get the current Communities Records service extension."""
+
+current_community_collections_service = LocalProxy(
+    lambda: current_app.extensions["invenio-rdm-records"].community_collections_service
+)
+"""Helper proxy to get the current Communities collection service extension."""
+
+current_rdm_records_storage_service = LocalProxy(
+    lambda: current_app.extensions["invenio-rdm-records"].storage_service
+)
+"""Helper proxy to get the current RDM-Records storage service."""
