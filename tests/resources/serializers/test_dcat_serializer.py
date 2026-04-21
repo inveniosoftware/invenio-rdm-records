@@ -111,6 +111,12 @@ def test_dcat_serializer(running_app, full_record_to_dict):
         "      </foaf:Project>\n"
         "    </citedcat:isFundedBy>\n"
         '    <citedcat:funder rdf:resource="https://ror.org/00k4n6c32"/>\n'
+        "    <citedcat:funder>\n"
+        "      <foaf:Organization>\n"
+        '        <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#string"/>\n'
+        "        <foaf:name>Caltech Library</foaf:name>\n"
+        "      </foaf:Organization>\n"
+        "    </citedcat:funder>\n"
         "    <dct:contributor>\n"
         '      <rdf:Description rdf:about="https://orcid.org/0000-0001-8135-3489">\n'
         '        <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>\n'

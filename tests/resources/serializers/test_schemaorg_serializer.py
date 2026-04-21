@@ -92,7 +92,13 @@ def test_schemaorg_serializer_full_record(running_app, full_record_to_dict):
                 "name": "Launching of the research program on meaning processing "
                 "(111023)",
                 "url": {"identifier": "https://sandbox.zenodo.org/", "scheme": "url"},
-            }
+            },
+            {
+                "funder": {
+                    "@type": "Organization",
+                    "name": "Caltech Library",
+                },
+            },
         ],
         "identifier": "https://doi.org/10.1234/12345-abcde",
         "inLanguage": {"@type": "Language", "alternateName": "dan", "name": "Danish"},

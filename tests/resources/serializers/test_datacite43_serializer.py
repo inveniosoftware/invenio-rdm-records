@@ -179,7 +179,10 @@ def test_datacite43_serializer(running_app, full_record_to_dict):
                 "funderIdentifier": "00k4n6c32",
                 "funderIdentifierType": "ROR",
                 "funderName": "European Commission",
-            }
+            },
+            {
+                "funderName": "Caltech Library",
+            },
         ],
         "geoLocations": [
             {
@@ -370,6 +373,9 @@ def test_datacite43_xml_serializer(running_app, full_record_to_dict):
         "      <awardNumber>111023</awardNumber>\n"
         "      <awardTitle>Launching of the research program on meaning "
         "processing</awardTitle>\n"
+        "    </fundingReference>\n"
+        "    <fundingReference>\n"
+        "      <funderName>Caltech Library</funderName>\n"
         "    </fundingReference>\n"
         "  </fundingReferences>\n"
         "</resource>\n"
