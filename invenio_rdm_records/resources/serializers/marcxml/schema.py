@@ -49,9 +49,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     # sources = fields.Constant(missing)  # Corresponds to references in the metadata schema
     formats = fields.Method("get_formats", data_key="520 1")
     sizes = fields.Method("get_sizes", data_key="520 2")
-    funding = fields.Method(
-        "get_funding", data_key="536  "
-    )  # TODO this was not implemented on Zenodo, neither specified in marcxml
+    funding = fields.Method("get_funding", data_key="536  ")
     updated = fields.Method("get_updated", data_key="005")
     files = fields.Method("get_files", data_key="8564 ")
     access = fields.Method("get_access", data_key="542  ")
@@ -343,12 +341,20 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             award = funding_object.get("award", {})
             award_title = award.get("title", {}).get("en")
             award_number = award.get("number")
+            funder_name = funding_object.get("funder", {}).get("name")
 
             serialized_funder = {}
+            text_of_note = ""
             if award_number:
                 serialized_funder["c"] = award_number
+            if funder_name:
+                text_of_note = funder_name
             if award_title:
-                serialized_funder["a"] = award_title
+                if text_of_note:
+                    text_of_note += f": {award_title}"
+                else:
+                    text_of_note = award_title
+            serialized_funder["a"] = text_of_note
 
             return serialized_funder
 

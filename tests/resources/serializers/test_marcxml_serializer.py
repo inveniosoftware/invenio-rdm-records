@@ -307,7 +307,10 @@ def test_marcxml_serializer_full_record(db, running_app, updated_full_record):
   </datafield>
   <datafield tag="536" ind1=" " ind2=" ">
     <subfield code="c">111023</subfield>
-    <subfield code="a">Launching of the research program on meaning processing</subfield>
+    <subfield code="a">European Commission: Launching of the research program on meaning processing</subfield>
+  </datafield>
+  <datafield tag="536" ind1=" " ind2=" ">
+    <subfield code="a">Caltech Library</subfield>
   </datafield>
   <controlfield tag="005">20231114183055.0</controlfield>
   <datafield tag="856" ind1="4" ind2=" ">
