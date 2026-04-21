@@ -111,9 +111,9 @@ class RDMVCSRelease(VCSRelease):
             )
 
         # Add license if not yet added and available from the repo.
-        license_pid = self.get_license_pid()
-        if not output.get("rights") and license_pid:
-            output.update({"rights": [{"id": license_pid}]})
+        license_entry = self.get_license_pid()
+        if not output.get("rights") and license_entry:
+            output.update({"rights": [license_entry]})
         return output
 
     def get_custom_fields(self):
@@ -135,8 +135,13 @@ class RDMVCSRelease(VCSRelease):
                 output.update({"affiliations": [{"name": company}]})
         return output
 
-    def get_license_pid(self) -> str | None:
-        """Returns whether the repository's license SPDX (as returned by the VCS) is a valid RDM license."""
+    def get_license_pid(self) -> dict | None:
+        """Returns the license rights entry for the repository's license SPDX ID.
+
+        Returns a vocabulary-backed entry (``{"id": ...}``) if the SPDX ID is
+        recognised, a custom free-text entry (``{"title": {...}}``) with a
+        warning if it is not, or ``None`` when no license is set.
+        """
         license_spdx_id = self.generic_repo.license_spdx
         if license_spdx_id is None:
             return None
@@ -146,13 +151,13 @@ class RDMVCSRelease(VCSRelease):
             license_vocab = current_vocabularies_service.read(
                 identity=self.user_identity, id_=("licenses", license_spdx_id.lower())
             )
-            return license_vocab.pid.id
+            return {"id": license_vocab.pid.id}
         except (PIDDoesNotExistError, NoResultFound):
             self.add_warning(
-                f"The repository's license '{license_spdx_id}' is not recognised. The record has been created without "
-                "a license; please edit it to select one manually.",
+                f"The repository's license '{license_spdx_id}' is not recognised and has been added as a custom license. "
+                "Please edit the record to select a standard license if needed.",
             )
-            return None
+            return {"title": {"en": license_spdx_id}}
 
     def resolve_record(self):
         """Resolves an RDM record from a release."""
