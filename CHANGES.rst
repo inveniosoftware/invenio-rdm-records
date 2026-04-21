@@ -12,6 +12,16 @@
 Changes
 =======
 
+Version v28.4.0 (released 2026-04-21)
+
+- fix(vcs): avoid failing on unrecognised license; include warning messages in notification
+- feat: add optional record parameter to support per-community PID assignment (#2279)
+- fix(config): reuse community records search params config
+- fix: use translation to customise msg instead of config
+- fix: missing proptype
+- fix: using only depositable resource type for fake data
+- fix: add preview button to publish modal
+
 Version v28.3.1 (released 2026-04-14)
 
 - fix: display DOI validation errors in deposit form
