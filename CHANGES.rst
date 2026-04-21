@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v28.5.0 (released 2026-04-21)
+
+- feat(moderation): handle `actor_id` and `note` in user block callback
+
 Version v28.4.0 (released 2026-04-21)
 
 - fix(vcs): avoid failing on unrecognised license; include warning messages in notification
