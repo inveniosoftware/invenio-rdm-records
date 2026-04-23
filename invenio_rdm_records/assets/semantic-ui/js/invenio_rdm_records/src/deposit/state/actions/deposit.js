@@ -16,6 +16,7 @@ import {
   DRAFT_FETCHED,
   DRAFT_HAS_VALIDATION_ERRORS,
   DRAFT_PREVIEW_FAILED,
+  DRAFT_PREVIEW_FAILED_WITH_VALIDATION_ERRORS,
   DRAFT_PREVIEW_STARTED,
   DRAFT_PUBLISH_FAILED,
   DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS,
@@ -278,7 +279,7 @@ export const preview = (draft) => {
       depositState: getState().deposit,
       dispatchFn: dispatch,
       failType: DRAFT_PREVIEW_FAILED,
-      partialValidationActionType: DRAFT_HAS_VALIDATION_ERRORS,
+      partialValidationActionType: DRAFT_PREVIEW_FAILED_WITH_VALIDATION_ERRORS,
       // Users should be able to preview a record with validation warnings.
       showOnlyValidationErrorsWithSeverityError: true,
     });
