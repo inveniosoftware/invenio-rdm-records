@@ -13,7 +13,6 @@ import pytest
 from invenio_db.utils import alembic_test_context, drop_alembic_version_table
 
 
-@pytest.mark.skip(reason="Caused by mergepoint")
 def test_alembic(base_app, database):
     """Test alembic recipes."""
     db = database
