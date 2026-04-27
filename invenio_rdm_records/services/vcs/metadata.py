@@ -71,7 +71,7 @@ class RDMReleaseMetadata(object):
         # Get default right from app config or use cc-by-4.0 if default is not set in app
         # TODO use the default software license
         version = self.rdm_release.generic_release.tag_name
-        site_name = current_app.config.get("THEME_SITENAME",_"Not Defined")
+        site_name = current_app.config.get("THEME_SITENAME", _("Not Defined"))
 
         publication_date = self.rdm_release.generic_release.published_at
         if publication_date is None:
