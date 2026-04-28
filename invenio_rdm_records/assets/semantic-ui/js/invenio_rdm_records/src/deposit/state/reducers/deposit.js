@@ -266,7 +266,6 @@ const depositReducer = (state = {}, action) => {
           action.payload.data,
           state.editorState.selectedCommunity
         ),
-        errors: {},
         actionState: action.type,
         actionStateExtra: {},
       };
@@ -282,7 +281,6 @@ const depositReducer = (state = {}, action) => {
           action.payload.data,
           state.editorState.selectedCommunity
         ),
-        errors: {},
         actionState: action.type,
         actionStateExtra: {},
       };
