@@ -278,6 +278,7 @@ class RelatedIdentifierSchema(IdentifierSchema):
 
     relation_type = fields.Nested(VocabularySchema)
     resource_type = fields.Nested(VocabularySchema)
+    relation_type_information = fields.Str()
 
     @validates_schema
     def validate_related_identifier(self, data, **kwargs):
