@@ -9,6 +9,8 @@
 
 """Test rights schema."""
 
+from contextlib import contextmanager
+
 import pytest
 from marshmallow import ValidationError
 
@@ -73,7 +75,7 @@ def test_invalid_title(running_app):
 def test_invalid_multiple_title(running_app):
     invalid_url = {
         "title": {
-            "en": "Creative Commons Attribution 4.0 International",
+            "sv": "Creative Commons Attribution 4.0 International SV",
             "es": "Creative Commons Attribution 4.0 International ES",
         },
         "description": {"en": "A description"},
@@ -96,7 +98,7 @@ def test_invalid_description(running_app):
 def test_invalid_multiple_description(running_app):
     invalid_url = {
         "title": {"en": "Creative Commons Attribution 4.0 International"},
-        "description": {"en": "A description", "es": "A description ES"},
+        "description": {"sv": "En beskrivning", "es": "A description ES"},
         "link": "creativecommons.org/licenses/by/4.0/",
     }
     with pytest.raises(ValidationError):
@@ -155,3 +157,79 @@ def test_valid_rights(running_app, rights, minimal_record):
     metadata["rights"] = rights
 
     assert metadata == MetadataSchema().load(metadata)
+
+
+@contextmanager
+def _secondary_locale(running_app):
+    """Temporarily add a secondary locale for schema tests."""
+    app = running_app.app
+    secondary_locale = "sv"
+    secondary_title = "Swedish"
+    previous_languages = list(app.config.get("I18N_LANGUAGES", []))
+    i18n_ext = app.extensions["invenio-i18n"]
+    previous_locales_cache = i18n_ext._locales_cache
+    previous_languages_cache = i18n_ext._languages_cache
+
+    if secondary_locale not in [lang for lang, _ in previous_languages]:
+        app.config["I18N_LANGUAGES"] = previous_languages + [
+            (secondary_locale, secondary_title)
+        ]
+
+    i18n_ext._locales_cache = None
+    i18n_ext._languages_cache = None
+
+    try:
+        yield secondary_locale
+    finally:
+        app.config["I18N_LANGUAGES"] = previous_languages
+        i18n_ext._locales_cache = previous_locales_cache
+        i18n_ext._languages_cache = previous_languages_cache
+
+
+def test_rights_title_requires_english(running_app):
+    with _secondary_locale(running_app) as secondary_locale:
+        valid_english_only = {
+            "title": {"en": "Creative Commons Attribution 4.0 International"}
+        }
+        valid_english_and_localized = {
+            "title": {
+                "en": "Copyright: KTH-Royal Institute of Technology",
+                secondary_locale: "Localized copyright statement",
+            }
+        }
+        invalid_localized_only = {
+            "title": {secondary_locale: "Localized copyright statement"}
+        }
+
+        assert valid_english_only == RightsSchema().load(valid_english_only)
+        assert valid_english_and_localized == RightsSchema().load(
+            valid_english_and_localized
+        )
+        with pytest.raises(ValidationError):
+            RightsSchema().load(invalid_localized_only)
+
+
+def test_rights_description_requires_english(running_app):
+    with _secondary_locale(running_app) as secondary_locale:
+        valid_english_only = {
+            "title": {"en": "Creative Commons Attribution 4.0 International"},
+            "description": {"en": "A description"},
+        }
+        valid_english_and_localized = {
+            "title": {"en": "Creative Commons Attribution 4.0 International"},
+            "description": {
+                "en": "A description",
+                secondary_locale: "Localized description",
+            },
+        }
+        invalid_localized_only = {
+            "title": {"en": "Creative Commons Attribution 4.0 International"},
+            "description": {secondary_locale: "Localized description"},
+        }
+
+        assert valid_english_only == RightsSchema().load(valid_english_only)
+        assert valid_english_and_localized == RightsSchema().load(
+            valid_english_and_localized
+        )
+        with pytest.raises(ValidationError):
+            RightsSchema().load(invalid_localized_only)

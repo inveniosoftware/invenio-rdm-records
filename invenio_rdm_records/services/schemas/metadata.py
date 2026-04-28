@@ -70,15 +70,21 @@ def _valid_url(error_msg):
     return validate.URL(error=error_msg)
 
 
-def locale_validation(value, field_name):
+def locale_validation(value, field_name, required_locale=None):
     """Validates the locale value."""
     valid_locales = current_app.extensions["invenio-i18n"].get_locales()
     valid_locales_code = [v.language for v in valid_locales]
     if value:
-        if len(value.keys()) > 1:
+        locales = list(value.keys())
+
+        if len(locales) > 1 and required_locale is None:
             raise ValidationError(_("Only one value is accepted."), field_name)
-        elif list(value.keys())[0] not in valid_locales_code:
+        elif any(locale not in valid_locales_code for locale in locales):
             raise ValidationError(_("Not a valid locale."), field_name)
+        elif required_locale and required_locale not in locales:
+            raise ValidationError(
+                _("Translation must be provided in English."), field_name
+            )
 
 
 class PersonOrOrganizationSchema(Schema):
@@ -233,13 +239,13 @@ class RightsSchema(Schema):
 
     @validates("title")
     def validate_title(self, value):
-        """Validates that title contains only one valid locale."""
-        locale_validation(value, "title")
+        """Validate that title contains English."""
+        locale_validation(value, "title", required_locale="en")
 
     @validates("description")
     def validate_description(self, value):
-        """Validates that description contains only one valid locale."""
-        locale_validation(value, "description")
+        """Validate that description contains English."""
+        locale_validation(value, "description", required_locale="en")
 
     @validates_schema
     def validate_rights(self, data, **kwargs):
