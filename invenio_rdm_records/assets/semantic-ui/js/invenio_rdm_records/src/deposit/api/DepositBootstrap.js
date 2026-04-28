@@ -115,7 +115,7 @@ class DepositBootstrapComponent extends Component {
   };
 
   render() {
-    const { errors, record, children } = this.props;
+    const { errors, record, children, formikConfig } = this.props;
     return (
       <DepositFormSubmitContext.Provider
         value={{ setSubmitContext: this.setSubmitContext }}
@@ -133,6 +133,7 @@ class DepositBootstrapComponent extends Component {
             initialValues: record,
             // errors need to be repopulated after form is reinitialised
             ...(errors && { initialErrors: errors }),
+            ...formikConfig,
           }}
         >
           {children}
@@ -154,12 +155,14 @@ DepositBootstrapComponent.propTypes = {
   reservePIDAction: PropTypes.func.isRequired,
   discardPIDAction: PropTypes.func.isRequired,
   fileUploadOngoing: PropTypes.bool,
+  formikConfig: PropTypes.object,
 };
 
 DepositBootstrapComponent.defaultProps = {
   errors: undefined,
   children: undefined,
   fileUploadOngoing: false,
+  formikConfig: {},
 };
 
 const mapStateToProps = (state) => {
