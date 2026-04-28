@@ -131,7 +131,8 @@ def test_signposting_serializer_full(
                     },
                     {
                         "href": "https://127.0.0.1:5000/api/records/12345-abcde",
-                        "type": 'application/ld+json;profile="https://datapackage.org/profiles/2.0/datapackage.json"',
+                        "type": "application/ld+json",
+                        "profile": "https://datapackage.org/profiles/2.0/datapackage.json",
                     },
                     {
                         "href": "https://127.0.0.1:5000/api/records/12345-abcde",
@@ -326,7 +327,7 @@ def test_signposting_lvl1_serializer_full_collections_size_ok(
         f'<{api_url}> ; rel="describedby" ; type="application/dcat+xml"',
         f'<{api_url}> ; rel="describedby" ; type="application/json"',
         f'<{api_url}> ; rel="describedby" ; type="application/ld+json"',
-        f'<{api_url}> ; rel="describedby" ; type="application/ld+json;profile="https://datapackage.org/profiles/2.0/datapackage.json""',
+        f'<{api_url}> ; rel="describedby" ; type="application/ld+json" ; profile="https://datapackage.org/profiles/2.0/datapackage.json"',
         f'<{api_url}> ; rel="describedby" ; type="application/marcxml+xml"',
         f'<{api_url}> ; rel="describedby" ; type="application/vnd.citationstyles.csl+json"',
         f'<{api_url}> ; rel="describedby" ; type="application/vnd.datacite.datacite+json"',
@@ -383,7 +384,8 @@ def test_signposting_serializer_minimal(running_app, minimal_record_to_dict):
                     },
                     {
                         "href": "https://127.0.0.1:5000/api/records/67890-fghij",
-                        "type": 'application/ld+json;profile="https://datapackage.org/profiles/2.0/datapackage.json"',
+                        "type": "application/ld+json",
+                        "profile": "https://datapackage.org/profiles/2.0/datapackage.json",
                     },
                     {
                         "href": "https://127.0.0.1:5000/api/records/67890-fghij",
@@ -464,7 +466,7 @@ def test_signposting_lvl1_serializer_minimal(running_app, minimal_record_to_dict
         f'<{api_url}> ; rel="describedby" ; type="application/dcat+xml"',
         f'<{api_url}> ; rel="describedby" ; type="application/json"',
         f'<{api_url}> ; rel="describedby" ; type="application/ld+json"',
-        f'<{api_url}> ; rel="describedby" ; type="application/ld+json;profile="https://datapackage.org/profiles/2.0/datapackage.json""',
+        f'<{api_url}> ; rel="describedby" ; type="application/ld+json" ; profile="https://datapackage.org/profiles/2.0/datapackage.json"',
         f'<{api_url}> ; rel="describedby" ; type="application/marcxml+xml"',
         f'<{api_url}> ; rel="describedby" ; type="application/vnd.citationstyles.csl+json"',
         f'<{api_url}> ; rel="describedby" ; type="application/vnd.datacite.datacite+json"',

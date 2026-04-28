@@ -35,6 +35,8 @@ class FAIRSignpostingProfileLvl1Serializer(MarshmallowSerializer):
                 link = f'<{value["href"]}> ; rel="{rel}"'
                 if "type" in value:
                     link += f' ; type="{value["type"]}"'
+                if "profile" in value:
+                    link += f' ; profile="{value["profile"]}"'
                 links.append(link)
         return " , ".join(links)
 
