@@ -335,6 +335,10 @@ export class DepositFileApiClient {
     throw new Error("Not implemented.");
   }
 
+  updateFileMetadata(updateUrl, fileMeta) {
+    throw new Error("Not implemented.");
+  }
+
   deleteFile(fileLinks) {
     throw new Error("Not implemented.");
   }
@@ -383,6 +387,12 @@ export class RDMDepositFileApiClient extends DepositFileApiClient {
 
   finalizeFileUpload(finalizeUploadUrl) {
     return this.axiosWithConfig.post(finalizeUploadUrl, {});
+  }
+
+  updateFileMetadata(updateUrl, fileMeta) {
+    return this.axiosWithConfig.put(updateUrl, fileMeta, {
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   importParentRecordFiles(draftLinks) {
