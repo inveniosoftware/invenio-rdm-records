@@ -3,6 +3,7 @@
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2023 Northwestern University.
 # Copyright (C) 2023-2024 Graz University of Technology.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -42,8 +43,10 @@ class BlockedPrefixes:
             if identifier.startswith(p):
                 errors.append(
                     _(
-                        "The prefix '{prefix}' is managed by {sitename}. Please supply an external DOI or select 'No' to have a DOI generated for you."
-                    ).format(prefix=p, sitename=current_app.config["THEME_SITENAME"])
+                        "The prefix '%(prefix)s' is managed by %(sitename)s. Please supply an external DOI or select 'No' to have a DOI generated for you.",
+                        prefix=p,
+                        sitename=current_app.config["THEME_SITENAME"],
+                    )
                 )
                 # Bail early
                 return
@@ -88,7 +91,7 @@ class ExternalPIDProvider(PIDProvider):
         if not identifier:
             self._insert_pid_type_error_msg(
                 errors,
-                _("Missing {scheme} for required field.").format(scheme=self.label),
+                _("Missing %(scheme)s for required field.", scheme=self.label),
             )
 
         for v in self._validators:
