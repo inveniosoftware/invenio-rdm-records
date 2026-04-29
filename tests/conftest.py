@@ -557,6 +557,7 @@ def full_record(users):
                     "scheme": "doi",
                     "relation_type": {"id": "iscitedby"},
                     "resource_type": {"id": "dataset"},
+                    "relation_type_information": "A very important citation",
                 }
             ],
             "sizes": ["11 pages"],

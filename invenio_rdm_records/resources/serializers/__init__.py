@@ -26,6 +26,7 @@ from .datacite import (
     DataCite43XMLSerializer,
     DataCite45JSONSerializer,
     DataCite45XMLSerializer,
+    DataCite47JSONSerializer,
 )
 from .datapackage import DataPackageSerializer
 from .dcat import DCATSerializer
@@ -54,6 +55,7 @@ __all__ = (
     "DataCite43XMLSerializer",
     "DataCite45JSONSerializer",
     "DataCite45XMLSerializer",
+    "DataCite47JSONSerializer",
     "DataPackageSerializer",
     "DublinCoreJSONSerializer",
     "DublinCoreXMLSerializer",
