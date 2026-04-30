@@ -299,6 +299,7 @@ class CommonFieldsMixin:
     def get_own_or_parent_review(self):
         """
         We used to store the review relation on the parent record, and we still do for existing/old records.
+
         New records store it on the draft directly.
         This method returns the review on the draft, or on the parent if it doesn't exist.
 

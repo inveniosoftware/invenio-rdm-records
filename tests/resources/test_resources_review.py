@@ -40,17 +40,15 @@ def test_simple_flow(
     client = uploader.login(client)
 
     # Request a review
-    minimal_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": community.data["id"]},
-        }
+    minimal_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": community.data["id"]},
     }
 
     # # Create a draft
     draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
     links = draft.json["links"]
-    review = draft.json["parent"]["review"]
+    review = draft.json["review"]
     assert draft.status_code == 201
     assert "submit-review" in links
     assert "id" in review
@@ -168,7 +166,7 @@ def test_review_endpoints(
     # Read draft
     draft = client.get(link(links["self"]), headers=headers)
     assert draft.status_code == 200
-    assert "review" not in draft.json["parent"]
+    assert "review" not in draft.json
 
 
 def test_review_errors(
@@ -183,8 +181,9 @@ def test_review_errors(
     client = uploader.login(client)
 
     # Invalid request type
-    minimal_record["parent"] = {
-        "review": {"type": "invalid", "receiver": {"community": community.data["id"]}}
+    minimal_record["review"] = {
+        "type": "invalid",
+        "receiver": {"community": community.data["id"]},
     }
     draft = client.post("/records", headers=headers, json=minimal_record)
     assert draft.status_code == 400
@@ -237,17 +236,15 @@ def test_submission_closed_non_member(
     client = uploader.login(client)
 
     # Request a review
-    minimal_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": closed_submission_community.data["id"]},
-        }
+    minimal_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": closed_submission_community.data["id"]},
     }
 
     # Create a draft
     draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
     links = draft.json["links"]
-    review = draft.json["parent"]["review"]
+    review = draft.json["review"]
     assert draft.status_code == 201
     assert "submit-review" in links
     assert "id" in review
@@ -282,17 +279,15 @@ def test_submission_closed_member(
     client = community_owner.login(client)
 
     # Request a review
-    minimal_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": closed_submission_community.data["id"]},
-        }
+    minimal_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": closed_submission_community.data["id"]},
     }
 
     # Create a draft
     draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
     links = draft.json["links"]
-    review = draft.json["parent"]["review"]
+    review = draft.json["review"]
     assert draft.status_code == 201
     assert "submit-review" in links
     assert "id" in review
@@ -317,17 +312,15 @@ def test_submission_open_non_member(
     client = uploader.login(client)
 
     # Request a review
-    minimal_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": community.data["id"]},
-        }
+    minimal_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": community.data["id"]},
     }
 
     # Create a draft
     draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
     links = draft.json["links"]
-    review = draft.json["parent"]["review"]
+    review = draft.json["review"]
     assert draft.status_code == 201
     assert "submit-review" in links
     assert "id" in review
@@ -358,17 +351,15 @@ def test_submission_open_member(
     client = community_owner.login(client)
 
     # Request a review
-    minimal_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": community.data["id"]},
-        }
+    minimal_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": community.data["id"]},
     }
 
     # Create a draft
     draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
     links = draft.json["links"]
-    review = draft.json["parent"]["review"]
+    review = draft.json["review"]
     assert draft.status_code == 201
     assert "submit-review" in links
     assert "id" in review
@@ -393,17 +384,15 @@ def test_submission_open_in_restricted_community_non_member(
     client = uploader.login(client)
 
     # Request a review
-    minimal_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": restricted_community.data["id"]},
-        }
+    minimal_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": restricted_community.data["id"]},
     }
 
     # Create a draft
     draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
     links = draft.json["links"]
-    review = draft.json["parent"]["review"]
+    review = draft.json["review"]
     assert draft.status_code == 201
     assert "submit-review" in links
     assert "id" in review
@@ -432,17 +421,15 @@ def test_submission_open_in_restricted_community_member(
     client = community_owner.login(client)
 
     # Request a review
-    minimal_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": restricted_community.data["id"]},
-        }
+    minimal_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": restricted_community.data["id"]},
     }
 
     # Create a draft
     draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
     links = draft.json["links"]
-    review = draft.json["parent"]["review"]
+    review = draft.json["review"]
     assert draft.status_code == 201
     assert "submit-review" in links
     assert "id" in review
