@@ -324,6 +324,8 @@ class RDMRecordService(RecordService):
         if disabled or forbidden:  # bail early
             raise PermissionDeniedError()
 
+        data["policy_id"] = immediate_file_mod.policy["id"]
+
         request = requests_service.create(
             identity,
             request_type=FileModification,
