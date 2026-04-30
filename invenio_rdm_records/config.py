@@ -886,3 +886,7 @@ RDM_RECORDS_ALLOW_RESTRICTION_AFTER_GRACE_PERIOD = False
 
 RDM_RECORDS_REQUIRE_SECRET_LINKS_EXPIRATION = False
 """Whether share access links require an expiration date to be set or not."""
+
+RDM_RECORDS_CONTAINER_EXTENSIONS=[".zip"]
+"""List of file extensions for container files.
+Experimental, this config can later be removed."""
