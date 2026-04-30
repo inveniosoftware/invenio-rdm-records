@@ -51,7 +51,7 @@ export function configureStore(appConfig) {
   const initialDepositState = {
     record,
     errors: errors || {},
-    editorState: computeDepositState(record, permissions, _preselectedCommunity),
+    editorState: computeDepositState(record, _preselectedCommunity),
     config,
     permissions,
     actionState: errors ? DRAFT_LOADED_WITH_VALIDATION_ERRORS : null,

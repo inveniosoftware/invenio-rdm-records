@@ -125,7 +125,7 @@ class ReviewService(RecordService):
         self.require_permission(identity, "read_draft", record=draft)
 
         review = draft.get_own_or_parent_review()
-        if review:
+        if review is None:
             raise ReviewNotFoundError()
 
         request_type = review.get_object()["type"]

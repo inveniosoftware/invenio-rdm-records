@@ -148,11 +148,7 @@ function getSelectedCommunityMetadata(record, selectedCommunity) {
  * @param {object} selectedCommunity: the selected community, `null` to deselect.
  * @returns a new state for the deposit form
  */
-export function computeDepositState(
-  record,
-  permissions,
-  selectedCommunity = undefined
-) {
+export function computeDepositState(record, selectedCommunity = undefined) {
   const depositStatusAllowsReviewDeletion = hasStatus(
     record,
     DepositStatus.allowsReviewDeletionStates
@@ -294,7 +290,6 @@ const depositReducer = (state = {}, action) => {
         },
         editorState: computeDepositState(
           action.payload.data,
-          state.permissions,
           state.editorState.selectedCommunity
         ),
         errors: {},
@@ -311,7 +306,6 @@ const depositReducer = (state = {}, action) => {
         },
         editorState: computeDepositState(
           action.payload.data,
-          state.permissions,
           state.editorState.selectedCommunity
         ),
         errors: {},
@@ -329,7 +323,6 @@ const depositReducer = (state = {}, action) => {
         },
         editorState: computeDepositState(
           action.payload.data,
-          state.permissions,
           state.editorState.selectedCommunity
         ),
         errors: { ...action.payload.errors },
@@ -369,11 +362,7 @@ const depositReducer = (state = {}, action) => {
       return {
         ...state,
         record: recordCopy,
-        editorState: computeDepositState(
-          recordCopy,
-          state.permissions,
-          action.payload.community
-        ),
+        editorState: computeDepositState(recordCopy, action.payload.community),
       };
     }
     case SET_DOI_NEEDED: {

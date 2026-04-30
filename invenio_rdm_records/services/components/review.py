@@ -77,14 +77,13 @@ class ReviewComponent(ServiceComponent):
             self.service.config.new_version_review_policy
         )
         if policy.requires_review(identity, draft):
-            request = current_requests_service.create(
+            self.service.review.create(
                 identity,
-                request_type=CommunitySubmission,
-                topic=draft,
-                creator=identity.user,
-                receiver=default_community,
-                data={},
+                {
+                    "type": CommunitySubmission.type_id,
+                    "receiver": {"community": default_community.id},
+                },
+                draft,
                 uow=self.uow,
                 assign_request_to_record=True,
             )
-            draft.review = request._request
