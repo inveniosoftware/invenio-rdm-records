@@ -184,7 +184,10 @@ def test_review_errors(
 
     # Invalid request type
     minimal_record["parent"] = {
-        "review": {"type": "invalid", "receiver": {"community": community.data["id"]}}
+        "review": {
+            "type": "invalid",
+            "receiver": {"community": community.data["id"]},
+        }
     }
     draft = client.post("/records", headers=headers, json=minimal_record)
     assert draft.status_code == 400

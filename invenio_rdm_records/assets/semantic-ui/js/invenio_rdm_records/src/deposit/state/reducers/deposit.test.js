@@ -26,6 +26,9 @@ const initialRecord = {
     files: "public",
   },
   is_published: false,
+  versions: {
+    index: 1,
+  },
 };
 
 const fakeSelectedCommunities = [
@@ -217,6 +220,32 @@ const publishedRecordWithoutCommunity = {
   },
 };
 
+const newVersionRecordWithReview = {
+  ...publishedRecordInCommunity,
+  status: DepositStatus.NEW_VERSION_DRAFT_WITH_REVIEW,
+  review: {
+    id: "1234",
+    receiver: {
+      community: fakeSelectedCommunities[0].id,
+    },
+    type: "community-submission",
+  },
+  expanded: {
+    ...publishedRecordInCommunity.expanded,
+    review: {
+      receiver: fakeSelectedCommunities[0],
+    },
+  },
+  versions: {
+    index: 2,
+  },
+};
+
+const newVersionRecordWithDeclinedReview = {
+  ...newVersionRecordWithReview,
+  status: DepositStatus.DECLINED,
+};
+
 describe("Test deposit reducer", () => {
   describe("Test deposit state when no draft has been created.", () => {
     it("user selects a community", async () => {
@@ -230,6 +259,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: false,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: true,
@@ -253,6 +283,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: false,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: true,
@@ -276,6 +307,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: false,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: false,
@@ -299,6 +331,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: false,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: true,
@@ -322,6 +355,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: false,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: true,
@@ -345,6 +379,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: false,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: false,
@@ -368,6 +403,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: false,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: true,
@@ -391,6 +427,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: false,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: true,
@@ -414,6 +451,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: true,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: false,
@@ -437,6 +475,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: true,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: false,
@@ -461,6 +500,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: true,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: false,
@@ -485,6 +525,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: false,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: true,
@@ -509,6 +550,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: false,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: true,
@@ -533,6 +575,7 @@ describe("Test deposit reducer", () => {
           showCommunitySelectionButton: true,
           disableCommunitySelectionButton: false,
           showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
         },
         actions: {
           shouldUpdateReview: true,
@@ -558,6 +601,7 @@ describe("Test deposit reducer", () => {
         showCommunitySelectionButton: true,
         disableCommunitySelectionButton: true,
         showCommunityHeader: true,
+        requireDeletionForDeclinedDraft: false,
       },
       actions: {
         shouldUpdateReview: false,
@@ -585,6 +629,7 @@ describe("Test deposit reducer", () => {
         showCommunitySelectionButton: true,
         disableCommunitySelectionButton: false,
         showCommunityHeader: true,
+        requireDeletionForDeclinedDraft: false,
       },
       actions: {
         shouldUpdateReview: true,
@@ -609,6 +654,7 @@ describe("Test deposit reducer", () => {
         showCommunitySelectionButton: true,
         disableCommunitySelectionButton: false,
         showCommunityHeader: true,
+        requireDeletionForDeclinedDraft: false,
       },
       actions: {
         shouldUpdateReview: false,
@@ -633,6 +679,7 @@ describe("Test deposit reducer", () => {
         showCommunitySelectionButton: false,
         disableCommunitySelectionButton: false,
         showCommunityHeader: false,
+        requireDeletionForDeclinedDraft: false,
       },
       actions: {
         shouldUpdateReview: false,
@@ -657,6 +704,7 @@ describe("Test deposit reducer", () => {
         showCommunitySelectionButton: false,
         disableCommunitySelectionButton: false,
         showCommunityHeader: true,
+        requireDeletionForDeclinedDraft: false,
       },
       actions: {
         shouldUpdateReview: false,
@@ -680,6 +728,7 @@ describe("Test deposit reducer", () => {
         showCommunitySelectionButton: false,
         disableCommunitySelectionButton: false,
         showCommunityHeader: false,
+        requireDeletionForDeclinedDraft: false,
       },
       actions: {
         shouldUpdateReview: false,
@@ -691,5 +740,57 @@ describe("Test deposit reducer", () => {
     expect(computeDepositState(publishedRecordInDeletedCommunity, undefined)).toEqual(
       expectedDepositState
     );
+  });
+
+  describe("Test deposit state when handling new record version drafts", () => {
+    it("user creates a new version draft with a created/pending review", () => {
+      const expectedDepositState = {
+        selectedCommunity: fakeSelectedCommunities[0],
+        ui: {
+          showSubmitForReviewButton: true,
+          showDirectPublishButton: false,
+          disableSubmitForReviewButton: false,
+          showChangeCommunityButton: false,
+          showCommunitySelectionButton: false,
+          disableCommunitySelectionButton: false,
+          showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: false,
+        },
+        actions: {
+          shouldUpdateReview: false,
+          shouldDeleteReview: false,
+          communityStateMustBeChecked: false,
+        },
+      };
+
+      expect(computeDepositState(newVersionRecordWithReview, undefined)).toEqual(
+        expectedDepositState
+      );
+    });
+
+    it("user views a new version draft with a declined review", () => {
+      const expectedDepositState = {
+        selectedCommunity: fakeSelectedCommunities[0],
+        ui: {
+          showSubmitForReviewButton: true,
+          showDirectPublishButton: false,
+          disableSubmitForReviewButton: true,
+          showChangeCommunityButton: false,
+          showCommunitySelectionButton: false,
+          disableCommunitySelectionButton: false,
+          showCommunityHeader: true,
+          requireDeletionForDeclinedDraft: true,
+        },
+        actions: {
+          shouldUpdateReview: false,
+          shouldDeleteReview: false,
+          communityStateMustBeChecked: false,
+        },
+      };
+
+      expect(
+        computeDepositState(newVersionRecordWithDeclinedReview, undefined)
+      ).toEqual(expectedDepositState);
+    });
   });
 });

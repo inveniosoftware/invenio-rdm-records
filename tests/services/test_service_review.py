@@ -36,6 +36,7 @@ from invenio_rdm_records.services.errors import (
     ReviewNotFoundError,
     ReviewStateError,
 )
+from invenio_rdm_records.services.review.policy import NewRecordVersionReviewPolicy
 
 
 def get_community_owner_identity(community):
@@ -59,13 +60,31 @@ def service():
 
 
 @pytest.fixture()
+def service_with_restrictive_review_policy(running_app):
+    """Get the current RDM records service with the review policy set to a restrictive one."""
+
+    class RestrictiveReviewPolicy(NewRecordVersionReviewPolicy):
+        """A more restrictive record version review policy."""
+
+        @classmethod
+        def requires_review(cls, identity, draft):
+            """Requires review for all new versions of records."""
+            return True
+
+    running_app.app.config["RDM_NEW_RECORD_VERSION_REVIEW_POLICY"] = (
+        RestrictiveReviewPolicy
+    )
+    return current_rdm_records.records_service
+
+
+@pytest.fixture()
 def requests_service():
     """Get the current RDM requests service."""
     return current_requests_service
 
 
 @pytest.fixture()
-def draft(minimal_record, community, service, running_app, db):
+def draft(minimal_record, community, service, running_app, db, uploader):
     minimal_record["parent"] = {
         "review": {
             "type": CommunitySubmission.type_id,
@@ -74,7 +93,7 @@ def draft(minimal_record, community, service, running_app, db):
     }
 
     # Create draft with review
-    return service.create(running_app.superuser_identity, minimal_record)
+    return service.create(uploader.identity, minimal_record)
 
 
 @pytest.fixture()
@@ -324,27 +343,27 @@ def test_direct_include_to_closed_review_community(
     assert req["is_open"] is True
 
 
-def test_creation(draft, running_app, community, service, requests_service):
+def test_creation(draft, running_app, community, service, requests_service, uploader):
     """Test basic creation with review."""
     # See the draft fixture for the actual creation
     record_id = draft.id
-    parent = draft.to_dict()["parent"]
 
-    assert "id" in parent["review"]
-    assert parent["review"]["type"] == CommunitySubmission.type_id
-    assert parent["review"]["receiver"] == {"community": community.data["id"]}
-    assert "@v" not in parent["review"]  # internals should not be exposed
+    review_dict = draft.to_dict()["parent"]["review"]
+    assert "id" in review_dict
+    assert review_dict["type"] == CommunitySubmission.type_id
+    assert review_dict["receiver"] == {"community": community.data["id"]}
+    assert "@v" not in review_dict  # internals should not be exposed
 
     # Read review request (via request service)
     review = requests_service.read(
-        running_app.superuser_identity, parent["review"]["id"]
+        running_app.superuser_identity, review_dict["id"]
     ).to_dict()
 
-    assert review["id"] == parent["review"]["id"]
+    assert review["id"] == review_dict["id"]
     assert review["status"] == "created"
     assert review["type"] == CommunitySubmission.type_id
     assert review["receiver"] == {"community": community.data["id"]}
-    assert review["created_by"] == {"user": str(running_app.superuser_identity.id)}
+    assert review["created_by"] == {"user": str(uploader.identity.id)}
     assert review["topic"] == {"record": record_id}
 
     # Read review request (via record review subservice)
@@ -352,7 +371,7 @@ def test_creation(draft, running_app, community, service, requests_service):
         running_app.superuser_identity,
         record_id,
     ).to_dict()
-    assert review["id"] == parent["review"]["id"]
+    assert review["id"] == review_dict["id"]
 
     # TODO: Test that curator cannot see it yet
 
@@ -459,8 +478,13 @@ def test_create_when_already_published(minimal_record, running_app, community, s
         )
 
 
-def test_create_with_new_version(minimal_record, running_app, community, service):
-    """Review creation should fail for unpublished new version."""
+def test_create_with_new_version_no_review(
+    minimal_record, running_app, community, service
+):
+    """
+    Review creation should succeed for unpublished new version, where the first published version
+    did not have a community.
+    """
     # Create draft
     draft = service.create(running_app.superuser_identity, minimal_record)
     # Publish and create new version of the record.
@@ -471,13 +495,63 @@ def test_create_with_new_version(minimal_record, running_app, community, service
         "type": CommunitySubmission.type_id,
         "receiver": {"community": community.data["id"]},
     }
-    with pytest.raises(ReviewStateError):
-        service.review.update(
-            running_app.superuser_identity,
-            draft.id,
-            data,
-            revision_id=draft.data["revision_id"],
-        )
+    req = service.review.update(
+        running_app.superuser_identity,
+        draft.id,
+        data,
+        revision_id=draft.data["revision_id"],
+        allow_new_record_version_review=True,
+    )
+
+    assert req["status"] == "created"
+    assert req["topic"] == {"record": draft.id}
+    assert req["receiver"] == {"community": community.data["id"]}
+
+
+def test_create_with_new_version_with_review(
+    draft,
+    running_app,
+    requests_service,
+    service_with_restrictive_review_policy,
+    uploader,
+):
+    """
+    Review creation should succeed for unpublished new version, where the first published version
+    was successfully accepted into a community.
+    """
+    # Submit and accept review, thereby including record in community
+    service_with_restrictive_review_policy.review.submit(uploader.identity, draft.id)
+    requests_service.execute_action(
+        running_app.superuser_identity, draft["parent"]["review"]["id"], "accept", {}
+    )
+
+    # Create a new version.
+    new_version_draft = service_with_restrictive_review_policy.new_version(
+        uploader.identity, draft.id
+    )
+
+    # The component should have auto-created a review since the community requires it for new versions
+    assert new_version_draft._record.review is not None
+    assert new_version_draft._record.review.status == "created"
+
+    # Submit the review and accept it to ensure no exceptions are raised.
+    service_with_restrictive_review_policy.review.submit(
+        uploader.identity, new_version_draft.id
+    )
+    requests_service.execute_action(
+        running_app.superuser_identity,
+        new_version_draft["review"]["id"],
+        "accept",
+        {},
+    )
+
+    # Make sure the record is published and has no review on it anymore
+    published_record = service_with_restrictive_review_policy.read(
+        uploader.identity,
+        new_version_draft.id,
+    )
+    assert published_record._record.review is None
+    assert published_record._record.versions.index == 2
 
 
 def test_update(draft, running_app, community2, service, db):
@@ -563,7 +637,7 @@ def test_delete_draft_unsubmitted(draft, running_app, service, requests_service)
     """Draft request should be deleted when the draft is deleted."""
     # Delete the draft
     req_id = draft.data["parent"]["review"]["id"]
-    res = service.delete_draft(running_app.superuser_identity, draft.id)
+    service.delete_draft(running_app.superuser_identity, draft.id)
 
     # Request was also deleted
     with pytest.raises(NoResultFound):
