@@ -26,6 +26,7 @@ from invenio_records_resources.services.records.queryparser.transformer import (
 import invenio_rdm_records.services.communities.moderation as communities_moderation
 from invenio_rdm_records.services.components.pids import validate_optional_doi
 from invenio_rdm_records.services.components.verified import UserModerationHandler
+from invenio_rdm_records.services.review.policy import RecordVersionReviewPolicy
 
 from . import tokens
 from .requests.community_inclusion import CommunityInclusion
@@ -150,8 +151,12 @@ RDM_RECORDS_REVIEWS = [
     CommunitySubmission.type_id,
 ]
 """List of review request types."""
+
 RDM_COMMUNITY_SUBMISSION_REQUEST_CLS = CommunitySubmission
 """Request type for community submission requests."""
+
+RDM_RECORD_VERSION_REVIEW_POLICY = RecordVersionReviewPolicy
+"""Policy for when to require a community review for new record versions."""
 
 #
 # Record files configuration

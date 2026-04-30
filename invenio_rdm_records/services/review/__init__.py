@@ -7,6 +7,10 @@
 
 """Review service."""
 
+from .policy import RecordVersionReviewPolicy
 from .service import ReviewService
 
-__all__ = ("ReviewService",)
+__all__ = (
+    "ReviewService",
+    "RecordVersionReviewPolicy",
+)

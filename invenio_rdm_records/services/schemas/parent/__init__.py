@@ -12,11 +12,12 @@ from flask import current_app
 from invenio_drafts_resources.services.records.schema import ParentSchema
 from invenio_i18n import lazy_gettext as _
 from invenio_requests.services.schemas import GenericRequestSchema
-from marshmallow import ValidationError, fields, post_dump, pre_load
+from marshmallow import ValidationError, fields, pre_load
 from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from ..pids import PIDSchema
+from ..review import CleanReviewMixin
 from .access import ParentAccessSchema
 from .communities import CommunitiesSchema
 
@@ -29,7 +30,7 @@ def validate_scheme(scheme):
         )
 
 
-class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
+class RDMParentSchema(ParentSchema, FieldPermissionsMixin, CleanReviewMixin):
     """Record schema."""
 
     field_dump_permissions = {
@@ -61,23 +62,6 @@ class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
         for name, field in self.fields.items():
             if field.dump_only:
                 data.pop(name, None)
-        return data
-
-    @pre_load
-    def clean_review(self, data, **kwargs):
-        """Clear review if None."""
-        # draft.parent.review returns None when not set, causing the serializer
-        # to dump {'review': None}. As a workaround we pop it if it's none
-        # here.
-        if data.get("review", None) is None:
-            data.pop("review", None)
-        return data
-
-    @post_dump()
-    def pop_review_if_none(self, data, many, **kwargs):
-        """Clear review if None."""
-        if data.get("review", None) is None:
-            data.pop("review", None)
         return data
 
 

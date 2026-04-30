@@ -60,7 +60,12 @@ class DraftStatus(SystemField):
         if record is None:
             return self  # returns the field itself.
 
-        review = getattr(record.parent, "review")
+        review = getattr(record, "review")
+        if review is None:
+            # The `review` field of `RDMParent` is deprecated and unused for new records.
+            # We are keeping this for backward-compatibility with existing records.
+            review = getattr(record.parent, "review")
+
         is_published = getattr(record, "is_published")
 
         if is_published:

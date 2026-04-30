@@ -66,11 +66,9 @@ def requests_service():
 
 @pytest.fixture()
 def draft(minimal_record, community, service, running_app, db):
-    minimal_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": community.data["id"]},
-        }
+    minimal_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": community.data["id"]},
     }
 
     # Create draft with review
@@ -81,11 +79,9 @@ def draft(minimal_record, community, service, running_app, db):
 def draft_for_open_review(
     minimal_record, open_review_community, service, community_owner, db
 ):
-    minimal_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": open_review_community.data["id"]},
-        }
+    minimal_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": open_review_community.data["id"]},
     }
 
     # Create draft with review
@@ -101,11 +97,9 @@ def draft_for_open_review_user(
     authenticated_identity,
     db,
 ):
-    minimal_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": open_review_community.data["id"]},
-        }
+    minimal_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": open_review_community.data["id"]},
     }
 
     # Create draft with review
@@ -116,11 +110,9 @@ def draft_for_open_review_user(
 def draft_for_closed_review(
     minimal_record, closed_review_community, service, community_owner, db
 ):
-    minimal_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": closed_review_community.data["id"]},
-        }
+    minimal_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": closed_review_community.data["id"]},
     }
 
     # Create draft with review
@@ -131,11 +123,9 @@ def draft_for_closed_review(
 def public_draft_review_restricted(
     minimal_record, restricted_community, service, running_app, db
 ):
-    minimal_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": restricted_community.data["id"]},
-        }
+    minimal_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": restricted_community.data["id"]},
     }
 
     # Create draft with review
@@ -146,11 +136,9 @@ def public_draft_review_restricted(
 def restricted_draft_review_restricted(
     minimal_restricted_record, restricted_community, service, running_app, db
 ):
-    minimal_restricted_record["parent"] = {
-        "review": {
-            "type": CommunitySubmission.type_id,
-            "receiver": {"community": restricted_community.data["id"]},
-        }
+    minimal_restricted_record["review"] = {
+        "type": CommunitySubmission.type_id,
+        "receiver": {"community": restricted_community.data["id"]},
     }
 
     # Create draft with review
@@ -328,19 +316,19 @@ def test_creation(draft, running_app, community, service, requests_service):
     """Test basic creation with review."""
     # See the draft fixture for the actual creation
     record_id = draft.id
-    parent = draft.to_dict()["parent"]
 
-    assert "id" in parent["review"]
-    assert parent["review"]["type"] == CommunitySubmission.type_id
-    assert parent["review"]["receiver"] == {"community": community.data["id"]}
-    assert "@v" not in parent["review"]  # internals should not be exposed
+    review_dict = draft.to_dict()["review"]
+    assert "id" in review_dict
+    assert review_dict["type"] == CommunitySubmission.type_id
+    assert review_dict["receiver"] == {"community": community.data["id"]}
+    assert "@v" not in review_dict  # internals should not be exposed
 
     # Read review request (via request service)
     review = requests_service.read(
-        running_app.superuser_identity, parent["review"]["id"]
+        running_app.superuser_identity, review_dict["id"]
     ).to_dict()
 
-    assert review["id"] == parent["review"]["id"]
+    assert review["id"] == review_dict["id"]
     assert review["status"] == "created"
     assert review["type"] == CommunitySubmission.type_id
     assert review["receiver"] == {"community": community.data["id"]}
@@ -352,7 +340,7 @@ def test_creation(draft, running_app, community, service, requests_service):
         running_app.superuser_identity,
         record_id,
     ).to_dict()
-    assert review["id"] == parent["review"]["id"]
+    assert review["id"] == review_dict["id"]
 
     # TODO: Test that curator cannot see it yet
 
@@ -482,7 +470,7 @@ def test_create_with_new_version(minimal_record, running_app, community, service
 
 def test_update(draft, running_app, community2, service, db):
     """Change to a different community."""
-    previous_id = draft.data["parent"]["review"]["id"]
+    previous_id = draft.data["review"]["id"]
     # Change to a different community
     data = {
         "type": CommunitySubmission.type_id,
@@ -531,7 +519,7 @@ def test_delete_when_accepted(draft, running_app, service, requests_service):
     # Submit and accept
     service.review.submit(running_app.superuser_identity, draft.id)
     requests_service.execute_action(
-        running_app.superuser_identity, draft["parent"]["review"]["id"], "accept", {}
+        running_app.superuser_identity, draft["review"]["id"], "accept", {}
     )
 
     # Review was already desassociated so nothing to delete.
@@ -562,8 +550,8 @@ def test_read_delete_submit_no_review(minimal_record, running_app, service):
 def test_delete_draft_unsubmitted(draft, running_app, service, requests_service):
     """Draft request should be deleted when the draft is deleted."""
     # Delete the draft
-    req_id = draft.data["parent"]["review"]["id"]
-    res = service.delete_draft(running_app.superuser_identity, draft.id)
+    req_id = draft.data["review"]["id"]
+    service.delete_draft(running_app.superuser_identity, draft.id)
 
     # Request was also deleted
     with pytest.raises(NoResultFound):
@@ -903,7 +891,7 @@ def test_share_draft_gives_access_to_review_request(
 
     # View permission should not give access to the submission request
     with pytest.raises(PermissionDeniedError):
-        requests_service.read(verified_user.identity, draft.parent.review.id)
+        requests_service.read(verified_user.identity, draft.review.id)
 
     # Preview permission should give access to the submission request
     payload = {"permission": "preview"}
@@ -914,10 +902,8 @@ def test_share_draft_gives_access_to_review_request(
         subject_type="user",
         data=payload,
     )
-    review = requests_service.read(
-        verified_user.identity, draft.parent.review.id
-    ).to_dict()
-    assert review["id"] == str(draft.parent.review.id)
+    review = requests_service.read(verified_user.identity, draft.review.id).to_dict()
+    assert review["id"] == str(draft.review.id)
 
     # Edit permission should give access to the submission request
     payload = {"permission": "edit"}
@@ -928,10 +914,8 @@ def test_share_draft_gives_access_to_review_request(
         subject_type="user",
         data=payload,
     )
-    review = requests_service.read(
-        verified_user.identity, draft.parent.review.id
-    ).to_dict()
-    assert review["id"] == str(draft.parent.review.id)
+    review = requests_service.read(verified_user.identity, draft.review.id).to_dict()
+    assert review["id"] == str(draft.review.id)
 
     # Manage permission should give access to the submission request
     payload = {"permission": "manage"}
@@ -942,10 +926,8 @@ def test_share_draft_gives_access_to_review_request(
         subject_type="user",
         data=payload,
     )
-    review = requests_service.read(
-        verified_user.identity, draft.parent.review.id
-    ).to_dict()
-    assert review["id"] == str(draft.parent.review.id)
+    review = requests_service.read(verified_user.identity, draft.review.id).to_dict()
+    assert review["id"] == str(draft.review.id)
 
 
 def test_share_draft_shows_up_in_shared_user_uploads(
