@@ -71,7 +71,6 @@ class UIObjectAccessStatus(UIAccessStatus):
                 "No files are available for this record."
             ),
         }
-        login_url = invenio_url_for("invenio_accounts.login", next=request.url)
 
         if self.record_access_dict.get("record") == "restricted":
             if self.has_files:
@@ -101,7 +100,8 @@ class UIObjectAccessStatus(UIAccessStatus):
                     }
                 )
         else:
-            if current_user.is_anonymous:
+            if request and current_user.is_anonymous:
+                login_url = invenio_url_for("invenio_accounts.login", next=request.url)
                 restricted_message = _(
                     "The record is publicly accessible, but files are restricted. "
                     '<a href="%(login_url)s">Log in</a> to check if you have access.'
