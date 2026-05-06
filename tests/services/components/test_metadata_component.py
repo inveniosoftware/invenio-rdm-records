@@ -13,7 +13,10 @@ from unittest.mock import patch
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.records.api import RDMDraft
-from invenio_rdm_records.services.components import MetadataComponent
+from invenio_rdm_records.services.components import (
+    CustomFieldsComponent,
+    MetadataComponent,
+)
 
 
 def test_metadata_component(minimal_record, parent, identity_simple, location):
@@ -41,3 +44,15 @@ def test_metadata_component(minimal_record, parent, identity_simple, location):
 
     # make sure the reference management is correct
     assert record.metadata["publication_date"] == original_publication_date
+
+
+def test_custom_fields_component_new_version(minimal_record, parent, location):
+    """Custom fields are copied verbatim, with no auto-populated fields."""
+    minimal_record["custom_fields"] = {"some:field": "original value"}
+    record = RDMRecord.create(minimal_record, parent=parent)
+    draft = RDMDraft.new_version(record)
+
+    component = CustomFieldsComponent(current_rdm_records.records_service)
+    component.new_version(None, draft=draft, record=record)
+
+    assert draft.custom_fields == {"some:field": "original value"}
