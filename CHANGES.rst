@@ -12,6 +12,16 @@
 Changes
 =======
 
+Version v28.6.0 (released 2026-05-06)
+
+- fix(serializers): avoid request context in access status description
+- fix(vcs): have fallback publisher value be THEME_SITENAME
+- feat(metadata): auto-populate `publication_date` on new versions
+- fix: Add max lenght to version field to prevent mis-rendering
+- fix(doi link): show appropriate DOI link in test(any) environment
+- fix: add funder to marcxml
+- fix: add funder ror to datacite serialization
+
 Version v28.5.0 (released 2026-04-21)
 
 - feat(moderation): handle `actor_id` and `note` in user block callback
