@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v28.6.1 (released 2026-05-06)
+
+- fix(metadata): fix `CustomFieldsComponent` subclass overrides
+- fix(metadata): use UTC date instead of datetime for publication_date
+
 Version v28.6.0 (released 2026-05-06)
 
 - fix(serializers): avoid request context in access status description
