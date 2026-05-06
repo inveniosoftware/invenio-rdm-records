@@ -70,6 +70,7 @@ export class CommunitySelectionModalComponent extends Component {
       handleClose,
       record,
       isInitialSubmission,
+      overriddenComponents,
     } = this.props;
 
     return (
@@ -98,6 +99,7 @@ export class CommunitySelectionModalComponent extends Component {
             apiConfigs={apiConfigs}
             record={record}
             isInitialSubmission={isInitialSubmission}
+            overriddenComponents={overriddenComponents}
           />
 
           {extraContentComponents && (
@@ -127,6 +129,7 @@ CommunitySelectionModalComponent.propTypes = {
   handleClose: PropTypes.func.isRequired,
   record: PropTypes.object,
   isInitialSubmission: PropTypes.bool,
+  overriddenComponents: PropTypes.object,
 };
 
 CommunitySelectionModalComponent.defaultProps = {
@@ -140,6 +143,7 @@ CommunitySelectionModalComponent.defaultProps = {
   apiConfigs: undefined,
   isInitialSubmission: true,
   record: null,
+  overriddenComponents: undefined,
 };
 
 const mapStateToProps = (state) => ({
