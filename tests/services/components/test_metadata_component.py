@@ -7,6 +7,9 @@
 
 """Tests for the service Metadata component."""
 
+from datetime import date
+from unittest.mock import patch
+
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.records.api import RDMDraft
@@ -24,11 +27,15 @@ def test_metadata_component(minimal_record, parent, identity_simple, location):
     original_publication_date = record.metadata["publication_date"]
 
     component = MetadataComponent(current_rdm_records.records_service)
-    component.new_version(identity_simple, draft=draft, record=record)
+    with patch(
+        "invenio_rdm_records.services.components.metadata.datetime",
+        **{"now.return_value.date.return_value": date(2030, 1, 2)},
+    ):
+        component.new_version(identity_simple, draft=draft, record=record)
 
     # publication_date is auto-populated with today's date (not copied),
     # while title IS copied from the original record
-    assert "publication_date" in draft.metadata
+    assert draft.metadata["publication_date"] == "2030-01-02"
     assert draft.metadata["publication_date"] != original_publication_date
     assert "title" in draft.metadata
 

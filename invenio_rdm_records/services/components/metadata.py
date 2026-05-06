@@ -10,7 +10,7 @@
 """RDM service component for metadata."""
 
 from copy import copy
-from datetime import datetime
+from datetime import datetime, timezone
 
 from invenio_drafts_resources.services.records.components import ServiceComponent
 
@@ -21,7 +21,9 @@ class MetadataComponent(ServiceComponent):
     field = "metadata"
     new_version_skip_fields = ["publication_date", "version"]
     new_version_generated_fields = {
-        "publication_date": lambda draft, record: datetime.today().isoformat(),
+        "publication_date": lambda draft, record: datetime.now(timezone.utc)
+        .date()
+        .isoformat(),
     }
 
     def create(self, identity, data=None, record=None, **kwargs):
