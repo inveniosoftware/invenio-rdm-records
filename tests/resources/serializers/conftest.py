@@ -343,6 +343,7 @@ def full_record_to_dict():
                             "en": "Is cited by",
                         },
                     },
+                    "relation_type_information": "A very important citation",
                     "resource_type": {
                         "id": "dataset",
                         "title": {

@@ -13,7 +13,7 @@ from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer, SimpleSerializer
 
 from ....contrib.journal.processors import JournalDataciteDumper
-from .schema import DataCite43Schema, DataCite45Schema
+from .schema import DataCite43Schema, DataCite45Schema, DataCite47Schema
 
 
 class DataCite43JSONSerializer(MarshmallowSerializer):
@@ -77,4 +77,21 @@ class DataCite45XMLSerializer(MarshmallowSerializer):
             list_schema_cls=BaseListSchema,
             schema_kwargs={"dumpers": [JournalDataciteDumper()]},  # Order matters
             encoder=encoder,
+        )
+
+
+class DataCite47JSONSerializer(MarshmallowSerializer):
+    """Marshmallow based DataCite schema v4.7 JSON serializer for records."""
+
+    def __init__(self, is_parent=False, **options):
+        """Constructor."""
+        super().__init__(
+            format_serializer_cls=JSONSerializer,
+            object_schema_cls=DataCite47Schema,
+            list_schema_cls=BaseListSchema,
+            schema_kwargs={
+                "dumpers": [JournalDataciteDumper()],
+                "is_parent": is_parent,
+            },  # Order matters
+            **options,
         )
