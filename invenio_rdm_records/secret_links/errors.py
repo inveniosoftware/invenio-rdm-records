@@ -7,6 +7,8 @@
 
 """Errors for secret links."""
 
+from invenio_i18n import gettext as _
+
 
 class SecretLinkError(Exception):
     """Base exception for secret links errors."""
@@ -19,4 +21,9 @@ class InvalidPermissionLevelError(SecretLinkError):
 
     def __init__(self, permission_level):
         """Initialise error."""
-        super().__init__(f"Invalid permission level: {permission_level}")
+        super().__init__(
+            _(
+                "Invalid permission level: %(permission_level)s",
+                permission_level=permission_level,
+            )
+        )

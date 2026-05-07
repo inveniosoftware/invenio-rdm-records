@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2021-2024 Graz University of Technology.
-# Copyright (C) 2024 KTH Royal Institute of Technology.
+# Copyright (C) 2024-2026 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -173,8 +173,10 @@ class PIDProvider:
                     {
                         "field": f"pids.{self.pid_type}",
                         "messages": [
-                            _("{pid_type}:{identifier} already exists.").format(
-                                pid_type=self.pid_type, identifier=identifier
+                            _(
+                                "%(pid_type)s:%(identifier)s already exists.",
+                                pid_type=self.pid_type,
+                                identifier=identifier,
                             )
                         ],
                     }

@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2021-2024 CERN.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -25,7 +26,7 @@ def validate_scheme(scheme):
     """Validate a PID scheme."""
     if scheme not in current_app.config["RDM_PARENT_PERSISTENT_IDENTIFIERS"]:
         raise ValidationError(
-            _("Invalid persistent identifier scheme {scheme}.".format(scheme=scheme))
+            _("Invalid persistent identifier scheme %(scheme)s.", scheme=scheme)
         )
 
 

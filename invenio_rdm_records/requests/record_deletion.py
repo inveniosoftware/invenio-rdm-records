@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2025-2026 CERN.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -8,6 +9,7 @@
 """Record deletion request."""
 
 from invenio_access.permissions import system_identity
+from invenio_i18n import gettext
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -39,8 +41,9 @@ class CreateAction(actions.CreateAction):
             )
 
         self._verify_removal_reason()
-        self.request["title"] = _('Deletion request for "{record_title}"').format(
-            record_title=record.metadata["title"]
+        self.request["title"] = gettext(
+            'Deletion request for "%(record_title)s"',
+            record_title=record.metadata["title"],
         )
 
         super().execute(identity, uow)
