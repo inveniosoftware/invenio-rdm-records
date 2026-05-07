@@ -11,6 +11,7 @@
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
+from invenio_records_resources.services.uow import RecordCommitOp
 from invenio_requests.customizations import actions
 
 from ..notifications.builders import (
@@ -59,7 +60,14 @@ class AcceptAction(actions.AcceptAction):
         # The curator (receiver) should still have access, via the community
         # The creator (uploader) should also still have access, because
         # they're the uploader
-        draft.parent.review = None
+        parent_needs_commit = False
+        if draft.review is not None:
+            draft.review = None
+            uow.register(RecordCommitOp(draft, indexer=service.indexer))
+
+        if draft.parent.review is not None:
+            draft.parent.review = None
+            parent_needs_commit = True
 
         # TODO:
         # - Put below into a service method
@@ -67,16 +75,21 @@ class AcceptAction(actions.AcceptAction):
 
         # Add community to record.
         is_default = self.request.type.set_as_default
-        draft.parent.communities.add(
-            community, request=self.request, default=is_default
-        )
+        # Only add to the parent record's community list if the draft is the first version.
+        # If this request is for a new version of an existing published record, the parent record
+        # will already belong to the community, so we don't want to add it again.
+        if draft.versions.index == 1:
+            draft.parent.communities.add(community, default=is_default)
+            if getattr(community, "parent", None):
+                draft.parent.communities.add(community.parent)
+            parent_needs_commit = True
 
-        if getattr(community, "parent", None):
-            draft.parent.communities.add(community.parent, request=self.request)
-
-        uow.register(
-            ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
-        )
+        if parent_needs_commit:
+            uow.register(
+                ParentRecordCommitOp(
+                    draft.parent, indexer_context=dict(service=service)
+                )
+            )
 
         # Publish the record
         # TODO: Ensure that the accepting user has permissions to publish.
@@ -109,10 +122,17 @@ class DeclineAction(actions.DeclineAction):
         # TODO: this shouldn't be required BUT because of the caching mechanism
         # in the review systemfield, the review should be set with the updated
         # request object
-        draft.parent.review = self.request
-        uow.register(
-            ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
-        )
+        if draft.parent.review is not None:
+            draft.parent.review = self.request
+            uow.register(
+                ParentRecordCommitOp(
+                    draft.parent, indexer_context=dict(service=service)
+                )
+            )
+        elif draft.review is not None:
+            draft.review = self.request
+            uow.register(RecordCommitOp(draft, indexer=service.indexer))
+
         uow.register(
             NotificationOp(
                 CommunityInclusionDeclineNotificationBuilder.build(
@@ -130,11 +150,19 @@ class CancelAction(actions.CancelAction):
         # Remove draft from request
         # Same reasoning as in 'decline'
         draft = self.request.topic.resolve()
-        draft.parent.review = None
-        uow.register(
-            ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
-        )
         super().execute(identity, uow)
+
+        if draft.parent.review is not None:
+            draft.parent.review = None
+            uow.register(
+                ParentRecordCommitOp(
+                    draft.parent, indexer_context=dict(service=service)
+                )
+            )
+        elif draft.review is not None:
+            draft.review = None
+            uow.register(RecordCommitOp(draft, indexer=service.indexer))
+
         uow.register(
             NotificationOp(
                 CommunityInclusionCancelNotificationBuilder.build(
@@ -159,10 +187,17 @@ class ExpireAction(actions.ExpireAction):
         # TODO: this shouldn't be required BUT because of the caching mechanism
         # in the review systemfield, the review should be set with the updated
         # request object
-        draft.parent.review = self.request
-        uow.register(
-            ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
-        )
+        if draft.parent.review is not None:
+            draft.parent.review = self.request
+            uow.register(
+                ParentRecordCommitOp(
+                    draft.parent, indexer_context=dict(service=service)
+                )
+            )
+        elif draft.review is not None:
+            draft.review = self.request
+            uow.register(RecordCommitOp(draft, indexer=service.indexer))
+
         uow.register(
             NotificationOp(
                 CommunityInclusionExpireNotificationBuilder.build(

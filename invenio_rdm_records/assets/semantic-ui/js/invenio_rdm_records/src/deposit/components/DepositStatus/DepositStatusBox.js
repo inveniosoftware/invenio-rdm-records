@@ -11,56 +11,83 @@ import { Button, Grid, Icon, Popup } from "semantic-ui-react";
 import { DepositStatus } from "../../state/reducers/deposit";
 import PropTypes from "prop-types";
 
-const STATUSES = {
-  [DepositStatus.IN_REVIEW]: {
-    color: "warning",
-    title: i18next.t("In review"),
-    message: i18next.t(
-      "Community curators will review your upload. Once accepted, it will be published."
-    ),
-  },
-  [DepositStatus.DECLINED]: {
-    color: "negative",
-    title: i18next.t("Declined"),
-    message: i18next.t(
-      "The request to submit this upload to the community was declined."
-    ),
-  },
-  [DepositStatus.EXPIRED]: {
-    color: "expired",
-    title: i18next.t("Expired"),
-    message: i18next.t(
-      "The request to submit this upload to the community has expired."
-    ),
-  },
-  [DepositStatus.PUBLISHED]: {
-    color: "positive",
-    title: i18next.t("Published"),
-    message: i18next.t("Your upload is published."),
-  },
-  [DepositStatus.DRAFT_WITH_REVIEW]: {
-    color: "neutral",
-    title: i18next.t("Draft"),
-    message: i18next.t(
-      "Once your upload is complete, you can submit it for review to the community curators."
-    ),
-  },
-  [DepositStatus.DRAFT]: {
-    color: "neutral",
-    title: i18next.t("Draft"),
-    message: i18next.t(
-      "Once your upload is complete, you can publish or submit it for review to the community curators."
-    ),
-  },
-  [DepositStatus.NEW_VERSION_DRAFT]: {
-    color: "neutral",
-    title: i18next.t("New version draft"),
-    message: i18next.t("Once your upload is complete, you can publish it."),
-  },
+const getStatus = (depositStatus, disablePublishButton) => {
+  switch (depositStatus) {
+    case DepositStatus.IN_REVIEW:
+      return {
+        color: "warning",
+        title: i18next.t("In review"),
+        message: i18next.t(
+          "Community curators will review your upload. Once accepted, it will be published."
+        ),
+      };
+    case DepositStatus.DECLINED:
+      return {
+        color: "negative",
+        title: i18next.t("Declined"),
+        message: disablePublishButton
+          ? i18next.t(
+              "The request to submit this upload to the community was declined. Please discard this version and create a new one to continue."
+            )
+          : i18next.t(
+              "The request to submit this upload to the community was declined."
+            ),
+      };
+    case DepositStatus.EXPIRED:
+      return {
+        color: "expired",
+        title: i18next.t("Expired"),
+        message: i18next.t(
+          "The request to submit this upload to the community has expired."
+        ),
+      };
+    case DepositStatus.PUBLISHED:
+      return {
+        color: "positive",
+        title: i18next.t("Published"),
+        message: i18next.t("Your upload is published."),
+      };
+    case DepositStatus.DRAFT_WITH_REVIEW:
+      return {
+        color: "neutral",
+        title: i18next.t("Draft"),
+        message: i18next.t(
+          "Once your upload is complete, you can submit it for review to the community curators."
+        ),
+      };
+    case DepositStatus.DRAFT:
+      return {
+        color: "neutral",
+        title: i18next.t("Draft"),
+        message: i18next.t(
+          "Once your upload is complete, you can publish or submit it for review to the community curators."
+        ),
+      };
+    case DepositStatus.NEW_VERSION_DRAFT:
+      return {
+        color: "neutral",
+        title: i18next.t("New version draft"),
+        message: i18next.t("Once your upload is complete, you can publish it."),
+      };
+    case DepositStatus.NEW_VERSION_DRAFT_WITH_REVIEW:
+      return {
+        color: "neutral",
+        title: i18next.t("New version draft"),
+        message: i18next.t(
+          "Once your upload is complete, you can submit it for review to the community curators."
+        ),
+      };
+    default:
+      return null;
+  }
 };
 
-const DepositStatusBoxComponent = ({ depositReview, depositStatus }) => {
-  const status = STATUSES[depositStatus];
+const DepositStatusBoxComponent = ({
+  depositReview,
+  depositStatus,
+  disablePublishButton,
+}) => {
+  const status = getStatus(depositStatus, disablePublishButton);
   if (!status) {
     throw new Error("Status is undefined");
   }
@@ -100,6 +127,7 @@ const DepositStatusBoxComponent = ({ depositReview, depositStatus }) => {
 DepositStatusBoxComponent.propTypes = {
   depositReview: PropTypes.bool,
   depositStatus: PropTypes.string.isRequired,
+  disablePublishButton: PropTypes.bool.isRequired,
 };
 
 DepositStatusBoxComponent.defaultProps = {
@@ -110,7 +138,8 @@ const mapStateToProps = (state) => ({
   depositStatus: state.deposit.record.status,
   depositReview:
     state.deposit.record.status !== DepositStatus.DRAFT &&
-    state.deposit.record.parent.review,
+    (state.deposit.record.review ?? state.deposit.record.parent.review),
+  disablePublishButton: state.deposit.editorState.ui.disablePublishButton,
 });
 
 export const DepositStatusBox = connect(

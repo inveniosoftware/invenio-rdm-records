@@ -59,6 +59,7 @@ class SubmitReviewOrPublishComponent extends Component {
       showChangeCommunityButton,
       showDirectPublishButton,
       showSubmitForReviewButton,
+      disablePublishButton,
       record,
       ...ui
     } = this.props;
@@ -101,7 +102,13 @@ class SubmitReviewOrPublishComponent extends Component {
         </>
       );
     } else {
-      result = <PublishButton doiReservationCheck={this.doiReservationCheck} {...ui} />;
+      result = (
+        <PublishButton
+          doiReservationCheck={this.doiReservationCheck}
+          disabled={disablePublishButton}
+          {...ui}
+        />
+      );
     }
     return result;
   }
@@ -113,6 +120,7 @@ SubmitReviewOrPublishComponent.propTypes = {
   showChangeCommunityButton: PropTypes.bool.isRequired,
   showDirectPublishButton: PropTypes.bool.isRequired,
   showSubmitForReviewButton: PropTypes.bool.isRequired,
+  disablePublishButton: PropTypes.bool.isRequired,
   record: PropTypes.object.isRequired,
   raiseDOINeededButNotReserved: PropTypes.func.isRequired,
 };
@@ -126,6 +134,7 @@ const mapStateToProps = (state) => ({
   showDirectPublishButton: state.deposit.editorState.ui.showDirectPublishButton,
   showChangeCommunityButton: state.deposit.editorState.ui.showChangeCommunityButton,
   showSubmitForReviewButton: state.deposit.editorState.ui.showSubmitForReviewButton,
+  disablePublishButton: state.deposit.editorState.ui.disablePublishButton,
 });
 
 const mapDispatchToProps = (dispatch) => ({
