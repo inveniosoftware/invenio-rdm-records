@@ -18,6 +18,7 @@ import {
   DRAFT_DELETE_FAILED,
   DRAFT_HAS_VALIDATION_ERRORS,
   DRAFT_PREVIEW_FAILED,
+  DRAFT_PREVIEW_FAILED_WITH_VALIDATION_ERRORS,
   DRAFT_PUBLISH_FAILED,
   DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS,
   DRAFT_SAVE_FAILED,
@@ -54,6 +55,12 @@ const ACTIONS = {
     feedback: "negative",
     message: i18next.t(
       "The draft was not published. Please try again. If the problem persists, contact user support."
+    ),
+  },
+  [DRAFT_PREVIEW_FAILED_WITH_VALIDATION_ERRORS]: {
+    feedback: "negative",
+    message: i18next.t(
+      "Unable to display preview. Please correct validation issues in"
     ),
   },
   [DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS]: {
