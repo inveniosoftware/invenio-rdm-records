@@ -18,7 +18,7 @@ from invenio_rdm_records.services.schemas.parent.access import (
     Grant,
 )
 
-from .context import LogChangesContext, ResourceDataContext
+from .context import FileContext, LogChangesContext, ResourceDataContext
 
 
 class ParentBaseAuditLog(BaseAuditLog):
@@ -127,4 +127,33 @@ class RDMDraftAccessSettingsAuditLog(RDMRecordAccessSettingsAuditLog):
     id = "draft.access_settings_update"
     message_template = _(
         "User {user_id} updated access settings of {resource_type} {resource_id} via draft."
+    )
+
+
+class FileCreateAuditLog(BaseAuditLog):
+    """Audit log for file create."""
+
+    resource_type = "draft"
+
+    context = BaseAuditLog.context + [
+        FileContext(),
+    ]
+
+    id = "file.create"
+    message_template = _(
+        "User {user_id} created file {file_key} of {resource_type} {resource_id}."
+    )
+
+    metadata_schema = {
+        **BaseAuditLog.metadata_schema,
+        "file_key": ma.fields.String(required=True),
+    }
+
+
+class FileDeleteAuditLog(FileCreateAuditLog):
+    """Audit log for file delete."""
+
+    id = "file.delete"
+    message_template = _(
+        "User {user_id} deleted file {file_key} of {resource_type} {resource_id}."
     )
