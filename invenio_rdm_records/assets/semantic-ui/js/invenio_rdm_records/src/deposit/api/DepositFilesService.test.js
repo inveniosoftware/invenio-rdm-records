@@ -37,6 +37,7 @@ class FakeFileApiClient extends DepositFileApiClient {
 }
 
 let fakeOnUploadAdded;
+let fakeOnUploadInitialized;
 let fakeOnUploadStarted;
 let fakeOnUploadProgress;
 let fakeOnUploadCompleted;
@@ -45,6 +46,9 @@ let fakeOnUploadFailed;
 class FakeProgressNotifier extends UploadProgressNotifier {
   onUploadAdded(filename) {
     fakeOnUploadAdded(filename);
+  }
+  onUploadInitialized(filename, links) {
+    fakeOnUploadInitialized(filename, links);
   }
   onUploadStarted(filename, cancelFunc) {
     fakeOnUploadStarted(filename, cancelFunc);
@@ -78,6 +82,7 @@ beforeEach(() => {
   fakeApiDeleteFile = jest.fn();
 
   fakeOnUploadAdded = jest.fn();
+  fakeOnUploadInitialized = jest.fn();
   fakeOnUploadStarted = jest.fn();
   fakeOnUploadProgress = jest.fn();
   fakeOnUploadCompleted = jest.fn();
