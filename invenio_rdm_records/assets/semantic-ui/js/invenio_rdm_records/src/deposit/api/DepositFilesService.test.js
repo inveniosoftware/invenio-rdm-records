@@ -13,6 +13,7 @@ let fakeApiIsCancelled;
 let fakeApiInitializeFileUpload;
 let fakeApiUploadFile;
 let fakeApiFinalizeFileUpload;
+let fakeApiUpdateFileMetadata;
 let fakeApiDeleteFile;
 class FakeFileApiClient extends DepositFileApiClient {
   isCancelled(error) {
@@ -29,6 +30,10 @@ class FakeFileApiClient extends DepositFileApiClient {
 
   finalizeFileUpload(finalizeUploadUrl) {
     return fakeApiFinalizeFileUpload(finalizeUploadUrl);
+  }
+
+  updateFileMetadata(updateUrl, fileMeta) {
+    return fakeApiUpdateFileMetadata(updateUrl, fileMeta);
   }
 
   deleteFile(fileLinks) {
@@ -75,6 +80,7 @@ beforeEach(() => {
     progressFn(20);
   });
   fakeApiFinalizeFileUpload = jest.fn();
+  fakeApiUpdateFileMetadata = jest.fn();
   fakeApiDeleteFile = jest.fn();
 
   fakeOnUploadAdded = jest.fn();
@@ -210,6 +216,14 @@ describe("DepositFilesService tests", () => {
       expect(fakeOnUploadProgress).not.toHaveBeenCalled();
       expect(fakeOnUploadCompleted).not.toHaveBeenCalled();
       expect(fakeOnUploadFailed).not.toHaveBeenCalled();
+    });
+
+    it("it should call updateFileMetadata without errors", async () => {
+      fakeApiUpdateFileMetadata.mockReturnValueOnce({ data: { message: "ok" } });
+      const updateUrl = "updateUrl";
+      const fileMeta = { id: "file1", links: {}, metadata: { description: "123" } };
+      await filesService.updateFileMetadata(updateUrl, fileMeta);
+      expect(fakeApiUpdateFileMetadata).toHaveBeenCalledWith(updateUrl, fileMeta);
     });
   });
 

@@ -102,6 +102,10 @@ export class DepositFilesService {
     throw new Error("Not implemented.");
   }
 
+  async updateFileMetadata(updateUrl, fileMeta) {
+    throw new Error("Not implemented.");
+  }
+
   async delete(fileLinks) {
     throw new Error("Not implemented.");
   }
@@ -224,6 +228,10 @@ export class RDMDepositFilesService extends DepositFilesService {
   finalizeUpload = async (commitFileURL, file) => {
     return (await this.fileApiClient.finalizeFileUpload(commitFileURL)).data;
   };
+
+  updateFileMetadata = async (updateUrl, fileMeta) => {
+    return (await this.fileApiClient.updateFileMetadata(updateUrl, fileMeta)).data;
+  }
 
   importParentRecordFiles = async (draftLinks) => {
     const response = await this.fileApiClient.importParentRecordFiles(draftLinks);

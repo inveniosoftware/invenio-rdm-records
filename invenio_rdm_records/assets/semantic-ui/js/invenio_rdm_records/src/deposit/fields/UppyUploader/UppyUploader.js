@@ -21,6 +21,15 @@ import { UploadState } from "../../state/reducers/files";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { getFilesList, FilesListTable, FileUploaderToolbar } from "../FileUploader";
 import { useUppyLocale } from "./locale";
+import {
+  defaultAllowedMetaFields,
+  getMetaFieldsRenderers,
+  onBeforeUploadProcessMetaFields,
+} from "./metaFields";
+import {
+  UPPY_EVENTS,
+  getUppyDashboardEventsProps,
+} from "./events";
 
 const defaultDashboardProps = {
   showRemoveButtonAfterComplete: false,
@@ -79,6 +88,7 @@ export const UppyUploaderComponent = ({
   permissions,
   record,
   initializeFileUpload,
+  updateFileMetadata,
   finalizeUpload,
   deleteFile,
   uploadPart,
@@ -92,6 +102,8 @@ export const UppyUploaderComponent = ({
   decimalSizeDisplay,
   filesLocked,
   allowEmptyFiles,
+  allowedMetaFields,
+  startEvent,
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
@@ -99,6 +111,7 @@ export const UppyUploaderComponent = ({
   const { filesList } = getFilesList(files ?? {});
   const hasError = (errors.files || initialErrors?.files) && files;
   const locale = useUppyLocale();
+  const activeAllowedMetaFields = config?.allowedMetaFields || allowedMetaFields || defaultAllowedMetaFields;
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const filesSize = filesList.reduce((totalSize, file) => (totalSize += file.size), 0);
   const lockFileUploader = !isDraftRecord && filesLocked;
@@ -147,6 +160,7 @@ export const UppyUploaderComponent = ({
         quota,
         // Bind Redux file actions to the uploader plugin
         initializeFileUpload,
+        updateFileMetadata,
         finalizeUpload,
         saveAndFetchDraft,
         setUploadProgress,
@@ -168,6 +182,16 @@ export const UppyUploaderComponent = ({
     const onBeforeFileAdded = createDuplicateFileChecker(uppy, filesList);
     uppy.setOptions({ onBeforeFileAdded });
   }, [uppy, filesList]);
+
+  React.useEffect(() => {
+    uppy.setOptions({
+      onBeforeUpload: (uppyFiles) => {
+        return activeAllowedMetaFields && activeAllowedMetaFields.length > 0 
+          ? onBeforeUploadProcessMetaFields(uppyFiles, files, activeAllowedMetaFields)
+          : uppyFiles;
+      }
+    });
+  }, [uppy, activeAllowedMetaFields]);
 
   React.useEffect(() => {
     const uploaderPlugin = uppy.getPlugin("RDMUppyUploaderPlugin");
@@ -304,10 +328,10 @@ export const UppyUploaderComponent = ({
                     disabled={!filesLeft || lockFileUploader}
                     // `null` means "do not display a Done button in a status bar"
                     doneButtonHandler={null}
-                    note={i18next.t(
-                      "File addition, removal or modification are not allowed after you have published your upload."
-                    )}
+                    note={i18next.t("File addition, removal or modification are not allowed after you have published your upload.")}
+                    metaFields={activeAllowedMetaFields && activeAllowedMetaFields.length > 0 ? getMetaFieldsRenderers(activeAllowedMetaFields) : undefined}
                     {...defaultDashboardProps}
+                    {...(startEvent && getUppyDashboardEventsProps(startEvent))}
                     {...uiProps}
                   />
                 )}
@@ -379,6 +403,7 @@ UppyUploaderComponent.propTypes = {
   isFileImportInProgress: PropTypes.bool,
   importParentFiles: PropTypes.func.isRequired,
   initializeFileUpload: PropTypes.func.isRequired,
+  updateFileMetadata: PropTypes.func.isRequired,
   finalizeUpload: PropTypes.func.isRequired,
   uploadPart: PropTypes.func.isRequired,
   setUploadProgress: PropTypes.func.isRequired,
@@ -388,6 +413,20 @@ UppyUploaderComponent.propTypes = {
   filesLocked: PropTypes.bool,
   permissions: PropTypes.object,
   allowEmptyFiles: PropTypes.bool,
+  allowedMetaFields: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      defaultValue: PropTypes.any,
+      name: PropTypes.string,
+      placeholder: PropTypes.string,
+      render: PropTypes.func,
+      condition: PropTypes.func,
+    })
+  ),
+  startEvent: PropTypes.shape({
+    event: PropTypes.oneOf(Object.values(UPPY_EVENTS)).isRequired,
+    payload: PropTypes.object,
+  }),
 };
 
 UppyUploaderComponent.defaultProps = {
@@ -408,4 +447,6 @@ UppyUploaderComponent.defaultProps = {
   decimalSizeDisplay: true,
   filesLocked: false,
   allowEmptyFiles: true,
+  allowedMetaFields: undefined,
+  startEvent: undefined,
 };

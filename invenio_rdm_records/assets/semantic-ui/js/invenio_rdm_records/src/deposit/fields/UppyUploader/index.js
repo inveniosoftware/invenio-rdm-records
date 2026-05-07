@@ -10,6 +10,7 @@ import {
   deleteFile,
   importParentFiles,
   initializeFileUpload,
+  updateFileMetadata,
   uploadPart,
   finalizeUpload,
   saveAndFetchDraft,
@@ -34,6 +35,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
   initializeFileUpload: (draft, file) => dispatch(initializeFileUpload(draft, file)),
+  updateFileMetadata: (draft, serverFile, file) => dispatch(updateFileMetadata(draft, serverFile, file)),
   finalizeUpload: (file) => dispatch(finalizeUpload(file.meta.links.commit, file)),
   importParentFiles: () => dispatch(importParentFiles()),
   setUploadProgress: (file, percent) => dispatch(setUploadProgress(file, percent)),
@@ -46,3 +48,6 @@ export const UppyUploader = connect(
   mapStateToProps,
   mapDispatchToProps
 )(UppyUploaderComponent);
+
+export { UPPY_EVENTS } from "./events";
+export { defaultAllowedMetaFields } from "./metaFields";

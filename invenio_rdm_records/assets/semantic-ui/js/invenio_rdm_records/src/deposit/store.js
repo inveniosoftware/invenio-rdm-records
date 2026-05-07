@@ -25,6 +25,7 @@ const preloadFiles = (files) => {
           name: file.key,
           size: file.size || 0,
           checksum: file.checksum || "",
+          metadata: file.metadata || {},
           links: file.links || {},
           mimetype: file.mimetype || "application/octet-stream",
           status: UploadState[file.status],
