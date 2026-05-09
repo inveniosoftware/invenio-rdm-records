@@ -66,6 +66,9 @@ RDM_RECORDS_UI_EDIT_URL = "/uploads/<pid_value>"
 RDM_ARCHIVE_DOWNLOAD_ENABLED = True
 """Flag to enable/disable the all-in-one download endpoint."""
 
+RDM_STATS_EXCLUDE_PREVIEW_FILE_DOWNLOAD_EVENTS = False
+"""Exclude file-download stats events whose Referer is the file's own preview page."""
+
 #: Default site URL (used only when not in a context - e.g. like celery tasks).
 THEME_SITEURL = "http://127.0.0.1:5000"
 
