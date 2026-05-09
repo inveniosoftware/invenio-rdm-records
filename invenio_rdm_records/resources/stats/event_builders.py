@@ -16,13 +16,39 @@ As such, it is assumed that a request context is available (and thus, Flask's gl
 """
 
 from datetime import datetime, timezone
+from urllib.parse import urlsplit
 
 from flask import current_app, request
+from invenio_base import invenio_url_for
 from invenio_stats.utils import get_user
+from werkzeug.routing.exceptions import BuildError
 
 # note: the event builders are located under resources, because they access some
 #       information that is usually only available on the resources level (such as
 #       request context) and we haven't found a more suitable home for them so far
+
+
+def _is_file_preview_url(url, recid, filename):
+    """Return True if the URL is the preview page URL of this file."""
+    if not url:
+        return False
+
+    try:
+        preview_url = invenio_url_for(
+            "invenio_app_rdm_records.record_file_preview",
+            pid_value=recid,
+            filename=filename,
+        )
+    except BuildError:
+        return False
+
+    url_parts = urlsplit(url)
+    preview_parts = urlsplit(preview_url)
+    return (
+        url_parts.scheme == preview_parts.scheme
+        and url_parts.netloc == preview_parts.netloc
+        and url_parts.path == preview_parts.path
+    )
 
 
 def file_download_event_builder(event, sender_app, **kwargs):
@@ -36,6 +62,14 @@ def file_download_event_builder(event, sender_app, **kwargs):
 
     record = kwargs["record"]
     obj = kwargs["obj"]
+    exclude_preview_events = current_app.config.get(
+        "RDM_STATS_EXCLUDE_PREVIEW_FILE_DOWNLOAD_EVENTS", False
+    )
+    if exclude_preview_events and _is_file_preview_url(
+        request.referrer, record["id"], obj.key
+    ):
+        return None
+
     event.update(
         {
             # When:

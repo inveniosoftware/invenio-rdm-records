@@ -28,6 +28,11 @@ def create_invenio_app_rdm_records_blueprint(app):
         """Fake record_file_download view function."""
         return "<file content>"
 
+    @blueprint.route("/records/<pid_value>/preview/<path:filename>")
+    def record_file_preview(pid_value, **kwargs):
+        """Fake record_file_preview view function."""
+        return "<file preview>"
+
     @blueprint.route("/records/<pid_value>")
     def record_detail(pid_value, file_item=None, is_preview=False, **kwargs):
         """Fake record_detail view function."""
