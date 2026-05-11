@@ -266,7 +266,7 @@ class DateSchema(Schema):
 
     date = EDTFDateTimeString(required=True)
     type = fields.Nested(VocabularySchema, required=True)
-    description = fields.Str()
+    description = SanitizedUnicode()
 
 
 class RelatedIdentifierSchema(IdentifierSchema):
