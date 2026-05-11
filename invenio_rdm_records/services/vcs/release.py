@@ -151,7 +151,7 @@ class RDMVCSRelease(VCSRelease):
             license_vocab = current_vocabularies_service.read(
                 identity=self.user_identity, id_=("licenses", license_spdx_id.lower())
             )
-            return {"id": license_vocab.pid.id}
+            return {"id": license_vocab.id}
         except (PIDDoesNotExistError, NoResultFound):
             self.add_warning(
                 f"The repository's license '{license_spdx_id}' is not recognised and has been added as a custom license. "
