@@ -8,6 +8,7 @@ import io
 import re
 import urllib
 
+import pytest
 from flask_principal import UserNeed
 from flask_security import login_user
 from invenio_access.permissions import (
@@ -25,8 +26,34 @@ from invenio_rdm_records.proxies import current_rdm_records_service as service
 from invenio_rdm_records.requests.access import AccessRequestTokenNeed
 
 
-def test_simple_guest_access_request_flow(running_app, client, users, minimal_record):
+@pytest.mark.parametrize(
+    ("show_emojis", "owner_subject", "guest_subject"),
+    [
+        (
+            None,
+            "📥 New access request for your record 'A Romans story'",
+            "📥 Your access request was submitted successfully",
+        ),
+        (
+            False,
+            "New access request for your record 'A Romans story'",
+            "Your access request was submitted successfully",
+        ),
+    ],
+)
+def test_simple_guest_access_request_flow(
+    running_app,
+    client,
+    users,
+    minimal_record,
+    show_emojis,
+    owner_subject,
+    guest_subject,
+):
     """Test a the simple guest-based access request flow."""
+    if show_emojis is not None:
+        running_app.app.config["NOTIFICATIONS_SHOW_EMOJIS"] = show_emojis
+
     with running_app.app.extensions["mail"].record_messages() as outbox:
         # Log in a user (whose ID we need later)
         record_owner, _ = users
@@ -97,16 +124,10 @@ def test_simple_guest_access_request_flow(running_app, client, users, minimal_re
         assert f"/access/requests/{request.id}" in request.links["self_html"]
         assert len(outbox) == 3
         owner_submit_message = outbox[1]
-        assert (
-            "New access request for your record 'A Romans story'"
-            in owner_submit_message.subject
-        )
+        assert owner_submit_message.subject == owner_subject
 
         guest_submit_message = outbox[2]
-        assert (
-            "Your access request was submitted successfully"
-            in guest_submit_message.subject
-        )
+        assert guest_submit_message.subject == guest_subject
         assert request["links"]["self_html"] in guest_submit_message.html
         # Following is a 1-off test of invenio_url_for in Jinja settings + dynamic
         # blueprint route registration (decorator style within a function). Good to keep
