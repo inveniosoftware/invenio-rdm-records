@@ -10,9 +10,11 @@
 
 {% set record_title = record.metadata.title %}
 {% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
+{% set show_emojis = config.get('NOTIFICATIONS_SHOW_EMOJIS', True) %}
 
 {%- block subject -%}
-    {{ _("✅ Access request for '{record_title}' was accepted.").format(record_title=record_title) }}
+{%- set emoji = "✅ " if show_emojis else "" -%}
+    {{ emoji }}{{ _("Access request for '{record_title}' was accepted.").format(record_title=record_title) }}
 {%- endblock subject -%}
 
 {%- block html_body -%}
