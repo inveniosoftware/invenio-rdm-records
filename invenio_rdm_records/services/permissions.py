@@ -22,6 +22,7 @@ from invenio_records_permissions.generators import (
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
 from invenio_records_resources.services.files.generators import IfTransferType
 from invenio_records_resources.services.files.transfer import (
+    LOCAL_STAGED_TRANSFER_TYPE,
     LOCAL_TRANSFER_TYPE,
     MULTIPART_TRANSFER_TYPE,
 )
@@ -139,6 +140,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         # note: even though this is closer to business logic than permissions,
         # it was simpler and less coupling to implement this as permission check
         IfTransferType(LOCAL_TRANSFER_TYPE, can_read_files),
+        IfTransferType(LOCAL_STAGED_TRANSFER_TYPE, can_read_files),
         SystemProcess(),
     ]
     # Allow submitting new record
@@ -161,23 +163,27 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_draft_create_files = [
         # review is the same as create_files
         IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(LOCAL_STAGED_TRANSFER_TYPE, can_review),
         IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
         SystemProcess(),
     ]
     can_draft_set_content_files = [
         # review is the same as create_files
         IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(LOCAL_STAGED_TRANSFER_TYPE, can_review),
         IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
         SystemProcess(),
     ]
     can_draft_get_content_files = [
         # preview is same as read_files
         IfTransferType(LOCAL_TRANSFER_TYPE, can_draft_read_files),
+        IfTransferType(LOCAL_STAGED_TRANSFER_TYPE, can_draft_read_files),
         SystemProcess(),
     ]
     can_draft_commit_files = [
         # review is the same as create_files
         IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(LOCAL_STAGED_TRANSFER_TYPE, can_review),
         IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
         SystemProcess(),
     ]
@@ -282,16 +288,19 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_draft_media_read_files = can_review
     can_draft_media_set_content_files = [
         IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(LOCAL_STAGED_TRANSFER_TYPE, can_review),
         SystemProcess(),
     ]
     can_draft_media_get_content_files = [
         # preview is same as read_files
         IfTransferType(LOCAL_TRANSFER_TYPE, can_preview),
+        IfTransferType(LOCAL_STAGED_TRANSFER_TYPE, can_preview),
         SystemProcess(),
     ]
     can_draft_media_commit_files = [
         # review is the same as create_files
         IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(LOCAL_STAGED_TRANSFER_TYPE, can_review),
         SystemProcess(),
     ]
     can_draft_media_update_files = can_review
@@ -308,6 +317,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         # note: even though this is closer to business logic than permissions,
         # it was simpler and less coupling to implement this as permission check
         IfTransferType(LOCAL_TRANSFER_TYPE, can_read),
+        IfTransferType(LOCAL_STAGED_TRANSFER_TYPE, can_read),
         SystemProcess(),
     ]
     can_media_create_files = [Disable()]
