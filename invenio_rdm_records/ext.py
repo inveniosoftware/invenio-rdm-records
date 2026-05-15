@@ -321,7 +321,7 @@ def init_menu(app):
             "%(icon)s Storage",
             icon="<i class='hdd icon'></i>",
         ),
-        order=7,
+        order=3,
         visible_when=lambda: (
             current_app.config.get("RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED", False)
             and getattr(current_user, "verified_at", False)
