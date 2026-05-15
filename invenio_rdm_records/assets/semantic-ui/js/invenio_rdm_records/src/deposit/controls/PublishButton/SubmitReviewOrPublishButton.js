@@ -84,6 +84,7 @@ class SubmitReviewOrPublishComponent extends Component {
               changeSelectedCommunityFn(community);
             }}
             onModalChange={(value) => this.setState({ modalOpen: value })}
+            handleClose={() => this.setState({ modalOpen: false })}
             modalOpen={modalOpen}
             displaySelected
             record={record}
