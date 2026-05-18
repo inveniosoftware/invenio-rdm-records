@@ -35,7 +35,9 @@ const NewVersionButtonComponent = ({ onError, record, disabled, ...uiProps }) =>
       disabled={disabled}
     >
       <Popup
-        content={i18next.t("You don't have permissions to create a new version.")}
+        content={i18next.t(
+          "You can't create a new version of this record due to external DOI restrictions or insufficient permissions."
+        )}
         position="top center"
         disabled={!disabled}
         trigger={
