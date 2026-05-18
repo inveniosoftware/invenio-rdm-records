@@ -422,6 +422,17 @@ class RDMDraft(CommonFieldsMixin, Draft):
 
     status = DraftStatus()
 
+    @classmethod
+    def edit(cls, record):
+        """Restore $schema for soft-deleted records when editing a record."""
+        # ConstantField.pre_init skips data=None (soft-deleted) records, so
+        # $schema is missing after undelete — restore it from the field. $schema
+        # field is RDM related and therefore it is not handled in edit method of
+        # the base Draft class https://github.com/inveniosoftware/invenio-drafts-resources/blob/0bd2cc6dd2a333c8a2db39eb6c3e17128ebeeefc/invenio_drafts_resources/records/api.py#L231
+        draft = super().edit(record)
+        draft.setdefault("$schema", cls.schema.value)
+        return draft
+
 
 RDMFileDraft.record_cls = RDMDraft
 
