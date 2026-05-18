@@ -254,8 +254,8 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_remove_community_from_record_ = [
         IfConfig(
             "RDM_ALLOW_OWNERS_REMOVE_COMMUNITY_FROM_RECORD",
-            then_=[RecordOwners(), CommunityCurators(), SystemProcess()],
-            else_=[CommunityCurators(), SystemProcess()],
+            then_=[RecordOwners(), RecordCommunitiesAction("curate"), SystemProcess()],
+            else_=[RecordCommunitiesAction("curate"), SystemProcess()],
         ),
     ]
     can_remove_community_from_record = [
