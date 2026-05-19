@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2021-2023 TU Wien.
+# Copyright (C) 2026 CESNET i.a.l.e.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.

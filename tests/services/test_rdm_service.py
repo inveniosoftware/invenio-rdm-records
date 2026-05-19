@@ -3,6 +3,7 @@
 # Copyright (C) 2021 Graz University of Technology.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2024 California Institute of Technology.
+# Copyright (C) 2026 CESNET i.a.l.e.
 #
 # Invenio-RDM-Records is free software; you can redistribute it
 # and/or modify it under the terms of the MIT License; see LICENSE file for
@@ -18,6 +19,7 @@ from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
 
 from invenio_rdm_records.proxies import current_rdm_records
+from invenio_rdm_records.records.api import RDMDraft, RDMRecord
 from invenio_rdm_records.services.errors import (
     EmbargoNotLiftedError,
     ValidationErrorWithMessageAsList,
@@ -467,3 +469,25 @@ def test_search_sort_verified_enabled(
 
     expected_order = [v_record.id, nv_record.id]
     assert expected_order == [h["id"] for h in hits]
+
+
+def test_edit_restores_schema_on_undeleted_draft(
+    running_app, search_clear, minimal_record
+):
+    """$schema must be restored when editing a published record.
+
+    Publishing soft-deletes the draft; editing the record undeletes it via
+    ``RDMDraft.edit(record)``. ``ConstantField.pre_init`` skips data=None
+    (soft-deleted) records, so ``$schema`` would otherwise be missing on the
+    undeleted draft.
+    """
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(superuser_identity, draft.id)
+
+    record_obj = RDMRecord.pid.resolve(record.id)
+    undeleted_draft = RDMDraft.edit(record_obj)
+
+    assert undeleted_draft["$schema"] == RDMDraft.schema.value
