@@ -90,7 +90,7 @@ class RDMRecordList(RecordList):
             record_dict = hit.to_dict()
 
             index_name = self._service.record_cls.index._name
-            if index_name in hit.meta["index"]:
+            if (index_name in hit.meta["index"]) or record_dict["is_published"]:
                 record = self._service.record_cls.loads(record_dict)
             else:
                 record = self._service.draft_cls.loads(record_dict)
