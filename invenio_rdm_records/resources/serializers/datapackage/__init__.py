@@ -1,9 +1,5 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2024 Open Knowledge Foundation
-#
-# Invenio-RDM-Records is free software; you can redistribute it and/or modify
-# it under the terms of the MIT License; see LICENSE file for more details.
+# SPDX-FileCopyrightText: 2024 Open Knowledge Foundation
+# SPDX-License-Identifier: MIT
 
 """Data Package Serializers for Invenio RDM Records."""
 

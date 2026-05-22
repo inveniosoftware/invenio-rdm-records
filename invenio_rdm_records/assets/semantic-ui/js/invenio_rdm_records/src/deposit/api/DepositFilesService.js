@@ -1,10 +1,9 @@
-// This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
-// Copyright (C) 2020-2022 Northwestern University.
-// Copyright (C)      2025 CESNET.
-//
-// Invenio-RDM-Records is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
+/*
+ * SPDX-FileCopyrightText: 2020-2023 CERN.
+ * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
+ * SPDX-FileCopyrightText: 2025 CESNET.
+ * SPDX-License-Identifier: MIT
+ */
 
 // Drives the business logic of the InvenioFormApp.
 // Defines what happens when a button is clicked.

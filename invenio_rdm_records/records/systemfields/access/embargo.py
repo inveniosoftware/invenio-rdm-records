@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
-#
-# This file is part of Invenio.
-# Copyright (C) 2021 TU Wien.
-# Copyright (C) 2025 Graz University of Technology.
-#
-# Invenio is free software; you can redistribute it and/or modify it
-# under the terms of the MIT License; see LICENSE file for more details.
+# SPDX-FileCopyrightText: 2021 TU Wien.
+# SPDX-FileCopyrightText: 2025 Graz University of Technology.
+# SPDX-License-Identifier: MIT
 
 """Embargo class for the access system field."""
 

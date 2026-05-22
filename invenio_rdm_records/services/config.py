@@ -1,15 +1,11 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2020-2026 CERN.
-# Copyright (C) 2020-2025 Northwestern University.
-# Copyright (C)      2021 TU Wien.
-# Copyright (C) 2021-2026 Graz University of Technology.
-# Copyright (C) 2022      Universität Hamburg
-# Copyright (C) 2024      KTH Royal Institute of Technology.
-# Copyright (C) 2025 CESNET i.a.l.e.
-#
-# Invenio-RDM-Records is free software; you can redistribute it and/or modify
-# it under the terms of the MIT License; see LICENSE file for more details.
+# SPDX-FileCopyrightText: 2020-2026 CERN.
+# SPDX-FileCopyrightText: 2020-2025 Northwestern University.
+# SPDX-FileCopyrightText: 2021 TU Wien.
+# SPDX-FileCopyrightText: 2021-2026 Graz University of Technology.
+# SPDX-FileCopyrightText: 2022 Universität Hamburg
+# SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
+# SPDX-FileCopyrightText: 2024 CESNET i.a.l.e.
+# SPDX-License-Identifier: MIT
 
 """RDM Record Service."""
 

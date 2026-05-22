@@ -1,8 +1,7 @@
-// This file is part of InvenioRdmRecords
-// Copyright (C) 2022-2025 CERN.
-//
-// Invenio RDM is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
+/*
+ * SPDX-FileCopyrightText: 2022-2025 CERN.
+ * SPDX-License-Identifier: MIT
+ */
 
 import PropTypes from "prop-types";
 import React, { Component } from "react";

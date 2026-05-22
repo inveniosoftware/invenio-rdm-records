@@ -1,10 +1,5 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2025 TU Wien.
-#
-# Invenio-RDM-Records is free software; you can redistribute it and/or modify
-# it under the terms of the MIT License; see LICENSE file for more details.
-
+# SPDX-FileCopyrightText: 2025 TU Wien.
+# SPDX-License-Identifier: MIT
 
 from invenio_access.permissions import system_identity
 from invenio_db import db

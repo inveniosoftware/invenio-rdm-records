@@ -1,9 +1,5 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2023-2026 CERN.
-#
-# Invenio-RDM-Records is free software; you can redistribute it and/or modify
-# it under the terms of the MIT License; see LICENSE file for more details.
+# SPDX-FileCopyrightText: 2023-2026 CERN.
+# SPDX-License-Identifier: MIT
 """RDM records implementation of the legacy Invenio-GitHub module.
 
 This module is now deprecated. For now, to allow for an optional migration, the RDM bindings for

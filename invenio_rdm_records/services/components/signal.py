@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2023 CERN.
-#
-# Invenio-RDM is free software; you can redistribute it and/or modify
-# it under the terms of the MIT License; see LICENSE file for more details.
+# SPDX-FileCopyrightText: 2023 CERN.
+# SPDX-License-Identifier: MIT
+
 """RDM service component for Software Heritage integration."""
 
 from invenio_drafts_resources.services.records.components import ServiceComponent

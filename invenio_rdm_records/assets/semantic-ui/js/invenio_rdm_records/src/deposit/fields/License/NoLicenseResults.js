@@ -1,10 +1,9 @@
-// This file is part of Invenio-RDM-Records
-// Copyright (C) 2021-2024 CERN.
-// Copyright (C) 2021 Northwestern University.
-// Copyright (C) 2025 ZBW – Leibniz-Informationszentrum Wirtschaft.
-//
-// Invenio is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
+/*
+ * SPDX-FileCopyrightText: 2021-2024 CERN.
+ * SPDX-FileCopyrightText: 2021 Northwestern University.
+ * SPDX-FileCopyrightText: 2025 ZBW – Leibniz-Informationszentrum Wirtschaft.
+ * SPDX-License-Identifier: MIT
+ */
 
 import PropTypes from "prop-types";
 import React from "react";

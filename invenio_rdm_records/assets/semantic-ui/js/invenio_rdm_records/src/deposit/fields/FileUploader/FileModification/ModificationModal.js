@@ -1,8 +1,7 @@
-// This file is part of InvenioRDM
-// Copyright (C) 2025-2026 CERN
-//
-// Invenio-rdm-records is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
+/*
+ * SPDX-FileCopyrightText: 2025-2026 CERN
+ * SPDX-License-Identifier: MIT
+ */
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";

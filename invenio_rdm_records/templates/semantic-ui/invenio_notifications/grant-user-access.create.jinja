@@ -1,3 +1,9 @@
+{#
+  SPDX-FileCopyrightText: 2023 Graz University of Technology.
+  SPDX-FileCopyrightText: 2023-2025 CERN.
+  SPDX-FileCopyrightText: 2025 Northwestern University.
+  SPDX-License-Identifier: MIT
+#}
 {% set record = notification.context.record %}
 {% set receiver = notification.context.receiver %}
 {% set message = notification.context.message | safe if notification.context.message else '' %}

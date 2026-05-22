@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2025 CERN.
+ * SPDX-License-Identifier: MIT
+ */
+
 import React from "react";
 import PropTypes from "prop-types";
 import { Group } from "@visx/group";

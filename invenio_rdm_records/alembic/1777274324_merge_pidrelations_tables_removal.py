@@ -1,10 +1,6 @@
-#
-# This file is part of Invenio.
-# Copyright (C) 2016-2018 CERN.
-# Copyright (C) 2026 CESNET z.s.p.o.
-#
-# Invenio is free software; you can redistribute it and/or modify it
-# under the terms of the MIT License; see LICENSE file for more details.
+# SPDX-FileCopyrightText: 2016-2018 CERN.
+# SPDX-FileCopyrightText: 2026 CESNET z.s.p.o.
+# SPDX-License-Identifier: MIT
 
 """Merge PIDRelations tables removal to single head."""
 

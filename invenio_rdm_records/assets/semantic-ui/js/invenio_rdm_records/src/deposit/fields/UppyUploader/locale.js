@@ -1,9 +1,8 @@
-// This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2025 CERN.
-// Copyright (C)      2025 CESNET.
-//
-// Invenio-RDM-Records is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
+/*
+ * SPDX-FileCopyrightText: 2020-2025 CERN.
+ * SPDX-FileCopyrightText: 2025 CESNET.
+ * SPDX-License-Identifier: MIT
+ */
 //
 // This file is an adaptation of:
 // https://raw.githubusercontent.com/transloadit/uppy/refs/tags/%40uppy/locales%403.5.4/packages/%40uppy/locales/src/en_US.ts

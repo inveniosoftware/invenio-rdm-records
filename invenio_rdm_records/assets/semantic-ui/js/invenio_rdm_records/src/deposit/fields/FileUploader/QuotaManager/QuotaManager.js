@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2025 CERN.
+ * SPDX-License-Identifier: MIT
+ */
+
 import React, { useState } from "react";
 import { Grid, Button, Icon, Message, Input } from "semantic-ui-react";
 import PropTypes from "prop-types";

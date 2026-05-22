@@ -1,12 +1,11 @@
-// This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2025 CERN.
-// Copyright (C) 2020-2022 Northwestern University.
-// Copyright (C) 2021-2022 Graz University of Technology.
-// Copyright (C)      2022 TU Wien.
-// Copyright (C)      2024 KTH Royal Institute of Technology.
-//
-// Invenio-RDM-Records is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
+/*
+ * SPDX-FileCopyrightText: 2020-2025 CERN.
+ * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
+ * SPDX-FileCopyrightText: 2021-2022 Graz University of Technology.
+ * SPDX-FileCopyrightText: 2022 TU Wien.
+ * SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
+ * SPDX-License-Identifier: MIT
+ */
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { useFormikContext, getIn } from "formik";

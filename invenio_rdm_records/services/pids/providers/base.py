@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2021 CERN.
-# Copyright (C) 2021-2024 Graz University of Technology.
-# Copyright (C) 2024-2026 KTH Royal Institute of Technology.
-#
-# Invenio-RDM-Records is free software; you can redistribute it and/or modify
-# it under the terms of the MIT License; see LICENSE file for more details.
+# SPDX-FileCopyrightText: 2021 CERN.
+# SPDX-FileCopyrightText: 2021-2024 Graz University of Technology.
+# SPDX-FileCopyrightText: 2024-2026 KTH Royal Institute of Technology.
+# SPDX-License-Identifier: MIT
 
 """PID Provider."""
 

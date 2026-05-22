@@ -1,8 +1,7 @@
-// This file is part of Invenio-RDM-Records
-// Copyright (C) 2026 CERN.
-//
-// Invenio-RDM-Records is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
+/*
+ * SPDX-FileCopyrightText: 2026 CERN.
+ * SPDX-License-Identifier: MIT
+ */
 
 import React from "react";
 import ReactDOM from "react-dom";

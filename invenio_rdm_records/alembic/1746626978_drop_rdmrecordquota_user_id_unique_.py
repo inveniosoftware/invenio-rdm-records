@@ -1,9 +1,5 @@
-#
-# This file is part of Invenio.
-# Copyright (C) 2025 TU Wien.
-#
-# Invenio is free software; you can redistribute it and/or modify it
-# under the terms of the MIT License; see LICENSE file for more details.
+# SPDX-FileCopyrightText: 2025 TU Wien.
+# SPDX-License-Identifier: MIT
 
 """Drop ``RDMRecordQuota.user_id`` unique constraint."""
 

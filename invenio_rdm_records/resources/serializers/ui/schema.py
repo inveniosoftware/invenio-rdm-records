@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2020-2025 CERN.
-# Copyright (C) 2020 Northwestern University.
-# Copyright (C) 2021-2025 Graz University of Technology.
-# Copyright (C) 2022-2023 TU Wien.
-#
-# Invenio-RDM-Records is free software; you can redistribute it and/or modify
-# it under the terms of the MIT License; see LICENSE file for more details.
+# SPDX-FileCopyrightText: 2020-2025 CERN.
+# SPDX-FileCopyrightText: 2020 Northwestern University.
+# SPDX-FileCopyrightText: 2021-2025 Graz University of Technology.
+# SPDX-FileCopyrightText: 2022-2023 TU Wien.
+# SPDX-License-Identifier: MIT
 
 """Record response serializers."""
 

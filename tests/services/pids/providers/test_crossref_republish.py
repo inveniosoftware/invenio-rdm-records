@@ -1,9 +1,5 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2026 University of Münster.
-#
-# Invenio-RDM-Records is free software; you can redistribute it and/or modify
-# it under the terms of the MIT License; see LICENSE file for more details.
+# SPDX-FileCopyrightText: 2025 University of Münster.
+# SPDX-License-Identifier: MIT
 
 """Tests reproducing 'A PID already exists for type doi' error on republish.
 
