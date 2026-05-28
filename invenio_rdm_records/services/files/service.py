@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2026 CESNET z.s.p.o.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -26,9 +27,9 @@ class RDMFileService(FileService):
             if not can_read_deleted:
                 raise RecordDeletedException(record)
 
-    def _get_record(self, id_, identity, action, file_key=None):
+    def _get_record(self, id_, identity, action, file_key=None, **kwargs):
         """Get the associated record."""
-        record = super()._get_record(id_, identity, action, file_key)
+        record = super()._get_record(id_, identity, action, file_key, **kwargs)
         self._check_record_deleted_permissions(record, identity)
 
         return record
