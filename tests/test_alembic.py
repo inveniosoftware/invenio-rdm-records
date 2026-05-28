@@ -3,6 +3,7 @@
 # This file is part of Invenio.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2024 Graz University of Technology.
+# Copyright (C) 2026 CESNET z.s.p.o.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -13,7 +14,6 @@ import pytest
 from invenio_db.utils import alembic_test_context, drop_alembic_version_table
 
 
-@pytest.mark.skip(reason="Caused by mergepoint")
 def test_alembic(base_app, database):
     """Test alembic recipes."""
     db = database
