@@ -533,8 +533,10 @@ class WithFileLinks(type):
                     }
                 ),
             ),
-            'container': FileEndpointLink(
-                f"{cls.name_of_file_blueprint}.list_container", params=["pid_value", "key"], when=is_container
+            "container": FileEndpointLink(
+                f"{cls.name_of_file_blueprint}.list_container",
+                params=["pid_value", "key"],
+                when=is_container,
             ),
         }
 
@@ -554,10 +556,7 @@ class FileServiceConfig(
     name_of_file_blueprint = ""  # Has to be overridden by descendants
     allow_archive_download = FromConfig("RDM_ARCHIVE_DOWNLOAD_ENABLED", True)
 
-
-    file_extractors = FromConfig(
-        "RDM_RECORD_FILE_EXTRACTORS", default=[]
-    )
+    file_extractors = FromConfig("RDM_RECORD_FILE_EXTRACTORS", default=[])
 
 
 class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):

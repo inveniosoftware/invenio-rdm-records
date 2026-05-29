@@ -12,6 +12,20 @@
 Changes
 =======
 
+Version v29.0.0 (released 2026-05-29)
+
+- chore(setup): bump dependencies
+- fix: alembic migrations
+- refactor(policy): apply SameAs
+- feat: Using SameAs generator for dynamic binding of permissions
+- chore(tests): use db fixture from pytest-invenio
+- feat: Support for ZIP extraction
+- UI: reorder menu in user settings
+- feat(stats): allow excluding file download stats from previewer
+- fix: make community modal on deposit form close
+- fix(vcs): extract license ID when returning
+- fix: add `policy_id` to request metadata of file modification (#2310)
+
 Version v28.6.1 (released 2026-05-06)
 
 - fix(metadata): fix `CustomFieldsComponent` subclass overrides
