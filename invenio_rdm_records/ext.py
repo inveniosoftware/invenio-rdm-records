@@ -20,6 +20,10 @@ from invenio_collections.services.config import CollectionServiceConfig
 from invenio_collections.services.service import CollectionsService
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.resources.files import FileResource
+from invenio_records_resources.services.custom_fields.schema import (
+    CustomFieldsSchema,
+    CustomFieldsSchemaUI,
+)
 
 from . import config
 from .oaiserver.resources.config import OAIPMHServerResourceConfig
@@ -366,3 +370,10 @@ def init(app):
     iregistry = app.extensions["invenio-indexer"].registry
     iregistry.register(ext.records_service.indexer, indexer_id="records")
     iregistry.register(ext.records_service.draft_indexer, indexer_id="records-drafts")
+
+    # Register custom fields schemas
+    cfs_registry = app.extensions[
+        "invenio-records-resources"
+    ].custom_fields_schema_registry
+    cfs_registry.register(app, "RDM_CUSTOM_FIELDS", CustomFieldsSchema)
+    cfs_registry.register(app, "RDM_CUSTOM_FIELDS", CustomFieldsSchemaUI)

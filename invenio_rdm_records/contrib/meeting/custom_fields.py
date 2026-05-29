@@ -15,8 +15,6 @@ Implements the following fields:
 - meeting.url
 """
 
-from functools import partial
-
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import BaseCF
 from marshmallow import fields
@@ -45,9 +43,8 @@ class MeetingCF(BaseCF):
                 ),
                 "identifiers": IdentifierValueSet(
                     fields.Nested(
-                        partial(
-                            IdentifierSchema,
-                            allowed_schemes=record_related_identifiers_schemes,
+                        IdentifierSchema(
+                            allowed_schemes=record_related_identifiers_schemes
                         )
                     )
                 ),

@@ -11,6 +11,7 @@ from functools import partial
 from flask import current_app
 from invenio_drafts_resources.services.records.schema import RecordSchema
 from invenio_i18n import lazy_gettext as _
+from invenio_records_resources.proxies import current_custom_fields_schema_registry
 from invenio_records_resources.services.custom_fields import CustomFieldsSchema
 from invenio_requests.services.schemas import GenericRequestSchema
 from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_dump
@@ -73,7 +74,9 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin, CleanReviewMixin):
     )
     metadata = NestedAttribute(MetadataSchema)
     custom_fields = NestedAttribute(
-        partial(CustomFieldsSchema, fields_var="RDM_CUSTOM_FIELDS")
+        lambda: current_custom_fields_schema_registry.get(
+            "RDM_CUSTOM_FIELDS", CustomFieldsSchema.field_property_name
+        )
     )
     # provenance
     access = NestedAttribute(AccessSchema)
