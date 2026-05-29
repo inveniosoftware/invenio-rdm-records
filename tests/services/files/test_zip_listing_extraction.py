@@ -7,8 +7,11 @@
 """Test RDM records files (metadata)."""
 
 import io
+import sys
 import zipfile
 from pathlib import Path
+
+import pytest
 
 from invenio_rdm_records.proxies import current_rdm_records_service
 
@@ -178,6 +181,7 @@ def test_zip_folder_extraction(
             assert content == "directory1-file2\n"
 
 
+@pytest.mark.skipif(sys.version_info < (3, 11), reason="Requires Python 3.11+")
 def test_large_zip_folder_extraction(
     running_app, db, location, minimal_record, identity_simple, search_clear
 ):
