@@ -1,4 +1,5 @@
-# SPDX-FileCopyrightText: 2023-2024 CERN.
+# SPDX-FileCopyrightText: 2023-2026 CERN.
+# SPDX-FileCopyrightText: 2026 TU Wien.
 # SPDX-License-Identifier: MIT
 
 """RDM Community Records Service."""
