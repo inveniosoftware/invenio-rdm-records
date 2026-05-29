@@ -62,7 +62,7 @@ def test_zip_file_listing(
         ],
         "truncated": False,
         "total": 1,
-        "folders": [
+        "directories": [
             {
                 "key": "test_zip",
                 "links": {
@@ -207,10 +207,10 @@ def test_large_zip_folder_extraction(
     # Create a large zip in memory for simplicity
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
-        # Create multiple nested folders and files
-        for i in range(5):  # top-level folders
+        # Create multiple nested directories and files
+        for i in range(5):  # top-level directories
             zipf.mkdir(f"folder_{i}/")
-            for j in range(10):  # subfolders
+            for j in range(10):  # subdirectories
                 folder_path = f"folder_{i}/subfolder_{j}/"
                 zipf.mkdir(folder_path)
                 for k in range(20):  # files in each subfolder
@@ -306,7 +306,7 @@ def test_zip_listing_resource(
         ],
         "truncated": False,
         "total": 1,
-        "folders": [
+        "directories": [
             {
                 "key": "test_zip",
                 "links": {
