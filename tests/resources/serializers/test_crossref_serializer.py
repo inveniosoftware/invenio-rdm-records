@@ -61,8 +61,13 @@ def test_crossref_serializer(running_app, full_record_to_dict):
         <jats:p>A description with HTML tags</jats:p>
       </jats:abstract>
       <fr:program xmlns:fr="http://www.crossref.org/fundref.xsd" name="fundref">
-        <fr:assertion name="ror">https://ror.org/00k4n6c32</fr:assertion>
-        <fr:assertion name="award_number">111023</fr:assertion>
+        <fr:assertion name="fundgroup">
+          <fr:assertion name="ror">https://ror.org/00k4n6c32</fr:assertion>
+          <fr:assertion name="award_number">111023</fr:assertion>
+        </fr:assertion>
+        <fr:assertion name="fundgroup">
+          <fr:assertion name="funder_name">Caltech Library</fr:assertion>
+        </fr:assertion>
       </fr:program>
       <version_info>
         <version>v1.0</version>
@@ -85,8 +90,8 @@ def test_crossref_serializer(running_app, full_record_to_dict):
   </body>
 </doi_batch>""".strip()
     serializer = CrossrefXMLSerializer()
-    serialized_record = serializer.serialize_object(full_record_to_dict).decode("utf-8")
-    assert strip_dynamic(expected_data) == strip_dynamic(serialized_record)
+    result = serializer.serialize_object(full_record_to_dict)
+    assert strip_dynamic(expected_data) == strip_dynamic(result)
 
 
 def strip_dynamic(xml_str):
