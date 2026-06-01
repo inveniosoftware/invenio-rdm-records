@@ -20,6 +20,7 @@ def test_crossref_serializer(running_app, full_record_to_dict):
         "client": "crossref",
     }
     full_record_to_dict["metadata"]["resource_type"]["id"] = "publication-preprint"
+    full_record_to_dict["metadata"]["publication_date"] = "2018-01-01"
     expected_data = """
 <?xml version="1.0" encoding="utf-8"?>
 <doi_batch xmlns="http://www.crossref.org/schema/5.4.0" xmlns:ai="http://www.crossref.org/AccessIndicators.xsd" xmlns:rel="http://www.crossref.org/relations.xsd" xmlns:fr="http://www.crossref.org/fundref.xsd" version="5.4.0">
@@ -48,6 +49,11 @@ def test_crossref_serializer(running_app, full_record_to_dict):
       <titles>
         <title>InvenioRDM</title>
       </titles>
+      <posted_date>
+        <month>1</month>
+        <day>1</day>
+        <year>2018</year>
+      </posted_date>
       <institution>
         <institution_name>InvenioRDM</institution_name>
       </institution>
