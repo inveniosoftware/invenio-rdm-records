@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 Northwestern University.
+# Copyright (C) 2023-2026 Northwestern University.
 # Copyright (C) 2024-2025 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -99,7 +99,7 @@ def full_record_to_dict_signposting_collections_six(full_record_to_dict):
     return full_record_to_dict_signposting(full_record_to_dict, 6)
 
 
-def test_signposting_serializer_full(
+def test_signposting_lvl2_serializer_full(
     running_app, full_record_to_dict_signposting_collections_six
 ):
     expected = {
@@ -361,7 +361,7 @@ def test_signposting_lvl1_serializer_full_collections_size_ok(
     assert expected == serialized.split(" , ")
 
 
-def test_signposting_serializer_minimal(running_app, minimal_record_to_dict):
+def test_signposting_lvl2_serializer_minimal(running_app, minimal_record_to_dict):
     expected = {
         "linkset": [
             # Landing page Link Context Object
