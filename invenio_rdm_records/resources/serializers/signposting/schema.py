@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 Northwestern University.
+# Copyright (C) 2023-2026 Northwestern University.
 # Copyright (C) 2024-2025 CERN.
 # Copyright (C) 2025 Graz University of Technology.
 #
@@ -8,6 +8,8 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Signposting schemas."""
+
+import re
 
 import idutils
 from invenio_base import invenio_url_for
@@ -69,20 +71,12 @@ class LandingPageSchema(Schema):
         # Has to be placed here to prevent circular dependency.
         from invenio_rdm_records.resources.config import record_serializers
 
-        result = []
-        for mimetype in sorted(record_serializers):
-            # Remove the linkset serializer, so that the linkset does not link to itself.
-            if mimetype == "application/linkset+json":
-                continue
-            if ";" in mimetype:
-                media_type, _, params = mimetype.partition(";")
-                entry = {"href": obj["links"]["self"], "type": media_type.strip()}
-                params = params.strip()
-                if params.startswith('profile="') and params.endswith('"'):
-                    entry["profile"] = params[len('profile="'):-1]
-            else:
-                entry = {"href": obj["links"]["self"], "type": mimetype}
-            result.append(entry)
+        result = [
+            self._serialize_typed_link(obj["links"]["self"], mimetype)
+            for mimetype in sorted(record_serializers)
+            # Remove the linkset serializer, so that the linkset does not link to itself
+            if mimetype != "application/linkset+json"
+        ]
 
         return result or missing
 
@@ -91,18 +85,40 @@ class LandingPageSchema(Schema):
         file_entries = obj.get("files", {}).get("entries", {})
 
         result = [
-            {
-                "href": invenio_url_for(
+            self._serialize_typed_link(
+                invenio_url_for(
                     "invenio_app_rdm_records.record_file_download",
                     pid_value=obj["id"],
                     filename=entry["key"],
                 ),
-                "type": entry["mimetype"],
-            }
+                entry["mimetype"],
+            )
             for entry in file_entries.values()
         ]
 
         return result or missing
+
+    def _serialize_typed_link(self, href, mimetype):
+        """Serialize href and mimetype to a typed link dict.
+
+        :param href: string. URL
+        :param mimetype: string. mimetype potentially including `;profile="..."`
+        :return: dict. Typed link dict.
+        """
+        if ";" in mimetype:
+            media_type, _, params = mimetype.partition(";")
+            type_ = media_type.strip()
+            profile_match = re.search(r'profile="([^"]*)"', params)
+            profile_dict = {"profile": profile_match.group(1)} if profile_match else {}
+        else:
+            type_ = mimetype
+            profile_dict = {}
+
+        return {
+            "href": href,
+            "type": type_,
+            **profile_dict,
+        }
 
     def serialize_license(self, obj, **kwargs):
         """Serialize license.
