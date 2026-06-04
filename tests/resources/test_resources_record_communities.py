@@ -80,6 +80,49 @@ def test_search_record_suggested_communities(
     assert hits["hits"][0]["id"] != open_review_community.id
 
 
+def test_add_communities_malformed_id(
+    client,
+    community,
+    open_review_community,
+    uploader,
+    record_community,
+    headers,
+):
+    """A malformed community id returns 400, not a 500."""
+    record = record_community.create_record()
+    client = uploader.login(client)
+
+    # A non-string id fails nested validation; it should surface as a 400, not
+    # crash the uniqueness check with a KeyError.
+    for bad_id in ({}, 42):
+        response = client.post(
+            f"/records/{record.pid.pid_value}/communities",
+            headers=headers,
+            json={
+                "communities": [
+                    {
+                        "id": bad_id,
+                        "comment": {"payload": {"content": "spam", "format": "html"}},
+                    }
+                ]
+            },
+        )
+        assert response.status_code == 400
+
+    # Duplicate valid ids are still rejected with 400.
+    response = client.post(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json={
+            "communities": [
+                {"id": open_review_community.id},
+                {"id": open_review_community.id},
+            ]
+        },
+    )
+    assert response.status_code == 400
+
+
 def test_set_default_community(
     client,
     headers,
