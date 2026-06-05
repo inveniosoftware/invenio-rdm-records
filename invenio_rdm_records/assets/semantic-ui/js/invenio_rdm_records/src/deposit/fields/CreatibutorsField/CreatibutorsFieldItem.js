@@ -9,14 +9,36 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import _get from "lodash/get";
-import React from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { Button, Label, List, Ref } from "semantic-ui-react";
 import { FeedbackLabel } from "react-invenio-forms";
 import { CreatibutorsModal } from "./CreatibutorsModal";
+import { CREATIBUTOR_TYPE } from "./type";
 import PropTypes from "prop-types";
 
-export const CreatibutorsFieldItem = ({
+export const getCreatibutorDisplayName = (value) => {
+  const creatibutorType = _get(value, "person_or_org.type", CREATIBUTOR_TYPE.PERSON);
+  const isPerson = creatibutorType === CREATIBUTOR_TYPE.PERSON;
+
+  const familyName = _get(value, "person_or_org.family_name", "");
+  const givenName = _get(value, "person_or_org.given_name", "");
+  const affiliations = value?.affiliations.map(
+    (affiliation) => affiliation.text || affiliation.name
+  );
+  const name = _get(value, `person_or_org.name`);
+
+  const affiliation = affiliations.length ? ` (${affiliations.join(", ")})` : "";
+
+  if (isPerson) {
+    const givenNameSuffix = givenName ? `, ${givenName}` : "";
+    return `${familyName}${givenNameSuffix}${affiliation}`;
+  }
+
+  return `${name}${affiliation}`;
+};
+
+export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
   compKey,
   creatibutorError,
   index,
@@ -33,8 +55,17 @@ export const CreatibutorsFieldItem = ({
   serializeSuggestions,
   serializeCreatibutor,
   deserializeCreatibutor,
-}) => {
-  const dropRef = React.useRef(null);
+}) {
+  const dropRef = useRef(null);
+  const modalRef = useRef(null);
+  const [mountModal, setMountModal] = useState(false);
+
+  // Only recompute the display string when this author's data actually changes.
+  const creatibutorDisplayName = useMemo(
+    () => getCreatibutorDisplayName(initialCreatibutor),
+    [initialCreatibutor]
+  );
+
   // eslint-disable-next-line no-unused-vars
   const [_, drag, preview] = useDrag({
     item: { index, type: "creatibutor" },
@@ -63,6 +94,22 @@ export const CreatibutorsFieldItem = ({
     }),
   });
 
+  useEffect(() => {
+    if (mountModal && modalRef.current) {
+      modalRef.current.openModal();
+    }
+  }, [mountModal]);
+
+  const handleEditClick = () => {
+    if (mountModal && modalRef.current) {
+      // Already mounted from a previous edit – open directly.
+      modalRef.current.openModal();
+    } else {
+      // First edit: mount the modal; the effect above will open it.
+      setMountModal(true);
+    }
+  };
+
   const renderRole = (role, roleOptions) => {
     if (role) {
       const friendlyRole =
@@ -72,7 +119,7 @@ export const CreatibutorsFieldItem = ({
     }
   };
 
-  // Initialize the ref explicitely
+  // Initialize the ref explicitly
   drop(dropRef);
   return (
     <Ref innerRef={dropRef} key={compKey}>
@@ -84,26 +131,27 @@ export const CreatibutorsFieldItem = ({
           <Button size="mini" type="button" onClick={() => removeCreatibutor(index)}>
             {i18next.t("Remove")}
           </Button>
-          <CreatibutorsModal
-            addLabel={addLabel}
-            editLabel={editLabel}
-            onCreatibutorChange={(selectedCreatibutor) => {
-              replaceCreatibutor(index, selectedCreatibutor);
-            }}
-            initialCreatibutor={initialCreatibutor}
-            roleOptions={roleOptions}
-            schema={schema}
-            autocompleteNames={autocompleteNames}
-            action="edit"
-            trigger={
-              <Button size="mini" primary type="button">
-                {i18next.t("Edit")}
-              </Button>
-            }
-            serializeSuggestions={serializeSuggestions}
-            serializeCreatibutor={serializeCreatibutor}
-            deserializeCreatibutor={deserializeCreatibutor}
-          />
+          <Button size="mini" primary type="button" onClick={handleEditClick}>
+            {i18next.t("Edit")}
+          </Button>
+          {mountModal && (
+            <CreatibutorsModal
+              ref={modalRef}
+              addLabel={addLabel}
+              editLabel={editLabel}
+              onCreatibutorChange={(selectedCreatibutor) => {
+                replaceCreatibutor(index, selectedCreatibutor);
+              }}
+              initialCreatibutor={initialCreatibutor}
+              roleOptions={roleOptions}
+              schema={schema}
+              autocompleteNames={autocompleteNames}
+              action="edit"
+              serializeSuggestions={serializeSuggestions}
+              serializeCreatibutor={serializeCreatibutor}
+              deserializeCreatibutor={deserializeCreatibutor}
+            />
+          )}
         </List.Content>
         <Ref innerRef={drag}>
           <List.Icon name="bars" className="drag-anchor" />
@@ -145,7 +193,8 @@ export const CreatibutorsFieldItem = ({
                     height="16"
                   />
                 )}
-                {displayName} {renderRole(initialCreatibutor?.role, roleOptions)}
+                {displayName || creatibutorDisplayName}
+                {renderRole(initialCreatibutor?.role, roleOptions)}
               </span>
             </List.Description>
             {creatibutorError && (
@@ -156,7 +205,7 @@ export const CreatibutorsFieldItem = ({
       </List.Item>
     </Ref>
   );
-};
+});
 
 CreatibutorsFieldItem.propTypes = {
   compKey: PropTypes.string.isRequired,
