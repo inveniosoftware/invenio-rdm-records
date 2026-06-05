@@ -20,32 +20,13 @@ import {
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { CreatibutorsModal } from "./CreatibutorsModal";
-import { CreatibutorsFieldItem } from "./CreatibutorsFieldItem";
-import { CREATIBUTOR_TYPE } from "./type";
+import {
+  CreatibutorsFieldItem,
+  getCreatibutorDisplayName,
+} from "./CreatibutorsFieldItem";
 import { sortOptions } from "../../utils";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
-
-const creatibutorNameDisplay = (value) => {
-  const creatibutorType = _get(value, "person_or_org.type", CREATIBUTOR_TYPE.PERSON);
-  const isPerson = creatibutorType === CREATIBUTOR_TYPE.PERSON;
-
-  const familyName = _get(value, "person_or_org.family_name", "");
-  const givenName = _get(value, "person_or_org.given_name", "");
-  const affiliations = value?.affiliations.map(
-    (affiliation) => affiliation.text || affiliation.name
-  );
-  const name = _get(value, `person_or_org.name`);
-
-  const affiliation = affiliations.length ? ` (${affiliations.join(", ")})` : "";
-
-  if (isPerson) {
-    const givenNameSuffix = givenName ? `, ${givenName}` : "";
-    return `${familyName}${givenNameSuffix}${affiliation}`;
-  }
-
-  return `${name}${affiliation}`;
-};
 
 class CreatibutorsFieldForm extends Component {
   handleOnContributorChange = (selectedCreatibutor) => {
@@ -120,7 +101,7 @@ class CreatibutorsFieldForm extends Component {
             <List>
               {creatibutorsList.map((value, index) => {
                 const key = `${fieldPath}.${index}`;
-                const displayName = creatibutorNameDisplay(value);
+                const displayName = getCreatibutorDisplayName(value);
 
                 return (
                   <CreatibutorsFieldItem
