@@ -12,6 +12,23 @@
 Changes
 =======
 
+Version v30.0.0 (released 2026-06-05)
+
+- chore(setup): bump dependencies
+- fix: update test_crossref_serializer.py
+- fix: crossref_xml test
+- fix: parent PID registration fragility
+- feat: add Crossref PID provider
+- feat: more flexible prefix handling in DataCite PID Provider
+- chore: update commonmeta-py dependency
+- fix(schema): use SanitizedUnicode for date description
+- feat: added overridable blocks to community search header
+- fix: make community header accept apiConfigs prop
+- tests: fix failing tests
+- i18n: update string formater
+- fix: fixed confusing feedback message when preview fails due to validation errors
+- fix: file not possible to delete if it fails between operations
+
 Version v29.0.0 (released 2026-05-29)
 
 - chore(setup): bump dependencies
