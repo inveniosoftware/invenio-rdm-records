@@ -12,6 +12,13 @@
 Changes
 =======
 
+Version v31.0.0 (released 2026-06-05)
+
+- feat(reviews): per-record-version unit tests
+- feat(reviews): per-record-version service/api changes
+- feat(reviews): per-record-version data model changes
+- feat(reviews): add config for record version review policy
+
 Version v30.0.0 (released 2026-06-05)
 
 - chore(setup): bump dependencies
