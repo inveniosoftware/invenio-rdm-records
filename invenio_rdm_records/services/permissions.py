@@ -199,7 +199,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         IfConfig(
             "RDM_ALLOW_RESTRICTED_RECORDS",
             then_=[IfNewRecord(then_=SameAs("can_create"), else_=SameAs("can_review"))],
-            else_=[],
+            else_=[Administration()],
         )
     ]
 
