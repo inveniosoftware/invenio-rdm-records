@@ -25,6 +25,7 @@ export function AccessRightFieldCmp({
   label,
   labelIcon,
   showMetadataAccess = true,
+  permissions,
   community = undefined,
   record,
   recordRestrictionGracePeriod,
@@ -49,6 +50,7 @@ export function AccessRightFieldCmp({
               <MetadataAccess
                 recordAccess={formik.field.value.record}
                 communityAccess={communityAccess}
+                permissions={permissions}
                 record={record}
                 recordRestrictionGracePeriod={recordRestrictionGracePeriod}
                 allowRecordRestriction={allowRecordRestriction}
@@ -97,6 +99,7 @@ AccessRightFieldCmp.propTypes = {
   labelIcon: PropTypes.string.isRequired,
   showMetadataAccess: PropTypes.bool,
   community: PropTypes.object,
+  permissions: PropTypes.object,
   record: PropTypes.object.isRequired,
   recordRestrictionGracePeriod: PropTypes.number.isRequired,
   allowRecordRestriction: PropTypes.bool.isRequired,

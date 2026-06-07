@@ -558,6 +558,43 @@ def test_restricted_records_disabled(
     assert "errors" not in response.json
 
 
+def test_restricted_records_disabled_administration_access(
+    running_app,
+    client,
+    headers,
+    minimal_record,
+    search_clear,
+    admin,
+    restricted_records_disabled,
+):
+    """Administration-access users (not just superusers) can still restrict.
+
+    Unlike a superuser, an administration-access user does not bypass all
+    permission checks, so the record must be created (and owned) by that
+    same user to get past the ownership-based `update_draft` check and
+    actually exercise the `Administration()` branch of
+    `can_manage_record_access`.
+    """
+    admin.login(client)
+    response = client.post("/records", json=minimal_record, headers=headers)
+    recid = response.json["id"]
+
+    assert response.status_code == 201
+    assert response.json["access"]["record"] == "public"
+
+    # Admin (administration-access, not superuser) can change record access
+    # even though RDM_ALLOW_RESTRICTED_RECORDS is disabled.
+    minimal_record["access"]["record"] = "restricted"
+    response = client.put(
+        f"/records/{recid}/draft",
+        json=minimal_record,
+        headers=headers,
+    )
+    assert response.status_code == 200
+    assert response.json["access"]["record"] == "restricted"
+    assert "errors" not in response.json
+
+
 # TODO
 @pytest.mark.skip()
 def test_create_publish_new_revision(
