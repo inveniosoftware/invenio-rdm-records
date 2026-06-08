@@ -26,7 +26,7 @@ theme = WebpackThemeBundle(
             },
             dependencies={
                 "@babel/runtime": "^7.9.0",
-                "@tinymce/tinymce-react": "^4.3.0",
+                "@hugerte/hugerte-react": "^2.0.2",
                 "@uppy/aws-s3-multipart": "^3.12.0",
                 "@uppy/core": "^3.13.1",
                 "@uppy/dashboard": "^3.9.1",
@@ -51,7 +51,7 @@ theme = WebpackThemeBundle(
                 "react-i18next": "^11.11.0",
                 "react-invenio-forms": "^4.11.0",
                 "react-searchkit": "^3.0.0",
-                "tinymce": "^6.7.2",
+                "hugerte": "^1.0.10",
                 "yup": "^0.32.0",
                 "@semantic-ui-react/css-patch": "^1.0.0",
                 "axios": "^1.7.7",
