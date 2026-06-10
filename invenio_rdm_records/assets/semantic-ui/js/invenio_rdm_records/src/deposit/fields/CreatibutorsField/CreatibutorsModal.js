@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2020-2025 CERN.
+ * SPDX-FileCopyrightText: 2020-2026 CERN.
  * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
  * SPDX-FileCopyrightText: 2021 Graz University of Technology.
  * SPDX-FileCopyrightText: 2022 data-futures.org.
@@ -27,6 +27,44 @@ import { AffiliationsField } from "./../AffiliationsField";
 import { CreatibutorsIdentifiers } from "./CreatibutorsIdentifiers";
 import { CREATIBUTOR_TYPE } from "./type";
 import Overridable from "react-overridable";
+
+const getCreatibutorValidationSchema = (schema) => {
+  const isCreator = schema === "creators";
+
+  return Yup.object({
+    person_or_org: Yup.object({
+      type: Yup.string(),
+      family_name: Yup.string().when("type", (type, fieldSchema) => {
+        if (type === CREATIBUTOR_TYPE.PERSON && isCreator) {
+          return fieldSchema.required(i18next.t("Family name is a required field."));
+        }
+      }),
+      name: Yup.string().when("type", (type, fieldSchema) => {
+        if (type === CREATIBUTOR_TYPE.ORGANIZATION && isCreator) {
+          return fieldSchema.required(i18next.t("Name is a required field."));
+        }
+      }),
+    }),
+    role: Yup.string().when("_", (_, fieldSchema) => {
+      if (!isCreator) {
+        return fieldSchema.required(i18next.t("Role is a required field."));
+      }
+    }),
+  });
+};
+
+export const validateCreatibutorEntry = (entry, schema) => {
+  if (typeof entry !== "object" || entry === null) {
+    return i18next.t("Entry is not a valid JSON object");
+  }
+
+  try {
+    getCreatibutorValidationSchema(schema).validateSync(entry, { abortEarly: true });
+    return null;
+  } catch (error) {
+    return error.message;
+  }
+};
 
 const ModalActions = {
   ADD: "add",
@@ -76,27 +114,6 @@ export class CreatibutorsModal extends Component {
       organizationAffiliations: isOrganization ? affiliations : [],
     });
   }
-
-  CreatorSchema = Yup.object({
-    person_or_org: Yup.object({
-      type: Yup.string(),
-      family_name: Yup.string().when("type", (type, schema) => {
-        if (type === CREATIBUTOR_TYPE.PERSON && this.isCreator()) {
-          return schema.required(i18next.t("Family name is a required field."));
-        }
-      }),
-      name: Yup.string().when("type", (type, schema) => {
-        if (type === CREATIBUTOR_TYPE.ORGANIZATION && this.isCreator()) {
-          return schema.required(i18next.t("Name is a required field."));
-        }
-      }),
-    }),
-    role: Yup.string().when("_", (_, schema) => {
-      if (!this.isCreator()) {
-        return schema.required(i18next.t("Role is a required field."));
-      }
-    }),
-  });
 
   openModal = () => {
     this.setState({ open: true, action: null }, () => {
@@ -376,6 +393,7 @@ export class CreatibutorsModal extends Component {
       initialCreatibutor,
       autocompleteNames,
       roleOptions,
+      schema,
       trigger,
       action,
       serializeSuggestions,
@@ -396,7 +414,7 @@ export class CreatibutorsModal extends Component {
         initialValues={this.deserializeCreatibutor(initialCreatibutor)}
         onSubmit={this.onSubmit}
         enableReinitialize
-        validationSchema={this.CreatorSchema}
+        validationSchema={getCreatibutorValidationSchema(schema)}
         validateOnChange={false}
         validateOnBlur={false}
       >
@@ -763,7 +781,7 @@ CreatibutorsModal.propTypes = {
     affiliations: PropTypes.array,
     role: PropTypes.string,
   }),
-  trigger: PropTypes.object.isRequired,
+  trigger: PropTypes.object,
   onCreatibutorChange: PropTypes.func.isRequired,
   roleOptions: PropTypes.array,
   serializeSuggestions: PropTypes.func,
@@ -775,6 +793,7 @@ CreatibutorsModal.defaultProps = {
   roleOptions: [],
   initialCreatibutor: {},
   autocompleteNames: "search",
+  trigger: undefined,
   serializeSuggestions: undefined,
   serializeCreatibutor: undefined,
   deserializeCreatibutor: undefined,
