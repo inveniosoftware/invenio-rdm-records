@@ -5,10 +5,11 @@
 
 """Record response serializers."""
 
+from urllib.parse import quote
+
 from babel_edtf import format_edtf
-from flask import request
+from flask import current_app, request
 from flask_login import current_user
-from invenio_base import invenio_url_for
 from invenio_i18n import get_locale
 from invenio_i18n import gettext as _
 from marshmallow import fields
@@ -97,7 +98,11 @@ class UIObjectAccessStatus(UIAccessStatus):
                 )
         else:
             if request and current_user.is_anonymous:
-                login_url = invenio_url_for("invenio_accounts.login", next=request.url)
+                login_page = (
+                    current_app.config.get("SECURITY_LOGIN_URL")
+                    or current_app.extensions["security"].login_url
+                )
+                login_url = f"{login_page}?next={quote(request.path)}"
                 restricted_message = _(
                     "The record is publicly accessible, but files are restricted. "
                     '<a href="%(login_url)s">Log in</a> to check if you have access.'
