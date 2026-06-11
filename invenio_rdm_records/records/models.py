@@ -59,6 +59,7 @@ class CommunityRelationMixin:
             UUIDType,
             db.ForeignKey(cls.__record_model__.id, ondelete="CASCADE"),
             primary_key=True,
+            index=True,  # New index, added along with the alembic migration 1780576627
         )
 
     @declared_attr

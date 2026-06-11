@@ -17,6 +17,7 @@ from invenio_db.utils import alembic_test_context, drop_alembic_version_table
 _MOCK_MODULE_MIGRATIONS = {
     ("add_table", "mock_metadata"),
     ("add_table", "mock_community"),
+    ("add_index", "ix_mock_community_record_id"),
 }
 
 
