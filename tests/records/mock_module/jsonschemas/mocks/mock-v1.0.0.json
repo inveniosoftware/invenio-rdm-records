@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "local://mocks/mock-v1.0.0.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "communities": {
+      "$ref": "local://communities/definitions-v2.0.0.json#/communities"
+    }
+  }
+}

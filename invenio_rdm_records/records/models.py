@@ -11,7 +11,7 @@
 import uuid
 
 from invenio_accounts.models import User
-from invenio_communities.records.records.models import CommunityRelationMixin
+from invenio_communities.communities.records.models import CommunityMetadata
 from invenio_db import db
 from invenio_drafts_resources.records import (
     DraftMetadataBase,
@@ -21,10 +21,54 @@ from invenio_drafts_resources.records import (
 from invenio_files_rest.models import Bucket
 from invenio_records.models import RecordMetadataBase
 from invenio_records_resources.records import FileRecordModelMixin
+from invenio_requests.records.models import RequestMetadata
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy_utils.types import ChoiceType, UUIDType
 
 from .systemfields.deletion_status import RecordDeletionStatusEnum
+
+
+# Moved from invenio-communities/invenio_communities/records/records/models.py
+class CommunityRelationMixin:
+    """Model mixin to define a relationship between a communities and records.
+
+    Usage:
+
+    .. code-block:: python
+
+        class CommunityRecordM2M(db.Model, CommunityRelationMixin):
+            __record_model__ = MyParentRecord
+    """
+
+    __record_model__ = None
+    __request_model__ = None
+
+    @declared_attr
+    def community_id(cls):
+        """Foreign key to the related communithy."""
+        return db.Column(
+            UUIDType,
+            db.ForeignKey(CommunityMetadata.id, ondelete="CASCADE"),
+            primary_key=True,
+        )
+
+    @declared_attr
+    def record_id(cls):
+        """Foreign key to the related record."""
+        return db.Column(
+            UUIDType,
+            db.ForeignKey(cls.__record_model__.id, ondelete="CASCADE"),
+            primary_key=True,
+        )
+
+    @declared_attr
+    def request_id(cls):
+        """Foreign key to a related request."""
+        return db.Column(
+            UUIDType,
+            db.ForeignKey(RequestMetadata.id, ondelete="SET NULL"),
+            nullable=True,
+        )
 
 
 #

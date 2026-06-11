@@ -5,11 +5,7 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Basic community integration test.
-
-Note, most data layer tests are in Invenio-Communities where the system field
-is defined.
-"""
+"""Basic community integration test."""
 
 import pytest
 from invenio_communities.communities.records.api import Community
