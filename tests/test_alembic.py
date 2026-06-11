@@ -13,6 +13,19 @@
 import pytest
 from invenio_db.utils import alembic_test_context, drop_alembic_version_table
 
+# Expected tables created by tests.records.mock_module (no alembic recipes).
+_MOCK_MODULE_MIGRATIONS = {
+    ("add_table", "mock_metadata"),
+    ("add_table", "mock_community"),
+}
+
+
+def _assert_no_unexpected_migrations(alembic):
+    """Assert Alembic metadata diff only contains known mock-module tables."""
+    for migration in alembic.compare_metadata():
+        if (migration[0], migration[1].name) not in _MOCK_MODULE_MIGRATIONS:
+            raise RuntimeError(f"Unexpected migration: {migration}")
+
 
 def test_alembic(base_app, database):
     """Test alembic recipes."""
@@ -46,12 +59,12 @@ def test_alembic(base_app, database):
     db.drop_all()
     drop_alembic_version_table()
     ext.alembic.upgrade()
-    assert not ext.alembic.compare_metadata()
+    _assert_no_unexpected_migrations(ext.alembic)
 
     # Try to upgrade and downgrade
     ext.alembic.stamp()
     ext.alembic.downgrade(target="96e796392533")
     ext.alembic.upgrade()
-    assert not ext.alembic.compare_metadata()
+    _assert_no_unexpected_migrations(ext.alembic)
 
     drop_alembic_version_table()
