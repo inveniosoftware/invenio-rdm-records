@@ -500,7 +500,10 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
 
         Output: {<Community-UUID>: <Request-UUID>}
         """
-        self.require_permission(identity, "review", record=record._record)
+        can_review = self.check_permission(identity, "review", record=record._record)
+        if not can_review:
+            # Instead of raising PermissionDeniedError, return an empty dictionary because anonymous users do not have permissions to search requests
+            return {}
         if type(identity) is AnonymousIdentity:
             return {}  # secret link users do not have permissions to search requests
 
