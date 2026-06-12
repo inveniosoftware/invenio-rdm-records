@@ -12,6 +12,14 @@
 Changes
 =======
 
+Version v32.0.0 (released 2026-06-12)
+
+- feat(RecordCommunitiesService): Add get_record_requests service method
+- alembic: create record_id index in rdm_parents_community
+- refactor(models): Move CommunityRelationMixin from invenio-communities
+- fix(CreatibutorsField): Mount CreatibutorsModal only when opened
+- fix(signposting): serialize typed link w/ profile for described_by and item
+
 Version v31.0.0 (released 2026-06-05)
 
 - feat(reviews): per-record-version unit tests
