@@ -8,6 +8,12 @@
 Changes
 =======
 
+Version v32.0.1 (released 2026-06-12)
+
+- fix(get_record_requests): allow anonymous users to access landing page
+- chore(git-blame): ignore the SPDX license header commit
+- chore(licenses): update license headers to use SPDX
+
 Version v32.0.0 (released 2026-06-12)
 
 - feat(RecordCommunitiesService): Add get_record_requests service method
