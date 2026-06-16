@@ -5,7 +5,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
 import PropTypes from "prop-types";
 
 import {
@@ -22,117 +21,112 @@ import { emptyRelatedWork } from "./initialValues";
 import { ResourceTypeField } from "../ResourceTypeField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-class RelatedWorksFieldComponent extends Component {
-  render() {
-    const {
-      fieldPath,
-      label,
-      labelIcon,
-      required,
-      disabled,
-      options,
-      showEmptyValue,
-      helpText,
-      addButtonLabel,
-      optimized,
-    } = this.props;
-
-    return (
-      <Overridable
-        id="InvenioRdmRecords.DepositForm.RelatedWorksField.Container"
+function RelatedWorksFieldComponent({
+  fieldPath,
+  label = i18next.t("Related works"),
+  labelIcon = "barcode",
+  required = undefined,
+  disabled,
+  options,
+  showEmptyValue = false,
+  helpText = i18next.t(
+    "Specify identifiers of related works. Supported identifiers include DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, URNs, and URLs."
+  ),
+  addButtonLabel = i18next.t("Add related work"),
+  optimized = true,
+}) {
+  return (
+    <Overridable
+      id="InvenioRdmRecords.DepositForm.RelatedWorksField.Container"
+      required={required}
+      disabled={disabled}
+      showEmptyValue={showEmptyValue}
+      defaultNewValue={emptyRelatedWork}
+      labelIcon={labelIcon}
+      label={label}
+      helpText={helpText}
+      addButtonLabel={addButtonLabel}
+      optimized={optimized}
+    >
+      <ArrayField
+        addButtonLabel={addButtonLabel}
+        defaultNewValue={emptyRelatedWork}
+        fieldPath={fieldPath}
+        helpText={helpText}
+        label={label}
+        labelIcon={labelIcon}
         required={required}
         disabled={disabled}
         showEmptyValue={showEmptyValue}
-        defaultNewValue={emptyRelatedWork}
-        labelIcon={labelIcon}
-        label={label}
-        helpText={helpText}
-        addButtonLabel={addButtonLabel}
-        optimized={optimized}
       >
-        <ArrayField
-          addButtonLabel={addButtonLabel}
-          defaultNewValue={emptyRelatedWork}
-          fieldPath={fieldPath}
-          helpText={helpText}
-          label={label}
-          labelIcon={labelIcon}
-          required={required}
-          disabled={disabled}
-          showEmptyValue={showEmptyValue}
-        >
-          {({ arrayHelpers, indexPath }) => {
-            const fieldPathPrefix = `${fieldPath}.${indexPath}`;
+        {({ arrayHelpers, indexPath }) => {
+          const fieldPathPrefix = `${fieldPath}.${indexPath}`;
 
-            return (
-              <GroupField optimized={optimized}>
-                <SelectField
-                  clearable
-                  fieldPath={`${fieldPathPrefix}.relation_type`}
-                  label={i18next.t("Relation")}
-                  aria-label={i18next.t("Relation")}
+          return (
+            <GroupField optimized={optimized}>
+              <SelectField
+                clearable
+                fieldPath={`${fieldPathPrefix}.relation_type`}
+                label={i18next.t("Relation")}
+                aria-label={i18next.t("Relation")}
+                optimized={optimized}
+                options={options.relations}
+                placeholder={i18next.t("Select relation...")}
+                required
+                width={3}
+              />
+
+              <TextField
+                fieldPath={`${fieldPathPrefix}.identifier`}
+                label={i18next.t("Identifier")}
+                required
+                width={4}
+              />
+
+              <SelectField
+                clearable
+                fieldPath={`${fieldPathPrefix}.scheme`}
+                label={i18next.t("Scheme")}
+                aria-label={i18next.t("Scheme")}
+                optimized={optimized}
+                options={options.scheme}
+                required
+                width={2}
+              />
+
+              <Overridable
+                id="InvenioRdmRecords.DepositForm.RelatedWorksField.ResourceType"
+                clearable
+                options={options.resource_type}
+                width={7}
+                optimized={optimized}
+              >
+                <ResourceTypeField
                   optimized={optimized}
-                  options={options.relations}
-                  placeholder={{
-                    role: "option",
-                    content: "Select relation...",
-                  }}
-                  required
-                  width={3}
-                />
-
-                <TextField
-                  fieldPath={`${fieldPathPrefix}.identifier`}
-                  label={i18next.t("Identifier")}
-                  required
-                  width={4}
-                />
-
-                <SelectField
                   clearable
-                  fieldPath={`${fieldPathPrefix}.scheme`}
-                  label={i18next.t("Scheme")}
-                  aria-label={i18next.t("Scheme")}
-                  optimized={optimized}
-                  options={options.scheme}
-                  required
-                  width={2}
-                />
-
-                <Overridable
-                  id="InvenioRdmRecords.DepositForm.RelatedWorksField.ResourceType"
-                  clearable
+                  fieldPath={`${fieldPathPrefix}.resource_type`}
                   options={options.resource_type}
                   width={7}
-                  optimized={optimized}
-                >
-                  <ResourceTypeField
-                    optimized={optimized}
-                    clearable
-                    fieldPath={`${fieldPathPrefix}.resource_type`}
-                    options={options.resource_type}
-                    width={7}
-                    labelclassname="small field-label-class"
-                    schema="relatedWork"
-                  />
-                </Overridable>
+                  labelclassname="small field-label-class"
+                  schema="relatedWork"
+                />
+              </Overridable>
 
-                <Form.Field>
-                  <Button
-                    type="button"
-                    aria-label={i18next.t("Remove field")}
-                    className="close-btn"
-                    icon="close"
-                    onClick={() => arrayHelpers.remove(indexPath)}
-                  />
-                </Form.Field>
-              </GroupField>
-            );
-          }}
-        </ArrayField>
-      </Overridable>
-    );
-  }
+              <Form.Field>
+                <Button
+                  type="button"
+                  aria-label={i18next.t("Remove field")}
+                  className="close-btn"
+                  icon="close"
+                  onClick={() => arrayHelpers.remove(indexPath)}
+                />
+              </Form.Field>
+            </GroupField>
+          );
+        }}
+      </ArrayField>
+    </Overridable>
+  );
 }
 
 RelatedWorksFieldComponent.propTypes = {
@@ -141,18 +135,6 @@ RelatedWorksFieldComponent.propTypes = {
   addButtonLabel: PropTypes.string,
   optimized: PropTypes.bool,
   ...fieldCommonProps,
-};
-
-RelatedWorksFieldComponent.defaultProps = {
-  label: i18next.t("Related works"),
-  labelIcon: "barcode",
-  required: undefined,
-  showEmptyValue: false,
-  helpText: i18next.t(
-    "Specify identifiers of related works. Supported identifiers include DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, URNs, and URLs."
-  ),
-  addButtonLabel: i18next.t("Add related work"),
-  optimized: true,
 };
 
 export const RelatedWorksField = showHideOverridable(

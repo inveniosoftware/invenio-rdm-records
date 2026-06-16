@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "react";
 import { connect as reduxConnect } from "react-redux";
 
 export function connect(Component) {

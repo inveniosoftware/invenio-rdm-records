@@ -6,7 +6,7 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { useState } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
 import {
@@ -26,79 +26,82 @@ import { DepositService } from "./DepositService";
 import { configureStore } from "../store";
 import { RDMUploadProgressNotifier } from "../components/UploadProgressNotifier";
 
-export class DepositFormApp extends Component {
-  constructor(props) {
-    super(props);
+export function DepositFormApp({
+  recordSerializer: recordSerializerProp = undefined,
+  config,
+  apiClient: apiClientProp = undefined,
+  fileApiClient: fileApiClientProp = undefined,
+  draftsService: draftsServiceProp = undefined,
+  filesService: filesServiceProp = undefined,
+  record,
+  preselectedCommunity = undefined,
+  files = undefined,
+  permissions = undefined,
+  errors = undefined,
+  children = undefined,
+}) {
+  const [store] = useState(() => {
+    const recordSerializer =
+      recordSerializerProp ||
+      new RDMDepositRecordSerializer(
+        config.default_locale,
+        config.custom_fields.vocabularies
+      );
 
-    const recordSerializer = props.recordSerializer
-      ? props.recordSerializer
-      : new RDMDepositRecordSerializer(
-          props.config.default_locale,
-          props.config.custom_fields.vocabularies
-        );
+    const additionalApiConfig = { headers: config.apiHeaders || null };
 
-    const apiHeaders = props.config.apiHeaders ? props.config.apiHeaders : null;
-    const additionalApiConfig = { headers: apiHeaders };
+    const apiClient =
+      apiClientProp ||
+      new RDMDepositApiClient(additionalApiConfig, config.createUrl, recordSerializer);
 
-    const apiClient = props.apiClient
-      ? props.apiClient
-      : new RDMDepositApiClient(
-          additionalApiConfig,
-          props.config.createUrl,
-          recordSerializer
-        );
+    const fileApiClient =
+      fileApiClientProp ||
+      new RDMDepositFileApiClient(
+        additionalApiConfig,
+        config.default_transfer_type,
+        config.enabled_transfer_types
+      );
 
-    const fileApiClient = props.fileApiClient
-      ? props.fileApiClient
-      : new RDMDepositFileApiClient(
-          additionalApiConfig,
-          props.config.default_transfer_type,
-          props.config.enabled_transfer_types
-        );
+    const draftsService = draftsServiceProp || new RDMDepositDraftsService(apiClient);
 
-    const draftsService = props.draftsService
-      ? props.draftsService
-      : new RDMDepositDraftsService(apiClient);
-
-    const filesService = props.filesService
-      ? props.filesService
-      : new RDMDepositFilesService(fileApiClient, props.config.fileUploadConcurrency);
+    const filesService =
+      filesServiceProp ||
+      new RDMDepositFilesService(fileApiClient, config.fileUploadConcurrency);
 
     const service = new DepositService(draftsService, filesService);
 
     const appConfig = {
-      config: props.config,
-      record: recordSerializer.deserialize(props.record),
-      preselectedCommunity: props.preselectedCommunity,
-      files: props.files,
+      config: config,
+      record: recordSerializer.deserialize(record),
+      preselectedCommunity: preselectedCommunity,
+      files: files,
       apiClient: apiClient,
       fileApiClient: fileApiClient,
       service: service,
-      permissions: props.permissions,
+      permissions: permissions,
       recordSerializer: recordSerializer,
     };
 
-    if (props.errors && props.errors.length > 0) {
-      appConfig.errors = recordSerializer.deserializeErrors(props.errors);
+    if (errors && errors.length > 0) {
+      appConfig.errors = recordSerializer.deserializeErrors(errors);
     }
 
-    this.store = configureStore(appConfig);
+    const depositStore = configureStore(appConfig);
 
-    const progressNotifier = new RDMUploadProgressNotifier(this.store.dispatch);
-    filesService.setProgressNotifier(progressNotifier);
-  }
-
-  render() {
-    const { children } = this.props;
-
-    return (
-      <Provider store={this.store}>
-        <I18nextProvider i18n={i18next}>
-          <DepositBootstrap>{children}</DepositBootstrap>
-        </I18nextProvider>
-      </Provider>
+    filesService.setProgressNotifier(
+      new RDMUploadProgressNotifier(depositStore.dispatch)
     );
-  }
+
+    return depositStore;
+  });
+
+  return (
+    <Provider store={store}>
+      <I18nextProvider i18n={i18next}>
+        <DepositBootstrap>{children}</DepositBootstrap>
+      </I18nextProvider>
+    </Provider>
+  );
 }
 
 DepositFormApp.propTypes = {
@@ -121,17 +124,4 @@ DepositFormApp.propTypes = {
   filesService: PropTypes.instanceOf(DepositFilesService),
   recordSerializer: PropTypes.instanceOf(DepositRecordSerializer),
   children: PropTypes.node,
-};
-
-DepositFormApp.defaultProps = {
-  preselectedCommunity: undefined,
-  permissions: undefined,
-  apiClient: undefined,
-  errors: undefined,
-  fileApiClient: undefined,
-  draftsService: undefined,
-  filesService: undefined,
-  recordSerializer: undefined,
-  files: undefined,
-  children: undefined,
 };

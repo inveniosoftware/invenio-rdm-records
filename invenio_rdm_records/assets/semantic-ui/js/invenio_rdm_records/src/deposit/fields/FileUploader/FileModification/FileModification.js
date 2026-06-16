@@ -6,16 +6,16 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Icon, Popup } from "semantic-ui-react";
 import { ModificationModal } from "./ModificationModal";
 
 export const FileModification = ({
-  disabled,
+  disabled = false,
   draft,
   record,
   permissions,
-  fileModification,
+  fileModification = {},
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const handleOpen = () => setModalOpen(true);
@@ -63,9 +63,4 @@ FileModification.propTypes = {
   record: PropTypes.object.isRequired,
   permissions: PropTypes.object.isRequired,
   fileModification: PropTypes.object,
-};
-
-FileModification.defaultProps = {
-  disabled: false,
-  fileModification: {},
 };

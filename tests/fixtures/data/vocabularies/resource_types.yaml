@@ -1049,7 +1049,7 @@
     - depositable
     - linkable
 - id: workflow
-  icon: code fork
+  icon: fork
   props:
     csl: software
     datacite_general: Workflow
