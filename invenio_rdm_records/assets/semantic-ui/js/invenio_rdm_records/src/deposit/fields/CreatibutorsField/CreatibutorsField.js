@@ -36,6 +36,18 @@ class CreatibutorsFieldForm extends Component {
   stableReplace = (index, newValue) => this._replaceRef.current(index, newValue);
   stableMove = (from, to) => this._moveRef.current(from, to);
 
+  // Cache sorted role options so a new array isn't created on every render.
+  _lastRoleOptions = null;
+  _sortedRoleOptions = null;
+  getSortedRoleOptions() {
+    const { roleOptions } = this.props;
+    if (roleOptions !== this._lastRoleOptions) {
+      this._lastRoleOptions = roleOptions;
+      this._sortedRoleOptions = sortOptions(roleOptions);
+    }
+    return this._sortedRoleOptions;
+  }
+
   handleOnCreatibutorChange = (selectedCreatibutor) => {
     const { push: formikArrayPush } = this.props;
     formikArrayPush(selectedCreatibutor);
@@ -151,7 +163,7 @@ class CreatibutorsFieldForm extends Component {
                 action="add"
                 addLabel={modal.addLabel}
                 editLabel={modal.editLabel}
-                roleOptions={sortOptions(roleOptions)}
+                roleOptions={this.getSortedRoleOptions()}
                 schema={schema}
                 autocompleteNames={autocompleteNames}
                 serializeSuggestions={serializeSuggestions}
@@ -200,17 +212,14 @@ class CreatibutorsFieldForm extends Component {
 }
 
 export class CreatibutorsFieldComponent extends Component {
-  render() {
-    const { fieldPath } = this.props;
+  // Stable class-instance function so FieldArray never sees a new `component`
+  // reference on unrelated Formik state changes.
+  _renderForm = (formikProps) => (
+    <CreatibutorsFieldForm {...formikProps} {...this.props} />
+  );
 
-    return (
-      <FieldArray
-        name={fieldPath}
-        component={(formikProps) => (
-          <CreatibutorsFieldForm {...formikProps} {...this.props} />
-        )}
-      />
-    );
+  render() {
+    return <FieldArray name={this.props.fieldPath} component={this._renderForm} />;
   }
 }
 

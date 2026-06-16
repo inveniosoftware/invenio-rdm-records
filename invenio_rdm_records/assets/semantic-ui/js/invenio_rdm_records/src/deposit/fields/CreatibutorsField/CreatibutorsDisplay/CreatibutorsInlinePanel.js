@@ -1,10 +1,9 @@
-// This file is part of Invenio-RDM-Records
-// Copyright (C) 2026 CERN.
-//
-// Invenio-RDM-Records is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
+/*
+ * SPDX-FileCopyrightText: 2026 CERN.
+ * SPDX-License-Identifier: MIT
+ */
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Input } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
@@ -12,16 +11,6 @@ import { CreatibutorsList, getCreatibutorDisplayName } from "./CreatibutorsList"
 
 const getCreatibutorSchemaLabel = (schema) =>
   schema === "contributors" ? i18next.t("contributors") : i18next.t("authors");
-
-const filterCreatibutorsByQuery = (list, searchQuery) => {
-  const query = searchQuery.toLowerCase().trim();
-  return list.reduce((acc, item, idx) => {
-    if (!query || getCreatibutorDisplayName(item).toLowerCase().includes(query)) {
-      acc.push({ item, idx });
-    }
-    return acc;
-  }, []);
-};
 
 const getScrollEdges = (el) => {
   const { scrollTop, scrollHeight, clientHeight } = el;
@@ -31,7 +20,7 @@ const getScrollEdges = (el) => {
   };
 };
 
-export function CreatibutorsInlinePanel({
+export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePanel({
   list,
   keyPrefix,
   schema,
@@ -60,8 +49,27 @@ export function CreatibutorsInlinePanel({
   const prevLengthRef = useRef(list.length);
 
   const type = getCreatibutorSchemaLabel(schema);
+
+  // Compute display names once per list change rather than on every search keystroke.
+  const entriesWithDisplayNames = useMemo(
+    () =>
+      list.map((item, idx) => ({
+        item,
+        idx,
+        displayName: getCreatibutorDisplayName(item),
+      })),
+    [list]
+  );
+
+  // Filter using the pre-computed display names (cheap string comparison per keystroke).
   const query = searchQuery.toLowerCase().trim();
-  const filteredEntries = filterCreatibutorsByQuery(list, searchQuery);
+  const filteredEntries = useMemo(() => {
+    if (!query) return entriesWithDisplayNames;
+    return entriesWithDisplayNames.filter(({ displayName }) =>
+      displayName.toLowerCase().includes(query)
+    );
+  }, [entriesWithDisplayNames, query]);
+
   const isScrollable = list.length > scrollThreshold;
 
   const updateScrollState = useCallback(() => {
@@ -149,28 +157,21 @@ export function CreatibutorsInlinePanel({
   return (
     <div className="creatibutors-inline-panel">
       {isScrollable && (
-        <div className="mb-10">
+        <div className="mb-10 flex">
           <Input
-            fluid
+            className="creatibutors-filter-input"
             icon="search"
             iconPosition="left"
-            placeholder={i18next.t(
-              "Search {{type}} by name, identifier or affiliation...",
-              { type }
-            )}
+            placeholder={i18next.t("Filter {{type}}...", { type })}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <div className="creatibutors-count-bar mt-5">
-            <span className="text-muted">
-              {query
-                ? i18next.t("{{shown}} / {{total}}", {
-                    shown: filteredEntries.length,
-                    total: list.length,
-                  })
-                : i18next.t("{{count}} total", { count: list.length })}
-            </span>
-          </div>
+          <span className="creatibutors-count-bar text-muted ml-10">
+            {i18next.t("{{shown}} / {{total}}", {
+              shown: query ? filteredEntries.length : list.length,
+              total: list.length,
+            })}
+          </span>
         </div>
       )}
 
@@ -198,7 +199,8 @@ export function CreatibutorsInlinePanel({
         >
           <CreatibutorsList
             entries={filteredEntries}
-            keyPrefix={`${keyPrefix}.${query}`}
+            keyPrefix={keyPrefix}
+            filterQuery={query}
             batchSize={batchSize}
             wrapWithDndProvider={false}
             highlightedIndices={highlightedIndices}
@@ -239,7 +241,7 @@ export function CreatibutorsInlinePanel({
       </div>
     </div>
   );
-}
+});
 
 CreatibutorsInlinePanel.propTypes = {
   list: PropTypes.array.isRequired,
