@@ -5,7 +5,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
 import PropTypes from "prop-types";
 import _get from "lodash/get";
 import {
@@ -17,8 +16,21 @@ import {
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
 
-export class ResourceTypeFieldComponent extends Component {
-  groupErrors = (errors, fieldPath) => {
+export function ResourceTypeFieldComponent({
+  fieldPath,
+  label = i18next.t("Resource type"),
+  labelIcon: propLabelIcon = "tag",
+  options,
+  placeholder,
+  helpText: propHelpText,
+  schema = "record",
+  optimized = true,
+  labelclassname = "field-label-class",
+  noResultsMessage = i18next.t("No results found."),
+  ...rest
+}) {
+  const restProps = { ...rest, labelclassname };
+  const groupErrors = (errors, fieldPath) => {
     const fieldErrors = _get(errors, fieldPath);
     if (fieldErrors) {
       return { content: fieldErrors };
@@ -26,25 +38,13 @@ export class ResourceTypeFieldComponent extends Component {
     return null;
   };
 
-  /**
-   * Generate label value
-   *
-   * @param {object} option - back-end option
-   * @returns {string} label
-   */
-  _label = (option) => {
+  const _label = (option) => {
     return option.type_name + (option.subtype_name ? " / " + option.subtype_name : "");
   };
 
-  /**
-   * Convert back-end options to front-end options.
-   *
-   * @param {array} propsOptions - back-end options
-   * @returns {array} front-end options
-   */
-  createOptions = (propsOptions) => {
+  const createOptions = (propsOptions) => {
     return propsOptions
-      .map((o) => ({ ...o, label: this._label(o) }))
+      .map((o) => ({ ...o, label: _label(o) }))
       .sort((o1, o2) => o1.label.localeCompare(o2.label))
       .map((o) => {
         return {
@@ -55,54 +55,40 @@ export class ResourceTypeFieldComponent extends Component {
       });
   };
 
-  render() {
-    const {
-      fieldPath,
-      label,
-      labelIcon: propLabelIcon,
-      options,
-      placeholder,
-      helpText: propHelpText,
-      schema,
-      optimized,
-      noResultsMessage,
-      ...restProps
-    } = this.props;
-    const frontEndOptions = this.createOptions(options);
+  const frontEndOptions = createOptions(options);
 
-    // Cannot show helpText or labelIcon when the field is inside an ArrayField
-    const helpText = schema === "record" ? propHelpText : undefined;
-    const labelIcon = schema === "record" ? propLabelIcon : undefined;
+  // Cannot show helpText or labelIcon when the field is inside an ArrayField
+  const helpText = schema === "record" ? propHelpText : undefined;
+  const labelIcon = schema === "record" ? propLabelIcon : undefined;
 
-    return (
-      <Overridable
-        id="InvenioRdmRecords.DepositForm.ResourceTypeField.Container"
+  return (
+    <Overridable
+      id="InvenioRdmRecords.DepositForm.ResourceTypeField.Container"
+      fieldPath={fieldPath}
+      labelIcon={labelIcon}
+      label={label}
+      aria-label={label}
+      options={frontEndOptions}
+      placeholder={placeholder}
+      helpText={helpText}
+      optimized={optimized}
+      noResultsMessage={noResultsMessage}
+    >
+      <SelectField
         fieldPath={fieldPath}
-        labelIcon={labelIcon}
-        label={label}
+        label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+        optimized={optimized}
         aria-label={label}
         options={frontEndOptions}
-        placeholder={placeholder}
+        selectOnBlur={false}
         helpText={helpText}
-        optimized={optimized}
+        placeholder={placeholder}
         noResultsMessage={noResultsMessage}
-      >
-        <SelectField
-          fieldPath={fieldPath}
-          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
-          optimized={optimized}
-          aria-label={label}
-          options={frontEndOptions}
-          selectOnBlur={false}
-          helpText={helpText}
-          placeholder={placeholder}
-          noResultsMessage={noResultsMessage}
-          required
-          {...restProps}
-        />
-      </Overridable>
-    );
-  }
+        required
+        {...restProps}
+      />
+    </Overridable>
+  );
 }
 
 ResourceTypeFieldComponent.propTypes = {
@@ -115,19 +101,10 @@ ResourceTypeFieldComponent.propTypes = {
       id: PropTypes.string,
     })
   ).isRequired,
-  schema: PropTypes.oneOf(["record", "relatedWork"]).isRequired,
+  schema: PropTypes.oneOf(["record", "relatedWork"]),
   optimized: PropTypes.bool,
   noResultsMessage: PropTypes.string,
   ...mandatoryFieldCommonProps,
-};
-
-ResourceTypeFieldComponent.defaultProps = {
-  label: i18next.t("Resource type"),
-  labelIcon: "tag",
-  labelclassname: "field-label-class",
-  schema: "record",
-  optimized: true,
-  noResultsMessage: i18next.t("No results found."),
 };
 
 export const ResourceTypeField = showHideOverridable(

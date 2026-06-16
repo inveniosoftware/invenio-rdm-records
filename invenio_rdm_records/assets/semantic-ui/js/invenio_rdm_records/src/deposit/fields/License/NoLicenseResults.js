@@ -6,7 +6,7 @@
  */
 
 import PropTypes from "prop-types";
-import React from "react";
+
 import { Segment } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 

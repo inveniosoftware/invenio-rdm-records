@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState, useEffect, useRef } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { List } from "semantic-ui-react";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -34,13 +34,13 @@ export const getCreatibutorDisplayName = (value) => {
  * Renders a drag-and-drop creatibutor list using CreatibutorsFieldItem.
  * Optionally batches mounting rows to keep large lists responsive.
  */
-export const CreatibutorsList = React.memo(function CreatibutorsList({
+export const CreatibutorsList = memo(function CreatibutorsList({
   entries,
   keyPrefix,
   batchSize,
   totalCount,
-  wrapWithDndProvider,
-  creatibutorErrors,
+  wrapWithDndProvider = true,
+  creatibutorErrors = undefined,
   removeCreatibutor,
   replaceCreatibutor,
   moveCreatibutor,
@@ -142,9 +142,4 @@ CreatibutorsList.propTypes = {
   removeCreatibutor: PropTypes.func.isRequired,
   replaceCreatibutor: PropTypes.func.isRequired,
   moveCreatibutor: PropTypes.func.isRequired,
-};
-
-CreatibutorsList.defaultProps = {
-  wrapWithDndProvider: true,
-  creatibutorErrors: undefined,
 };

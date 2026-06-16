@@ -5,7 +5,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Field } from "formik";
@@ -19,81 +18,75 @@ import {
   AccessMessage,
 } from "./components";
 
-export class AccessRightFieldCmp extends Component {
-  /** Top-level Access Right Component */
+export function AccessRightFieldCmp({
+  id,
+  fieldPath,
+  formik, // this is our access to the shared current draft
+  label,
+  labelIcon,
+  showMetadataAccess = true,
+  community = undefined,
+  record,
+  recordRestrictionGracePeriod,
+  allowRecordRestriction,
+}) {
+  const isGhostCommunity = community?.is_ghost === true;
+  const communityAccess =
+    (community && !isGhostCommunity && community.access.visibility) || "public";
+  const isMetadataOnly = !formik.form.values.files.enabled;
 
-  render() {
-    const {
-      id,
-      fieldPath,
-      formik, // this is our access to the shared current draft
-      label,
-      labelIcon,
-      showMetadataAccess,
-      community,
-      record,
-      recordRestrictionGracePeriod,
-      allowRecordRestriction,
-    } = this.props;
+  return (
+    <Card label={label} id={id} className="access-right">
+      <Form.Field required>
+        <Card.Content>
+          <Card.Header>
+            <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+          </Card.Header>
+        </Card.Content>
+        <Card.Content>
+          {showMetadataAccess && (
+            <>
+              <MetadataAccess
+                recordAccess={formik.field.value.record}
+                communityAccess={communityAccess}
+                record={record}
+                recordRestrictionGracePeriod={recordRestrictionGracePeriod}
+                allowRecordRestriction={allowRecordRestriction}
+              />
+              <Divider hidden />
+            </>
+          )}
+          <FilesAccess
+            access={formik.field.value}
+            accessCommunity={communityAccess}
+            metadataOnly={isMetadataOnly}
+          />
 
-    const isGhostCommunity = community?.is_ghost === true;
-    const communityAccess =
-      (community && !isGhostCommunity && community.access.visibility) || "public";
-    const isMetadataOnly = !formik.form.values.files.enabled;
+          <Divider hidden />
 
-    return (
-      <Card label={label} id={id} className="access-right">
-        <Form.Field required>
-          <Card.Content>
-            <Card.Header>
-              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-            </Card.Header>
-          </Card.Content>
-          <Card.Content>
-            {showMetadataAccess && (
-              <>
-                <MetadataAccess
-                  recordAccess={formik.field.value.record}
-                  communityAccess={communityAccess}
-                  record={record}
-                  recordRestrictionGracePeriod={recordRestrictionGracePeriod}
-                  allowRecordRestriction={allowRecordRestriction}
-                />
-                <Divider hidden />
-              </>
-            )}
-            <FilesAccess
-              access={formik.field.value}
-              accessCommunity={communityAccess}
-              metadataOnly={isMetadataOnly}
-            />
+          <AccessMessage
+            access={formik.field.value}
+            accessCommunity={communityAccess}
+            metadataOnly={isMetadataOnly}
+          />
 
-            <Divider hidden />
-
-            <AccessMessage
-              access={formik.field.value}
-              accessCommunity={communityAccess}
-              metadataOnly={isMetadataOnly}
-            />
-
-            <Divider hidden />
-          </Card.Content>
-          <Card.Content>
-            <Card.Header as={Header} size="tiny">
-              {i18next.t("Options")}
-            </Card.Header>
-          </Card.Content>
-          <Card.Content extra>
-            <EmbargoAccess
-              access={formik.field.value}
-              accessCommunity={communityAccess}
-              metadataOnly={isMetadataOnly}
-            />
-          </Card.Content>
-        </Form.Field>
-      </Card>
-    );
-  }
+          <Divider hidden />
+        </Card.Content>
+        <Card.Content>
+          <Card.Header as={Header} size="tiny">
+            {i18next.t("Options")}
+          </Card.Header>
+        </Card.Content>
+        <Card.Content extra>
+          <EmbargoAccess
+            access={formik.field.value}
+            accessCommunity={communityAccess}
+            metadataOnly={isMetadataOnly}
+          />
+        </Card.Content>
+      </Form.Field>
+    </Card>
+  );
 }
 
 AccessRightFieldCmp.propTypes = {
@@ -109,11 +102,6 @@ AccessRightFieldCmp.propTypes = {
   allowRecordRestriction: PropTypes.bool.isRequired,
 };
 
-AccessRightFieldCmp.defaultProps = {
-  showMetadataAccess: true,
-  community: undefined,
-};
-
 const mapStateToPropsAccessRightFieldCmp = (state) => ({
   community: state.deposit.editorState.selectedCommunity,
 });
@@ -123,16 +111,25 @@ export const AccessRightFieldComponent = connect(
   null
 )(AccessRightFieldCmp);
 
-export class AccessRightField extends Component {
-  render() {
-    const { fieldPath } = this.props;
-
-    return (
-      <Field name={fieldPath}>
-        {(formik) => <AccessRightFieldComponent formik={formik} {...this.props} />}
-      </Field>
-    );
-  }
+export function AccessRightField({
+  fieldPath,
+  labelIcon = undefined,
+  isMetadataOnly = undefined,
+  ...props
+}) {
+  return (
+    <Field name={fieldPath}>
+      {(formik) => (
+        <AccessRightFieldComponent
+          formik={formik}
+          fieldPath={fieldPath}
+          labelIcon={labelIcon}
+          isMetadataOnly={isMetadataOnly}
+          {...props}
+        />
+      )}
+    </Field>
+  );
 }
 
 AccessRightField.propTypes = {
@@ -143,9 +140,4 @@ AccessRightField.propTypes = {
   record: PropTypes.object.isRequired,
   recordRestrictionGracePeriod: PropTypes.number.isRequired,
   allowRecordRestriction: PropTypes.bool.isRequired,
-};
-
-AccessRightField.defaultProps = {
-  labelIcon: undefined,
-  isMetadataOnly: undefined,
 };
