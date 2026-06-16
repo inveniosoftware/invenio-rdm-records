@@ -5,9 +5,8 @@
  */
 
 import { Formik } from "formik";
-import React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
-import { act } from "react-dom/test-utils";
+import { act } from "react";
 import { AccessRightFieldCmp } from "./AccessRightField";
 import "@testing-library/jest-dom/extend-expect";
 

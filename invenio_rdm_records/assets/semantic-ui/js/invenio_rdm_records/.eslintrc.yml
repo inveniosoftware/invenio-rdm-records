@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 extends:
-  - '@inveniosoftware/eslint-config-invenio'
-  - '@inveniosoftware/eslint-config-invenio/prettier'
+  - '@inveniosoftware/eslint-config-invenio/configs/react18.yaml'
+  - '@inveniosoftware/eslint-config-invenio/configs/prettier.yaml'
 
 rules:
   react/default-props-match-prop-types: off

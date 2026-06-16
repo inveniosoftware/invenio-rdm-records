@@ -8,7 +8,7 @@
 // https://raw.githubusercontent.com/transloadit/uppy/refs/tags/%40uppy/locales%403.5.4/packages/%40uppy/locales/src/en_US.ts
 // to integrate Uppy localization with Invenio"s i18next system.
 
-import * as React from "react";
+import { useEffect, useState } from "react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 function normalizeLanguageCode(code) {
@@ -71,10 +71,10 @@ const importLangPack = async (code) => {
 };
 
 export function useUppyLocale() {
-  const [locale, setLocale] = React.useState(null);
+  const [locale, setLocale] = useState(null);
   const detectedLocale = i18next.language;
 
-  React.useEffect(() => {
+  useEffect(() => {
     const normalizedLangCode = normalizeLanguageCode(detectedLocale);
 
     importLangPack(normalizedLangCode).then((module) => {

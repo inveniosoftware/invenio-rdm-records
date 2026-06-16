@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Input } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
@@ -17,16 +17,16 @@ const normalizeSearch = (str) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePanel({
+export const CreatibutorsInlinePanel = memo(function CreatibutorsInlinePanel({
   type,
   list,
   keyPrefix,
-  creatibutorErrors,
+  creatibutorErrors = undefined,
   removeCreatibutor,
   replaceCreatibutor,
   moveCreatibutor,
-  scrollThreshold,
-  batchSize,
+  scrollThreshold = 10,
+  batchSize = 30,
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [scrollToIndex, setScrollToIndex] = useState(null);
@@ -220,10 +220,4 @@ CreatibutorsInlinePanel.propTypes = {
   moveCreatibutor: PropTypes.func.isRequired,
   scrollThreshold: PropTypes.number,
   batchSize: PropTypes.number,
-};
-
-CreatibutorsInlinePanel.defaultProps = {
-  scrollThreshold: 10,
-  batchSize: 30,
-  creatibutorErrors: undefined,
 };
