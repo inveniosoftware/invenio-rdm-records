@@ -11,10 +11,10 @@
       type="checkbox"
       class="repo-switch-with-communities"
       {{ 'checked' if repo.enabled }}
-      data-repo-id="{{ repo_id }}"
-      data-provider="{{ provider }}"
-      data-checked-aria-label="{{ _('Disable') }} {{ repo.name }}"
-      data-unchecked-aria-label="{{ _('Enable') }} {{ repo.name }}"
+      data-repo-id='{{ repo_id }}'
+      data-provider='{{ provider }}'
+      data-checked-aria-label='{{ _('Disable') }} {{ repo.name }}'
+      data-unchecked-aria-label='{{ _('Enable') }} {{ repo.name }}'
       aria-label="{{ 'disable' if repo.enabled else 'enable' }} {{ repo.name }}"
     />
     <label aria-hidden="true"></label>

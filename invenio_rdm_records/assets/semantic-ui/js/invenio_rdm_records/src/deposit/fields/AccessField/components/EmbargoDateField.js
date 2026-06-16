@@ -6,17 +6,16 @@
  */
 
 import PropTypes from "prop-types";
-import React from "react";
 import { FieldLabel, TextField } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 export function EmbargoDateField({
   fieldPath,
-  label,
-  labelIcon,
-  placeholder,
-  required,
-  helpText,
+  label = i18next.t("Embargo until"),
+  labelIcon = "calendar",
+  placeholder = i18next.t("YYYY-MM-DD"),
+  required = false,
+  helpText = `${i18next.t("Format")}: ${i18next.t("YYYY-MM-DD")}`,
 }) {
   return (
     <TextField
@@ -36,12 +35,4 @@ EmbargoDateField.propTypes = {
   placeholder: PropTypes.string,
   required: PropTypes.bool,
   helpText: PropTypes.string,
-};
-
-EmbargoDateField.defaultProps = {
-  required: false,
-  labelIcon: "calendar",
-  placeholder: i18next.t("YYYY-MM-DD"),
-  label: i18next.t("Embargo until"),
-  helpText: `${i18next.t("Format")}: ${i18next.t("YYYY-MM-DD")}`,
 };
