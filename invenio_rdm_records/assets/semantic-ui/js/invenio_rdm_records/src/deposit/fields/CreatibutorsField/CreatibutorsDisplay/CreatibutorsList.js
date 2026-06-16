@@ -1,8 +1,7 @@
-// This file is part of Invenio-RDM-Records
-// Copyright (C) 2026 CERN.
-//
-// Invenio-RDM-Records is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
+/*
+ * SPDX-FileCopyrightText: 2026 CERN.
+ * SPDX-License-Identifier: MIT
+ */
 
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
@@ -35,9 +34,10 @@ export const getCreatibutorDisplayName = (value) => {
  * Renders a drag-and-drop creatibutor list using CreatibutorsFieldItem.
  * Optionally batches mounting rows to keep large lists responsive.
  */
-export function CreatibutorsList({
+export const CreatibutorsList = React.memo(function CreatibutorsList({
   entries,
   keyPrefix,
+  filterQuery,
   batchSize,
   wrapWithDndProvider,
   enableDrag,
@@ -61,9 +61,10 @@ export function CreatibutorsList({
   const batchScheduled = useRef(false);
   const prevEntriesLenRef = useRef(entries.length);
 
+  // Reset the batch window when the filter changes or keyPrefix changes.
   useEffect(() => {
     setRenderLimit(batchSize);
-  }, [keyPrefix, batchSize]);
+  }, [filterQuery, keyPrefix, batchSize]);
 
   // Extend the batch window when rows are appended so new items at the end mount.
   useEffect(() => {
@@ -97,15 +98,15 @@ export function CreatibutorsList({
 
   const list = (
     <List>
-      {visibleEntries.map(({ item, idx }) => {
+      {visibleEntries.map(({ item, idx, displayName }) => {
         const key = `${keyPrefix}.${idx}`;
         return (
           <CreatibutorsFieldItem
             key={key}
             index={idx}
-            displayName={getCreatibutorDisplayName(item)}
             compKey={key}
             initialCreatibutor={item}
+            displayName={displayName}
             roleOptions={roleOptions}
             schema={schema}
             autocompleteNames={autocompleteNames}
@@ -141,16 +142,18 @@ export function CreatibutorsList({
       )}
     </>
   );
-}
+});
 
 CreatibutorsList.propTypes = {
   entries: PropTypes.arrayOf(
     PropTypes.shape({
       item: PropTypes.object.isRequired,
       idx: PropTypes.number.isRequired,
+      displayName: PropTypes.string,
     })
   ).isRequired,
   keyPrefix: PropTypes.string.isRequired,
+  filterQuery: PropTypes.string,
   batchSize: PropTypes.number,
   wrapWithDndProvider: PropTypes.bool,
   enableDrag: PropTypes.bool,
@@ -171,6 +174,7 @@ CreatibutorsList.propTypes = {
 };
 
 CreatibutorsList.defaultProps = {
+  filterQuery: undefined,
   batchSize: 20,
   wrapWithDndProvider: true,
   enableDrag: true,
