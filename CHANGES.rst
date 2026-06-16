@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version v33.0.0 (released 2026-06-18)
+
+- chore(setup): bump dependencies
+
 Version v32.0.1 (released 2026-06-12)
 
 - fix(get_record_requests): allow anonymous users to access landing page
