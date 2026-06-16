@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component } from "react";
 import { Button, Popup, Icon } from "semantic-ui-react";
 import { FastField } from "formik";
 import { i18next } from "@translations/invenio_rdm_records/i18next";

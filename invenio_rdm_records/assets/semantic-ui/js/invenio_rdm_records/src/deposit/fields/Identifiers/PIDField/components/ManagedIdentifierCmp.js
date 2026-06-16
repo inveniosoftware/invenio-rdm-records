@@ -5,7 +5,7 @@
  */
 
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Form } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { UnreservePIDBtn } from "./UnreservePIDBtn";

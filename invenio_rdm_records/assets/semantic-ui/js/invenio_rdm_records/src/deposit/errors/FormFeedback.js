@@ -9,7 +9,7 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { FormFeedbackSummary } from "./FormFeedbackSummary";
 import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
-import React, { Component } from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import { Grid, Message, Icon } from "semantic-ui-react";
 import {

@@ -6,7 +6,7 @@
 import _debounce from "lodash/debounce";
 import _isEmpty from "lodash/isEmpty";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import { FieldLabel, FeedbackLabel } from "react-invenio-forms";
 import { Form, Grid } from "semantic-ui-react";

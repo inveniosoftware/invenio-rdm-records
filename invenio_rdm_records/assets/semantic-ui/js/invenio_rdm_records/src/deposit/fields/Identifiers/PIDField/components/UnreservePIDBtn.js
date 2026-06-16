@@ -6,7 +6,7 @@
 
 import { Field } from "formik";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Form, Popup } from "semantic-ui-react";
 
 /**
