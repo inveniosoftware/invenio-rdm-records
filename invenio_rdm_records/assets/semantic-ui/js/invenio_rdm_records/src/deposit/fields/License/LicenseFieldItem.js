@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "react";
+import { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { Button, List, Ref } from "semantic-ui-react";
 import _truncate from "lodash/truncate";
@@ -21,7 +21,7 @@ export const LicenseFieldItem = ({
   searchConfig,
   serializeLicenses,
 }) => {
-  const dropRef = React.useRef(null);
+  const dropRef = useRef(null);
 
   const [, drag, preview] = useDrag({
     item: { index: license.index, type: "license" },

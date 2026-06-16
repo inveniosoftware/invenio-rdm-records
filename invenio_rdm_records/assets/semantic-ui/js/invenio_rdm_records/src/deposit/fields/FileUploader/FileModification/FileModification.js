@@ -6,7 +6,7 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Icon, Popup } from "semantic-ui-react";
 import { ModificationModal } from "./ModificationModal";
 

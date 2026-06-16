@@ -6,7 +6,7 @@
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import Overridable from "react-overridable";
 import { save } from "../../../state/actions";
 import { connect } from "react-redux";

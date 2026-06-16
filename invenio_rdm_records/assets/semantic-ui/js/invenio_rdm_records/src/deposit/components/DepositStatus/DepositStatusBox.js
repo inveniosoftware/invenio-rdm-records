@@ -4,7 +4,6 @@
  */
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import React from "react";
 import { connect } from "react-redux";
 import { Button, Grid, Icon, Popup } from "semantic-ui-react";
 import { DepositStatus } from "../../state/reducers/deposit";

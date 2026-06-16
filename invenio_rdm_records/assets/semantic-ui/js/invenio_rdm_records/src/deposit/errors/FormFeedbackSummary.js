@@ -7,7 +7,7 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import _isEmpty from "lodash/isEmpty";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Label } from "semantic-ui-react";
 import PropTypes from "prop-types";
 

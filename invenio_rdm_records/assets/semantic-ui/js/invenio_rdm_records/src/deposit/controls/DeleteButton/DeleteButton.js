@@ -5,7 +5,7 @@
  */
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import React, { Component } from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import { connect as connectFormik } from "formik";
 import { Button, Modal } from "semantic-ui-react";
