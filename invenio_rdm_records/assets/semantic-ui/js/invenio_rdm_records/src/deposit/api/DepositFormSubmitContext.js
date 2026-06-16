@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "react";
+import { createContext } from "react";
 
 export const DepositFormSubmitActions = {
   SAVE: "SAVE",
@@ -28,6 +28,6 @@ export const DepositFormSubmitActions = {
  * - https://github.com/jaredpalmer/formik/issues/214
  * - https://github.com/jaredpalmer/formik/issues/1792
  */
-export const DepositFormSubmitContext = React.createContext({
+export const DepositFormSubmitContext = createContext({
   setSubmitContext: undefined,
 });

@@ -7,7 +7,7 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
 import Overridable from "react-overridable";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { TextAreaField, ErrorMessage } from "react-invenio-forms";
 import { Button, Form, Icon, Message, Modal } from "semantic-ui-react";
 import * as Yup from "yup";

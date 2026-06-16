@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { http, showHideOverridable } from "react-invenio-forms";
 import { Icon, Button, Popup } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";

@@ -7,7 +7,6 @@
 import _isEmpty from "lodash/isEmpty";
 import { DateTime } from "luxon";
 import PropTypes from "prop-types";
-import React from "react";
 import { TextAreaField } from "react-invenio-forms";
 import { Divider, Icon, List } from "semantic-ui-react";
 import { EmbargoCheckboxField } from "./EmbargoCheckboxField";

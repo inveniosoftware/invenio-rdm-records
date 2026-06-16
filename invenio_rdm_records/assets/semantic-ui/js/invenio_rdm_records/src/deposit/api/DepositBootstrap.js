@@ -5,7 +5,7 @@
  */
 
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { BaseForm } from "react-invenio-forms";
 import { connect } from "react-redux";
 import {

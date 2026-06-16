@@ -6,7 +6,7 @@
  */
 
 import _find from "lodash/find";
-import React, { Component } from "react";
+import { Component } from "react";
 import PropTypes from "prop-types";
 import { getIn, FieldArray } from "formik";
 import { HTML5Backend } from "react-dnd-html5-backend";

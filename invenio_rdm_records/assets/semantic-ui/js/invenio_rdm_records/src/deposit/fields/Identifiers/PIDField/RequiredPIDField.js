@@ -5,7 +5,7 @@
 
 import _debounce from "lodash/debounce";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { FieldLabel } from "react-invenio-forms";
 import { Form } from "semantic-ui-react";
 import {

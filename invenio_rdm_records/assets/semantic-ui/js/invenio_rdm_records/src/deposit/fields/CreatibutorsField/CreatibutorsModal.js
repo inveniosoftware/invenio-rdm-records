@@ -13,7 +13,7 @@ import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
 import _map from "lodash/map";
 import PropTypes from "prop-types";
-import React, { Component, createRef } from "react";
+import { Component, createRef } from "react";
 import {
   RadioField,
   RemoteSelectField,

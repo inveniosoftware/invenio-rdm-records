@@ -5,7 +5,7 @@
 
 import { Trans } from "react-i18next";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Accordion, Grid, Icon, Message } from "semantic-ui-react";
 import { NewVersionButton } from "../../controls/NewVersionButton";
 import { FileModification } from "./FileModification/FileModification";

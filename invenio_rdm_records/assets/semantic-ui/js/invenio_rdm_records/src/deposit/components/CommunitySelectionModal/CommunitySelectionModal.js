@@ -5,7 +5,7 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { cloneElement, Component } from "react";
 import { connect } from "react-redux";
 import { Header, Modal, Button } from "semantic-ui-react";
 import { CommunityContext } from "./CommunityContext";
@@ -45,7 +45,7 @@ export class CommunitySelectionModalComponent extends Component {
   modalTrigger = () => {
     const { trigger, modalOpen } = this.props;
     if (!_isEmpty(trigger)) {
-      return React.cloneElement(trigger, {
+      return cloneElement(trigger, {
         "aria-haspopup": "dialog",
         "aria-expanded": modalOpen,
       });

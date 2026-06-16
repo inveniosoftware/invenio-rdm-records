@@ -10,7 +10,7 @@ import { connect as connectFormik } from "formik";
 import _get from "lodash/get";
 import _omit from "lodash/omit";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import { Button } from "semantic-ui-react";
 import {

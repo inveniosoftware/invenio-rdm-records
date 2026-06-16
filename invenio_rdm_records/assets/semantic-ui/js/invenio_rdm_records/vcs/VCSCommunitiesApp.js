@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { sendEnableDisableRequest } from "./api";
 import { CommunitySelectionModalComponent } from "../src/deposit/components/CommunitySelectionModal/CommunitySelectionModal.js";

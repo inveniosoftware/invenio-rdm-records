@@ -11,7 +11,7 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { useFormikContext, getIn } from "formik";
 import _get from "lodash/get";
 import PropTypes from "prop-types";
-import React, { Component, useState } from "react";
+import { Component, useState } from "react";
 import Dropzone from "react-dropzone";
 import {
   Button,

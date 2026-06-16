@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component } from "react";
 import PropTypes from "prop-types";
 import { Button, Popup } from "semantic-ui-react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-class SimpleCopyButton extends React.Component {
+class SimpleCopyButton extends Component {
   render() {
     const { text, onCopy, hoverState } = this.props;
 

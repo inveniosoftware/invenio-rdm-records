@@ -7,7 +7,7 @@
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Form, Radio } from "semantic-ui-react";
 
 /**

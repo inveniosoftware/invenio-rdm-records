@@ -4,7 +4,7 @@
  */
 
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import CopyButton from "./CopyButton";
 import { Table, Header, Dropdown, Grid } from "semantic-ui-react";
