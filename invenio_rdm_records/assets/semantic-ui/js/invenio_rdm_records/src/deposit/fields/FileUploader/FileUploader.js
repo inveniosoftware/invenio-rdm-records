@@ -387,6 +387,7 @@ const fileDetailsShape = PropTypes.objectOf(
     progressPercentage: PropTypes.number,
     checksum: PropTypes.string,
     links: PropTypes.object,
+    mimetype: PropTypes.string,
     cancelUploadFn: PropTypes.func,
     state: PropTypes.oneOf(Object.values(UploadState)),
     enabled: PropTypes.bool,
@@ -418,6 +419,7 @@ FileUploaderComponent.propTypes = {
   permissions: PropTypes.object,
   allowEmptyFiles: PropTypes.bool,
   fileModification: PropTypes.object,
+  fileActions: PropTypes.func,
 };
 
 FileUploaderComponent.defaultProps = {
@@ -441,4 +443,5 @@ FileUploaderComponent.defaultProps = {
   filesLocked: false,
   allowEmptyFiles: true,
   fileModification: {},
+  fileActions: undefined,
 };
