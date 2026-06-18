@@ -17,6 +17,7 @@ export const getFilesList = (filesState) => {
       size: fileState.size,
       checksum: fileState.checksum,
       links: fileState.links,
+      mimetype: fileState.mimetype,
       uploadState: {
         // initial: fileState.status === UploadState.initial,
         isFailed: fileState.status === UploadState.failed,
