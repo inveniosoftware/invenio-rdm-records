@@ -394,7 +394,8 @@ export const UppyUploaderComponent = ({
                       filesEnabled={filesEnabled}
                       filesLocked={lockFileUploader}
                       deleteFile={deleteFile}
-                      decimalSizeDislay={decimalSizeDisplay}
+                      decimalSizeDisplay={decimalSizeDisplay}
+                      fileActions={uiProps.fileActions}
                     />
                   </Grid.Column>
                 )}
@@ -476,6 +477,7 @@ const fileDetailsShape = PropTypes.objectOf(
     progressPercentage: PropTypes.number,
     checksum: PropTypes.string,
     links: PropTypes.object,
+    mimetype: PropTypes.string,
     cancelUploadFn: PropTypes.func,
     state: PropTypes.oneOf(Object.values(UploadState)),
     enabled: PropTypes.bool,
@@ -508,6 +510,7 @@ UppyUploaderComponent.propTypes = {
   filesLocked: PropTypes.bool,
   permissions: PropTypes.object,
   allowEmptyFiles: PropTypes.bool,
+  fileActions: PropTypes.func,
 };
 
 UppyUploaderComponent.defaultProps = {
@@ -529,4 +532,5 @@ UppyUploaderComponent.defaultProps = {
   decimalSizeDisplay: true,
   filesLocked: false,
   allowEmptyFiles: true,
+  fileActions: undefined,
 };
