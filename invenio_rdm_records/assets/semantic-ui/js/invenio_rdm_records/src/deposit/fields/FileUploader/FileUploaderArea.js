@@ -64,10 +64,12 @@ const FileTableRow = ({
   setDefaultPreview,
   decimalSizeDisplay,
   fileError,
+  fileActions,
 }) => {
   const [isCancelling, setIsCancelling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const isDefaultPreview = defaultPreview === file.name;
+  const fileAction = fileActions ? fileActions(file) : null;
 
   const handleDelete = async (file) => {
     setIsDeleting(true);
@@ -106,37 +108,53 @@ const FileTableRow = ({
               <br />
             </>
           )}
-          {file.uploadState.isPending ? (
-            <div className="mr-5 text-break">{file.name}</div>
-          ) : (
-            <a
-              href={_get(file, "links.content", "")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mr-5 text-break"
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+              }}
             >
-              {file.name}
-            </a>
-          )}
-          <br />
-          {(file.checksum && (
-            <div className="ui text-muted">
-              <span style={{ fontSize: "10px" }}>{file.checksum}</span>{" "}
-              <Popup
-                content={i18next.t(
-                  "This is the file fingerprint (MD5 checksum), which can be used to verify the file integrity."
-                )}
-                trigger={<Icon fitted name="help circle" size="small" />}
-                position="top center"
-              />
+              {file.uploadState.isPending ? (
+                <div className="text-break">{file.name}</div>
+              ) : (
+                <a
+                  href={_get(file, "links.content", "")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-break"
+                >
+                  {file.name}
+                </a>
+              )}
+              {(file.checksum && (
+                <div className="ui text-muted">
+                  <span style={{ fontSize: "10px" }}>{file.checksum}</span>{" "}
+                  <Popup
+                    content={i18next.t(
+                      "This is the file fingerprint (MD5 checksum), which can be used to verify the file integrity."
+                    )}
+                    trigger={<Icon fitted name="help circle" size="small" />}
+                    position="top center"
+                  />
+                </div>
+              )) || (
+                <div className="ui text-muted">
+                  <span style={{ fontSize: "10px" }}>
+                    {i18next.t("Checksum not yet calculated.")}
+                  </span>
+                </div>
+              )}
             </div>
-          )) || (
-            <div className="ui text-muted">
-              <span style={{ fontSize: "10px" }}>
-                {i18next.t("Checksum not yet calculated.")}
-              </span>{" "}
-            </div>
-          )}
+          </div>
+          {fileAction && fileAction}
         </div>
       </Table.Cell>
       <Table.Cell data-label={i18next.t("Size")} width={2}>
@@ -208,6 +226,7 @@ FileTableRow.propTypes = {
   setDefaultPreview: PropTypes.func.isRequired,
   decimalSizeDisplay: PropTypes.bool,
   fileError: PropTypes.object,
+  fileActions: PropTypes.func,
 };
 
 FileTableRow.defaultProps = {
@@ -216,6 +235,7 @@ FileTableRow.defaultProps = {
   defaultPreview: undefined,
   decimalSizeDisplay: false,
   fileError: undefined,
+  fileActions: undefined,
 };
 
 const FileUploadBox = ({
@@ -283,6 +303,7 @@ export const FilesListTable = ({
   filesList,
   deleteFile,
   decimalSizeDisplay,
+  fileActions,
 }) => {
   const { errors, setFieldValue, values: formikDraft } = useFormikContext();
   const defaultPreview = _get(formikDraft, "files.default_preview", "");
@@ -303,6 +324,7 @@ export const FilesListTable = ({
               }
               decimalSizeDisplay={decimalSizeDisplay}
               fileError={getIn(errors, "files.entries." + file.name, undefined)}
+              fileActions={fileActions}
             />
           );
         })}
@@ -316,6 +338,7 @@ FilesListTable.propTypes = {
   filesList: PropTypes.array,
   deleteFile: PropTypes.func,
   decimalSizeDisplay: PropTypes.bool,
+  fileActions: PropTypes.func,
 };
 
 FilesListTable.defaultProps = {
@@ -323,6 +346,7 @@ FilesListTable.defaultProps = {
   filesList: undefined,
   deleteFile: undefined,
   decimalSizeDisplay: undefined,
+  fileActions: undefined,
 };
 
 export class FileUploaderArea extends Component {
@@ -374,6 +398,7 @@ FileUploaderArea.propTypes = {
   uploadButtonIcon: PropTypes.string,
   uploadButtonText: PropTypes.string,
   decimalSizeDisplay: PropTypes.bool,
+  fileActions: PropTypes.func,
 };
 
 FileUploaderArea.defaultProps = {
@@ -387,4 +412,5 @@ FileUploaderArea.defaultProps = {
   uploadButtonIcon: undefined,
   uploadButtonText: undefined,
   decimalSizeDisplay: undefined,
+  fileActions: undefined,
 };
