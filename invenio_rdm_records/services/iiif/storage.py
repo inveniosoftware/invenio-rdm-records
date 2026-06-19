@@ -141,7 +141,9 @@ class LocalTilesStorage(TilesStorage):
                 "Failed to delete tiles for record.",
                 extra={
                     "record_id": record["id"],
-                    "filename": filename,
+                    # Not using the key `filename` as it is a field of `LogRecord`
+                    # and using it would raise a KeyError exception.
+                    "filename_": filename,
                 },
             )
             return False
