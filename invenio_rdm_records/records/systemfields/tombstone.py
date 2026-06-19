@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 TU Wien.
+# SPDX-FileCopyrightText: 2023-2026 TU Wien.
 # SPDX-FileCopyrightText: 2025 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
@@ -39,6 +39,10 @@ class Tombstone:
         #       in the record's relations systemfield
         if isinstance(value, str):
             value = {"id": value}
+        elif isinstance(value, dict):
+            # in case we run into a dictionary, we want to avoid shallow copies
+            # that are subject to side effects -> we take only what we're interested in
+            value = {"id": value["id"]}
 
         self._removal_reason = value
 
