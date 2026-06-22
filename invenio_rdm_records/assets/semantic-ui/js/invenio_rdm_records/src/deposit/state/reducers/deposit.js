@@ -69,7 +69,7 @@ function hasStatus(record, statuses = []) {
 // within its parent.
 // This essentially corresponds to whether the parent record has been published.
 function isParentAlreadyPublished(record) {
-  return hasStatus(record, [DepositStatus.PUBLISHED]) || record.versions?.index !== 1;
+  return hasStatus(record, [DepositStatus.PUBLISHED]) || record.versions?.index > 1;
 }
 
 function getSelectedCommunityMetadata(record, selectedCommunity) {
