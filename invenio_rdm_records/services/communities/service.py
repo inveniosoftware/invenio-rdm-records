@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2023-2026 CERN.
 # SPDX-FileCopyrightText: 2024 Graz University of Technology.
 # SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
+# SPDX-FileCopyrightText: 2026 TU Wien.
 # SPDX-License-Identifier: MIT
 
 """RDM Record Communities Service."""
@@ -48,15 +49,23 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
     The communities service is in charge of managing communities of a given record.
     """
 
+    def __init__(self, config):
+        """Constructor."""
+        super().__init__(config)
+        self._schema = ServiceSchemaWrapper(self, schema=self.config.schema)
+        self._communities_schema = ServiceSchemaWrapper(
+            self, schema=self.config.communities_schema
+        )
+
     @property
     def schema(self):
         """Returns the data schema instance."""
-        return ServiceSchemaWrapper(self, schema=self.config.schema)
+        return self._schema
 
     @property
     def communities_schema(self):
         """Returns the communities schema instance."""
-        return ServiceSchemaWrapper(self, schema=self.config.communities_schema)
+        return self._communities_schema
 
     @property
     def record_cls(self):
