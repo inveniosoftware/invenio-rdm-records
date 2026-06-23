@@ -25,10 +25,17 @@ class CommunityRecordsService(RecordService):
     The record communities service is in charge of managing the records of a given community.
     """
 
+    def __init__(self, config):
+        """Constructor."""
+        super().__init__(config)
+        self._community_record_schema = ServiceSchemaWrapper(
+            self, schema=self.config.community_record_schema
+        )
+
     @property
     def community_record_schema(self):
         """Returns the community schema instance."""
-        return ServiceSchemaWrapper(self, schema=self.config.community_record_schema)
+        return self._community_record_schema
 
     @property
     def community_cls(self):
