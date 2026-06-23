@@ -72,9 +72,8 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin, CleanReviewMixin):
         values=fields.Nested(PIDSchema),
     )
     metadata = NestedAttribute(MetadataSchema)
-    custom_fields = NestedAttribute(
-        partial(CustomFieldsSchema, fields_var="RDM_CUSTOM_FIELDS")
-    )
+    custom_fields = NestedAttribute(lambda: CustomFieldsSchema("RDM_CUSTOM_FIELDS"))
+
     # provenance
     access = NestedAttribute(AccessSchema)
     files = NestedAttribute(FilesSchema)

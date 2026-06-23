@@ -6,7 +6,6 @@
 
 """RDM record schemas."""
 
-from functools import partial
 from urllib import parse
 
 from flask import current_app
@@ -99,13 +98,10 @@ class PersonOrOrganizationSchema(Schema):
     family_name = SanitizedUnicode()
     identifiers = IdentifierSet(
         fields.Nested(
-            partial(
-                IdentifierSchema,
-                # It is intended to allow org schemes to be sent as personal
-                # and viceversa. This is a trade off learnt from running
-                # Zenodo in production.
-                allowed_schemes=record_personorg_schemes,
-            )
+            # It is intended to allow org schemes to be sent as personal
+            # and viceversa. This is a trade off learnt from running
+            # Zenodo in production.
+            IdentifierSchema(allowed_schemes=record_personorg_schemes),
         )
     )
 
@@ -323,9 +319,7 @@ class LocationSchema(Schema):
     geometry = fields.Nested(GeometryObjectSchema)
     place = SanitizedUnicode()
     identifiers = fields.List(
-        fields.Nested(
-            partial(IdentifierSchema, allowed_schemes=record_location_schemes)
-        )
+        fields.Nested(IdentifierSchema(allowed_schemes=record_location_schemes))
     )
     description = SanitizedUnicode()
 
@@ -374,9 +368,7 @@ class MetadataSchema(Schema):
     languages = fields.List(fields.Nested(VocabularySchema))
     # alternate identifiers
     identifiers = IdentifierValueSet(
-        fields.Nested(
-            partial(IdentifierSchema, allowed_schemes=record_identifiers_schemes)
-        )
+        fields.Nested(IdentifierSchema(allowed_schemes=record_identifiers_schemes))
     )
     related_identifiers = fields.List(fields.Nested(RelatedIdentifierSchema))
     sizes = fields.List(
