@@ -23,7 +23,7 @@ def get_vocabulary_props(vocabulary, fields, id_):
         system_identity,
         ["id"] + fields,
         vocabulary,
-        extra_filter=dsl.Q("term", id=id_),
+        extra_filter=dsl.Q("term", **{"id.keyword": id_}),
     )
 
     for h in results.hits:
