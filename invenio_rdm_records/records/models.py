@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2020-2026 CERN.
 # SPDX-FileCopyrightText: 2026 Graz University of Technology.
+# SPDX-FileCopyrightText: 2026 TU Wien.
 # SPDX-License-Identifier: MIT
 
 """Record and draft database models."""
@@ -15,13 +16,39 @@ from invenio_drafts_resources.records import (
     ParentRecordStateMixin,
 )
 from invenio_files_rest.models import Bucket
-from invenio_records.models import RecordMetadataBase
+from invenio_records.models import RecordMetadataBase as OriginalRecordMetadataBase
 from invenio_records_resources.records import FileRecordModelMixin
 from invenio_requests.records.models import RequestMetadata
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy_utils.types import ChoiceType, UUIDType
 
+from ..utils import very_simple_deepcopy
 from .systemfields.deletion_status import RecordDeletionStatusEnum
+
+
+class RecordMetadataBase(OriginalRecordMetadataBase):
+    """Record metadata class with a lighter decode mechanism.
+
+    This class replaces the ``copy.deepcopy()`` call that's being done by the parent
+    classes with a simple shallow copy for performance gains on read operations on
+    record data.
+
+    This less defensive approach may require some extra precautions when manipulating
+    data dictionaries from records than are necessary with ``copy.deepcopy()``.
+    In InvenioRDM, such use cases are few and far between however.
+    """
+
+    @classmethod
+    def decode(cls, json):
+        """Decode a JSON document, doing only a very simple deepcopy."""
+        data = very_simple_deepcopy(json) if json else json
+        return cls.encoder.decode(data) if cls.encoder else data
+
+    @classmethod
+    def encode(cls, value):
+        """Encode a JSON document, doing only a very simple deepcopy."""
+        data = very_simple_deepcopy(value)
+        return cls.encoder.encode(data) if cls.encoder else data
 
 
 # Moved from invenio-communities/invenio_communities/records/records/models.py

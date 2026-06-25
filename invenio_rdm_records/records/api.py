@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2020-2024 CERN.
-# SPDX-FileCopyrightText: 2021-2023 TU Wien.
+# SPDX-FileCopyrightText: 2021-2026 TU Wien.
 # SPDX-License-Identifier: MIT
 
 """RDM Record and Draft API."""
@@ -14,7 +14,6 @@ from invenio_drafts_resources.services.records.components.media_files import (
     MediaFilesAttrConfig,
 )
 from invenio_pidstore.models import PIDStatus
-from invenio_records.dumpers import SearchDumper
 from invenio_records.dumpers.relations import RelationDumperExt
 from invenio_records.systemfields import ConstantField, DictField, ModelField
 from invenio_records.systemfields.relations import MultiRelationsField
@@ -49,6 +48,7 @@ from .dumpers import (
     EDTFDumperExt,
     EDTFListDumperExt,
     GrantTokensDumperExt,
+    SearchDumper,
     StatisticsDumperExt,
     SubjectHierarchyDumperExt,
 )
