@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2022-2024 CERN.
+# SPDX-FileCopyrightText: 2026 TU Wien.
 # SPDX-License-Identifier: MIT
 
 """Utility functions."""
@@ -147,3 +148,36 @@ def verify_token(identity):
     if access_request_token:
         session["access_request_token"] = access_request_token
         identity.provides.add(AccessRequestTokenNeed(access_request_token))
+
+
+def simple_deepcopy(data):
+    """A simpler variant of ``deepcopy()`` that's sufficient for our use cases.
+
+    This function only creates deep copies of some specific data structures; basically
+    the ones that are representable in JSON.
+    This makes it faster than ``deepcopy()``.
+
+    This is sufficient in many cases in InvenioRDM since we don't generally manipulate
+    data from sources where we care about manipulations via side effects.
+    """
+    if isinstance(data, dict):
+        return {k: simple_deepcopy(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [simple_deepcopy(v) for v in data]
+    return data
+
+
+def very_simple_deepcopy(data):
+    """An even simpler variant of ``deepcopy()`` that does the job sometimes.
+
+    This function only creates deep copies of dictionaries, and creates new references
+    for lists (but does not touch the items within them).
+    This makes it much faster than ``deepcopy()``.
+
+    Like ``simple_deepcopy()``, this is sufficient for some use cases in InvenioRDM.
+    """
+    if isinstance(data, dict):
+        return {k: very_simple_deepcopy(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [*data]
+    return data
