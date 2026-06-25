@@ -54,7 +54,6 @@ export const CreatibutorsList = React.memo(function CreatibutorsList({
   replaceCreatibutor,
   moveCreatibutor,
   highlightedIndices,
-  onHighlightEnd,
 }) {
   const useBatchRender = entries.length > batchSize;
   const [renderLimit, setRenderLimit] = useState(batchSize);
@@ -120,7 +119,6 @@ export const CreatibutorsList = React.memo(function CreatibutorsList({
             moveCreatibutor={moveCreatibutor}
             enableDrag={enableDrag}
             highlighted={highlightedIndices?.has(idx)}
-            onHighlightEnd={onHighlightEnd}
             creatibutorError={creatibutorErrors?.[idx]}
           />
         );
@@ -154,7 +152,7 @@ CreatibutorsList.propTypes = {
   ).isRequired,
   keyPrefix: PropTypes.string.isRequired,
   filterQuery: PropTypes.string,
-  batchSize: PropTypes.number,
+  batchSize: PropTypes.number.isRequired,
   wrapWithDndProvider: PropTypes.bool,
   enableDrag: PropTypes.bool,
   creatibutorErrors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
@@ -170,12 +168,10 @@ CreatibutorsList.propTypes = {
   replaceCreatibutor: PropTypes.func.isRequired,
   moveCreatibutor: PropTypes.func.isRequired,
   highlightedIndices: PropTypes.instanceOf(Set),
-  onHighlightEnd: PropTypes.func,
 };
 
 CreatibutorsList.defaultProps = {
   filterQuery: undefined,
-  batchSize: 20,
   wrapWithDndProvider: true,
   enableDrag: true,
   creatibutorErrors: undefined,
@@ -186,5 +182,4 @@ CreatibutorsList.defaultProps = {
   serializeCreatibutor: undefined,
   deserializeCreatibutor: undefined,
   highlightedIndices: undefined,
-  onHighlightEnd: undefined,
 };

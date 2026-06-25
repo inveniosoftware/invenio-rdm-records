@@ -19,7 +19,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import { CreatibutorsInlinePanel } from "./CreatibutorsDisplay/CreatibutorsInlinePanel";
-import { FileImportReviewModal } from "./FileImportReviewModal";
+import { CreatibutorsFileModal } from "./CreatibutorsFileModal";
 import { sortOptions } from "../../utils";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
@@ -75,8 +75,6 @@ class CreatibutorsFieldForm extends Component {
       serializeSuggestions,
       serializeCreatibutor,
       deserializeCreatibutor,
-      scrollThreshold,
-      batchSize,
     } = this.props;
 
     // Keep refs pointing at the latest helpers without changing their identity.
@@ -137,8 +135,6 @@ class CreatibutorsFieldForm extends Component {
                 list={creatibutorsList}
                 keyPrefix={fieldPath}
                 schema={schema}
-                scrollThreshold={scrollThreshold}
-                batchSize={batchSize}
                 creatibutorErrors={
                   creatibutorsError && typeof creatibutorsError !== "string"
                     ? creatibutorsError
@@ -177,7 +173,7 @@ class CreatibutorsFieldForm extends Component {
                 }
               />
 
-              <FileImportReviewModal
+              <CreatibutorsFileModal
                 roleOptions={roleOptions}
                 schema={schema}
                 autocompleteNames={autocompleteNames}
@@ -195,8 +191,6 @@ class CreatibutorsFieldForm extends Component {
                       : i18next.t("Add authors from file")}
                   </Button>
                 }
-                scrollThreshold={scrollThreshold}
-                batchSize={batchSize}
               />
             </div>
 
@@ -219,7 +213,8 @@ export class CreatibutorsFieldComponent extends Component {
   );
 
   render() {
-    return <FieldArray name={this.props.fieldPath} component={this._renderForm} />;
+    const { fieldPath } = this.props;
+    return <FieldArray name={fieldPath} component={this._renderForm} />;
   }
 }
 
@@ -242,14 +237,10 @@ CreatibutorsFieldForm.propTypes = {
   serializeSuggestions: PropTypes.func,
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
-  scrollThreshold: PropTypes.number,
-  batchSize: PropTypes.number,
   ...mandatoryFieldCommonProps,
 };
 
 CreatibutorsFieldForm.defaultProps = {
-  scrollThreshold: 10,
-  batchSize: 20,
   autocompleteNames: "search",
   label: i18next.t("Authors"),
   labelIcon: "user",
@@ -277,14 +268,10 @@ CreatibutorsFieldComponent.propTypes = {
   serializeSuggestions: PropTypes.func,
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
-  scrollThreshold: PropTypes.number,
-  batchSize: PropTypes.number,
   ...mandatoryFieldCommonProps,
 };
 
 CreatibutorsFieldComponent.defaultProps = {
-  scrollThreshold: 10,
-  batchSize: 20,
   autocompleteNames: "search",
   label: undefined,
   labelIcon: undefined,
