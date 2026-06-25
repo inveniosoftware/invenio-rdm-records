@@ -61,7 +61,6 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
   serializeCreatibutor,
   deserializeCreatibutor,
   highlighted,
-  onHighlightEnd,
 }) {
   const dropRef = useRef(null);
   const modalRef = useRef(null);
@@ -108,12 +107,6 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
     }
   }, [mountModal]);
 
-  const handleHighlightAnimationEnd = (event) => {
-    if (event.animationName === "creatibutor-highlight-fade") {
-      onHighlightEnd?.(index);
-    }
-  };
-
   const handleEditClick = () => {
     if (mountModal && modalRef.current) {
       // Already mounted from a previous edit - open directly.
@@ -132,12 +125,11 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
         key={compKey}
         className={[
           "deposit-drag-listitem",
-          hidden && "hidden",
+          hidden && "drag-ghost",
           highlighted && "highlighted",
         ]
           .filter(Boolean)
           .join(" ")}
-        onAnimationEnd={handleHighlightAnimationEnd}
       >
         <List.Content floated="right">
           <Button size="mini" type="button" onClick={() => removeCreatibutor(index)}>
@@ -239,7 +231,6 @@ CreatibutorsFieldItem.propTypes = {
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
   highlighted: PropTypes.bool,
-  onHighlightEnd: PropTypes.func,
 };
 
 CreatibutorsFieldItem.defaultProps = {
@@ -252,5 +243,4 @@ CreatibutorsFieldItem.defaultProps = {
   serializeCreatibutor: undefined,
   deserializeCreatibutor: undefined,
   highlighted: false,
-  onHighlightEnd: undefined,
 };

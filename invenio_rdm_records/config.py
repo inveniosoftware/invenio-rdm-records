@@ -872,21 +872,6 @@ RDM_USER_MODERATION_ENABLED = False
 RDM_RECORDS_MAX_FILES_COUNT = 100
 """Max amount of files allowed to upload in the deposit form."""
 
-RDM_CREATIBUTORS_INLINE_LIST_THRESHOLD = 10
-"""When a author/contributor list exceeds this count, expanded list UI is enabled.
-
-On the record landing page this shows a searchable "show all" modal instead of
-the full inline list. In the deposit form this enables inline search and
-scrolling for authors and contributors.
-"""
-
-RDM_CREATIBUTORS_RENDER_BATCH_SIZE = 20
-"""Number of author/contributor rows rendered per batch in the deposit form.
-
-Each batch is rendered in a separate requestAnimationFrame callback for smoother incremental rendering
-and avoids blocking the main thread during rendering.
-"""
-
 RDM_RECORDS_MAX_MEDIA_FILES_COUNT = 100
 """Max amount of media files allowed to upload in the deposit form."""
 

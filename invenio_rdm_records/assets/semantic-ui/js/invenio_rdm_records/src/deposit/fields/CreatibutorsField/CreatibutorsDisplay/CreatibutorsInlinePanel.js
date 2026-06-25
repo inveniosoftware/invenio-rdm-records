@@ -3,28 +3,29 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Input } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { CreatibutorsList, getCreatibutorDisplayName } from "./CreatibutorsList";
 
+// Normalise a string for diacritic insensitive search: decompose into base chars +
+// combining marks, strip the marks, then lower-case while still matching the literal character.
+const normalizeSearch = (str) =>
+  str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
 const getCreatibutorSchemaLabel = (schema) =>
   schema === "contributors" ? i18next.t("contributors") : i18next.t("authors");
-
-const getScrollEdges = (el) => {
-  const { scrollTop, scrollHeight, clientHeight } = el;
-  return {
-    canScrollUp: scrollTop > 0,
-    canScrollDown: Math.ceil(scrollTop + clientHeight) < scrollHeight,
-  };
-};
 
 export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePanel({
   list,
   keyPrefix,
   schema,
   highlightOnAdd,
+  highlightDuration,
   creatibutorErrors,
   removeCreatibutor,
   replaceCreatibutor,
@@ -41,12 +42,15 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [highlightedIndices, setHighlightedIndices] = useState(() => new Set());
-  const [canScrollUp, setCanScrollUp] = useState(false);
-  const [canScrollDown, setCanScrollDown] = useState(false);
   const [scrollToIndex, setScrollToIndex] = useState(null);
 
   const scrollRef = useRef(null);
+  const wrapperRef = useRef(null);
   const prevLengthRef = useRef(list.length);
+  const highlightTimerRef = useRef(null);
+  // Holds the latest sync function so it can be called when content height changes
+  // without re-registering the scroll listener.
+  const syncScrollEdgesRef = useRef(null);
 
   const type = getCreatibutorSchemaLabel(schema);
 
@@ -62,34 +66,20 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
   );
 
   // Filter using the pre-computed display names (cheap string comparison per keystroke).
-  const query = searchQuery.toLowerCase().trim();
+  // normalizeSearch strips diacritics so "u" matches "ü", etc.
+  const query = normalizeSearch(searchQuery.trim());
   const filteredEntries = useMemo(() => {
     if (!query) return entriesWithDisplayNames;
     return entriesWithDisplayNames.filter(({ displayName }) =>
-      displayName.toLowerCase().includes(query)
+      normalizeSearch(displayName).includes(query)
     );
   }, [entriesWithDisplayNames, query]);
 
   const isScrollable = list.length > scrollThreshold;
 
-  const updateScrollState = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const { canScrollUp, canScrollDown } = getScrollEdges(el);
-    setCanScrollUp(canScrollUp);
-    setCanScrollDown(canScrollDown);
-  }, []);
-
-  const clearHighlight = useCallback((index) => {
-    setHighlightedIndices((prev) => {
-      if (!prev.has(index)) return prev;
-      const next = new Set(prev);
-      next.delete(index);
-      return next;
-    });
-  }, []);
-
-  // When creatibutors are added: clear search, scroll to bottom, highlight new indices.
+  // When creatibutors are added: clear search, scroll to bottom, highlight new rows.
+  // A single timer clears all highlights after the animation completes — no need to
+  // track each index individually via a callback chain.
   useEffect(() => {
     if (!highlightOnAdd || list.length <= prevLengthRef.current) {
       prevLengthRef.current = list.length;
@@ -108,14 +98,59 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
       return next;
     });
 
+    if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
+    highlightTimerRef.current = setTimeout(() => {
+      setHighlightedIndices(new Set());
+      highlightTimerRef.current = null;
+    }, highlightDuration);
+
     setScrollToIndex(list.length - 1);
-  }, [highlightOnAdd, list.length]);
+  }, [highlightOnAdd, list.length, highlightDuration]);
 
-  // Scroll the list container once the new row is in the DOM.
+  // Clean up the highlight timer on unmount.
+  useEffect(
+    () => () => {
+      if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
+    },
+    []
+  );
+
+  // Toggle .can-scroll-up / .can-scroll-down directly
+  // no state handling, so scroll events never trigger re-renders
   useEffect(() => {
-    if (scrollToIndex == null) return;
+    const el = scrollRef.current;
+    const wrapper = wrapperRef.current;
+    if (!el || !wrapper || !isScrollable) {
+      wrapper?.classList.remove("can-scroll-up", "can-scroll-down");
+      syncScrollEdgesRef.current = null;
+      return;
+    }
 
-    if (!isScrollable) {
+    const sync = () => {
+      wrapper.classList.toggle("can-scroll-up", el.scrollTop > 0);
+      wrapper.classList.toggle(
+        "can-scroll-down",
+        el.scrollTop < el.scrollHeight - el.clientHeight - 1
+      );
+    };
+    syncScrollEdgesRef.current = sync;
+
+    sync();
+    el.addEventListener("scroll", sync, { passive: true });
+    return () => {
+      el.removeEventListener("scroll", sync);
+      syncScrollEdgesRef.current = null;
+    };
+  }, [isScrollable]);
+
+  // Resync scroll edges when filtered results change the scroll container's content height.
+  useEffect(() => {
+    syncScrollEdgesRef.current?.();
+  }, [filteredEntries]);
+
+  // Scroll the container once the new row is in the DOM (double rAF ensures layout is ready).
+  useEffect(() => {
+    if (scrollToIndex == null || !isScrollable) {
       setScrollToIndex(null);
       return;
     }
@@ -123,13 +158,8 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
     const el = scrollRef.current;
     if (!el) return;
 
-    const scrollToBottom = () => {
-      el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-      updateScrollState();
-    };
-
     const frameId = requestAnimationFrame(() => {
-      requestAnimationFrame(scrollToBottom);
+      el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
     });
 
     const timeoutId = setTimeout(() => setScrollToIndex(null), 500);
@@ -137,19 +167,7 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
       cancelAnimationFrame(frameId);
       clearTimeout(timeoutId);
     };
-  }, [scrollToIndex, isScrollable, updateScrollState]);
-
-  useEffect(() => {
-    updateScrollState();
-  }, [list.length, filteredEntries.length, updateScrollState]);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el || !isScrollable) return;
-    const observer = new ResizeObserver(() => updateScrollState());
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [isScrollable, updateScrollState]);
+  }, [scrollToIndex, isScrollable]);
 
   const scrollContainerClassName =
     "creatibutors-scroll-container " + (isScrollable ? "scrollable" : "");
@@ -175,8 +193,10 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
         </div>
       )}
 
-      <div className="creatibutors-scroll-wrapper">
-        {isScrollable && canScrollUp && (
+      <div className="creatibutors-scroll-wrapper" ref={wrapperRef}>
+        {/* Scroll-to-top shortcut: always shown when list is scrollable. Clicking when
+            already at the top is a harmless no-op and avoids JS scroll-edge detection. */}
+        {isScrollable && (
           <div className="creatibutors-scroll-fade start">
             <Button
               type="button"
@@ -192,11 +212,7 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
           </div>
         )}
 
-        <div
-          className={scrollContainerClassName}
-          ref={scrollRef}
-          onScroll={updateScrollState}
-        >
+        <div className={scrollContainerClassName} ref={scrollRef}>
           <CreatibutorsList
             entries={filteredEntries}
             keyPrefix={keyPrefix}
@@ -204,7 +220,6 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
             batchSize={batchSize}
             wrapWithDndProvider={false}
             highlightedIndices={highlightedIndices}
-            onHighlightEnd={clearHighlight}
             creatibutorErrors={creatibutorErrors}
             roleOptions={roleOptions}
             schema={schema}
@@ -220,7 +235,8 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
           />
         </div>
 
-        {isScrollable && canScrollDown && (
+        {/* Scroll-to-bottom shortcut: same rationale as scroll-to-top above. */}
+        {isScrollable && (
           <div className="creatibutors-scroll-fade end">
             <Button
               type="button"
@@ -248,6 +264,7 @@ CreatibutorsInlinePanel.propTypes = {
   keyPrefix: PropTypes.string.isRequired,
   schema: PropTypes.oneOf(["creators", "contributors"]).isRequired,
   highlightOnAdd: PropTypes.bool,
+  highlightDuration: PropTypes.number,
   creatibutorErrors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   addLabel: PropTypes.node,
   editLabel: PropTypes.node,
@@ -265,7 +282,8 @@ CreatibutorsInlinePanel.propTypes = {
 
 CreatibutorsInlinePanel.defaultProps = {
   scrollThreshold: 10,
-  batchSize: 20,
+  batchSize: 30,
+  highlightDuration: 2000, // 2 seconds
   highlightOnAdd: true,
   creatibutorErrors: undefined,
   addLabel: undefined,
