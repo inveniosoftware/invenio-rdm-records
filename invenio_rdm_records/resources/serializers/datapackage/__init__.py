@@ -18,5 +18,5 @@ class DataPackageSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=DataPackageSchema,
             list_schema_cls=BaseListSchema,
-            **options
+            **options,
         )
