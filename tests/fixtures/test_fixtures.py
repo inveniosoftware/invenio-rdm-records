@@ -235,9 +235,10 @@ def test_load_communities(app, db, location):
 
     # make sure the right logo was uploaded for community1
     logo = service.read_logo(system_identity, community1_id)
-    with logo.open_stream("rb") as fs1, open(
-        Path(communities.logo_path) / "community1.png", "rb"
-    ) as fs2:
+    with (
+        logo.open_stream("rb") as fs1,
+        open(Path(communities.logo_path) / "community1.png", "rb") as fs2,
+    ):
         assert fs1.read() == fs2.read()
 
     # make sure community2 has no logo
