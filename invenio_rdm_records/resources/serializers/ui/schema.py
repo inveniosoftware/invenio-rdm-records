@@ -97,7 +97,11 @@ def record_version(obj):
     field_data = obj.get("metadata", {}).get("version")
 
     if not field_data:
-        return f"v{obj['versions']['index']}"
+        field_data = obj.get("versions", {}).get("index")
+        if field_data:
+            return f"v{field_data}"
+        # If both metadata.version and versions.index are not available, return None as it is not published yet
+        return None
 
     return field_data
 
