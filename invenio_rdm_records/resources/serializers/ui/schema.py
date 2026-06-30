@@ -94,6 +94,10 @@ def make_affiliation_index(attr, obj, *args):
 
 def record_version(obj):
     """Return record's version."""
+    # For drafts, the ghost_record() method is called.
+    if obj.get("is_draft", False):
+        return None
+
     field_data = obj.get("metadata", {}).get("version")
 
     if not field_data:

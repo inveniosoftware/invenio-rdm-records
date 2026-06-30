@@ -59,7 +59,7 @@ class RDMRecordProxy(RecordProxy):
         Drafts at the moment cannot be resolved, service.read_many() is searching on
         public records, thus the `ghost_record` method will always kick in!
         """
-        return {"id": record}
+        return {"id": record["id"], "is_draft": True}
 
     def pick_resolved_fields(self, identity, resolved_dict):
         """Select which fields to return when resolving the reference."""
