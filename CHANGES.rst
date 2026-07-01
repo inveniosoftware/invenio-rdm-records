@@ -8,6 +8,16 @@
 Changes
 =======
 
+Version v33.1.0 (released 2026-07-01)
+
+- chore(setup): migrate build backend from setuptools to hatchling
+- chore(cleanup): remove outdated and unnecessary files
+- chore(format): reformat with black
+- fix(iiif): logging without reserved filename key
+- fix(ui): use SECURITY_LOGIN_URL in restricted files login link
+- fix(requests): expose record version in expanded topic
+- feat(auditlog): Add audit logs for file create/delete
+
 Version v33.0.0 (released 2026-06-18)
 
 - chore(setup): bump dependencies
