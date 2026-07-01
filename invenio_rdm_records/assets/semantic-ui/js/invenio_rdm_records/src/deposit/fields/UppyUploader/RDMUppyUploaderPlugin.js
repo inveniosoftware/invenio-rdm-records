@@ -218,6 +218,7 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
     try {
       const response = await this.opts.initializeFileUpload(this.draftRecord, file);
       this.uppy.setFileMeta(file.id, {
+        ...file.meta,
         file_id: response.file_id,
         links: response.links,
       });
@@ -321,6 +322,7 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
 
     // Map any links to Uppy file state for further use (e.g. to fetch signed part URLs)
     this.uppy.setFileMeta(file.id, {
+      ...file.meta,
       file_id: response.file_id,
       links: response.links,
     });
@@ -366,6 +368,7 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
 
       file.meta.links = response.links;
       this.uppy.setFileMeta(file.id, {
+        ...file.meta,
         links: response.links,
       });
 
@@ -394,6 +397,9 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
    *  - The default implementation calls out to Companion’s S3 signing endpoints.
    */
   async completeMultipartUpload(file) {
+    if (file.meta?.metadata && Object.keys(file.meta.metadata).length > 0 && this.opts.updateFileMetadata) {
+      await this.opts.updateFileMetadata(this.draftRecord, file);
+    }
     const response = await this.opts.finalizeUpload(file);
     return response.links.content;
   }
