@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component } from "react";
 import { Checkbox } from "semantic-ui-react";
 import { FastField } from "formik";
 import PropTypes from "prop-types";

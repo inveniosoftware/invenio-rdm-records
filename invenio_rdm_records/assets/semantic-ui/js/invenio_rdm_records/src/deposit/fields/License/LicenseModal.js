@@ -9,7 +9,7 @@
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { cloneElement, Component } from "react";
 import { TextAreaField, TextField } from "react-invenio-forms";
 import { OverridableContext } from "react-overridable";
 import {
@@ -116,7 +116,7 @@ export class LicenseModal extends Component {
               this.setMode(mode);
             }}
             open={open}
-            trigger={React.cloneElement(trigger, {
+            trigger={cloneElement(trigger, {
               "aria-expanded": open,
               "aria-haspopup": "dialog",
             })}

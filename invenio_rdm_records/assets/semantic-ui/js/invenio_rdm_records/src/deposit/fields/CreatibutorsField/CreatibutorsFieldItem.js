@@ -8,7 +8,7 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import _get from "lodash/get";
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import { memo, useRef, useState, useEffect, useMemo } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { Button, Label, List, Ref } from "semantic-ui-react";
 import { FeedbackLabel } from "react-invenio-forms";
@@ -37,7 +37,7 @@ export const getCreatibutorDisplayName = (value) => {
   return `${name}${affiliation}`;
 };
 
-export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
+export const CreatibutorsFieldItem = memo(function CreatibutorsFieldItem({
   compKey,
   creatibutorError,
   index,

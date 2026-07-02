@@ -13,7 +13,7 @@ import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
 import _map from "lodash/map";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Grid, Icon, Message, Modal } from "semantic-ui-react";
 import { UploadState } from "../../state/reducers/files";
 import { FileUploaderArea } from "./FileUploaderArea";

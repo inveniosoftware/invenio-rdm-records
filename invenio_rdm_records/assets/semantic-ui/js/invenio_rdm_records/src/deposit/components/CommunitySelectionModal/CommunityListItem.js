@@ -8,7 +8,7 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { get } from "lodash";
 import _capitalize from "lodash/capitalize";
 import PropTypes from "prop-types";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Button, Icon, Label } from "semantic-ui-react";
 import { CommunityCompactItem } from "@js/invenio_communities/community";
 import { CommunityContext } from "./CommunityContext";

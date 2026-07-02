@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState, Component } from "react";
+import { useState, Component } from "react";
 import PropTypes from "prop-types";
 import { withState } from "react-searchkit";
 import { Input } from "semantic-ui-react";

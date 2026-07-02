@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component } from "react";
 import PropTypes from "prop-types";
 import { Button, Popup } from "semantic-ui-react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
