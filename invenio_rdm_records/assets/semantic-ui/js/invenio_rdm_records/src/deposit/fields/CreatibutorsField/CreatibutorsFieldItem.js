@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2020-2025 CERN.
+ * SPDX-FileCopyrightText: 2020-2026 CERN.
  * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
  * SPDX-FileCopyrightText: 2021 New York University.
  * SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
@@ -37,6 +37,12 @@ export const getCreatibutorDisplayName = (value) => {
   return `${name}${affiliation}`;
 };
 
+const renderRole = (role, roleOptions) => {
+  if (!role) return null;
+  const friendlyRole = roleOptions.find(({ value }) => value === role)?.text ?? role;
+  return <Label size="tiny">{friendlyRole}</Label>;
+};
+
 export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
   compKey,
   creatibutorError,
@@ -54,6 +60,7 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
   serializeSuggestions,
   serializeCreatibutor,
   deserializeCreatibutor,
+  highlighted,
 }) {
   const dropRef = useRef(null);
   const modalRef = useRef(null);
@@ -93,6 +100,7 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
     }),
   });
 
+  // After the modal mounts for the first time, open it immediately.
   useEffect(() => {
     if (mountModal && modalRef.current) {
       modalRef.current.openModal();
@@ -101,35 +109,33 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
 
   const handleEditClick = () => {
     if (mountModal && modalRef.current) {
-      // Already mounted from a previous edit – open directly.
+      // Already mounted from a previous edit - open directly.
       modalRef.current.openModal();
     } else {
       // First edit: mount the modal; the effect above will open it.
-      setMountModal(true);
+      setTimeout(() => setMountModal(true), 0);
     }
   };
 
-  const renderRole = (role, roleOptions) => {
-    if (role) {
-      const friendlyRole =
-        roleOptions.find(({ value }) => value === role)?.text ?? role;
-
-      return <Label size="tiny">{friendlyRole}</Label>;
-    }
-  };
-
-  // Initialize the ref explicitly
+  // Initialize the ref explicitely
   drop(dropRef);
   return (
     <Ref innerRef={dropRef} key={compKey}>
       <List.Item
         key={compKey}
-        className={hidden ? "deposit-drag-listitem hidden" : "deposit-drag-listitem"}
+        className={[
+          "deposit-drag-listitem",
+          hidden && "drag-ghost",
+          highlighted && "highlighted",
+        ]
+          .filter(Boolean)
+          .join(" ")}
       >
         <List.Content floated="right">
           <Button size="mini" type="button" onClick={() => removeCreatibutor(index)}>
             {i18next.t("Remove")}
           </Button>
+          {/* Edit button mounts the modal lazily on first click. */}
           <Button size="mini" primary type="button" onClick={handleEditClick}>
             {i18next.t("Edit")}
           </Button>
@@ -146,6 +152,7 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
               schema={schema}
               autocompleteNames={autocompleteNames}
               action="edit"
+              trigger={null}
               serializeSuggestions={serializeSuggestions}
               serializeCreatibutor={serializeCreatibutor}
               deserializeCreatibutor={deserializeCreatibutor}
@@ -192,7 +199,7 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
                     height="16"
                   />
                 )}
-                {displayName || creatibutorDisplayName}
+                {displayName || creatibutorDisplayName}{" "}
                 {renderRole(initialCreatibutor?.role, roleOptions)}
               </span>
             </List.Description>
@@ -223,6 +230,7 @@ CreatibutorsFieldItem.propTypes = {
   serializeSuggestions: PropTypes.func,
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
+  highlighted: PropTypes.bool,
 };
 
 CreatibutorsFieldItem.defaultProps = {
@@ -234,4 +242,5 @@ CreatibutorsFieldItem.defaultProps = {
   serializeSuggestions: undefined,
   serializeCreatibutor: undefined,
   deserializeCreatibutor: undefined,
+  highlighted: false,
 };
