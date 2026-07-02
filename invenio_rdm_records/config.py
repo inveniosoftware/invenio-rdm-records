@@ -958,3 +958,6 @@ RDM_RECORDS_CONTAINER_EXTENSIONS = [".zip"]
 Experimental, this config can later be removed."""
 
 RDM_RECORD_FILE_EXTRACTORS = [ZipExtractor()]
+
+NOTIFICATIONS_SHOW_EMOJIS = True
+"""Whether to show emojis in notification email subject lines."""
