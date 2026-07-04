@@ -24,7 +24,6 @@ classifiers = [
   "Development Status :: 5 - Production/Stable",
 ]
 dependencies = [
-  "arrow>=0.17.0",
   "babel-edtf>=1.2.0",
   "citeproc-py>=0.6.0",
   "citeproc-py-styles>=0.1.2,<1.0.0",
@@ -48,6 +47,7 @@ dependencies = [
   "invenio-stats>=7.0.0,<8.0.0",
   "invenio-vocabularies>=14.0.0,<15.0.0",
   "nameparser>=1.1.1",
+  "pendulum>=3.2.0",
   "pycountry>=22.3.5",
   "pydash>=6.0.0,<7.0.0",
   "python-slugify>=8.0.1",
