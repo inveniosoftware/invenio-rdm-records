@@ -21,6 +21,20 @@ from invenio_rdm_records.resources.serializers.csl import get_citation_string
 from invenio_rdm_records.resources.serializers.csl.schema import CSLJSONSchema
 
 
+def test_string_citation_serializer(running_app, full_record_to_dict):
+    serializer = StringCitationSerializer(
+        url_args_retriever=("modern-language-association", "en-US")
+    )
+
+    result = serializer.serialize_object(full_record_to_dict)
+
+    expected = (
+        "Nielsen, L. H.and B. Tom. InvenioRDM. Version v1.0, InvenioRDM, 2018–Sept. 2020, "
+        "https://handle.test.datacite.org/10.1234/inveniordm.1234."
+    )
+    assert expected == result
+
+
 def test_csl_json_serializer(running_app, full_record_to_dict):
     """Test JSON CLS Serializer."""
     # if the record is created this field will be present
