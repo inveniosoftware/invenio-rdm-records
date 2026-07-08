@@ -18,7 +18,11 @@ import marshmallow as ma
 import requests
 from flask import Response, current_app, g, request, send_file
 from flask_cors import cross_origin
-from flask_iiif.errors import MultimediaImageNotFound
+from flask_iiif.errors import (
+    MultimediaError,
+    MultimediaImageFormatError,
+    MultimediaImageNotFound,
+)
 from flask_resources import (
     HTTPJSONException,
     JSONSerializer,
@@ -115,6 +119,20 @@ class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
         ),
         IdentifierShapeException: create_error_handler(
             lambda e: HTTPJSONException(code=400, description=e.description)
+        ),
+        MultimediaImageFormatError: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=400,
+                description=_(
+                    # Once Flask-IIIF has translations, we can simply use `e.message` here
+                    "%(requested_format)s is not supported, please select one of the valid formats: %(supported_formats)s",
+                    requested_format=e.requested_format,
+                    supported_formats=e.supported_formats,
+                ),
+            )
+        ),
+        MultimediaError: create_error_handler(
+            lambda e: HTTPJSONException(code=400, message=e.message)
         ),
     }
 
