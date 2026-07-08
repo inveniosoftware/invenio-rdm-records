@@ -8,6 +8,15 @@
 Changes
 =======
 
+Version v33.2.0 (released 2026-07-09)
+
+- feat(ui): make NewVersionButton overridable
+- fix(checks): Removed redundant check
+- fix(checks): resolve section labels
+- fix(entity_resolvers): Fix ghost_record for drafts on submission
+- tests: update citation string for csl 1.0.2
+- fix(citation): use harvard-cite-them-right and setup _extras in tests
+
 Version v33.1.0 (released 2026-07-01)
 
 - chore(setup): migrate build backend from setuptools to hatchling
