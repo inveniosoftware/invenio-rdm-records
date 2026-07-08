@@ -53,6 +53,18 @@ def full_modified_record(full_record_to_dict):
 
 
 @pytest.fixture
+def full_record_with_journal(full_record_to_dict):
+    full_record_to_dict["custom_fields"]["journal:journa"] = {
+            "title": "Astronomy & Astrophysics",
+            "volume": "678",
+            "issue": "10",
+            "pages": "A149",
+            "issn": "0004-6361",
+    }
+    return full_record_to_dict
+
+
+@pytest.fixture
 def full_geolocation_box_record(full_record_to_dict):
     full_record_to_dict["metadata"]["locations"]["features"] = [
         {
@@ -578,5 +590,162 @@ def test_datacite47_serializer_empty_record(running_app, empty_record):
 
     serializer = DataCite47JSONSerializer()
     serialized_record = serializer.dump_obj(empty_record)
+
+    assert serialized_record == expected_data
+
+
+def test_datacite47_journal_serializer(running_app, full_record_with_journal):
+    """Test journal serializer to DataCite 4.7 JSON"""
+
+    expected_data = {
+        "doi": "10.1234/12345-abcde",
+        "contributors": [
+            {
+                "affiliation": [{"name": "CERN"}, {"name": "TU Wien"}],
+                "contributorType": "Other",
+                "familyName": "Nielsen",
+                "givenName": "Lars Holm",
+                "name": "Nielsen, Lars Holm",
+                "nameIdentifiers": [
+                    {
+                        "nameIdentifier": "0000-0001-8135-3489",
+                        "nameIdentifierScheme": "ORCID",
+                    }
+                ],
+                "nameType": "Personal",
+            },
+            {
+                "contributorType": "Other",
+                "familyName": "Dirk",
+                "givenName": "Dirkin",
+                "name": "Dirk, Dirkin",
+                "nameIdentifiers": [],
+                "nameType": "Personal",
+            },
+        ],
+        "creators": [
+            {
+                "affiliation": [{"name": "CERN"}, {"name": "free-text"}],
+                "familyName": "Nielsen",
+                "givenName": "Lars Holm",
+                "name": "Nielsen, Lars Holm",
+                "nameIdentifiers": [
+                    {
+                        "nameIdentifier": "0000-0001-8135-3489",
+                        "nameIdentifierScheme": "ORCID",
+                    }
+                ],
+                "nameType": "Personal",
+            },
+            {
+                "familyName": "Tom",
+                "givenName": "Blabin",
+                "name": "Tom, Blabin",
+                "nameIdentifiers": [],
+                "nameType": "Personal",
+            },
+        ],
+        "dates": [
+            {"date": "2018/2020-09", "dateType": "Issued"},
+            {"date": "1939/1945", "dateInformation": "A date", "dateType": "Other"},
+            {"date": "2023-11-14", "dateType": "Updated"},
+        ],
+        "descriptions": [
+            {
+                "description": "A description \nwith HTML tags",
+                "descriptionType": "Abstract",
+            },
+            {"description": "Bla bla bla", "descriptionType": "Methods", "lang": "eng"},
+        ],
+        "formats": ["application/pdf"],
+        "fundingReferences": [
+            {
+                "awardNumber": "111023",
+                "awardTitle": "Launching of the research program on meaning processing",
+                "awardURI": "https://sandbox.zenodo.org/",
+                "funderIdentifier": "00k4n6c32",
+                "funderIdentifierType": "ROR",
+                "funderName": "European Commission",
+            },
+            {
+                "funderName": "Caltech Library",
+            },
+        ],
+        "geoLocations": [
+            {
+                "geoLocationPlace": "test location place",
+                "geoLocationPoint": {
+                    "pointLatitude": "-60.63932",
+                    "pointLongitude": "-32.94682",
+                },
+            }
+        ],
+        "alternateIdentifiers": [
+            {
+                "alternateIdentifier": "https://127.0.0.1:5000/records/12345-abcde",
+                "alternateIdentifierType": "URL",
+            },
+            {
+                "alternateIdentifier": "oai:invenio-rdm.com:12345-abcde",
+                "alternateIdentifierType": "oai",
+            },
+            {
+                "alternateIdentifier": "1924MNRAS..84..308E",
+                "alternateIdentifierType": "bibcode",
+            },
+        ],
+        "language": "dan",
+        "publicationYear": "2018",
+        "publisher": {"name": "InvenioRDM"},
+        "relatedIdentifiers": [
+            {
+                "relatedIdentifier": "10.1234/foo.bar",
+                "relatedIdentifierType": "DOI",
+                "relationType": "IsCitedBy",
+                "resourceTypeGeneral": "Dataset",
+                "relationTypeInformation": "A very important citation",
+            },
+            {
+                "relatedIdentifier": "10.1234/pgfpj-at058",
+                "relatedIdentifierType": "DOI",
+                "relationType": "IsVersionOf",
+            },
+        ],
+        "rightsList": [
+            {
+                "rights": "A custom license",
+                "rightsUri": "https://customlicense.org/licenses/by/4.0/",
+            },
+            {
+                "rights": "Creative Commons Attribution 4.0 International",
+                "rightsIdentifier": "cc-by-4.0",
+                "rightsIdentifierScheme": "spdx",
+                "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
+            },
+        ],
+        "schemaVersion": "http://datacite.org/schema/kernel-4",
+        "sizes": ["11 pages"],
+        "subjects": [
+            {
+                "subject": "Abdominal Injuries",
+                "subjectScheme": "MeSH",
+                "valueURI": "http://id.nlm.nih.gov/mesh/A-D000007",
+            },
+            {"subject": "custom"},
+        ],
+        "titles": [
+            {"title": "InvenioRDM"},
+            {
+                "lang": "eng",
+                "title": "a research data management platform",
+                "titleType": "Subtitle",
+            },
+        ],
+        "types": {"resourceType": "Photo", "resourceTypeGeneral": "Image"},
+        "version": "v1.0",
+    }
+
+    serializer = DataCite47JSONSerializer()
+    serialized_record = serializer.dump_obj(full_record_with_journal)
 
     assert serialized_record == expected_data
