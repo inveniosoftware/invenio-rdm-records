@@ -80,11 +80,11 @@ class StringCitationSerializer(MarshmallowSerializer):
     we need a CSL-JSON serialized version of it.
     """
 
-    _default_style = "harvard1"
+    _default_style = "harvard-cite-them-right"
     """The `citeproc-py` library supports by default the 'harvard1' style."""
 
     _default_locale = "en-US"
-    """The `citeproc-py` library supports by default the 'harvard1' style."""
+    """The `citeproc-py` library supports by default the 'en-US' locale."""
 
     _user_args = {
         "style": fields.Str(load_default=_default_style),
