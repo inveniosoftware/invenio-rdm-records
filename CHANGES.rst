@@ -5,6 +5,7 @@
     Copyright (C) 2019-2024 Northwestern University.
     Copyright (C) 2024      KTH Royal Institute of Technology.
     Copyright (C) 2024-2025 Graz University of Technology.
+    Copyright (C) 2026      TU Wien.
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
     modify it under the terms of the MIT License; see LICENSE file for more
@@ -12,6 +13,15 @@
 
 Changes
 =======
+
+Version v20.3.1 (released 2026-07-10)
+
+- fix(iiif): add handlers for more possible IIIF errors
+- fix(doi link): show appropriate DOI link in test(any) environment
+- fix(citation): use harvard-cite-them-right and setup _extras in tests
+- tests: update citation string for csl 1.0.2
+- fix(iiif): validate expected shape of identifiers
+- fix(tests): add tests for invalid identifiers in IIIF endpoints
 
 Version v20.3.0 (released 2026-04-16)
 
