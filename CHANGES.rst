@@ -8,6 +8,16 @@
 Changes
 =======
 
+Version v32.0.2 (released 2026-07-09)
+
+- fix(iiif): add handlers for more possible IIIF errors
+- fix(iiif): validate expected shape of identifiers
+- fix(tests): add tests for invalid identifiers in IIIF endpoints
+- fix(citation): use harvard-cite-them-right and setup _extras in tests
+- tests: update citation string for csl 1.0.2
+- fix(checks): resolve section labels
+- fix(checks): Removed redundant check
+
 Version v32.0.1 (released 2026-06-12)
 
 - fix(get_record_requests): allow anonymous users to access landing page
