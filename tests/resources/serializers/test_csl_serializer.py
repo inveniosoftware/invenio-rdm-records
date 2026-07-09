@@ -82,9 +82,11 @@ def test_citation_string_serializer_records_list(
     for _ in range(3):
         draft = service.create(superuser_identity, minimal_record)
         record = service.publish(superuser_identity, draft.id)
+        dumped = CSLJSONSchema().dump(record)
+        dumped["_extras"] = {"links": record.links}
 
         expected_record_data = get_citation_string(
-            CSLJSONSchema().dump(record),
+            dumped,
             record.id,
             locale=default_locale,
             style=get_style_filepath(default_style),
@@ -148,8 +150,10 @@ def test_citation_string_serializer_record(
 
         if expected_status == 200:
             assert response.headers["content-type"] == "text/plain"
+            dumped = CSLJSONSchema().dump(record)
+            dumped["_extras"] = {"links": record.links}
             expected_data = get_citation_string(
-                CSLJSONSchema().dump(record),
+                dumped,
                 _id,
                 locale=expected_locale,
                 style=get_style_filepath(expected_style),
