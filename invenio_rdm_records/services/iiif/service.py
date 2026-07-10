@@ -13,12 +13,15 @@ import importlib.metadata as metadata
 import io
 
 from flask_iiif.api import IIIFImageAPIWrapper
+from flask_iiif.errors import MultimediaError
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services import Service
 
 from ..errors import IdentifierShapeException
 
 try:
     metadata.distribution("wand")
+    from wand.exceptions import DelegateError
     from wand.image import Image
 
     HAS_IMAGEMAGICK = True
@@ -117,13 +120,24 @@ class IIIFService(Service):
             fp.close()
             return first_page_buf
         elif HAS_IMAGEMAGICK:
-            first_page = Image(blob=fp)
-            first_page_buf = io.BytesIO()
-            with first_page.convert(format="png") as converted:
-                converted.save(file=first_page_buf)
-            first_page_buf.seek(0)
-            fp.close()
-            return first_page_buf
+            try:
+                first_page = Image(blob=fp)
+                first_page_buf = io.BytesIO()
+                with first_page.convert(format="png") as converted:
+                    converted.save(file=first_page_buf)
+                first_page_buf.seek(0)
+                fp.close()
+                return first_page_buf
+
+            except DelegateError as e:
+                # This can happen with unsupported file types; e.g. it has been observed
+                # with PDF files
+                raise MultimediaError(
+                    _(
+                        "The requested file cannot be transformed into PNG: %(filename)s",
+                        filename=file_["key"],
+                    )
+                )
 
         return fp
 
