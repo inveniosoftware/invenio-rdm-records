@@ -132,7 +132,7 @@ class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
             )
         ),
         MultimediaError: create_error_handler(
-            lambda e: HTTPJSONException(code=400, message=e.message)
+            lambda e: HTTPJSONException(code=400, description=e.message)
         ),
     }
 
