@@ -11,7 +11,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from io import BytesIO
 
-import arrow
+import pendulum
 import pytest
 from invenio_accounts.testutils import login_user_via_session
 from invenio_requests import current_requests_service
@@ -52,8 +52,8 @@ def _validate_access(response, original):
         assert "embargo" in access
         embargo, orig_embargo = access["embargo"], orig_access["embargo"]
 
-        until = arrow.get(embargo["until"]).datetime
-        orig_until = arrow.get(orig_embargo["until"]).datetime
+        until = pendulum.parse(embargo["until"])
+        orig_until = pendulum.parse(orig_embargo["until"])
         assert until.isoformat() == orig_until.isoformat()
 
         if embargo.get("reason"):
