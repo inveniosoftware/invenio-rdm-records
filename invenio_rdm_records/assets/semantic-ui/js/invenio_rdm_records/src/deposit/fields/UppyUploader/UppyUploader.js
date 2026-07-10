@@ -12,7 +12,7 @@ import ImageEditor from "@uppy/image-editor";
 import { useFormikContext } from "formik";
 import _get from "lodash/get";
 import PropTypes from "prop-types";
-import { Grid, Message, Icon, Button } from "semantic-ui-react";
+import { Button, Dimmer, Grid, Icon, Message } from "semantic-ui-react";
 import Overridable from "react-overridable";
 import RDMUppyUploaderPlugin from "./RDMUppyUploaderPlugin";
 import { NewVersionButton } from "../../controls/NewVersionButton";
@@ -22,6 +22,7 @@ import { getFilesList, FilesListTable, FileUploaderToolbar } from "../FileUpload
 import { QuotaManager } from "../FileUploader/QuotaManager/QuotaManager";
 import { useQuotaManager } from "../FileUploader/QuotaManager/useQuotaManager";
 import { useUppyLocale } from "./locale";
+import { humanReadableBytes } from "react-invenio-forms";
 
 const defaultDashboardProps = {
   showRemoveButtonAfterComplete: false,
@@ -71,6 +72,68 @@ const createDuplicateFileChecker = (uppy, filesList) => {
   };
 };
 
+export const createFileValidator = (
+  uppy,
+  filesList,
+  filesSize,
+  quota,
+  decimalSizeDisplay
+) => {
+  const duplicateFileChecker = createDuplicateFileChecker(uppy, filesList);
+
+  return (file, files) => {
+    const uppyFilesSize = Object.values(files).reduce(
+      (totalSize, uppyFile) => (totalSize += uppyFile.size),
+      0
+    );
+    const wouldBeTotalFiles = filesList.length + Object.keys(files).length + 1;
+    const wouldBeTotalSize = filesSize + uppyFilesSize + file.size;
+
+    if (wouldBeTotalFiles > quota.maxFiles) {
+      uppy.info(
+        i18next.t(
+          "Uploading this file would result in {{total}} files (max. {{maxFiles}}).",
+          {
+            total: wouldBeTotalFiles,
+            maxFiles: quota.maxFiles,
+          }
+        ),
+        "warning"
+      );
+      return false;
+    }
+
+    if (wouldBeTotalSize > quota.maxStorage) {
+      uppy.info(
+        i18next.t(
+          "Uploading this file would result in {{total}} of used storage (max. {{limit}}).",
+          {
+            total: humanReadableBytes(wouldBeTotalSize, decimalSizeDisplay),
+            limit: humanReadableBytes(quota.maxStorage, decimalSizeDisplay),
+          }
+        ),
+        "warning"
+      );
+      return false;
+    }
+
+    if (quota.maxFileSize && file.size > quota.maxFileSize) {
+      uppy.info(
+        i18next.t(
+          "Uploading this file would exceed the maximum file size of {{limit}}.",
+          {
+            limit: humanReadableBytes(quota.maxFileSize, decimalSizeDisplay),
+          }
+        ),
+        "warning"
+      );
+      return false;
+    }
+
+    return duplicateFileChecker(file, files);
+  };
+};
+
 export const UppyUploaderComponent = ({
   config,
   files,
@@ -111,6 +174,7 @@ export const UppyUploaderComponent = ({
   } = useQuotaManager(quota, filesSize);
   const lockFileUploader = !isDraftRecord && filesLocked;
   const filesLeft = filesList.length < quota.maxFiles;
+  const storageLeft = filesSize < quota.maxStorage;
   const displayImportBtn =
     filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
 
@@ -130,8 +194,9 @@ export const UppyUploaderComponent = ({
   const restrictions = React.useMemo(
     () => ({
       minFileSize: allowEmptyFiles ? 0 : 1,
-      maxNumberOfFiles: quota.maxFiles - filesList.length,
-      maxTotalFileSize: quota.maxStorage - filesSize,
+      maxNumberOfFiles: Math.max(0, quota.maxFiles - filesList.length),
+      maxTotalFileSize: Math.max(0, quota.maxStorage - filesSize),
+      maxFileSize: quota.maxFileSize,
     }),
     [allowEmptyFiles, quota, filesList, filesSize]
   );
@@ -173,9 +238,8 @@ export const UppyUploaderComponent = ({
   }, [uppy]);
 
   React.useEffect(() => {
-    const onBeforeFileAdded = createDuplicateFileChecker(uppy, filesList);
-    uppy.setOptions({ onBeforeFileAdded });
-  }, [uppy, filesList]);
+    uppy.setOptions({ restrictions });
+  }, [uppy, restrictions]);
 
   React.useEffect(() => {
     const uploaderPlugin = uppy.getPlugin("RDMUppyUploaderPlugin");
@@ -191,16 +255,32 @@ export const UppyUploaderComponent = ({
   }, [uppy, locale]);
 
   React.useEffect(() => {
-    uppy.setOptions({ restrictions });
-  }, [uppy, restrictions]);
+    uppy.setOptions({
+      onBeforeFileAdded: createFileValidator(
+        uppy,
+        filesList,
+        filesSize,
+        quota,
+        decimalSizeDisplay
+      ),
+    });
+  }, [uppy, filesList, filesSize, quota, decimalSizeDisplay]);
 
+  const [uppyHasFiles, setUppyHasFiles] = useState(false);
   React.useEffect(() => {
-    const dashboardPlugin = uppy.getPlugin("uppy-uploader-dashboard");
-    if (!dashboardPlugin) {
-      return;
-    }
-    dashboardPlugin.setOptions({ disabled: !filesLeft });
-  }, [uppy, filesLeft]);
+    const update = () =>
+      setUppyHasFiles(Object.keys(uppy.getState().files || {}).length > 0);
+    uppy.on("file-added", update);
+    uppy.on("file-removed", update);
+    update();
+    return () => {
+      uppy.off("file-added", update);
+      uppy.off("file-removed", update);
+    };
+  }, [uppy]);
+
+  const showQuotaOverlay =
+    (!filesLeft || !storageLeft) && !lockFileUploader && !uppyHasFiles;
 
   return (
     <Overridable
@@ -319,19 +399,36 @@ export const UppyUploaderComponent = ({
                   </Grid.Column>
                 )}
                 {!(!isDraftRecord && filesLocked) && (
-                  <Dashboard
-                    style={{ width: "100%" }}
-                    uppy={uppy}
-                    id="uppy-uploader-dashboard"
-                    disabled={!filesLeft || lockFileUploader}
-                    // `null` means "do not display a Done button in a status bar"
-                    doneButtonHandler={null}
-                    note={i18next.t(
-                      "File addition, removal or modification are not allowed after you have published your upload."
+                  <div
+                    inert={showQuotaOverlay ? "" : undefined}
+                    style={{ position: "relative", width: "100%", zIndex: 0 }}
+                  >
+                    <Dashboard
+                      style={{ width: "100%" }}
+                      uppy={uppy}
+                      id="uppy-uploader-dashboard"
+                      disabled={lockFileUploader}
+                      // `null` means "do not display a Done button in a status bar"
+                      doneButtonHandler={null}
+                      note={i18next.t(
+                        "File addition, removal or modification are not allowed after you have published your upload."
+                      )}
+                      {...defaultDashboardProps}
+                      {...uiProps}
+                    />
+                    {showQuotaOverlay && (
+                      <Dimmer active style={{ cursor: "not-allowed" }}>
+                        <Message compact icon inverted>
+                          <Icon name="ban" />
+                          <Message.Content>
+                            {i18next.t(
+                              "The file quota has been reached. No more files can be uploaded."
+                            )}
+                          </Message.Content>
+                        </Message>
+                      </Dimmer>
                     )}
-                    {...defaultDashboardProps}
-                    {...uiProps}
-                  />
+                  </div>
                 )}
               </Grid.Column>
             </Grid.Row>
@@ -394,6 +491,7 @@ UppyUploaderComponent.propTypes = {
   quota: PropTypes.shape({
     maxStorage: PropTypes.number,
     maxFiles: PropTypes.number,
+    maxFileSize: PropTypes.number,
   }),
   record: PropTypes.object,
   importButtonIcon: PropTypes.string,
@@ -424,6 +522,7 @@ UppyUploaderComponent.defaultProps = {
   quota: {
     maxFiles: 5,
     maxStorage: 10 ** 10,
+    maxFileSize: undefined,
   },
   importButtonIcon: "sync",
   importButtonText: i18next.t("Import files"),
