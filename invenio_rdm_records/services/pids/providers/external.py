@@ -33,12 +33,12 @@ class BlockedPrefixes:
                 _prefixes += list(val.values())
             else:
                 _prefixes += val
-        return _prefixes + self._prefixes
+        return [prefix for prefix in _prefixes + self._prefixes if prefix]
 
     def __call__(self, record, identifier, provider, errors):
         """Validator call."""
         for p in self.prefixes:
-            if identifier.startswith(p):
+            if p and identifier.startswith(p):
                 errors.append(
                     _(
                         "The prefix '%(prefix)s' is managed by %(sitename)s. Please supply an external DOI or select 'No' to have a DOI generated for you.",
