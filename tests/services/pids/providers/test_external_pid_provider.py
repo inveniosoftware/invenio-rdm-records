@@ -6,8 +6,8 @@
 """External provider tests."""
 
 import pytest
-from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from flask import current_app
+from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 
 from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.services.pids.providers import (
