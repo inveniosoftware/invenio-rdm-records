@@ -9,7 +9,7 @@
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { cloneElement, Component } from "react";
 import { TextAreaField, TextField } from "react-invenio-forms";
 import { OverridableContext } from "react-overridable";
 import {
@@ -49,47 +49,33 @@ const LicenseSchema = Yup.object().shape({
   }),
 });
 
-export class LicenseModal extends Component {
-  state = {
-    open: false,
-    mode: ModalTypes.STANDARD,
-  };
+export function LicenseModal({onLicenseChange, mode, trigger, action, searchConfig, serializeLicenses = undefined, initialLicense = undefined}) {
+  const [mode, setMode] = React.useState(null);
 
-  openModal = () => {
+  const openModal = () => {
     this.setState({ open: true });
   };
 
-  closeModal = () => {
+  const closeModal = () => {
     this.setState({ open: false });
   };
 
-  setMode = (mode) => {
-    this.setState({ mode: mode });
+  const setMode = (mode) => {
+    setMode(mode);
   };
 
-  onSubmit = (values, formikBag) => {
+  const onSubmit = (values, formikBag) => {
     // We have to close the modal first because onLicenseChange and passing
     // license as an object makes React get rid of this component. Otherwise
     // we get a memory leak warning.
     const { onLicenseChange } = this.props;
-    this.closeModal();
-    this.setMode(this.mode);
+    closeModal();
+    setMode(mode);
     onLicenseChange(values.selectedLicense);
     formikBag.resetForm();
   };
 
-  render() {
-    const {
-      mode,
-      trigger,
-      action,
-      searchConfig,
-      serializeLicenses,
-      initialLicense: initialLicenseProp,
-    } = this.props;
-    const { open, mode: modeState } = this.state;
-
-    const initialLicense = initialLicenseProp || {
+  const initialLicense = initialLicenseProp || {
       title: "",
       description: "",
       id: null,
@@ -102,7 +88,7 @@ export class LicenseModal extends Component {
         initialValues={{
           selectedLicense: initialLicense,
         }}
-        onSubmit={this.onSubmit}
+        onSubmit={onSubmit}
         validationSchema={LicenseSchema}
         validateOnChange={false}
         validateOnBlur={false}
@@ -112,18 +98,18 @@ export class LicenseModal extends Component {
             role="dialog"
             centered={false}
             onOpen={() => {
-              this.openModal();
-              this.setMode(mode);
+              openModal();
+              setMode(mode);
             }}
             open={open}
-            trigger={React.cloneElement(trigger, {
+            trigger={cloneElement(trigger, {
               "aria-expanded": open,
               "aria-haspopup": "dialog",
             })}
             onClose={() => {
               resetForm();
-              this.setMode(ModalTypes.STANDARD);
-              this.closeModal();
+              setMode(ModalTypes.STANDARD);
+              closeModal();
             }}
             closeIcon
             closeOnDimmerClick={false}
@@ -207,7 +193,7 @@ export class LicenseModal extends Component {
                           <NoLicenseResults
                             switchToCustom={() => {
                               resetForm();
-                              this.setMode(ModalTypes.CUSTOM);
+                              setMode(ModalTypes.CUSTOM);
                             }}
                           />
                         </Grid.Column>
@@ -241,8 +227,8 @@ export class LicenseModal extends Component {
                 name="cancel"
                 onClick={() => {
                   resetForm();
-                  this.setMode(mode);
-                  this.closeModal();
+                  setMode(mode);
+                  closeModal();
                 }}
                 icon="remove"
                 content={i18next.t("Cancel")}
@@ -264,7 +250,6 @@ export class LicenseModal extends Component {
         )}
       </Formik>
     );
-  }
 }
 
 LicenseModal.propTypes = {
@@ -290,7 +275,3 @@ LicenseModal.propTypes = {
   serializeLicenses: PropTypes.func,
 };
 
-LicenseModal.defaultProps = {
-  initialLicense: undefined,
-  serializeLicenses: undefined,
-};

@@ -101,6 +101,7 @@ RDM_RECORDS_IDENTIFIERS_SCHEMES = {
     "ean13": {"label": _("EAN13"), "validator": idutils.is_ean13, "datacite": "EAN13"},
     "eissn": {"label": _("EISSN"), "validator": idutils.is_issn, "datacite": "EISSN"},
     "grid": {"label": _("GRID"), "validator": always_valid, "datacite": "GRID"},
+    "hal": {"label": _("HAL"), "validator": idutils.is_hal, "datacite": "Other"},
     "handle": {
         "label": _("Handle"),
         "validator": idutils.is_handle,

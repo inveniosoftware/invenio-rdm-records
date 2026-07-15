@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component } from "react";
 import PropTypes from "prop-types";
 import { Button, Form } from "semantic-ui-react";
 import {
@@ -21,12 +21,8 @@ import { emptyAdditionalTitle } from "./initialValues";
 import { LanguagesField } from "../LanguagesField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-class AdditionalTitlesFieldComponent extends Component {
-  render() {
-    const { fieldPath, options, recordUI, helpText, addButtonLabel, optimized } =
-      this.props;
-
-    return (
+function AdditionalTitlesFieldComponent({fieldPath, options = undefined, recordUI = undefined, helpText, addButtonLabel = i18next.t("Add titles"), optimized = true}) {
+  return (
       <ArrayField
         addButtonLabel={addButtonLabel}
         helpText={helpText}
@@ -90,7 +86,6 @@ class AdditionalTitlesFieldComponent extends Component {
         }}
       </ArrayField>
     );
-  }
 }
 
 AdditionalTitlesFieldComponent.propTypes = {
@@ -113,13 +108,6 @@ AdditionalTitlesFieldComponent.propTypes = {
   addButtonLabel: PropTypes.string,
   optimized: PropTypes.bool,
   ...fieldCommonProps,
-};
-
-AdditionalTitlesFieldComponent.defaultProps = {
-  options: undefined,
-  recordUI: undefined,
-  addButtonLabel: i18next.t("Add titles"),
-  optimized: true,
 };
 
 export const AdditionalTitlesField = showHideOverridable(

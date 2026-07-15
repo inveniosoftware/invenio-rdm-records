@@ -8,9 +8,9 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import _get from "lodash/get";
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import { memo, useRef, useState, useEffect, useMemo } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import { Button, Label, List, Ref } from "semantic-ui-react";
+import { Button, Label, List } from "semantic-ui-react";
 import { FeedbackLabel } from "react-invenio-forms";
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import { CREATIBUTOR_TYPE } from "./type";
@@ -37,23 +37,23 @@ export const getCreatibutorDisplayName = (value) => {
   return `${name}${affiliation}`;
 };
 
-export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
+export const CreatibutorsFieldItem = memo(function CreatibutorsFieldItem({
   compKey,
-  creatibutorError,
+  creatibutorError = undefined,
   index,
   replaceCreatibutor,
   removeCreatibutor,
   moveCreatibutor,
-  addLabel,
-  editLabel,
+  addLabel = undefined,
+  editLabel = undefined,
   initialCreatibutor,
-  displayName,
+  displayName = undefined,
   roleOptions,
   schema,
-  autocompleteNames,
-  serializeSuggestions,
-  serializeCreatibutor,
-  deserializeCreatibutor,
+  autocompleteNames = undefined,
+  serializeSuggestions = undefined,
+  serializeCreatibutor = undefined,
+  deserializeCreatibutor = undefined,
 }) {
   const dropRef = useRef(null);
   const modalRef = useRef(null);
@@ -121,88 +121,81 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
   // Initialize the ref explicitly
   drop(dropRef);
   return (
-    <Ref innerRef={dropRef} key={compKey}>
-      <List.Item
-        key={compKey}
-        className={hidden ? "deposit-drag-listitem hidden" : "deposit-drag-listitem"}
-      >
-        <List.Content floated="right">
-          <Button size="mini" type="button" onClick={() => removeCreatibutor(index)}>
-            {i18next.t("Remove")}
-          </Button>
-          <Button size="mini" primary type="button" onClick={handleEditClick}>
-            {i18next.t("Edit")}
-          </Button>
-          {mountModal && (
-            <CreatibutorsModal
-              ref={modalRef}
-              addLabel={addLabel}
-              editLabel={editLabel}
-              onCreatibutorChange={(selectedCreatibutor) => {
-                replaceCreatibutor(index, selectedCreatibutor);
-              }}
-              initialCreatibutor={initialCreatibutor}
-              roleOptions={roleOptions}
-              schema={schema}
-              autocompleteNames={autocompleteNames}
-              action="edit"
-              serializeSuggestions={serializeSuggestions}
-              serializeCreatibutor={serializeCreatibutor}
-              deserializeCreatibutor={deserializeCreatibutor}
-            />
-          )}
-        </List.Content>
-        <Ref innerRef={drag}>
-          <List.Icon name="bars" className="drag-anchor" />
-        </Ref>
-        <Ref innerRef={preview}>
-          <List.Content>
-            <List.Description>
-              <span className="creatibutor">
-                {_get(initialCreatibutor, "person_or_org.identifiers", []).some(
-                  (identifier) => identifier.scheme === "orcid"
-                ) && (
-                  <img
-                    alt={i18next.t("ORCID logo")}
-                    className="inline-id-icon mr-5"
-                    src="/static/images/orcid.svg"
-                    width="16"
-                    height="16"
-                  />
-                )}
-                {_get(initialCreatibutor, "person_or_org.identifiers", []).some(
-                  (identifier) => identifier.scheme === "ror"
-                ) && (
-                  <img
-                    alt={i18next.t("ROR logo")}
-                    className="inline-id-icon mr-5"
-                    src="/static/images/ror-icon.svg"
-                    width="16"
-                    height="16"
-                  />
-                )}
-                {_get(initialCreatibutor, "person_or_org.identifiers", []).some(
-                  (identifier) => identifier.scheme === "gnd"
-                ) && (
-                  <img
-                    alt={i18next.t("GND logo")}
-                    className="inline-id-icon mr-5"
-                    src="/static/images/gnd-icon.svg"
-                    width="16"
-                    height="16"
-                  />
-                )}
-                {displayName || creatibutorDisplayName}
-                {renderRole(initialCreatibutor?.role, roleOptions)}
-              </span>
-            </List.Description>
-            {creatibutorError && (
-              <FeedbackLabel fieldPath={`${compKey}`} hasSubfields />
+    <List.Item
+      ref={dropRef}
+      key={compKey}
+      className={hidden ? "deposit-drag-listitem hidden" : "deposit-drag-listitem"}
+    >
+      <List.Content floated="right">
+        <Button size="mini" type="button" onClick={() => removeCreatibutor(index)}>
+          {i18next.t("Remove")}
+        </Button>
+        <Button size="mini" primary type="button" onClick={handleEditClick}>
+          {i18next.t("Edit")}
+        </Button>
+        {mountModal && (
+          <CreatibutorsModal
+            ref={modalRef}
+            addLabel={addLabel}
+            editLabel={editLabel}
+            onCreatibutorChange={(selectedCreatibutor) => {
+              replaceCreatibutor(index, selectedCreatibutor);
+            }}
+            initialCreatibutor={initialCreatibutor}
+            roleOptions={roleOptions}
+            schema={schema}
+            autocompleteNames={autocompleteNames}
+            action="edit"
+            serializeSuggestions={serializeSuggestions}
+            serializeCreatibutor={serializeCreatibutor}
+            deserializeCreatibutor={deserializeCreatibutor}
+          />
+        )}
+      </List.Content>
+      <List.Icon ref={drag} name="bars" className="drag-anchor" />
+      <List.Content ref={preview}>
+        <List.Description>
+          <span className="creatibutor">
+            {_get(initialCreatibutor, "person_or_org.identifiers", []).some(
+              (identifier) => identifier.scheme === "orcid"
+            ) && (
+              <img
+                alt={i18next.t("ORCID logo")}
+                className="inline-id-icon mr-5"
+                src="/static/images/orcid.svg"
+                width="16"
+                height="16"
+              />
             )}
-          </List.Content>
-        </Ref>
-      </List.Item>
-    </Ref>
+            {_get(initialCreatibutor, "person_or_org.identifiers", []).some(
+              (identifier) => identifier.scheme === "ror"
+            ) && (
+              <img
+                alt={i18next.t("ROR logo")}
+                className="inline-id-icon mr-5"
+                src="/static/images/ror-icon.svg"
+                width="16"
+                height="16"
+              />
+            )}
+            {_get(initialCreatibutor, "person_or_org.identifiers", []).some(
+              (identifier) => identifier.scheme === "gnd"
+            ) && (
+              <img
+                alt={i18next.t("GND logo")}
+                className="inline-id-icon mr-5"
+                src="/static/images/gnd-icon.svg"
+                width="16"
+                height="16"
+              />
+            )}
+            {displayName || creatibutorDisplayName}
+            {renderRole(initialCreatibutor?.role, roleOptions)}
+          </span>
+        </List.Description>
+        {creatibutorError && <FeedbackLabel fieldPath={`${compKey}`} hasSubfields />}
+      </List.Content>
+    </List.Item>
   );
 });
 
@@ -223,15 +216,4 @@ CreatibutorsFieldItem.propTypes = {
   serializeSuggestions: PropTypes.func,
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
-};
-
-CreatibutorsFieldItem.defaultProps = {
-  creatibutorError: undefined,
-  addLabel: undefined,
-  editLabel: undefined,
-  displayName: undefined,
-  autocompleteNames: undefined,
-  serializeSuggestions: undefined,
-  serializeCreatibutor: undefined,
-  deserializeCreatibutor: undefined,
 };

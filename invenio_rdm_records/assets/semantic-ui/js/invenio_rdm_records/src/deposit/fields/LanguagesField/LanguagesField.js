@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component } from "react";
 import PropTypes from "prop-types";
 import {
   FieldLabel,
@@ -16,24 +16,8 @@ import {
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
 
-class LanguagesFieldComponent extends Component {
-  render() {
-    const {
-      fieldPath,
-      label,
-      labelIcon,
-      multiple,
-      placeholder,
-      clearable,
-      initialOptions,
-      serializeSuggestions: serializeSuggestionsFunc,
-      required,
-      disabled,
-      helpText,
-      noQueryMessage,
-      ...uiProps
-    } = this.props;
-    const serializeSuggestions = serializeSuggestionsFunc || null;
+function LanguagesFieldComponent({fieldPath, label = i18next.t("Languages"), labelIcon = "globe", multiple = true, placeholder = i18next.t('Search for a language by name (e.g "eng", "fr" or "Polish")'), clearable = true, initialOptions = undefined, serializeSuggestions = undefined, required = false, disabled, helpText, noQueryMessage = i18next.t("Search for languages..."), ...uiProps}) {
+  const serializeSuggestions = serializeSuggestionsFunc || null;
 
     return (
       <Overridable
@@ -70,7 +54,6 @@ class LanguagesFieldComponent extends Component {
         />
       </Overridable>
     );
-  }
 }
 
 LanguagesFieldComponent.propTypes = {
@@ -88,18 +71,6 @@ LanguagesFieldComponent.propTypes = {
   ),
   serializeSuggestions: PropTypes.func,
   ...fieldCommonProps,
-};
-
-LanguagesFieldComponent.defaultProps = {
-  label: i18next.t("Languages"),
-  labelIcon: "globe",
-  multiple: true,
-  clearable: true,
-  placeholder: i18next.t('Search for a language by name (e.g "eng", "fr" or "Polish")'),
-  noQueryMessage: i18next.t("Search for languages..."),
-  required: false,
-  initialOptions: undefined,
-  serializeSuggestions: undefined,
 };
 
 export const LanguagesField = showHideOverridable(

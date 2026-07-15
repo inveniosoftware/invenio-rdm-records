@@ -5,7 +5,7 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import { Button } from "semantic-ui-react";
 import { changeSelectedCommunity } from "../../state/actions";
@@ -13,15 +13,10 @@ import { CommunitySelectionModal } from "../../components/CommunitySelectionModa
 import { PublishButton } from "./PublishButton";
 import { SubmitReviewButton } from "./SubmitReviewButton";
 
-class SubmitReviewOrPublishComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      modalOpen: false,
-    };
-  }
+function SubmitReviewOrPublishComponent({raiseDOINeededButNotReserved, community = undefined, changeSelectedCommunityFn, showChangeCommunityButton, showDirectPublishButton, showSubmitForReviewButton, record, ...ui}) {
+  const [modalOpen, setModalOpen] = React.useState(false);
 
-  doiReservationCheck = (
+  const doiReservationCheck = (
     isDOIRequired,
     noINeedDOI,
     formik,
@@ -51,18 +46,7 @@ class SubmitReviewOrPublishComponent extends Component {
     return shouldCheckForExplicitDOIReservation;
   };
 
-  render() {
-    const {
-      community,
-      changeSelectedCommunityFn,
-      showChangeCommunityButton,
-      showDirectPublishButton,
-      showSubmitForReviewButton,
-      record,
-      ...ui
-    } = this.props;
-    const { modalOpen } = this.state;
-    let result;
+  let result;
 
     if (showSubmitForReviewButton) {
       result = (
@@ -72,7 +56,7 @@ class SubmitReviewOrPublishComponent extends Component {
           fluid
           className="mb-10"
           record={record}
-          doiReservationCheck={this.doiReservationCheck}
+          doiReservationCheck={doiReservationCheck}
         />
       );
     } else if (showChangeCommunityButton) {
@@ -82,8 +66,8 @@ class SubmitReviewOrPublishComponent extends Component {
             onCommunityChange={(community) => {
               changeSelectedCommunityFn(community);
             }}
-            onModalChange={(value) => this.setState({ modalOpen: value })}
-            handleClose={() => this.setState({ modalOpen: false })}
+            onModalChange={(value) => setModalOpen(value)}
+            handleClose={() => setModalOpen(false)}
             modalOpen={modalOpen}
             displaySelected
             record={record}
@@ -94,17 +78,16 @@ class SubmitReviewOrPublishComponent extends Component {
           />
           <PublishButton
             buttonLabel={i18next.t("Publish without community")}
-            doiReservationCheck={this.doiReservationCheck}
+            doiReservationCheck={doiReservationCheck}
             publishWithoutCommunity
             {...ui}
           />
         </>
       );
     } else {
-      result = <PublishButton doiReservationCheck={this.doiReservationCheck} {...ui} />;
+      result = <PublishButton doiReservationCheck={doiReservationCheck} {...ui} />;
     }
     return result;
-  }
 }
 
 SubmitReviewOrPublishComponent.propTypes = {
@@ -115,10 +98,6 @@ SubmitReviewOrPublishComponent.propTypes = {
   showSubmitForReviewButton: PropTypes.bool.isRequired,
   record: PropTypes.object.isRequired,
   raiseDOINeededButNotReserved: PropTypes.func.isRequired,
-};
-
-SubmitReviewOrPublishComponent.defaultProps = {
-  community: undefined,
 };
 
 const mapStateToProps = (state) => ({

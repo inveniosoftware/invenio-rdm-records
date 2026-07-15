@@ -6,16 +6,14 @@
 
 import { Field } from "formik";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Form, Popup } from "semantic-ui-react";
 
 /**
  * Button component to unreserve a PID.
  */
-export class UnreservePIDBtn extends Component {
-  render() {
-    const { disabled, handleDiscardPID, label, loading } = this.props;
-    return (
+export function UnreservePIDBtn({disabled = false, handleDiscardPID, label, loading = false}) {
+  return (
       <Popup
         content={label}
         trigger={
@@ -33,7 +31,6 @@ export class UnreservePIDBtn extends Component {
         }
       />
     );
-  }
 }
 
 UnreservePIDBtn.propTypes = {
@@ -43,7 +40,3 @@ UnreservePIDBtn.propTypes = {
   loading: PropTypes.bool,
 };
 
-UnreservePIDBtn.defaultProps = {
-  disabled: false,
-  loading: false,
-};

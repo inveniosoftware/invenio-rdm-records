@@ -4,7 +4,6 @@
  */
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import React from "react";
 import { connect } from "react-redux";
 import { Button, Grid, Icon, Popup } from "semantic-ui-react";
 import { DepositStatus } from "../../state/reducers/deposit";
@@ -82,7 +81,7 @@ const getStatus = (depositStatus, requireDeletionForDeclinedDraft) => {
 };
 
 const DepositStatusBoxComponent = ({
-  depositReview,
+  depositReview = undefined,
   depositStatus,
   requireDeletionForDeclinedDraft,
 }) => {
@@ -127,10 +126,6 @@ DepositStatusBoxComponent.propTypes = {
   depositReview: PropTypes.bool,
   depositStatus: PropTypes.string.isRequired,
   requireDeletionForDeclinedDraft: PropTypes.bool.isRequired,
-};
-
-DepositStatusBoxComponent.defaultProps = {
-  depositReview: undefined,
 };
 
 const mapStateToProps = (state) => ({

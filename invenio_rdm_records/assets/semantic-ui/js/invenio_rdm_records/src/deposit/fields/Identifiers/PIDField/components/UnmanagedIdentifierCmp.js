@@ -5,7 +5,7 @@
  */
 
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Form } from "semantic-ui-react";
 import { getFieldErrors } from "./helpers";
 
@@ -13,38 +13,26 @@ import { getFieldErrors } from "./helpers";
  * Render identifier field to allow user to input
  * the unmanaged PID.
  */
-export class UnmanagedIdentifierCmp extends Component {
-  constructor(props) {
-    super(props);
-
-    const { identifier } = props;
-
-    this.state = {
-      localIdentifier: identifier,
-    };
-  }
-
-  componentDidUpdate(prevProps) {
+export function UnmanagedIdentifierCmp({identifier, onIdentifierChanged, form, fieldPath, helpText = null, pidPlaceholder, disabled = false}) {
+  const [localIdentifier, setLocalIdentifier] = React.useState(identifier);
+  React.useEffect(() => {
     // called after the form field is updated and therefore re-rendered.
-    const { identifier } = this.props;
-    if (identifier !== prevProps.identifier) {
-      this.handleIdentifierUpdate(identifier);
+    
+    if (identifier !== identifier) {
+      handleIdentifierUpdate(identifier);
     }
-  }
+  }, [identifier, onIdentifierChanged, form, fieldPath, helpText, pidPlaceholder, disabled]);
 
-  handleIdentifierUpdate = (newIdentifier) => {
-    this.setState({ localIdentifier: newIdentifier });
+  const handleIdentifierUpdate = (newIdentifier) => {
+    setLocalIdentifier(newIdentifier);
   };
 
-  onChange = (value) => {
+  const onChange = (value) => {
     const { onIdentifierChanged } = this.props;
     this.setState({ localIdentifier: value }, () => onIdentifierChanged(value));
   };
 
-  render() {
-    const { localIdentifier } = this.state;
-    const { form, fieldPath, helpText, pidPlaceholder, disabled } = this.props;
-    const fieldError = getFieldErrors(form, fieldPath);
+  const fieldError = getFieldErrors(form, fieldPath);
     const displayError =
       fieldError && typeof fieldError === "object" && fieldError.message
         ? fieldError.message
@@ -53,7 +41,7 @@ export class UnmanagedIdentifierCmp extends Component {
       <>
         <Form.Field width={8} error={displayError}>
           <Form.Input
-            onChange={(e, { value }) => this.onChange(value)}
+            onChange={(e, { value }) => onChange(value)}
             value={localIdentifier}
             placeholder={pidPlaceholder}
             width={16}
@@ -64,7 +52,6 @@ export class UnmanagedIdentifierCmp extends Component {
         {helpText && <label className="helptext">{helpText}</label>}
       </>
     );
-  }
 }
 
 UnmanagedIdentifierCmp.propTypes = {
@@ -77,7 +64,3 @@ UnmanagedIdentifierCmp.propTypes = {
   disabled: PropTypes.bool,
 };
 
-UnmanagedIdentifierCmp.defaultProps = {
-  helpText: null,
-  disabled: false,
-};

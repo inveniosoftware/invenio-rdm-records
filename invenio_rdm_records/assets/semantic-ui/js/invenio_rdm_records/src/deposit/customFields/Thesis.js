@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
-
+import { Component } from "react";
 import {
   FieldLabel,
   InputComponent,
@@ -15,19 +14,9 @@ import { Divider, Grid } from "semantic-ui-react";
 
 import PropTypes from "prop-types";
 
-class ThesisComponent extends Component {
-  render() {
-    const {
-      fieldPath, // injected by the custom field loader via the `field` config property
-      university,
-      department,
-      type,
-      date_submitted: dateSubmitted,
-      date_defended: dateDefended,
-      labelIcon,
-      label,
-    } = this.props;
-    // For backwards compability added conditional rendering for fields; it is based on their definition in the props in THESIS_CUSTOM_FIELDS_UI
+function ThesisComponent({fieldPath, // injected by the custom field loader via the `field` config property
+      university, department, type, date_submitted, date_defended, labelIcon = undefined, label = undefined}) {
+  // For backwards compability added conditional rendering for fields; it is based on their definition in the props in THESIS_CUSTOM_FIELDS_UI
     const uniWidth = department && type ? 6 : 16;
     return (
       <>
@@ -89,7 +78,6 @@ class ThesisComponent extends Component {
         </Grid>
       </>
     );
-  }
 }
 
 ThesisComponent.propTypes = {
@@ -101,11 +89,6 @@ ThesisComponent.propTypes = {
   date_defended: PropTypes.object.isRequired,
   labelIcon: PropTypes.string,
   label: PropTypes.string,
-};
-
-ThesisComponent.defaultProps = {
-  labelIcon: undefined,
-  label: undefined,
 };
 
 export const Thesis = showHideOverridableWithDynamicId(ThesisComponent);

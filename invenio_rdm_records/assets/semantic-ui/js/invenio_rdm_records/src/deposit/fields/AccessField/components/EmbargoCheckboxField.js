@@ -4,15 +4,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component } from "react";
 import { Checkbox } from "semantic-ui-react";
 import { FastField } from "formik";
 import PropTypes from "prop-types";
 
-class EmbargoCheckboxComponent extends Component {
-  render() {
-    const { fieldPath, formik, checked, disabled } = this.props;
-    return (
+function EmbargoCheckboxComponent({fieldPath, formik, checked = false, disabled = true}) {
+  return (
       <Checkbox
         id={fieldPath}
         data-testid="embargo-checkbox-component"
@@ -32,7 +30,6 @@ class EmbargoCheckboxComponent extends Component {
         }}
       />
     );
-  }
 }
 
 EmbargoCheckboxComponent.propTypes = {
@@ -42,16 +39,8 @@ EmbargoCheckboxComponent.propTypes = {
   disabled: PropTypes.bool,
 };
 
-EmbargoCheckboxComponent.defaultProps = {
-  checked: false,
-  disabled: true,
-};
-
-export class EmbargoCheckboxField extends Component {
-  render() {
-    const { disabled: embargoDisabled, fieldPath } = this.props;
-
-    // NOTE: See the optimization pattern on AccessRightField for more details.
+export function EmbargoCheckboxField({disabled = false, fieldPath}) {
+  // NOTE: See the optimization pattern on AccessRightField for more details.
     //       This makes FastField only render when the things
     //       (access.embargo.active and embargo) it cares about change as it
     //       should be.
@@ -61,12 +50,11 @@ export class EmbargoCheckboxField extends Component {
       <FastField
         name={fieldPath}
         component={(formikProps) => (
-          <EmbargoCheckboxComponent formik={formikProps} {...this.props} />
+          <EmbargoCheckboxComponent formik={formikProps} {...props} />
         )}
         {...change}
       />
     );
-  }
 }
 
 EmbargoCheckboxField.propTypes = {
@@ -74,6 +62,3 @@ EmbargoCheckboxField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
 };
 
-EmbargoCheckboxField.defaultProps = {
-  disabled: false,
-};

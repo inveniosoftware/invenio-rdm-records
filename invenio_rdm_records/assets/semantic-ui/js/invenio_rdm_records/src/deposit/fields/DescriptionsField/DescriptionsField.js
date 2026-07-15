@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component } from "react";
 import PropTypes from "prop-types";
 import {
   FieldLabel,
@@ -17,23 +17,8 @@ import { AdditionalDescriptionsField } from "./components";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
 
-class DescriptionsFieldComponent extends Component {
-  render() {
-    const {
-      fieldPath,
-      label,
-      labelIcon,
-      options,
-      editorConfig: propEditorConfig,
-      recordUI,
-      disabled,
-      required,
-      placeholder,
-      optimized,
-      helpText,
-    } = this.props;
-
-    const editorConfig = {
+function DescriptionsFieldComponent({fieldPath, label = i18next.t("Description"), labelIcon = "pencil", options, editorConfig = undefined, recordUI = undefined, disabled, required, placeholder, optimized = true, helpText}) {
+  const editorConfig = {
       placeholder,
       ...propEditorConfig,
     };
@@ -74,7 +59,6 @@ class DescriptionsFieldComponent extends Component {
         </>
       </Overridable>
     );
-  }
 }
 
 DescriptionsFieldComponent.propTypes = {
@@ -83,14 +67,6 @@ DescriptionsFieldComponent.propTypes = {
   options: PropTypes.object.isRequired,
   optimized: PropTypes.bool,
   ...fieldCommonProps,
-};
-
-DescriptionsFieldComponent.defaultProps = {
-  label: i18next.t("Description"),
-  labelIcon: "pencil",
-  editorConfig: undefined,
-  recordUI: undefined,
-  optimized: true,
 };
 
 export const DescriptionsField = showHideOverridable(

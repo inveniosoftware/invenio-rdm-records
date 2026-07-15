@@ -13,7 +13,7 @@ import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
 import _map from "lodash/map";
 import PropTypes from "prop-types";
-import React, { Component, createRef } from "react";
+import { Component, createRef } from "react";
 import {
   RadioField,
   RemoteSelectField,
@@ -39,31 +39,26 @@ const NamesAutocompleteOptions = {
   OFF: "off",
 };
 
-export class CreatibutorsModal extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      open: false,
-      saveAndContinueLabel: i18next.t("Save and add another"),
-      action: null,
-      showPersonForm:
-        props.autocompleteNames !== NamesAutocompleteOptions.SEARCH_ONLY ||
-        !_isEmpty(props.initialCreatibutor),
-      isOrganization:
-        !_isEmpty(props.initialCreatibutor) &&
-        props.initialCreatibutor.person_or_org.type === CREATIBUTOR_TYPE.ORGANIZATION,
-      personIdentifiers: [],
-      personAffiliations: [],
-      organizationIdentifiers: [],
-      organizationAffiliations: [],
-    };
-    this.inputRef = createRef();
-    this.identifiersRef = createRef();
-    this.affiliationsRef = createRef();
-    this.namesAutocompleteRef = createRef();
-  }
+const creatibutorsModalDefaultPropRoleOptions = [];
+const creatibutorsModalDefaultPropInitialCreatibutor = {};
+export function CreatibutorsModal({autocompleteNames = "search", initialCreatibutor = creatibutorsModalDefaultPropInitialCreatibutor, action, addLabel, editLabel, serializeCreatibutor = undefined, deserializeCreatibutor = undefined, schema, onCreatibutorChange, roleOptions = creatibutorsModalDefaultPropRoleOptions, trigger, serializeSuggestions = undefined}) {
+  const [open, setOpen] = React.useState(false);
+  const [saveAndContinueLabel, setSaveAndContinueLabel] = React.useState(i18next.t("Save and add another"));
+  const [action, setAction] = React.useState(null);
+  const [showPersonForm, setShowPersonForm] = React.useState(autocompleteNames !== NamesAutocompleteOptions.SEARCH_ONLY ||
+        !_isEmpty(initialCreatibutor));
+  const [isOrganization, setIsOrganization] = React.useState(!_isEmpty(initialCreatibutor) &&
+        initialCreatibutor.person_or_org.type === CREATIBUTOR_TYPE.ORGANIZATION);
+  const [personIdentifiers, setPersonIdentifiers] = React.useState([]);
+  const [personAffiliations, setPersonAffiliations] = React.useState([]);
+  const [organizationIdentifiers, setOrganizationIdentifiers] = React.useState([]);
+  const [organizationAffiliations, setOrganizationAffiliations] = React.useState([]);
+  const inputRef = React.useRef(null);
+  const identifiersRef = React.useRef(null);
+  const affiliationsRef = React.useRef(null);
+  const namesAutocompleteRef = React.useRef(null);
 
-  initStatesFromInitialCreatibutor(initialCreatibutor) {
+  function initStatesFromInitialCreatibutor(initialCreatibutor) {
     const { affiliations = [] } = initialCreatibutor;
     const { isOrganization } = this.state;
     const identifiers = initialCreatibutor.person_or_org.identifiers?.map(
@@ -96,9 +91,9 @@ export class CreatibutorsModal extends Component {
         return schema.required(i18next.t("Role is a required field."));
       }
     }),
-  });
+  })
 
-  openModal = () => {
+  const openModal = () => {
     this.setState({ open: true, action: null }, () => {
       const { initialCreatibutor } = this.props;
       if (!_isEmpty(initialCreatibutor)) {
@@ -113,12 +108,12 @@ export class CreatibutorsModal extends Component {
           initialCreatibutor.person_or_org.name = "";
         }
 
-        this.initStatesFromInitialCreatibutor(initialCreatibutor);
+        initStatesFromInitialCreatibutor(initialCreatibutor);
       }
     });
   };
 
-  closeModal = () => {
+  const closeModal = () => {
     this.setState({
       personAffiliations: [],
       personIdentifiers: [],
@@ -129,27 +124,21 @@ export class CreatibutorsModal extends Component {
     });
   };
 
-  changeContent = () => {
-    this.setState({ saveAndContinueLabel: i18next.t("Added") });
+  const changeContent = () => {
+    setSaveAndContinueLabel(i18next.t("Added"));
     // change in 2 sec
     setTimeout(() => {
-      this.setState({
-        saveAndContinueLabel: i18next.t("Save and add another"),
-      });
+      setSaveAndContinueLabel(i18next.t("Save and add another"));
     }, 2000);
   };
 
-  displayActionLabel = () => {
+  const displayActionLabel = () => {
     const { action, addLabel, editLabel } = this.props;
 
     return action === ModalActions.ADD ? addLabel : editLabel;
   };
 
-  /**
-   * Function to transform formik creatibutor state
-   * back to the external format.
-   */
-  serializeCreatibutor = (submittedCreatibutor) => {
+  const serializeCreatibutor = (submittedCreatibutor) => {
     const { personIdentifiers } = this.state;
     const { initialCreatibutor, serializeCreatibutor } = this.props;
     if (serializeCreatibutor) {
@@ -191,14 +180,7 @@ export class CreatibutorsModal extends Component {
     };
   };
 
-  /**
-   * Function to transform creatibutor object
-   * to formik initialValues. The function is converting
-   * the array of objects fields e.g `identifiers`, `affiliations`
-   * to simple arrays. This is needed as SUI dropdowns accept only
-   * array of strings as values.
-   */
-  deserializeCreatibutor = (initialCreatibutor) => {
+  const deserializeCreatibutor = (initialCreatibutor) => {
     const { deserializeCreatibutor } = this.props;
     if (deserializeCreatibutor) {
       return deserializeCreatibutor(initialCreatibutor);
@@ -220,43 +202,43 @@ export class CreatibutorsModal extends Component {
     };
   };
 
-  isCreator = () => {
+  const isCreator = () => {
     const { schema } = this.props;
 
     return schema === "creators";
   };
 
-  onSubmit = (values, formikBag) => {
+  const onSubmit = (values, formikBag) => {
     const { onCreatibutorChange } = this.props;
     const { action } = this.state;
 
-    onCreatibutorChange(this.serializeCreatibutor(values));
+    onCreatibutorChange(serializeCreatibutor(values));
     formikBag.setSubmitting(false);
     formikBag.resetForm();
     switch (action) {
       case "saveAndContinue":
         // Needed to close and open the modal to reset the internal
         // state of the cmp inside the modal
-        this.closeModal();
-        this.openModal();
-        this.changeContent();
+        closeModal();
+        openModal();
+        changeContent();
         break;
       case "saveAndClose":
-        this.closeModal();
+        closeModal();
         break;
       default:
         break;
     }
   };
 
-  serializeSuggestions = (creatibutors) => {
+  const serializeSuggestions = (creatibutors) => {
     const { isOrganization } = this.state;
     // TODO: AffiliationsSuggestions is wrongly named, since it also serializes authors,
     // this has to be fixed upstream though
     return AffiliationsSuggestions(creatibutors, isOrganization);
   };
 
-  updateIdentifiersAndAffiliations(
+  function updateIdentifiersAndAffiliations(
     formikProps,
     identifiers,
     affiliations,
@@ -297,7 +279,7 @@ export class CreatibutorsModal extends Component {
     });
   }
 
-  onOrganizationSearchChange = ({ formikProps }, selectedSuggestions) => {
+  const onOrganizationSearchChange = ({ formikProps }, selectedSuggestions) => {
     const selectedSuggestion = selectedSuggestions[0].extra;
     this.setState(
       {
@@ -311,27 +293,25 @@ export class CreatibutorsModal extends Component {
 
         formikProps.form.setFieldValue("person_or_org.name", selectedSuggestion.name);
 
-        this.updateIdentifiersAndAffiliations(
+        updateIdentifiersAndAffiliations(
           formikProps,
           organizationIdentifiers,
           organizationAffiliations,
-          this.identifiersRef,
-          this.affiliationsRef
+          identifiersRef,
+          affiliationsRef
         );
       }
     );
   };
 
-  onPersonSearchChange = ({ formikProps }, selectedSuggestions) => {
+  const onPersonSearchChange = ({ formikProps }, selectedSuggestions) => {
     if (selectedSuggestions[0].key === "manual-entry") {
       // Empty the autocomplete's selected values
-      this.namesAutocompleteRef.current.setState({
+      namesAutocompleteRef.current.setState({
         suggestions: [],
         selectedSuggestions: [],
       });
-      this.setState({
-        showPersonForm: true,
-      });
+      setShowPersonForm(true);
       return;
     }
 
@@ -360,43 +340,24 @@ export class CreatibutorsModal extends Component {
           formikProps.form.setFieldValue(path, value);
         });
 
-        this.updateIdentifiersAndAffiliations(
+        updateIdentifiersAndAffiliations(
           formikProps,
           personIdentifiers.map((identifier) => identifier.identifier), // Only identifer value is needed for the form
           personAffiliations,
-          this.identifiersRef,
-          this.affiliationsRef
+          identifiersRef,
+          affiliationsRef
         );
       }
     );
   };
 
-  render() {
-    const {
-      initialCreatibutor,
-      autocompleteNames,
-      roleOptions,
-      trigger,
-      action,
-      serializeSuggestions,
-    } = this.props;
-    const {
-      open,
-      showPersonForm,
-      personIdentifiers,
-      personAffiliations,
-      organizationIdentifiers,
-      organizationAffiliations,
-      saveAndContinueLabel,
-    } = this.state;
-
-    const ActionLabel = this.displayActionLabel();
+  const ActionLabel = displayActionLabel();
     return (
       <Formik
-        initialValues={this.deserializeCreatibutor(initialCreatibutor)}
-        onSubmit={this.onSubmit}
+        initialValues={deserializeCreatibutor(initialCreatibutor)}
+        onSubmit={onSubmit}
         enableReinitialize
-        validationSchema={this.CreatorSchema}
+        validationSchema={CreatorSchema}
         validateOnChange={false}
         validateOnBlur={false}
       >
@@ -412,11 +373,11 @@ export class CreatibutorsModal extends Component {
           return (
             <Modal
               centered={false}
-              onOpen={() => this.openModal()}
+              onOpen={() => openModal()}
               open={open}
               trigger={trigger}
               onClose={() => {
-                this.closeModal();
+                closeModal();
                 resetForm();
               }}
               closeIcon
@@ -434,9 +395,7 @@ export class CreatibutorsModal extends Component {
                       checked={_get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON}
                       value={CREATIBUTOR_TYPE.PERSON}
                       onChange={({ formikProps }) => {
-                        this.setState({
-                          isOrganization: false,
-                        });
+                        setIsOrganization(false);
                         formikProps.form.setFieldValue(
                           typeFieldPath,
                           CREATIBUTOR_TYPE.PERSON
@@ -462,9 +421,7 @@ export class CreatibutorsModal extends Component {
                       }
                       value={CREATIBUTOR_TYPE.ORGANIZATION}
                       onChange={({ formikProps }) => {
-                        this.setState({
-                          isOrganization: true,
-                        });
+                        setIsOrganization(true);
                         formikProps.form.setFieldValue(
                           typeFieldPath,
                           CREATIBUTOR_TYPE.ORGANIZATION
@@ -488,10 +445,10 @@ export class CreatibutorsModal extends Component {
                           id="InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonRemoteSelectField"
                           initialCreatibutor={initialCreatibutor}
                           serializeSuggestions={
-                            serializeSuggestions || this.serializeSuggestions
+                            serializeSuggestions || serializeSuggestions
                           }
-                          onValueChange={this.onPersonSearchChange}
-                          ref={this.namesAutocompleteRef}
+                          onValueChange={onPersonSearchChange}
+                          ref={namesAutocompleteRef}
                         >
                           <RemoteSelectField
                             selectOnBlur={false}
@@ -514,10 +471,10 @@ export class CreatibutorsModal extends Component {
                             search={(options) => options}
                             suggestionAPIUrl="/api/names"
                             serializeSuggestions={
-                              serializeSuggestions || this.serializeSuggestions
+                              serializeSuggestions || serializeSuggestions
                             }
-                            onValueChange={this.onPersonSearchChange}
-                            ref={this.namesAutocompleteRef}
+                            onValueChange={onPersonSearchChange}
+                            ref={namesAutocompleteRef}
                           />
                         </Overridable>
                       )}
@@ -527,14 +484,14 @@ export class CreatibutorsModal extends Component {
                             id="InvenioRdmRecords.DepositForm.CreatibutorsModal.FullNameField"
                             familyNameFieldPath={familyNameFieldPath}
                             givenNameFieldPath={givenNameFieldPath}
-                            isCreator={this.isCreator()}
+                            isCreator={isCreator()}
                           >
                             <Form.Group widths="equal">
                               <TextField
                                 label={i18next.t("Family name")}
                                 placeholder={i18next.t("Family name")}
                                 fieldPath={familyNameFieldPath}
-                                required={this.isCreator()}
+                                required={isCreator()}
                               />
                               <TextField
                                 label={i18next.t("Given names")}
@@ -545,7 +502,7 @@ export class CreatibutorsModal extends Component {
                           </Overridable>
                           <Overridable
                             id="InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonIdentifiersField"
-                            ref={this.identifiersRef}
+                            ref={identifiersRef}
                             fieldPath={identifiersFieldPath}
                             values={values}
                           >
@@ -559,17 +516,17 @@ export class CreatibutorsModal extends Component {
                                 })
                               )}
                               fieldPath={identifiersFieldPath}
-                              ref={this.identifiersRef}
+                              ref={identifiersRef}
                             />
                           </Overridable>
                           <Overridable
                             id="InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonAffiliationsField"
-                            ref={this.affiliationsRef}
+                            ref={affiliationsRef}
                             fieldPath={affiliationsFieldPath}
                           >
                             <AffiliationsField
                               fieldPath={affiliationsFieldPath}
-                              selectRef={this.affiliationsRef}
+                              selectRef={affiliationsRef}
                             />
                           </Overridable>
                         </>
@@ -582,9 +539,9 @@ export class CreatibutorsModal extends Component {
                           id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationRemoteSelectField"
                           initialCreatibutor={initialCreatibutor}
                           serializeSuggestions={
-                            serializeSuggestions || this.serializeSuggestions
+                            serializeSuggestions || serializeSuggestions
                           }
-                          onValueChange={this.onOrganizationSearchChange}
+                          onValueChange={onOrganizationSearchChange}
                         >
                           <RemoteSelectField
                             selectOnBlur={false}
@@ -607,31 +564,31 @@ export class CreatibutorsModal extends Component {
                             search={(options) => options}
                             suggestionAPIUrl="/api/affiliations"
                             serializeSuggestions={
-                              serializeSuggestions || this.serializeSuggestions
+                              serializeSuggestions || serializeSuggestions
                             }
-                            onValueChange={this.onOrganizationSearchChange}
+                            onValueChange={onOrganizationSearchChange}
                           />
                         </Overridable>
                       )}
                       <Overridable
                         id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationNameField"
                         fieldPath={organizationNameFieldPath}
-                        ref={this.inputRef}
-                        isCreator={this.isCreator()}
+                        ref={inputRef}
+                        isCreator={isCreator()}
                       >
                         <TextField
                           label={i18next.t("Name")}
                           placeholder={i18next.t("Organization name")}
                           fieldPath={organizationNameFieldPath}
-                          required={this.isCreator()}
+                          required={isCreator()}
                           // forward ref to Input component because Form.Input
                           // doesn't handle it
-                          input={{ ref: this.inputRef }}
+                          input={{ ref: inputRef }}
                         />
                       </Overridable>
                       <Overridable
                         id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationIdentifiersField"
-                        ref={this.identifiersRef}
+                        ref={identifiersRef}
                         values={values}
                         fieldPath={identifiersFieldPath}
                       >
@@ -645,18 +602,18 @@ export class CreatibutorsModal extends Component {
                             })
                           )}
                           fieldPath={identifiersFieldPath}
-                          ref={this.identifiersRef}
+                          ref={identifiersRef}
                           placeholder={i18next.t("e.g. ROR, ISNI or GND.")}
                         />
                       </Overridable>
                       <Overridable
                         id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationAffiliationsField"
                         fieldPath={affiliationsFieldPath}
-                        ref={this.affiliationsRef}
+                        ref={affiliationsRef}
                       >
                         <AffiliationsField
                           fieldPath={affiliationsFieldPath}
-                          selectRef={this.affiliationsRef}
+                          selectRef={affiliationsRef}
                         />
                       </Overridable>
                     </>
@@ -668,15 +625,15 @@ export class CreatibutorsModal extends Component {
                       id="InvenioRdmRecords.DepositForm.CreatibutorsModal.RoleSelectField"
                       fieldPath={roleFieldPath}
                       roleOptions={roleOptions}
-                      isCreator={this.isCreator()}
+                      isCreator={isCreator()}
                     >
                       <SelectField
                         fieldPath={roleFieldPath}
                         label={i18next.t("Role")}
                         options={roleOptions}
                         placeholder={i18next.t("Select role")}
-                        {...(this.isCreator() && { clearable: true })}
-                        required={!this.isCreator()}
+                        {...(isCreator() && { clearable: true })}
+                        required={!isCreator()}
                         optimized
                         scrolling
                       />
@@ -689,7 +646,7 @@ export class CreatibutorsModal extends Component {
                   name="cancel"
                   onClick={() => {
                     resetForm();
-                    this.closeModal();
+                    closeModal();
                   }}
                   icon="remove"
                   content={i18next.t("Cancel")}
@@ -737,7 +694,6 @@ export class CreatibutorsModal extends Component {
         }}
       </Formik>
     );
-  }
 }
 
 CreatibutorsModal.propTypes = {
@@ -771,11 +727,3 @@ CreatibutorsModal.propTypes = {
   deserializeCreatibutor: PropTypes.func,
 };
 
-CreatibutorsModal.defaultProps = {
-  roleOptions: [],
-  initialCreatibutor: {},
-  autocompleteNames: "search",
-  serializeSuggestions: undefined,
-  serializeCreatibutor: undefined,
-  deserializeCreatibutor: undefined,
-};

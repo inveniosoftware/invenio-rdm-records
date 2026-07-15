@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
-
+import { Component } from "react";
 import {
   FieldLabel,
   InputComponent,
@@ -15,19 +14,9 @@ import { Divider, Grid } from "semantic-ui-react";
 
 import PropTypes from "prop-types";
 
-class JournalComponent extends Component {
-  render() {
-    const {
-      fieldPath, // injected by the custom field loader via the `field` config property
-      title,
-      volume,
-      issue,
-      pages,
-      issn,
-      labelIcon,
-      label,
-    } = this.props;
-    return (
+function JournalComponent({fieldPath, // injected by the custom field loader via the `field` config property
+      title, volume, issue, pages, issn, labelIcon = undefined, label = undefined}) {
+  return (
       <>
         {label && (
           <>
@@ -79,7 +68,6 @@ class JournalComponent extends Component {
         </Grid>
       </>
     );
-  }
 }
 
 JournalComponent.propTypes = {
@@ -91,11 +79,6 @@ JournalComponent.propTypes = {
   issn: PropTypes.object.isRequired,
   labelIcon: PropTypes.string,
   label: PropTypes.string,
-};
-
-JournalComponent.defaultProps = {
-  labelIcon: undefined,
-  label: undefined,
 };
 
 export const Journal = showHideOverridableWithDynamicId(JournalComponent);

@@ -7,24 +7,21 @@
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Form, Radio } from "semantic-ui-react";
 
 /**
  * Manage radio buttons choices between managed
  * and unmanaged PID.
  */
-export class ManagedUnmanagedSwitch extends Component {
-  handleChange = (e, { value }) => {
+export function ManagedUnmanagedSwitch({onManagedUnmanagedChange, disabled = false, isManagedSelected, pidLabel = undefined}) {
+  const handleChange = (e, { value }) => {
     const { onManagedUnmanagedChange } = this.props;
     const isManagedSelected = value === "managed";
     onManagedUnmanagedChange(isManagedSelected);
   };
 
-  render() {
-    const { disabled, isManagedSelected, pidLabel } = this.props;
-
-    return (
+  return (
       <Form.Group inline>
         <Form.Field>
           {i18next.t("Do you already have a {{pidLabel}} for this upload?", {
@@ -39,7 +36,7 @@ export class ManagedUnmanagedSwitch extends Component {
             value="unmanaged"
             disabled={disabled}
             checked={!isManagedSelected}
-            onChange={this.handleChange}
+            onChange={handleChange}
           />
         </Form.Field>
         <Form.Field width={3}>
@@ -50,12 +47,11 @@ export class ManagedUnmanagedSwitch extends Component {
             value="managed"
             disabled={disabled}
             checked={isManagedSelected}
-            onChange={this.handleChange}
+            onChange={handleChange}
           />
         </Form.Field>
       </Form.Group>
     );
-  }
 }
 
 ManagedUnmanagedSwitch.propTypes = {
@@ -65,7 +61,3 @@ ManagedUnmanagedSwitch.propTypes = {
   pidLabel: PropTypes.string,
 };
 
-ManagedUnmanagedSwitch.defaultProps = {
-  disabled: false,
-  pidLabel: undefined,
-};

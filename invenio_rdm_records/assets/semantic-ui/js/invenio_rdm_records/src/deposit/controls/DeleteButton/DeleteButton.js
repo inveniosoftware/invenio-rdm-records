@@ -5,7 +5,7 @@
  */
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import React, { Component } from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import { connect as connectFormik } from "formik";
 import { Button, Modal } from "semantic-ui-react";
@@ -51,15 +51,14 @@ const DialogText = ({ actionLbl }) => {
   return text;
 };
 
-export class DeleteButtonComponent extends Component {
-  state = { modalOpen: false };
-  static contextType = DepositFormSubmitContext;
+export function DeleteButtonComponent({isPublished, isVersion, formik, draftExists, actionState, ...ui // only has ActionButton props}) {
+  const contextValue = React.useContext(DepositFormSubmitContext);
 
-  openConfirmModal = () => this.setState({ modalOpen: true });
+  const openConfirmModal = () => this.setState({ modalOpen: true });
 
-  closeConfirmModal = () => this.setState({ modalOpen: false });
+  const closeConfirmModal = () => this.setState({ modalOpen: false });
 
-  handleDelete = async (event) => {
+  const handleDelete = (event) => {
     const { isPublished, isVersion, formik } = this.props;
     const { handleSubmit } = formik;
     const { setSubmitContext } = this.context;
@@ -68,21 +67,10 @@ export class DeleteButtonComponent extends Component {
       isDiscardingVersion: isPublished || isVersion,
     });
     handleSubmit(event);
-    this.closeConfirmModal();
+    closeConfirmModal();
   };
 
-  render() {
-    const {
-      draftExists,
-      isPublished,
-      isVersion,
-      actionState,
-      formik,
-      ...ui // only has ActionButton props
-    } = this.props;
-    const { modalOpen } = this.state;
-
-    const { isSubmitting } = formik;
+  const { isSubmitting } = formik;
 
     const uiProps = _omit(ui, ["dispatch"]);
 
@@ -100,7 +88,7 @@ export class DeleteButtonComponent extends Component {
       <>
         <Button
           disabled={!draftExists || isSubmitting}
-          onClick={this.openConfirmModal}
+          onClick={openConfirmModal}
           className={color}
           icon={icon}
           loading={isSubmitting && actionState === DRAFT_DELETE_STARTED}
@@ -109,17 +97,17 @@ export class DeleteButtonComponent extends Component {
           content={capitalizedActionLbl}
         />
 
-        <Modal open={modalOpen} onClose={this.closeConfirmModal} size="tiny">
+        <Modal open={modalOpen} onClose={closeConfirmModal} size="tiny">
           <Modal.Content>
             <DialogText actionLbl={actionLbl} />
           </Modal.Content>
           <Modal.Actions>
-            <Button onClick={this.closeConfirmModal} floated="left">
+            <Button onClick={closeConfirmModal} floated="left">
               {i18next.t("Cancel")}
             </Button>
             <Button
               className={color}
-              onClick={this.handleDelete}
+              onClick={handleDelete}
               loading={isSubmitting && actionState === DRAFT_DELETE_STARTED}
               icon="trash alternate outline"
               content={capitalizedActionLbl}
@@ -128,7 +116,6 @@ export class DeleteButtonComponent extends Component {
         </Modal>
       </>
     );
-  }
 }
 
 DeleteButtonComponent.propTypes = {

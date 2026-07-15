@@ -7,7 +7,7 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
 import Overridable from "react-overridable";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Button, Icon, Message, Modal, Form } from "semantic-ui-react";
 import * as Yup from "yup";
 import {
@@ -16,52 +16,15 @@ import {
 } from "./PublishCheckboxComponent";
 import { PreviewButton } from "../PreviewButton";
 
-class PublishModalComponent extends Component {
-  constructor(props) {
-    super(props);
-    const { extraCheckboxes } = props;
-    this.validationSchema = Yup.object().shape({}).noUnknown();
-    this.initialValues = {};
-
-    // Get extra checkbox component and define its schema and defaults
-    if (extraCheckboxes.length > 0) {
-      // Validate id and fieldpath are unique
-      const fieldPaths = extraCheckboxes.map((checkbox) => checkbox.fieldPath);
-      ensureUniqueProps(fieldPaths, "fieldPath");
-      const ids = extraCheckboxes.map((checkbox) => checkbox.id);
-      ensureUniqueProps(ids, "id");
-
-      extraCheckboxes.forEach((checkbox) => {
-        this.validationSchema = this.validationSchema.concat(
-          Yup.object({
-            [checkbox.fieldPath]: Yup.bool().oneOf(
-              [true],
-              i18next.t("You must accept this.")
-            ),
-          })
-        );
-        this.initialValues[checkbox.fieldPath] = false;
-      });
-    }
-  }
-
-  render() {
-    const {
-      isConfirmModalOpen,
-      onClose,
-      onSubmit,
-      publishModalExtraContent,
-      buttonLabel,
-      extraCheckboxes,
-      beforeContent,
-      afterContent,
-      depositFormHandleSubmit,
-    } = this.props;
-    return (
+const publishModalComponentDefaultPropExtraCheckboxes = [];
+const publishModalComponentDefaultPropBeforeContent = () => undefined;
+const publishModalComponentDefaultPropAfterContent = () => undefined;
+function PublishModalComponent({extraCheckboxes = publishModalComponentDefaultPropExtraCheckboxes, isConfirmModalOpen, onClose, onSubmit, publishModalExtraContent = "", buttonLabel = i18next.t("Publish"), beforeContent = publishModalComponentDefaultPropBeforeContent, afterContent = publishModalComponentDefaultPropAfterContent, depositFormHandleSubmit = undefined}) {
+  return (
       <Formik
-        initialValues={this.initialValues}
+        initialValues={initialValues}
         onSubmit={onSubmit}
-        validationSchema={this.validationSchema}
+        validationSchema={validationSchema}
         validateOnChange={false}
         validateOnBlur={false}
       >
@@ -123,7 +86,6 @@ class PublishModalComponent extends Component {
         }}
       </Formik>
     );
-  }
 }
 
 PublishModalComponent.propTypes = {
@@ -141,15 +103,6 @@ PublishModalComponent.propTypes = {
   beforeContent: PropTypes.func,
   afterContent: PropTypes.func,
   depositFormHandleSubmit: PropTypes.func,
-};
-
-PublishModalComponent.defaultProps = {
-  publishModalExtraContent: "",
-  buttonLabel: i18next.t("Publish"),
-  extraCheckboxes: [],
-  beforeContent: () => undefined,
-  afterContent: () => undefined,
-  depositFormHandleSubmit: undefined,
 };
 
 export const PublishModal = Overridable.component(

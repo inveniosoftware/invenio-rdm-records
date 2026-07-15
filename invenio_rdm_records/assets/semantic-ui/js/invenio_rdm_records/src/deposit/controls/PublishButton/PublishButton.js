@@ -10,7 +10,7 @@ import { connect as connectFormik } from "formik";
 import _get from "lodash/get";
 import _omit from "lodash/omit";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import { Button } from "semantic-ui-react";
 import {
@@ -22,16 +22,14 @@ import { scrollTop } from "../../utils";
 import { DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS } from "../../state/types";
 import { PublishModal } from "./PublishModal";
 
-class PublishButtonComponent extends Component {
-  state = { isConfirmModalOpen: false };
+function PublishButtonComponent({formik, isDOIRequired = undefined, noINeedDOI = undefined, doiReservationCheck, publishWithoutCommunity = false, actionState = undefined, filesState = undefined, buttonLabel = i18next.t("Publish"), publishModalExtraContent = undefined, ...ui}) {
+  const contextValue = React.useContext(DepositFormSubmitContext);
 
-  static contextType = DepositFormSubmitContext;
+  const openConfirmModal = () => this.setState({ isConfirmModalOpen: true });
 
-  openConfirmModal = () => this.setState({ isConfirmModalOpen: true });
+  const closeConfirmModal = () => this.setState({ isConfirmModalOpen: false });
 
-  closeConfirmModal = () => this.setState({ isConfirmModalOpen: false });
-
-  handlePublish = () => {
+  const handlePublish = () => {
     const { setSubmitContext } = this.context;
     const {
       formik,
@@ -58,12 +56,12 @@ class PublishButtonComponent extends Component {
       );
       handleSubmit();
     }
-    this.closeConfirmModal();
+    closeConfirmModal();
     // scroll top to show the global error
     scrollTop();
   };
 
-  isDisabled = (values, isSubmitting, filesState) => {
+  const isDisabled = (values, isSubmitting, filesState) => {
     if (isSubmitting) {
       return true;
     }
@@ -82,19 +80,7 @@ class PublishButtonComponent extends Component {
     return !allCompleted;
   };
 
-  render() {
-    const {
-      actionState,
-      filesState,
-      buttonLabel,
-      formik,
-      publishModalExtraContent,
-      noINeedDOI,
-      isDOIRequired,
-      ...ui
-    } = this.props;
-    const { isConfirmModalOpen } = this.state;
-    const { values, isSubmitting } = formik;
+  const { values, isSubmitting } = formik;
 
     const uiProps = _omit(ui, [
       "dispatch",
@@ -105,9 +91,9 @@ class PublishButtonComponent extends Component {
     return (
       <>
         <Button
-          disabled={this.isDisabled(values, isSubmitting, filesState)}
+          disabled={isDisabled(values, isSubmitting, filesState)}
           name="publish"
-          onClick={this.openConfirmModal}
+          onClick={openConfirmModal}
           positive
           icon="upload"
           loading={isSubmitting && actionState === DRAFT_PUBLISH_STARTED}
@@ -119,8 +105,8 @@ class PublishButtonComponent extends Component {
         {isConfirmModalOpen && (
           <PublishModal
             isConfirmModalOpen={isConfirmModalOpen}
-            onClose={this.closeConfirmModal}
-            onSubmit={this.handlePublish}
+            onClose={closeConfirmModal}
+            onSubmit={handlePublish}
             publishModalExtraContent={publishModalExtraContent}
             buttonLabel={buttonLabel}
             depositFormHandleSubmit={formik.handleSubmit}
@@ -128,7 +114,6 @@ class PublishButtonComponent extends Component {
         )}
       </>
     );
-  }
 }
 
 PublishButtonComponent.propTypes = {
@@ -141,16 +126,6 @@ PublishButtonComponent.propTypes = {
   doiReservationCheck: PropTypes.func.isRequired,
   isDOIRequired: PropTypes.bool,
   noINeedDOI: PropTypes.bool,
-};
-
-PublishButtonComponent.defaultProps = {
-  buttonLabel: i18next.t("Publish"),
-  publishWithoutCommunity: false,
-  actionState: undefined,
-  publishModalExtraContent: undefined,
-  filesState: undefined,
-  isDOIRequired: undefined,
-  noINeedDOI: undefined,
 };
 
 const mapStateToProps = (state) => ({

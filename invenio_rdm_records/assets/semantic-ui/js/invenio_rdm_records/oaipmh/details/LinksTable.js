@@ -4,7 +4,7 @@
  */
 
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import CopyButton from "./CopyButton";
 import { Table, Header, Dropdown, Grid } from "semantic-ui-react";
@@ -23,26 +23,16 @@ const knownFormats = {
   oai_dcat: "OAI DCAT-AP",
 };
 
-class LinksTable extends Component {
-  constructor(props) {
-    super(props);
-    const { links: passedLinks } = props.data;
+function LinksTable({data}) {
+  const [links, setLinks] = React.useState(passedLinks || []);
+  const [formats, setFormats] = React.useState([]);
+  const [currentFormat, setCurrentFormat] = React.useState(currentPrefix ?? "oai_dc");
+  const [error, setError] = React.useState(undefined);
+  React.useEffect(() => {
+    fetchFormats();
+  }, []);
 
-    const currentPrefix = this.getPrefixFromLink(passedLinks["oai-listrecords"]);
-
-    this.state = {
-      links: passedLinks || [],
-      formats: [],
-      currentFormat: currentPrefix ?? "oai_dc",
-      error: undefined,
-    };
-  }
-
-  componentDidMount() {
-    this.fetchFormats();
-  }
-
-  fetchFormats = async () => {
+  const fetchFormats = () => {
     const cancellableFetchFormats = withCancel(http.get("/api/oaipmh/formats"));
 
     try {
@@ -54,31 +44,23 @@ class LinksTable extends Component {
         const serialized = formats.map((formt) => ({
           key: formt.id,
           value: formt.id,
-          text: knownFormats[formt.id] ?? this.formatKeyToName(formt.id),
+          text: knownFormats[formt.id] ?? formatKeyToName(formt.id),
         }));
 
-        this.setState({
-          formats: serialized,
-        });
+        setFormats(serialized);
       }
     } catch (error) {
       console.error(error);
 
-      this.setState({
-        error: {
+      setError({
           header: i18next.t("Fetch error"),
           content: i18next.t("Error fetching OAI set formats."),
           id: error.code,
-        },
-      });
+        });
     }
   };
 
-  /**
-   * Replaces the metadata prefix in the link.
-   * Used to update links when the metadata prefix is changed.
-   */
-  replaceLinkPrefix = (link, newPrefix) => {
+  const replaceLinkPrefix = (link, newPrefix) => {
     if (_isEmpty(link)) return null;
 
     const prefixParam = "metadataPrefix";
@@ -92,12 +74,7 @@ class LinksTable extends Component {
     return url.toString();
   };
 
-  /**
-   * Retrieves metadata prefix from a link.
-   *
-   * Returns null if parameter not found.
-   */
-  getPrefixFromLink = (link) => {
+  const getPrefixFromLink = (link) => {
     if (_isEmpty(link)) return null;
     const prefixParam = "metadataPrefix";
     const url = new URL(link);
@@ -106,23 +83,12 @@ class LinksTable extends Component {
     return prefix || null;
   };
 
-  /**
-   * Transforms a key into a readable name.
-   * @example
-   *  // returns Oai Datacite
-   *  formateKeytoName('oai_datacite')
-   */
-  formatKeyToName = (formatKey) => {
+  const formatKeyToName = (formatKey) => {
     const whiteSpaced = formatKey.replace("_", " ");
     return capitalize(whiteSpaced);
   };
 
-  /**
-   * Dropdown's on change handler.
-   * This method will update the following states if the new prefix is known:
-   * - 'links', each link with its prefix replaced by the new prefix.
-   */
-  prefixOnChange = (event, data) => {
+  const prefixOnChange = (event, data) => {
     const newFormat = data.value;
     const { formats, links } = this.state;
 
@@ -130,19 +96,17 @@ class LinksTable extends Component {
       const newLinks = {};
       Object.keys(links).forEach((key) => {
         const link = links[key];
-        newLinks[key] = this.replaceLinkPrefix(link, newFormat);
+        newLinks[key] = replaceLinkPrefix(link, newFormat);
       });
       this.setState({ links: newLinks, currentFormat: newFormat });
     }
   };
 
-  resetErrorState = () => {
-    this.setState({ error: undefined });
+  const resetErrorState = () => {
+    setError(undefined);
   };
 
-  render() {
-    const { links, formats, error, currentFormat } = this.state;
-    const listRecords = links["oai-listrecords"];
+  const listRecords = links["oai-listrecords"];
     const listIdentifiers = links["oai-listidentifiers"];
 
     return (
@@ -161,7 +125,7 @@ class LinksTable extends Component {
                 selection
                 defaultValue={currentFormat}
                 selectOnNavigation={false}
-                onChange={this.prefixOnChange}
+                onChange={prefixOnChange}
               />
             </Grid.Column>
           </Grid.Row>
@@ -207,11 +171,10 @@ class LinksTable extends Component {
           </Table.Body>
         </Table>
         {!_isEmpty(error) && (
-          <ErrorMessage {...error} removeNotification={this.resetErrorState} />
+          <ErrorMessage {...error} removeNotification={resetErrorState} />
         )}
       </>
     );
-  }
 }
 
 LinksTable.propTypes = {

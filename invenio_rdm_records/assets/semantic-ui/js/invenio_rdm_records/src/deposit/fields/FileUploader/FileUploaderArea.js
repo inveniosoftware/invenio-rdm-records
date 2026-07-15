@@ -11,7 +11,7 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { useFormikContext, getIn } from "formik";
 import _get from "lodash/get";
 import PropTypes from "prop-types";
-import React, { Component, useState } from "react";
+import { Component, useState } from "react";
 import Dropzone from "react-dropzone";
 import {
   Button,
@@ -26,7 +26,7 @@ import {
 } from "semantic-ui-react";
 import { humanReadableBytes, FeedbackLabel } from "react-invenio-forms";
 
-const FileTableHeader = ({ filesLocked }) => (
+const FileTableHeader = ({ filesLocked = false }) => (
   <Table.Header>
     <Table.Row>
       <Table.HeaderCell>
@@ -52,18 +52,14 @@ FileTableHeader.propTypes = {
   filesLocked: PropTypes.bool,
 };
 
-FileTableHeader.defaultProps = {
-  filesLocked: false,
-};
-
 const FileTableRow = ({
-  filesLocked,
-  file,
+  filesLocked = false,
+  file = undefined,
   deleteFile,
-  defaultPreview,
+  defaultPreview = undefined,
   setDefaultPreview,
-  decimalSizeDisplay,
-  fileError,
+  decimalSizeDisplay = false,
+  fileError = undefined,
 }) => {
   const [isCancelling, setIsCancelling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -210,22 +206,14 @@ FileTableRow.propTypes = {
   fileError: PropTypes.object,
 };
 
-FileTableRow.defaultProps = {
-  filesLocked: false,
-  file: undefined,
-  defaultPreview: undefined,
-  decimalSizeDisplay: false,
-  fileError: undefined,
-};
-
 const FileUploadBox = ({
   filesLocked,
-  filesList,
-  dragText,
-  hasError,
-  uploadButtonIcon,
-  uploadButtonText,
-  openFileDialog,
+  filesList = undefined,
+  dragText = undefined,
+  hasError = false,
+  uploadButtonIcon = undefined,
+  uploadButtonText = undefined,
+  openFileDialog = null,
 }) =>
   !filesLocked && (
     <Segment
@@ -269,20 +257,11 @@ FileUploadBox.propTypes = {
   openFileDialog: PropTypes.func,
 };
 
-FileUploadBox.defaultProps = {
-  filesList: undefined,
-  dragText: undefined,
-  uploadButtonIcon: undefined,
-  uploadButtonText: undefined,
-  openFileDialog: null,
-  hasError: false,
-};
-
 export const FilesListTable = ({
-  filesLocked,
-  filesList,
-  deleteFile,
-  decimalSizeDisplay,
+  filesLocked = undefined,
+  filesList = undefined,
+  deleteFile = undefined,
+  decimalSizeDisplay = undefined,
 }) => {
   const { errors, setFieldValue, values: formikDraft } = useFormikContext();
   const defaultPreview = _get(formikDraft, "files.default_preview", "");
@@ -318,17 +297,8 @@ FilesListTable.propTypes = {
   decimalSizeDisplay: PropTypes.bool,
 };
 
-FilesListTable.defaultProps = {
-  filesLocked: undefined,
-  filesList: undefined,
-  deleteFile: undefined,
-  decimalSizeDisplay: undefined,
-};
-
-export class FileUploaderArea extends Component {
-  render() {
-    const { filesEnabled, dropzoneParams, filesList, filesLocked } = this.props;
-    return filesEnabled ? (
+export function FileUploaderArea({filesEnabled, dropzoneParams = undefined, filesList = undefined, filesLocked = false}) {
+  return filesEnabled ? (
       <Dropzone {...dropzoneParams} disabled={filesLocked}>
         {({ getRootProps, getInputProps, open: openFileDialog }) => (
           <Grid.Column width={16}>
@@ -336,10 +306,10 @@ export class FileUploaderArea extends Component {
               <input {...getInputProps()} />
               {filesList.length !== 0 && (
                 <Grid.Column verticalAlign="middle">
-                  <FilesListTable {...this.props} />
+                  <FilesListTable {...props} />
                 </Grid.Column>
               )}
-              <FileUploadBox {...this.props} openFileDialog={openFileDialog} />
+              <FileUploadBox {...props} openFileDialog={openFileDialog} />
             </span>
           </Grid.Column>
         )}
@@ -359,7 +329,6 @@ export class FileUploaderArea extends Component {
         </Segment>
       </Grid.Column>
     );
-  }
 }
 
 FileUploaderArea.propTypes = {
@@ -376,15 +345,3 @@ FileUploaderArea.propTypes = {
   decimalSizeDisplay: PropTypes.bool,
 };
 
-FileUploaderArea.defaultProps = {
-  deleteFile: undefined,
-  dragText: undefined,
-  dropzoneParams: undefined,
-  filesList: undefined,
-  filesLocked: false,
-  links: undefined,
-  setDefaultPreviewFile: undefined,
-  uploadButtonIcon: undefined,
-  uploadButtonText: undefined,
-  decimalSizeDisplay: undefined,
-};

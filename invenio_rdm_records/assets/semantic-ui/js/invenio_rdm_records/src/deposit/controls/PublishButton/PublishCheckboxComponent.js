@@ -5,7 +5,6 @@
 
 import _get from "lodash/get";
 import { useFormikContext } from "formik";
-import React from "react";
 import PropTypes from "prop-types";
 import { ErrorLabel, RadioField } from "react-invenio-forms";
 import { Checkbox, Form } from "semantic-ui-react";

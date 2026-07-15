@@ -5,7 +5,7 @@
 
 import _debounce from "lodash/debounce";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { FieldLabel } from "react-invenio-forms";
 import { Form } from "semantic-ui-react";
 import {
@@ -24,25 +24,10 @@ const UPDATE_PID_DEBOUNCE_MS = 200;
  * The field value has the following format:
  * { 'doi': { identifier: '<value>', provider: '<value>', client: '<value>' } }
  */
-export class RequiredPIDField extends Component {
-  constructor(props) {
-    super(props);
+export function RequiredPIDField({canBeManaged, canBeUnmanaged, record, field = undefined, form, fieldPath, btnLabelDiscardPID, btnLabelGetPID, fieldLabel, isEditingPublishedRecord, managedHelpText = null, pidLabel, pidIcon, pidPlaceholder, required, unmanagedHelpText = null, pidType}) {
+  const [isManagedSelected, setIsManagedSelected] = React.useState(isManagedSelected);
 
-    const { canBeManaged, canBeUnmanaged, record, field } = this.props;
-    this.canBeManagedAndUnmanaged = canBeManaged && canBeUnmanaged;
-    const value = field?.value;
-    const isInternalProvider = value?.provider !== PROVIDER_EXTERNAL;
-    const isDraft = record?.is_draft === true;
-    const hasIdentifier = value?.identifier;
-    const isManagedSelected =
-      isDraft && hasIdentifier && isInternalProvider ? true : undefined;
-
-    this.state = {
-      isManagedSelected: isManagedSelected,
-    };
-  }
-
-  onExternalIdentifierChanged = (identifier) => {
+  const onExternalIdentifierChanged = (identifier) => {
     const { form, fieldPath } = this.props;
 
     const pid = {
@@ -50,36 +35,14 @@ export class RequiredPIDField extends Component {
       provider: PROVIDER_EXTERNAL,
     };
 
-    this.debounced && this.debounced.cancel();
-    this.debounced = _debounce(() => {
+    debounced && debounced.cancel();
+    debounced = _debounce(() => {
       form.setFieldValue(fieldPath, pid);
     }, UPDATE_PID_DEBOUNCE_MS);
-    this.debounced();
+    debounced();
   };
 
-  render() {
-    const { isManagedSelected } = this.state;
-    const {
-      btnLabelDiscardPID,
-      btnLabelGetPID,
-      canBeManaged,
-      canBeUnmanaged,
-      form,
-      fieldPath,
-      fieldLabel,
-      isEditingPublishedRecord,
-      managedHelpText,
-      pidLabel,
-      pidIcon,
-      pidPlaceholder,
-      required,
-      unmanagedHelpText,
-      pidType,
-      field,
-      record,
-    } = this.props;
-
-    let { doiDefaultSelection } = this.props;
+  let { doiDefaultSelection } = props;
 
     const value = field.value || {};
     const currentIdentifier = value.identifier || "";
@@ -118,7 +81,7 @@ export class RequiredPIDField extends Component {
           <FieldLabel htmlFor={fieldPath} icon={pidIcon} label={fieldLabel} />
         </Form.Field>
 
-        {this.canBeManagedAndUnmanaged && (
+        {canBeManagedAndUnmanaged && (
           <ManagedUnmanagedSwitch
             disabled={
               (isEditingPublishedRecord || hasManagedIdentifier) &&
@@ -129,12 +92,10 @@ export class RequiredPIDField extends Component {
               if (userSelectedManaged) {
                 form.setFieldValue("pids", {});
               } else {
-                this.onExternalIdentifierChanged("");
+                onExternalIdentifierChanged("");
               }
               form.setFieldError(fieldPath, false);
-              this.setState({
-                isManagedSelected: userSelectedManaged,
-              });
+              setIsManagedSelected(userSelectedManaged);
             }}
             pidLabel={pidLabel}
           />
@@ -159,7 +120,7 @@ export class RequiredPIDField extends Component {
           <UnmanagedIdentifierCmp
             identifier={unmanagedIdentifier}
             onIdentifierChanged={(identifier) => {
-              this.onExternalIdentifierChanged(identifier);
+              onExternalIdentifierChanged(identifier);
             }}
             form={form}
             fieldPath={fieldPath}
@@ -169,7 +130,6 @@ export class RequiredPIDField extends Component {
         )}
       </>
     );
-  }
 }
 
 RequiredPIDField.propTypes = {
@@ -193,8 +153,3 @@ RequiredPIDField.propTypes = {
   doiDefaultSelection: PropTypes.object.isRequired,
 };
 
-RequiredPIDField.defaultProps = {
-  managedHelpText: null,
-  unmanagedHelpText: null,
-  field: undefined,
-};

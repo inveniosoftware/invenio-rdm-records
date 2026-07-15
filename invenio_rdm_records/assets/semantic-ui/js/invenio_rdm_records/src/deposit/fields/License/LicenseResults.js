@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "react";
 import { Item, Header, Radio } from "semantic-ui-react";
 import { withState } from "react-searchkit";
 import _get from "lodash/get";

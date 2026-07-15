@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState } from "react";
+import { useMemo, useCallback, useEffect, useState } from "react";
 import Uppy from "@uppy/core";
 import { Dashboard } from "@uppy/react";
 import ImageEditor from "@uppy/image-editor";
@@ -69,14 +69,19 @@ const createDuplicateFileChecker = (uppy, filesList) => {
   };
 };
 
+const uppyUploaderComponentDefaultPropQuota = {
+    maxFiles: 5,
+    maxStorage: 10 ** 10,
+};
+
 export const UppyUploaderComponent = ({
-  config,
-  files,
-  isDraftRecord,
-  hasParentRecord,
-  quota,
-  permissions,
-  record,
+  config = undefined,
+  files = undefined,
+  isDraftRecord = true,
+  hasParentRecord = false,
+  quota = uppyUploaderComponentDefaultPropQuota,
+  permissions = undefined,
+  record = undefined,
   initializeFileUpload,
   finalizeUpload,
   deleteFile,
@@ -84,13 +89,13 @@ export const UppyUploaderComponent = ({
   saveAndFetchDraft,
   setUploadProgress,
   importParentFiles,
-  importButtonIcon,
-  importButtonText,
-  isFileImportInProgress,
-  fileUploadConcurrency,
-  decimalSizeDisplay,
-  filesLocked,
-  allowEmptyFiles,
+  importButtonIcon = "sync",
+  importButtonText = i18next.t("Import files"),
+  isFileImportInProgress = false,
+  fileUploadConcurrency = 3,
+  decimalSizeDisplay = true,
+  filesLocked = false,
+  allowEmptyFiles = true,
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
@@ -105,7 +110,7 @@ export const UppyUploaderComponent = ({
   const displayImportBtn =
     filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
 
-  const transfersConfig = React.useMemo(() => {
+  const transfersConfig = useMemo(() => {
     const {
       transfer_types: transferType,
       enabled_transfer_types: enabledTypes,
@@ -118,7 +123,7 @@ export const UppyUploaderComponent = ({
     };
   }, [config]);
 
-  const restrictions = React.useMemo(
+  const restrictions = useMemo(
     () => ({
       minFileSize: allowEmptyFiles ? 0 : 1,
       maxNumberOfFiles: quota.maxFiles - filesList.length,
@@ -127,7 +132,7 @@ export const UppyUploaderComponent = ({
     [allowEmptyFiles, quota, filesList, filesSize]
   );
 
-  const isTransferSupported = React.useCallback(
+  const isTransferSupported = useCallback(
     (transferType) => transfersConfig.enabledTypes.includes(transferType),
     [transfersConfig]
   );
@@ -156,19 +161,19 @@ export const UppyUploaderComponent = ({
       .use(ImageEditor)
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       // https://uppy.io/blog/2017/05/0.16/#dom-element-in-target-option-uppyclose-for-tearing-down-an-uppy-instance
       uppy.close();
     };
   }, [uppy]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const onBeforeFileAdded = createDuplicateFileChecker(uppy, filesList);
     uppy.setOptions({ onBeforeFileAdded });
   }, [uppy, filesList]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const uploaderPlugin = uppy.getPlugin("RDMUppyUploaderPlugin");
     if (uploaderPlugin) {
       // Synchronize uploader state with current formik state
@@ -176,16 +181,16 @@ export const UppyUploaderComponent = ({
     }
   }, [uppy, formikDraft]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Synchronize uppy locale with i18next
     uppy.setOptions({ locale });
   }, [uppy, locale]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     uppy.setOptions({ restrictions });
   }, [uppy, restrictions]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const dashboardPlugin = uppy.getPlugin("uppy-uploader-dashboard");
     if (!dashboardPlugin) {
       return;
@@ -389,22 +394,3 @@ UppyUploaderComponent.propTypes = {
   allowEmptyFiles: PropTypes.bool,
 };
 
-UppyUploaderComponent.defaultProps = {
-  permissions: undefined,
-  config: undefined,
-  files: undefined,
-  fileUploadConcurrency: 3,
-  record: undefined,
-  isFileImportInProgress: false,
-  isDraftRecord: true,
-  hasParentRecord: false,
-  quota: {
-    maxFiles: 5,
-    maxStorage: 10 ** 10,
-  },
-  importButtonIcon: "sync",
-  importButtonText: i18next.t("Import files"),
-  decimalSizeDisplay: true,
-  filesLocked: false,
-  allowEmptyFiles: true,
-};

@@ -6,17 +6,15 @@
 
 import { Field } from "formik";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Form } from "semantic-ui-react";
 
 /**
  * Button component to reserve a PID.
  */
 
-export class ReservePIDBtn extends Component {
-  render() {
-    const { disabled, handleReservePID, label, loading, fieldError } = this.props;
-    return (
+export function ReservePIDBtn({disabled = false, handleReservePID, label, loading = false, fieldError = null}) {
+  return (
       <Field>
         {({ form: formik }) => (
           <Form.Button
@@ -31,7 +29,6 @@ export class ReservePIDBtn extends Component {
         )}
       </Field>
     );
-  }
 }
 
 ReservePIDBtn.propTypes = {
@@ -42,8 +39,3 @@ ReservePIDBtn.propTypes = {
   loading: PropTypes.bool,
 };
 
-ReservePIDBtn.defaultProps = {
-  disabled: false,
-  loading: false,
-  fieldError: null,
-};

@@ -5,7 +5,7 @@
  */
 
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Form } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { UnreservePIDBtn } from "./UnreservePIDBtn";
@@ -21,10 +21,11 @@ import { getFieldErrors } from "./helpers";
  * Render identifier field and reserve/unreserve
  * button components for managed PID.
  */
-class ManagedIdentifierComponent extends Component {
-  static contextType = DepositFormSubmitContext;
+const managedIdentifierComponentDefaultPropActionStateExtra = {};
+function ManagedIdentifierComponent({pidType, actionState = "", actionStateExtra = managedIdentifierComponentDefaultPropActionStateExtra, btnLabelDiscardPID, btnLabelGetPID, disabled = false, helpText = null, identifier, pidPlaceholder, form, fieldPath}) {
+  const contextValue = React.useContext(DepositFormSubmitContext);
 
-  handleReservePID = (event, formik) => {
+  const handleReservePID = (event, formik) => {
     const { pidType } = this.props;
     const { setSubmitContext } = this.context;
     setSubmitContext(DepositFormSubmitActions.RESERVE_PID, {
@@ -33,7 +34,7 @@ class ManagedIdentifierComponent extends Component {
     formik.handleSubmit(event);
   };
 
-  handleDiscardPID = (event, formik) => {
+  const handleDiscardPID = (event, formik) => {
     const { pidType } = this.props;
     const { setSubmitContext } = this.context;
     setSubmitContext(DepositFormSubmitActions.DISCARD_PID, {
@@ -42,21 +43,7 @@ class ManagedIdentifierComponent extends Component {
     formik.handleSubmit(event);
   };
 
-  render() {
-    const {
-      actionState,
-      actionStateExtra,
-      btnLabelDiscardPID,
-      btnLabelGetPID,
-      disabled,
-      helpText,
-      identifier,
-      pidPlaceholder,
-      pidType,
-      form,
-      fieldPath,
-    } = this.props;
-    const hasIdentifier = identifier !== "";
+  const hasIdentifier = identifier !== "";
 
     const ReserveBtn = (
       <ReservePIDBtn
@@ -65,7 +52,7 @@ class ManagedIdentifierComponent extends Component {
         loading={
           actionState === RESERVE_PID_STARTED && actionStateExtra.pidType === pidType
         }
-        handleReservePID={this.handleReservePID}
+        handleReservePID={handleReservePID}
         fieldError={getFieldErrors(form, fieldPath)}
       />
     );
@@ -74,7 +61,7 @@ class ManagedIdentifierComponent extends Component {
       <UnreservePIDBtn
         disabled={disabled}
         label={btnLabelDiscardPID}
-        handleDiscardPID={this.handleDiscardPID}
+        handleDiscardPID={handleDiscardPID}
         loading={
           actionState === DISCARD_PID_STARTED && actionStateExtra.pidType === pidType
         }
@@ -100,7 +87,6 @@ class ManagedIdentifierComponent extends Component {
         {helpText && <label className="helptext">{helpText}</label>}
       </>
     );
-  }
 }
 
 ManagedIdentifierComponent.propTypes = {
@@ -116,14 +102,6 @@ ManagedIdentifierComponent.propTypes = {
   /* from Redux */
   actionState: PropTypes.string,
   actionStateExtra: PropTypes.object,
-};
-
-ManagedIdentifierComponent.defaultProps = {
-  disabled: false,
-  helpText: null,
-  /* from Redux */
-  actionState: "",
-  actionStateExtra: {},
 };
 
 const mapStateToProps = (state) => ({

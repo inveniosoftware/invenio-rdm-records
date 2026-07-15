@@ -6,7 +6,7 @@
  */
 
 import _find from "lodash/find";
-import React, { Component } from "react";
+import { Component } from "react";
 import PropTypes from "prop-types";
 import { getIn, FieldArray } from "formik";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -59,25 +59,8 @@ class VisibleLicense {
   }
 }
 
-class LicenseFieldForm extends Component {
-  render() {
-    const {
-      label,
-      labelIcon,
-      fieldPath,
-      uiFieldPath,
-      form: { values, errors, initialErrors, initialValues },
-      move: formikArrayMove,
-      push: formikArrayPush,
-      remove: formikArrayRemove,
-      replace: formikArrayReplace,
-      required,
-      searchConfig,
-      serializeLicenses,
-      disabled,
-    } = this.props;
-
-    const uiRights = getIn(values, uiFieldPath, []);
+function LicenseFieldForm({label, labelIcon = undefined, fieldPath, uiFieldPath = undefined, form, errors, initialErrors, initialValues, move, push, remove, replace, required, searchConfig, serializeLicenses = undefined, disabled}) {
+  const uiRights = getIn(values, uiFieldPath, []);
 
     const licenseList = getIn(values, fieldPath, []);
     const formikInitialValues = getIn(initialValues, fieldPath, []);
@@ -166,7 +149,6 @@ class LicenseFieldForm extends Component {
         </DndProvider>
       </Overridable>
     );
-  }
 }
 
 LicenseFieldForm.propTypes = {
@@ -182,24 +164,15 @@ LicenseFieldForm.propTypes = {
   ...fieldCommonProps,
 };
 
-LicenseFieldForm.defaultProps = {
-  labelIcon: undefined,
-  uiFieldPath: undefined,
-  serializeLicenses: undefined,
-};
-
-class LicenseFieldComponent extends Component {
-  render() {
-    const { fieldPath } = this.props;
-    return (
+function LicenseFieldComponent({fieldPath}) {
+  return (
       <FieldArray
         name={fieldPath}
         component={(formikProps) => (
-          <LicenseFieldForm {...formikProps} {...this.props} />
+          <LicenseFieldForm {...formikProps} {...props} />
         )}
       />
     );
-  }
 }
 
 LicenseFieldComponent.propTypes = {

@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState, Component } from "react";
+import { useState, Component } from "react";
 import PropTypes from "prop-types";
 import { withState } from "react-searchkit";
 import { Input } from "semantic-ui-react";
 
 export const LicenseSearchBarComponent = ({
-  updateQueryState,
-  currentQueryState,
-  autofocus,
-  actionProps,
-  placeholder,
+  updateQueryState = null,
+  currentQueryState = null,
+  autofocus = false,
+  actionProps = null,
+  placeholder = "",
 }) => {
   const [currentValue, setCurrentValue] = useState("");
 
@@ -56,33 +56,14 @@ LicenseSearchBarComponent.propTypes = {
   placeholder: PropTypes.string,
 };
 
-LicenseSearchBarComponent.defaultProps = {
-  actionProps: null,
-  autofocus: false,
-  placeholder: "",
-  currentQueryState: null,
-  updateQueryState: null,
-};
-
-class Element extends Component {
-  componentDidMount() {
-    const { autofocus } = this.props;
-    if (autofocus && this.focusInput) {
-      this.focusInput.focus();
+function Element({autofocus = false, actionProps = null, onBtnSearchClick = null, onInputChange = null, onKeyPress = null, placeholder = "", queryString = ""}) {
+  React.useEffect(() => {
+    if (autofocus && focusInput) {
+      focusInput.focus();
     }
-  }
+  }, []);
 
-  render() {
-    const {
-      actionProps,
-      onBtnSearchClick,
-      onInputChange,
-      onKeyPress,
-      placeholder,
-      queryString,
-    } = this.props;
-
-    return (
+  return (
       <Input
         action={{
           content: "Search",
@@ -97,11 +78,10 @@ class Element extends Component {
         value={queryString}
         onKeyPress={onKeyPress}
         ref={(input) => {
-          this.focusInput = input;
+          focusInput = input;
         }}
       />
     );
-  }
 }
 
 Element.propTypes = {
@@ -112,16 +92,6 @@ Element.propTypes = {
   onKeyPress: PropTypes.func,
   placeholder: PropTypes.string,
   queryString: PropTypes.string,
-};
-
-Element.defaultProps = {
-  actionProps: null,
-  autofocus: false,
-  onBtnSearchClick: null,
-  onInputChange: null,
-  onKeyPress: null,
-  placeholder: "",
-  queryString: "",
 };
 
 export const LicenseSearchBar = withState(LicenseSearchBarComponent);

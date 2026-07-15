@@ -6,7 +6,7 @@
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import { Form, Radio, Popup } from "semantic-ui-react";
 import { DepositStatus } from "../../../../state/reducers/deposit";
@@ -15,27 +15,17 @@ const PROVIDER_EXTERNAL = "external";
 /**
  * Manage radio buttons choices between managed (i.e. datacite), unmanaged (i.e. external) and no need for a PID.
  */
-class OptionalDOIoptionsCmp extends Component {
-  handleChange = (e, { value }) => {
+function OptionalDOIoptionsCmp({onManagedUnmanagedChange, isManagedSelected, isNoNeedSelected, pidLabel = undefined, optionalDOItransitions, record}) {
+  const handleChange = (e, { value }) => {
     const { onManagedUnmanagedChange } = this.props;
     const isManagedSelected = value === "managed";
     const isNoNeedSelected = value === "notneeded";
     onManagedUnmanagedChange(isManagedSelected, isNoNeedSelected);
   };
 
-  _render = (cmp, shouldWrapPopup, message) =>
-    shouldWrapPopup && message ? <Popup content={message} trigger={cmp} /> : cmp;
+  const _render = (cmp, shouldWrapPopup, message) => shouldWrapPopup && message ? <Popup content={message} trigger={cmp} /> : cmp;
 
-  render() {
-    const {
-      isManagedSelected,
-      isNoNeedSelected,
-      pidLabel,
-      optionalDOItransitions,
-      record,
-    } = this.props;
-
-    const doi = record?.pids?.doi?.identifier || "";
+  const doi = record?.pids?.doi?.identifier || "";
     const alreadyPublished = [
       DepositStatus.PUBLISHED,
       DepositStatus.NEW_VERSION_DRAFT,
@@ -46,13 +36,7 @@ class OptionalDOIoptionsCmp extends Component {
       hasDoi && record?.pids?.doi?.provider !== PROVIDER_EXTERNAL;
     const hasManagedDOI = hasInternalProvider && isManagedSelected;
 
-    function isDisabled(provider) {
-      return (
-        hasManagedDOI ||
-        (alreadyPublished &&
-          !optionalDOItransitions?.allowed_providers?.includes(provider))
-      );
-    }
+    
 
     const isUnManagedDisabled = isDisabled("external");
     const isNoNeedDisabled = isDisabled("not_needed");
@@ -74,7 +58,7 @@ class OptionalDOIoptionsCmp extends Component {
           value="unmanaged"
           disabled={isUnManagedDisabled}
           checked={!isManagedSelected && !isNoNeedSelected}
-          onChange={this.handleChange}
+          onChange={handleChange}
         />
       </Form.Field>
     );
@@ -88,7 +72,7 @@ class OptionalDOIoptionsCmp extends Component {
           value="managed"
           disabled={isManagedDisabled}
           checked={isManagedSelected && !isNoNeedSelected}
-          onChange={this.handleChange}
+          onChange={handleChange}
         />
       </Form.Field>
     );
@@ -102,7 +86,7 @@ class OptionalDOIoptionsCmp extends Component {
           value="notneeded"
           disabled={isNoNeedDisabled}
           checked={isNoNeedSelected}
-          onChange={this.handleChange}
+          onChange={handleChange}
         />
       </Form.Field>
     );
@@ -114,16 +98,15 @@ class OptionalDOIoptionsCmp extends Component {
             pidLabel: pidLabel,
           })}
         </Form.Field>
-        {this._render(
+        {_render(
           yesIHaveOne,
           isUnManagedDisabled,
           optionalDOItransitions?.message
         )}
-        {this._render(noINeedOne, isManagedDisabled, optionalDOItransitions?.message)}
-        {this._render(noNeed, isNoNeedDisabled, optionalDOItransitions?.message)}
+        {_render(noINeedOne, isManagedDisabled, optionalDOItransitions?.message)}
+        {_render(noNeed, isNoNeedDisabled, optionalDOItransitions?.message)}
       </Form.Group>
     );
-  }
 }
 
 OptionalDOIoptionsCmp.propTypes = {
@@ -133,10 +116,6 @@ OptionalDOIoptionsCmp.propTypes = {
   pidLabel: PropTypes.string,
   optionalDOItransitions: PropTypes.object.isRequired,
   record: PropTypes.object.isRequired,
-};
-
-OptionalDOIoptionsCmp.defaultProps = {
-  pidLabel: undefined,
 };
 
 const mapStateToProps = (state) => ({

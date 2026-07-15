@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Field } from "formik";
@@ -19,24 +19,9 @@ import {
   AccessMessage,
 } from "./components";
 
-export class AccessRightFieldCmp extends Component {
-  /** Top-level Access Right Component */
-
-  render() {
-    const {
-      id,
-      fieldPath,
-      formik, // this is our access to the shared current draft
-      label,
-      labelIcon,
-      showMetadataAccess,
-      community,
-      record,
-      recordRestrictionGracePeriod,
-      allowRecordRestriction,
-    } = this.props;
-
-    const isGhostCommunity = community?.is_ghost === true;
+export function AccessRightFieldCmp({id, fieldPath, formik, // this is our access to the shared current draft
+      label, labelIcon, showMetadataAccess = true, community = undefined, record, recordRestrictionGracePeriod, allowRecordRestriction}) {
+  const isGhostCommunity = community?.is_ghost === true;
     const communityAccess =
       (community && !isGhostCommunity && community.access.visibility) || "public";
     const isMetadataOnly = !formik.form.values.files.enabled;
@@ -93,7 +78,6 @@ export class AccessRightFieldCmp extends Component {
         </Form.Field>
       </Card>
     );
-  }
 }
 
 AccessRightFieldCmp.propTypes = {
@@ -109,11 +93,6 @@ AccessRightFieldCmp.propTypes = {
   allowRecordRestriction: PropTypes.bool.isRequired,
 };
 
-AccessRightFieldCmp.defaultProps = {
-  showMetadataAccess: true,
-  community: undefined,
-};
-
 const mapStateToPropsAccessRightFieldCmp = (state) => ({
   community: state.deposit.editorState.selectedCommunity,
 });
@@ -123,16 +102,12 @@ export const AccessRightFieldComponent = connect(
   null
 )(AccessRightFieldCmp);
 
-export class AccessRightField extends Component {
-  render() {
-    const { fieldPath } = this.props;
-
-    return (
+export function AccessRightField({fieldPath}) {
+  return (
       <Field name={fieldPath}>
-        {(formik) => <AccessRightFieldComponent formik={formik} {...this.props} />}
+        {(formik) => <AccessRightFieldComponent formik={formik} {...props} />}
       </Field>
     );
-  }
 }
 
 AccessRightField.propTypes = {

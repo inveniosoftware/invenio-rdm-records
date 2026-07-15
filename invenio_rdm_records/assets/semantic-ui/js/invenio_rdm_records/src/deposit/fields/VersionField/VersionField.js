@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component } from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 import {
@@ -16,10 +16,8 @@ import {
 } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-class VersionFieldComponent extends Component {
-  render() {
-    const { fieldPath, label, labelIcon, placeholder, disabled, required } = this.props;
-    const helpText = (
+function VersionFieldComponent({fieldPath, label = i18next.t("Version"), labelIcon = "code branch", placeholder = "", disabled, required}) {
+  const helpText = (
       <span>
         {i18next.t(
           "Mostly relevant for software and dataset uploads. A semantic version string is preferred see"
@@ -57,19 +55,12 @@ class VersionFieldComponent extends Component {
         />
       </Overridable>
     );
-  }
 }
 
 VersionFieldComponent.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   ...fieldCommonProps,
-};
-
-VersionFieldComponent.defaultProps = {
-  label: i18next.t("Version"),
-  labelIcon: "code branch",
-  placeholder: "",
 };
 
 export const VersionField = showHideOverridable(

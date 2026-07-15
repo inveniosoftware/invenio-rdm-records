@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component } from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 import {
@@ -20,21 +20,8 @@ import { Button, Form } from "semantic-ui-react";
 import { emptyReference } from "./initialValues";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-class ReferencesFieldComponent extends Component {
-  render() {
-    const {
-      fieldPath,
-      label,
-      labelIcon,
-      required,
-      disabled,
-      showEmptyValue,
-      helpText,
-      addButtonLabel,
-      optimized,
-    } = this.props;
-
-    return (
+function ReferencesFieldComponent({fieldPath, label = i18next.t("References"), labelIcon = "bookmark", required = false, disabled, showEmptyValue = false, helpText, addButtonLabel = i18next.t("Add reference"), optimized = true}) {
+  return (
       <Overridable
         id="InvenioRdmRecords.DepositForm.ReferencesField.Container"
         defaultNewValue={emptyReference}
@@ -83,7 +70,6 @@ class ReferencesFieldComponent extends Component {
         </ArrayField>
       </Overridable>
     );
-  }
 }
 
 ReferencesFieldComponent.propTypes = {
@@ -91,15 +77,6 @@ ReferencesFieldComponent.propTypes = {
   addButtonLabel: PropTypes.string,
   optimized: PropTypes.bool,
   ...fieldCommonProps,
-};
-
-ReferencesFieldComponent.defaultProps = {
-  label: i18next.t("References"),
-  labelIcon: "bookmark",
-  required: false,
-  showEmptyValue: false,
-  addButtonLabel: i18next.t("Add reference"),
-  optimized: true,
 };
 
 export const ReferencesField = showHideOverridable(

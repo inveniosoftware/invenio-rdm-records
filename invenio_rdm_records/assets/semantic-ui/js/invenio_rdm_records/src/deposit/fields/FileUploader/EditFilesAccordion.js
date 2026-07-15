@@ -5,15 +5,14 @@
 
 import { Trans } from "react-i18next";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Accordion, Grid, Icon, Message } from "semantic-ui-react";
 import { NewVersionButton } from "../../controls/NewVersionButton";
 import { FileModification } from "./FileModification/FileModification";
 
-export class EditFilesAccordion extends Component {
-  state = { activeIndex: -1 };
-
-  handleClick = (e, titleProps) => {
+const editFilesAccordionDefaultPropFileModification = {};
+export function EditFilesAccordion({draft, record, permissions, fileModification = editFilesAccordionDefaultPropFileModification}) {
+  const handleClick = (e, titleProps) => {
     const { index } = titleProps;
     const { activeIndex } = this.state;
     const newIndex = activeIndex === index ? -1 : index;
@@ -21,21 +20,18 @@ export class EditFilesAccordion extends Component {
     this.setState({ activeIndex: newIndex });
   };
 
-  render() {
-    const { draft, record, permissions, fileModification } = this.props;
-    const { activeIndex } = this.state;
-    return (
+  return (
       <Message info>
         <Accordion className="m-0">
           <Accordion.Title
             className="ui"
             active={activeIndex === 0}
             index={0}
-            onClick={this.handleClick}
+            onClick={handleClick}
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                this.handleClick(e, { index: 0 });
+                handleClick(e, { index: 0 });
               }
             }}
           >
@@ -87,7 +83,6 @@ export class EditFilesAccordion extends Component {
         </Accordion>
       </Message>
     );
-  }
 }
 
 EditFilesAccordion.propTypes = {
@@ -97,6 +92,3 @@ EditFilesAccordion.propTypes = {
   fileModification: PropTypes.object,
 };
 
-EditFilesAccordion.defaultProps = {
-  fileModification: {},
-};
