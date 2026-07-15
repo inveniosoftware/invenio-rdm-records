@@ -15,11 +15,11 @@ def test_crossref_serializer(running_app, full_record_to_dict):
         "provider": "crossref",
         "client": "crossref",
     }
-    full_record_to_dict["metadata"]["resource_type"]["id"] = "publication-preprint"
+    full_record_to_dict["metadata"]["resource_type"]["id"] = "poster"
     full_record_to_dict["metadata"]["publication_date"] = "2018-01-01"
     expected_data = """
 <?xml version="1.0" encoding="utf-8"?>
-<doi_batch xmlns="http://www.crossref.org/schema/5.4.0" xmlns:ai="http://www.crossref.org/AccessIndicators.xsd" xmlns:rel="http://www.crossref.org/relations.xsd" xmlns:fr="http://www.crossref.org/fundref.xsd" version="5.4.0">
+<doi_batch xmlns="http://www.crossref.org/schema/5.5.0" xmlns:ai="http://www.crossref.org/AccessIndicators.xsd" xmlns:rel="http://www.crossref.org/relations.xsd" xmlns:fr="http://www.crossref.org/fundref.xsd" version="5.5.0">
   <head>
     <doi_batch_id>352789d5-4785-4ab6-8426-cc34773d3acd</doi_batch_id>
     <timestamp>20251101134647</timestamp>
@@ -30,7 +30,7 @@ def test_crossref_serializer(running_app, full_record_to_dict):
     <registrant>test</registrant>
   </head>
   <body>
-    <posted_content type="other" language="da">
+    <posted_content type="poster" language="da">
       <contributors>
         <person_name contributor_role="author" sequence="first">
           <given_name>Lars Holm</given_name>
@@ -40,6 +40,15 @@ def test_crossref_serializer(running_app, full_record_to_dict):
         <person_name contributor_role="author" sequence="additional">
           <given_name>Blabin</given_name>
           <surname>Tom</surname>
+        </person_name>
+        <person_name contributor_role="other" sequence="additional">
+          <given_name>Lars Holm</given_name>
+          <surname>Nielsen</surname>
+          <ORCID>https://orcid.org/0000-0001-8135-3489</ORCID>
+        </person_name>
+        <person_name contributor_role="other" sequence="additional">
+          <given_name>Dirkin</given_name>
+          <surname>Dirk</surname>
         </person_name>
       </contributors>
       <titles>
@@ -65,6 +74,11 @@ def test_crossref_serializer(running_app, full_record_to_dict):
           <fr:assertion name="funder_name">Caltech Library</fr:assertion>
         </fr:assertion>
       </fr:program>
+      <rel:program xmlns:rel="http://www.crossref.org/relations.xsd" name="relations">
+        <rel:related_item>
+          <rel:intra_work_relation relationship-type="isVersionOf" identifier-type="doi">10.1234/pgfpj-at058</rel:intra_work_relation>
+        </rel:related_item>
+      </rel:program>
       <version_info>
         <version>v1.0</version>
       </version_info>
