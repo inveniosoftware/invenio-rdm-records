@@ -25,6 +25,17 @@ import Overridable from "react-overridable";
 // NOTE: This component has to be a function component to allow
 //       the `useFormikContext` hook.
 export const FileUploaderToolbar = (props) => {
+  props = {
+    ...props,
+    filesList: typeof props.filesList === "undefined" ? undefined : props.filesList,
+    filesSize: typeof props.filesSize === "undefined" ? undefined : props.filesSize,
+    quota: typeof props.quota === "undefined" ? undefined : props.quota,
+    decimalSizeDisplay: typeof props.decimalSizeDisplay === "undefined" ? false : props.decimalSizeDisplay,
+    showMetadataOnlyToggle:
+      typeof props.showMetadataOnlyToggle === "undefined" ? true
+        : props.showMetadataOnlyToggle
+  };
+
   const {
     filesList,
     filesSize,
@@ -162,10 +173,3 @@ FileUploaderToolbar.propTypes = {
   toggleQuotaSection: PropTypes.func.isRequired,
 };
 
-FileUploaderToolbar.defaultProps = {
-  filesList: undefined,
-  filesSize: undefined,
-  quota: undefined,
-  decimalSizeDisplay: false,
-  showMetadataOnlyToggle: true,
-};

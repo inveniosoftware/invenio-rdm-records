@@ -16,12 +16,10 @@ import {
 } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-class PublisherFieldComponent extends Component {
-  render() {
-    const { fieldPath, label, labelIcon, placeholder, disabled, required, helpText } =
-      this.props;
-
-    return (
+function PublisherFieldComponent({fieldPath, label = i18next.t("Publisher"), labelIcon = "building outline", placeholder = i18next.t("Publisher"), disabled, required, helpText = i18next.t(
+    "The publisher is used to formulate the citation, so consider the prominence of the role."
+  )}) {
+  return (
       <Overridable
         id="InvenioRdmRecords.DepositForm.PublisherField.Container"
         fieldPath={fieldPath}
@@ -42,22 +40,12 @@ class PublisherFieldComponent extends Component {
         />
       </Overridable>
     );
-  }
 }
 
 PublisherFieldComponent.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   ...fieldCommonProps,
-};
-
-PublisherFieldComponent.defaultProps = {
-  label: i18next.t("Publisher"),
-  labelIcon: "building outline",
-  placeholder: i18next.t("Publisher"),
-  helpText: i18next.t(
-    "The publisher is used to formulate the citation, so consider the prominence of the role."
-  ),
 };
 
 export const PublisherField = showHideOverridable(

@@ -21,40 +21,37 @@ import { Grid, Menu, Modal } from "semantic-ui-react";
 import { CommunityListItem } from "./CommunityListItem";
 import PropTypes from "prop-types";
 
-export class CommunitySelectionSearch extends Component {
-  constructor(props) {
-    super(props);
-    const {
-      apiConfigs: { allCommunities },
-    } = this.props;
-
-    this.state = {
-      selectedConfig: allCommunities,
-    };
-  }
-
-  render() {
-    const {
-      selectedConfig: {
-        searchApi: selectedSearchApi,
-        appId: selectedAppId,
-        initialQueryState: selectedInitialQueryState,
-        toggleText,
+const communitySelectionSearchDefaultPropApiConfigs = {
+    allCommunities: {
+      initialQueryState: { size: 5, page: 1, sortBy: "bestmatch" },
+      searchApi: {
+        axios: {
+          url: "/api/communities",
+          headers: { Accept: "application/vnd.inveniordm.v1+json" },
+        },
       },
-    } = this.state;
+      appId: "ReactInvenioDeposit.CommunitySelectionSearch.AllCommunities",
+      toggleText: i18next.t("Search in all communities"),
+    },
+    myCommunities: {
+      initialQueryState: { size: 5, page: 1, sortBy: "bestmatch" },
+      searchApi: {
+        axios: {
+          url: "/api/user/communities",
+          headers: { Accept: "application/vnd.inveniordm.v1+json" },
+        },
+      },
+      appId: "ReactInvenioDeposit.CommunitySelectionSearch.MyCommunities",
+      toggleText: i18next.t("Search in my communities"),
+    },
+  };
+export function CommunitySelectionSearch({apiConfigs = communitySelectionSearchDefaultPropApiConfigs, myCommunities, record = null, isInitialSubmission = true, CommunityListItem = CommunityListItem, pagination = true, myCommunitiesEnabled = true, autofocus = true, overriddenComponents = undefined}) {
+  const [selectedConfig, setSelectedConfig] = React.useState(allCommunities);
+  const [searchApi, setSearchApi] = React.useState(null);
+  const [appId, setAppId] = React.useState(null);
+  const [initialQueryState, setInitialQueryState] = React.useState(null);
 
-    const {
-      apiConfigs: { allCommunities, myCommunities },
-      record,
-      isInitialSubmission,
-      CommunityListItem,
-      pagination,
-      myCommunitiesEnabled,
-      autofocus,
-      overriddenComponents: extraOverriddenComponents,
-    } = this.props;
-
-    const searchApi = new InvenioSearchApi(selectedSearchApi);
+  const searchApi = new InvenioSearchApi(selectedSearchApi);
     const overriddenComponents = {
       [`${selectedAppId}.ResultsList.item`]: parametrize(CommunityListItem, {
         record,
@@ -80,7 +77,7 @@ export class CommunitySelectionSearch extends Component {
                 allCommunities={allCommunities}
                 myCommunities={myCommunities}
                 selectedAppId={selectedAppId}
-                onSelectConfig={(config) => this.setState({ selectedConfig: config })}
+                onSelectConfig={(config) => setSelectedConfig(config)}
                 myCommunitiesEnabled={myCommunitiesEnabled}
               >
                 {myCommunitiesEnabled && (
@@ -102,9 +99,7 @@ export class CommunitySelectionSearch extends Component {
                         name="All"
                         active={selectedAppId === allCommunities.appId}
                         onClick={() =>
-                          this.setState({
-                            selectedConfig: allCommunities,
-                          })
+                          setSelectedConfig(allCommunities)
                         }
                       >
                         {i18next.t("All")}
@@ -118,9 +113,7 @@ export class CommunitySelectionSearch extends Component {
                         name="My communities"
                         active={selectedAppId === myCommunities.appId}
                         onClick={() =>
-                          this.setState({
-                            selectedConfig: myCommunities,
-                          })
+                          setSelectedConfig(myCommunities)
                         }
                       >
                         {i18next.t("My communities")}
@@ -172,7 +165,6 @@ export class CommunitySelectionSearch extends Component {
         </ReactSearchKit>
       </OverridableContext.Provider>
     );
-  }
 }
 
 CommunitySelectionSearch.propTypes = {
@@ -197,36 +189,3 @@ CommunitySelectionSearch.propTypes = {
   overriddenComponents: PropTypes.object,
 };
 
-CommunitySelectionSearch.defaultProps = {
-  isInitialSubmission: true,
-  pagination: true,
-  myCommunitiesEnabled: true,
-  autofocus: true,
-  CommunityListItem: CommunityListItem,
-  record: null,
-  overriddenComponents: undefined,
-  apiConfigs: {
-    allCommunities: {
-      initialQueryState: { size: 5, page: 1, sortBy: "bestmatch" },
-      searchApi: {
-        axios: {
-          url: "/api/communities",
-          headers: { Accept: "application/vnd.inveniordm.v1+json" },
-        },
-      },
-      appId: "ReactInvenioDeposit.CommunitySelectionSearch.AllCommunities",
-      toggleText: i18next.t("Search in all communities"),
-    },
-    myCommunities: {
-      initialQueryState: { size: 5, page: 1, sortBy: "bestmatch" },
-      searchApi: {
-        axios: {
-          url: "/api/user/communities",
-          headers: { Accept: "application/vnd.inveniordm.v1+json" },
-        },
-      },
-      appId: "ReactInvenioDeposit.CommunitySelectionSearch.MyCommunities",
-      toggleText: i18next.t("Search in my communities"),
-    },
-  },
-};

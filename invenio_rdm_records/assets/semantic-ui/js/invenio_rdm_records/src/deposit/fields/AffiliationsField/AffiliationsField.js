@@ -16,10 +16,8 @@ import { Field, getIn } from "formik";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 /**Affiliation input component */
-export class AffiliationsField extends Component {
-  render() {
-    const { fieldPath, selectRef } = this.props;
-    return (
+export function AffiliationsField({fieldPath, selectRef = undefined}) {
+  return (
       <Field name={fieldPath}>
         {({ form: { values } }) => {
           return (
@@ -63,7 +61,6 @@ export class AffiliationsField extends Component {
         }}
       </Field>
     );
-  }
 }
 
 AffiliationsField.propTypes = {
@@ -71,6 +68,3 @@ AffiliationsField.propTypes = {
   selectRef: PropTypes.object,
 };
 
-AffiliationsField.defaultProps = {
-  selectRef: undefined,
-};

@@ -9,7 +9,7 @@ import { ProtectionButtons } from "./ProtectionButtons";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Card } from "semantic-ui-react";
 
-export const FilesAccess = ({ access, accessCommunity, metadataOnly }) => {
+export const FilesAccess = ({ access, accessCommunity, metadataOnly = false }) => {
   const publicFiles = access.files === "public";
   const publicMetadata = access.record === "public";
   const publicCommunity = accessCommunity === "public";
@@ -57,8 +57,4 @@ FilesAccess.propTypes = {
   access: PropTypes.object.isRequired,
   metadataOnly: PropTypes.bool,
   accessCommunity: PropTypes.string.isRequired,
-};
-
-FilesAccess.defaultProps = {
-  metadataOnly: false,
 };

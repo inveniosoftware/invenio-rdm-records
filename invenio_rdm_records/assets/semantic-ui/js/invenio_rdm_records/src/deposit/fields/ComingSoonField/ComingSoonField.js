@@ -11,10 +11,8 @@ import { FieldLabel } from "react-invenio-forms";
 import { Form, Segment } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-export class ComingSoonField extends Component {
-  render() {
-    const { fieldPath, label, labelIcon } = this.props;
-    return (
+export function ComingSoonField({fieldPath, label = undefined, labelIcon = undefined}) {
+  return (
       <Form.Field id={fieldPath} name={fieldPath}>
         <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
         <Segment size="massive" tertiary textAlign="center">
@@ -22,7 +20,6 @@ export class ComingSoonField extends Component {
         </Segment>
       </Form.Field>
     );
-  }
 }
 
 ComingSoonField.propTypes = {
@@ -31,7 +28,3 @@ ComingSoonField.propTypes = {
   labelIcon: PropTypes.string,
 };
 
-ComingSoonField.defaultProps = {
-  label: undefined,
-  labelIcon: undefined,
-};

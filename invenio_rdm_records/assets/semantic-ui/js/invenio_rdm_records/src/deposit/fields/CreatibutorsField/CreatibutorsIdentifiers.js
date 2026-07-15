@@ -11,16 +11,11 @@ import { SelectField } from "react-invenio-forms";
 import _unickBy from "lodash/unionBy";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-export class CreatibutorsIdentifiers extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedOptions: props.initialOptions,
-    };
-  }
+export function CreatibutorsIdentifiers({initialOptions, fieldPath, label = i18next.t("Identifiers"), placeholder = i18next.t("e.g. ORCID, ISNI or GND.")}) {
+  const [selectedOptions, setSelectedOptions] = React.useState(initialOptions);
 
-  handleIdentifierAddition = (e, { value }) => {
-    this.setState((prevState) => ({
+  const handleIdentifierAddition = (e, { value }) => {
+    setSelectedOptions(prevSelectedOptions => ({
       selectedOptions: _unickBy(
         [
           {
@@ -28,33 +23,26 @@ export class CreatibutorsIdentifiers extends Component {
             value: value,
             key: value,
           },
-          ...prevState.selectedOptions,
+          ...prevSelectedOptions,
         ],
         "value"
       ),
     }));
   };
 
-  valuesToOptions = (options) =>
-    options.map((option) => ({
+  const valuesToOptions = (options) => options.map((option) => ({
       text: option,
       value: option,
       key: option,
     }));
 
-  handleChange = ({ data, formikProps }) => {
+  const handleChange = ({ data, formikProps }) => {
     const { fieldPath } = this.props;
-    this.setState({
-      selectedOptions: this.valuesToOptions(data.value),
-    });
+    setSelectedOptions(this.valuesToOptions(data.value));
     formikProps.form.setFieldValue(fieldPath, data.value);
   };
 
-  render() {
-    const { fieldPath, label, placeholder } = this.props;
-    const { selectedOptions } = this.state;
-
-    return (
+  return (
       <SelectField
         fieldPath={fieldPath}
         label={label}
@@ -65,14 +53,13 @@ export class CreatibutorsIdentifiers extends Component {
         multiple
         selection
         allowAdditions
-        onChange={this.handleChange}
+        onChange={handleChange}
         // `icon` is set to `null` in order to hide the dropdown default icon
         icon={null}
-        onAddItem={this.handleIdentifierAddition}
+        onAddItem={handleIdentifierAddition}
         optimized
       />
     );
-  }
 }
 
 CreatibutorsIdentifiers.propTypes = {
@@ -88,7 +75,3 @@ CreatibutorsIdentifiers.propTypes = {
   placeholder: PropTypes.string,
 };
 
-CreatibutorsIdentifiers.defaultProps = {
-  label: i18next.t("Identifiers"),
-  placeholder: i18next.t("e.g. ORCID, ISNI or GND."),
-};

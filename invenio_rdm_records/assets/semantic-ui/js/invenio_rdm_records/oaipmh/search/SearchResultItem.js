@@ -18,13 +18,14 @@ const overridenComponents = {
   "InvenioAdministration.DeleteModal.layout": DeleteModal,
 };
 
-class SearchResultItemComponent extends Component {
-  refreshAfterAction = () => {
+const searchResultItemComponentDefaultPropActions = {};
+function SearchResultItemComponent({updateQueryState, currentQueryState, resourceSchema, title, resourceName, result, columns, displayEdit = true, displayDelete = true, actions = searchResultItemComponentDefaultPropActions, apiEndpoint = undefined, idKeyPath, listUIEndpoint}) {
+  const refreshAfterAction = () => {
     const { updateQueryState, currentQueryState } = this.props;
     updateQueryState(currentQueryState);
   };
 
-  displayAsPre = (result, property) => {
+  const displayAsPre = (result, property) => {
     const { resourceSchema } = this.props;
     if (property === "spec") {
       return (
@@ -47,21 +48,7 @@ class SearchResultItemComponent extends Component {
     }
   };
 
-  render() {
-    const {
-      title,
-      resourceName,
-      result,
-      columns,
-      displayEdit,
-      displayDelete,
-      actions,
-      apiEndpoint,
-      idKeyPath,
-      listUIEndpoint,
-    } = this.props;
-
-    const resourceHasActions = displayEdit || displayDelete || !isEmpty(actions);
+  const resourceHasActions = displayEdit || displayDelete || !isEmpty(actions);
 
     overridenComponents["InvenioAdministration.EditAction"] = parametrize(Edit, {
       disable: () => result.system_created,
@@ -91,10 +78,10 @@ class SearchResultItemComponent extends Component {
                   <a
                     href={AdminUIRoutes.detailsView(listUIEndpoint, result, idKeyPath)}
                   >
-                    {this.displayAsPre(result, property)}
+                    {displayAsPre(result, property)}
                   </a>
                 ) : (
-                  this.displayAsPre(result, property)
+                  displayAsPre(result, property)
                 )}
               </Table.Cell>
             );
@@ -111,7 +98,7 @@ class SearchResultItemComponent extends Component {
                 displayDelete={displayDelete}
                 resource={result}
                 idKeyPath={idKeyPath}
-                successCallback={this.refreshAfterAction}
+                successCallback={refreshAfterAction}
                 listUIEndpoint={listUIEndpoint}
               />
             </Table.Cell>
@@ -119,7 +106,6 @@ class SearchResultItemComponent extends Component {
         </Table.Row>
       </OverridableContext.Provider>
     );
-  }
 }
 
 SearchResultItemComponent.propTypes = {
@@ -136,13 +122,6 @@ SearchResultItemComponent.propTypes = {
   idKeyPath: PropTypes.string.isRequired,
   listUIEndpoint: PropTypes.string.isRequired,
   resourceSchema: PropTypes.object.isRequired,
-};
-
-SearchResultItemComponent.defaultProps = {
-  displayDelete: true,
-  displayEdit: true,
-  apiEndpoint: undefined,
-  actions: {},
 };
 
 export const SearchResultItem = withState(SearchResultItemComponent);

@@ -13,7 +13,7 @@ import { EmbargoCheckboxField } from "./EmbargoCheckboxField";
 import { EmbargoDateField } from "./EmbargoDateField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-export const EmbargoAccess = ({ access, accessCommunity, metadataOnly }) => {
+export const EmbargoAccess = ({ access, accessCommunity, metadataOnly = false }) => {
   const recordPublic = access.record === "public";
   const filesPublic = access.files === "public";
   const communityPublic = accessCommunity === "public";
@@ -96,6 +96,3 @@ EmbargoAccess.propTypes = {
   accessCommunity: PropTypes.string.isRequired,
 };
 
-EmbargoAccess.defaultProps = {
-  metadataOnly: false,
-};

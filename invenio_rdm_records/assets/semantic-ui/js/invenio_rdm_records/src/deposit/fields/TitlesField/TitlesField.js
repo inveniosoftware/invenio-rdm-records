@@ -17,20 +17,8 @@ import {
 import { AdditionalTitlesField } from "./AdditionalTitlesField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-class TitlesFieldComponent extends Component {
-  render() {
-    const {
-      fieldPath,
-      options,
-      label,
-      labelIcon,
-      recordUI,
-      helpText,
-      placeholder,
-      optimized,
-    } = this.props;
-
-    return (
+function TitlesFieldComponent({fieldPath, options, label = i18next.t("Title"), labelIcon = "book", recordUI = undefined, helpText, placeholder, optimized = true}) {
+  return (
       <Overridable
         id="InvenioRdmRecords.DepositForm.TitlesField.Container"
         options={options}
@@ -58,7 +46,6 @@ class TitlesFieldComponent extends Component {
         </>
       </Overridable>
     );
-  }
 }
 
 TitlesFieldComponent.propTypes = {
@@ -79,14 +66,6 @@ TitlesFieldComponent.propTypes = {
   }).isRequired,
   recordUI: PropTypes.object,
   ...mandatoryFieldCommonProps,
-};
-
-TitlesFieldComponent.defaultProps = {
-  label: i18next.t("Title"),
-  labelIcon: "book",
-  required: false,
-  recordUI: undefined,
-  optimized: true,
 };
 
 export const TitlesField = showHideOverridable(

@@ -19,7 +19,7 @@ export const LicenseFieldItem = ({
   replaceLicense,
   removeLicense,
   searchConfig,
-  serializeLicenses,
+  serializeLicenses = undefined,
 }) => {
   const dropRef = useRef(null);
 
@@ -114,6 +114,3 @@ LicenseFieldItem.propTypes = {
   serializeLicenses: PropTypes.func,
 };
 
-LicenseFieldItem.defaultProps = {
-  serializeLicenses: undefined,
-};

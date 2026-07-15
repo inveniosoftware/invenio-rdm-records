@@ -15,30 +15,10 @@ import { changeSelectedCommunity } from "../../state/actions";
 import { CommunitySelectionModal } from "../CommunitySelectionModal";
 import Overridable from "react-overridable";
 
-class CommunityHeaderComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      modalOpen: false,
-    };
-  }
+function CommunityHeaderComponent({changeSelectedCommunity, community = undefined, imagePlaceholderLink, showCommunitySelectionButton, disableCommunitySelectionButton, userCanManageRecord, record, showCommunityHeader, apiConfigs = undefined, overriddenComponents = undefined}) {
+  const [modalOpen, setModalOpen] = React.useState(false);
 
-  render() {
-    const {
-      changeSelectedCommunity,
-      community,
-      imagePlaceholderLink,
-      showCommunitySelectionButton,
-      disableCommunitySelectionButton,
-      userCanManageRecord,
-      record,
-      showCommunityHeader,
-      apiConfigs,
-      overriddenComponents,
-    } = this.props;
-    const { modalOpen } = this.state;
-
-    // record is coming from the Jinja template and it is refreshed on page reload
+  // record is coming from the Jinja template and it is refreshed on page reload
     const isNewUpload = !record.id;
     // Check if the user can manage the record only if it is not a new upload
     const isCommunitySelectionDisabled =
@@ -79,10 +59,10 @@ class CommunityHeaderComponent extends Component {
                     <CommunitySelectionModal
                       onCommunityChange={(community) => {
                         changeSelectedCommunity(community);
-                        this.setState({ modalOpen: false });
+                        setModalOpen(false);
                       }}
-                      onModalChange={(value) => this.setState({ modalOpen: value })}
-                      handleClose={() => this.setState({ modalOpen: false })}
+                      onModalChange={(value) => setModalOpen(value)}
+                      handleClose={() => setModalOpen(false)}
                       modalOpen={modalOpen}
                       chosenCommunity={community}
                       displaySelected
@@ -94,7 +74,7 @@ class CommunityHeaderComponent extends Component {
                           <Button
                             className="community-header-button"
                             disabled={isCommunitySelectionDisabled}
-                            onClick={() => this.setState({ modalOpen: true })}
+                            onClick={() => setModalOpen(true)}
                             primary
                             size="mini"
                             name="setting"
@@ -133,7 +113,6 @@ class CommunityHeaderComponent extends Component {
         </Container>
       )
     );
-  }
 }
 
 CommunityHeaderComponent.propTypes = {
@@ -147,12 +126,6 @@ CommunityHeaderComponent.propTypes = {
   userCanManageRecord: PropTypes.bool.isRequired,
   apiConfigs: PropTypes.object,
   overriddenComponents: PropTypes.object,
-};
-
-CommunityHeaderComponent.defaultProps = {
-  community: undefined,
-  apiConfigs: undefined,
-  overriddenComponents: undefined,
 };
 
 const mapStateToProps = (state) => ({

@@ -13,14 +13,8 @@ import { OptionalPIDField } from "./OptionalPIDField";
 /**
  * Render the PIDField using a custom Formik component
  */
-export class PIDField extends Component {
-  constructor(props) {
-    super(props);
-
-    this.validatePropValues();
-  }
-
-  validatePropValues = () => {
+export function PIDField({canBeManaged = true, canBeUnmanaged = true, fieldPath, required = false}) {
+  const validatePropValues = () => {
     const { canBeManaged, canBeUnmanaged, fieldPath } = this.props;
 
     if (!canBeManaged && !canBeUnmanaged) {
@@ -28,12 +22,9 @@ export class PIDField extends Component {
     }
   };
 
-  render() {
-    const { fieldPath, required } = this.props;
-    const cmp = required ? RequiredPIDField : OptionalPIDField;
+  const cmp = required ? RequiredPIDField : OptionalPIDField;
 
-    return <FastField name={fieldPath} component={cmp} {...this.props} />;
-  }
+    return <FastField name={fieldPath} component={cmp} {...props} />;
 }
 
 PIDField.propTypes = {
@@ -56,14 +47,3 @@ PIDField.propTypes = {
   optionalDOItransitions: PropTypes.object.isRequired,
 };
 
-PIDField.defaultProps = {
-  btnLabelDiscardPID: "Discard",
-  btnLabelGetPID: "Reserve",
-  canBeManaged: true,
-  canBeUnmanaged: true,
-  managedHelpText: null,
-  pidIcon: "barcode",
-  pidPlaceholder: "",
-  required: false,
-  unmanagedHelpText: null,
-};

@@ -11,7 +11,7 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 
-const NewVersionButtonComponent = ({ onError, record, disabled, ...uiProps }) => {
+const NewVersionButtonComponent = ({ onError, record, disabled = false, ...uiProps }) => {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
@@ -66,10 +66,6 @@ NewVersionButtonComponent.propTypes = {
   onError: PropTypes.func.isRequired,
   record: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
-};
-
-NewVersionButtonComponent.defaultProps = {
-  disabled: false,
 };
 
 export const NewVersionButton = showHideOverridable(

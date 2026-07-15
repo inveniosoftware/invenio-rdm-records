@@ -12,10 +12,8 @@ import { Form, Popup } from "semantic-ui-react";
 /**
  * Button component to unreserve a PID.
  */
-export class UnreservePIDBtn extends Component {
-  render() {
-    const { disabled, handleDiscardPID, label, loading } = this.props;
-    return (
+export function UnreservePIDBtn({disabled = false, handleDiscardPID, label, loading = false}) {
+  return (
       <Popup
         content={label}
         trigger={
@@ -33,7 +31,6 @@ export class UnreservePIDBtn extends Component {
         }
       />
     );
-  }
 }
 
 UnreservePIDBtn.propTypes = {
@@ -43,7 +40,3 @@ UnreservePIDBtn.propTypes = {
   loading: PropTypes.bool,
 };
 
-UnreservePIDBtn.defaultProps = {
-  disabled: false,
-  loading: false,
-};

@@ -16,20 +16,12 @@ import {
   TextField,
 } from "react-invenio-forms";
 
-class CopyrightsFieldComponent extends Component {
-  render() {
-    const {
-      fieldPath,
-      label,
-      labelIcon,
-      required,
-      disabled,
-      helpText,
-      placeholder,
-      optimized,
-    } = this.props;
-
-    return (
+function CopyrightsFieldComponent({fieldPath, label = i18next.t("Copyright"), labelIcon = "copyright outline", required = false, disabled, helpText = i18next.t(
+    "A copyright statement describing the ownership of the uploaded resource."
+  ), placeholder = i18next.t("Copyright (C) {{currentYear}} The Authors.", {
+    currentYear: new Date().getFullYear(),
+  }), optimized = true}) {
+  return (
       <Overridable
         id="InvenioRdmRecords.DepositForm.CopyrightsField.Container"
         label={label}
@@ -51,25 +43,11 @@ class CopyrightsFieldComponent extends Component {
         />
       </Overridable>
     );
-  }
 }
 
 CopyrightsFieldComponent.propTypes = {
   optimized: PropTypes.bool,
   ...fieldCommonProps,
-};
-
-CopyrightsFieldComponent.defaultProps = {
-  label: i18next.t("Copyright"),
-  labelIcon: "copyright outline",
-  required: false,
-  helpText: i18next.t(
-    "A copyright statement describing the ownership of the uploaded resource."
-  ),
-  placeholder: i18next.t("Copyright (C) {{currentYear}} The Authors.", {
-    currentYear: new Date().getFullYear(),
-  }),
-  optimized: true,
 };
 
 export const CopyrightsField = showHideOverridable(

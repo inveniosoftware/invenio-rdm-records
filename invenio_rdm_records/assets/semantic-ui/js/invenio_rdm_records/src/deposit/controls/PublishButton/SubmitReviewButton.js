@@ -21,15 +21,14 @@ import { SubmitReviewModal } from "./SubmitReviewModal";
 import { DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS } from "../../state/types";
 import { scrollTop } from "../../utils";
 
-class SubmitReviewButtonComponent extends Component {
-  state = { isConfirmModalOpen: false };
-  static contextType = DepositFormSubmitContext;
+function SubmitReviewButtonComponent({formik, directPublish = false, isDOIRequired = undefined, noINeedDOI = undefined, doiReservationCheck, userCanManageRecord, record, actionState = undefined, actionStateExtra, community, disableSubmitForReviewButton = undefined, isRecordSubmittedForReview, publishModalExtraContent = undefined, filesState = undefined, ...ui}) {
+  const contextValue = React.useContext(DepositFormSubmitContext);
 
-  openConfirmModal = () => this.setState({ isConfirmModalOpen: true });
+  const openConfirmModal = () => this.setState({ isConfirmModalOpen: true });
 
-  closeConfirmModal = () => this.setState({ isConfirmModalOpen: false });
+  const closeConfirmModal = () => this.setState({ isConfirmModalOpen: false });
 
-  handleSubmitReview = ({ reviewComment }) => {
+  const handleSubmitReview = ({ reviewComment }) => {
     const { formik, directPublish, isDOIRequired, noINeedDOI, doiReservationCheck } =
       this.props;
     const { handleSubmit } = formik;
@@ -50,12 +49,12 @@ class SubmitReviewButtonComponent extends Component {
       });
       handleSubmit();
     }
-    this.closeConfirmModal();
+    closeConfirmModal();
     // scroll top to show the global error
     scrollTop();
   };
 
-  isDisabled = (disableSubmitForReviewButton, filesState) => {
+  const isDisabled = (disableSubmitForReviewButton, filesState) => {
     const { formik, userCanManageRecord, record } = this.props;
     const { values, isSubmitting } = formik;
 
@@ -84,25 +83,11 @@ class SubmitReviewButtonComponent extends Component {
     return !allCompleted;
   };
 
-  render() {
-    const {
-      actionState,
-      actionStateExtra,
-      community,
-      disableSubmitForReviewButton,
-      directPublish,
-      formik,
-      isRecordSubmittedForReview,
-      publishModalExtraContent,
-      filesState,
-      ...ui
-    } = this.props;
-
-    const { isSubmitting } = formik;
+  const { isSubmitting } = formik;
 
     const uiProps = _omit(ui, ["dispatch"]);
 
-    const { isConfirmModalOpen } = this.state;
+    
 
     const btnLblSubmitReview = isRecordSubmittedForReview
       ? i18next.t("Submitted for review")
@@ -114,9 +99,9 @@ class SubmitReviewButtonComponent extends Component {
     return (
       <>
         <Button
-          disabled={this.isDisabled(disableSubmitForReviewButton, filesState)}
+          disabled={isDisabled(disableSubmitForReviewButton, filesState)}
           name="SubmitReview"
-          onClick={this.openConfirmModal}
+          onClick={openConfirmModal}
           positive={directPublish}
           primary={!directPublish}
           icon="upload"
@@ -130,16 +115,15 @@ class SubmitReviewButtonComponent extends Component {
           <SubmitReviewModal
             isConfirmModalOpen={isConfirmModalOpen}
             initialReviewComment={actionStateExtra.reviewComment}
-            onSubmit={this.handleSubmitReview}
+            onSubmit={handleSubmitReview}
             community={community}
-            onClose={this.closeConfirmModal}
+            onClose={closeConfirmModal}
             publishModalExtraContent={publishModalExtraContent}
             directPublish={directPublish}
           />
         )}
       </>
     );
-  }
 }
 
 SubmitReviewButtonComponent.propTypes = {
@@ -157,16 +141,6 @@ SubmitReviewButtonComponent.propTypes = {
   doiReservationCheck: PropTypes.func.isRequired,
   isDOIRequired: PropTypes.bool,
   noINeedDOI: PropTypes.bool,
-};
-
-SubmitReviewButtonComponent.defaultProps = {
-  actionState: undefined,
-  disableSubmitForReviewButton: undefined,
-  publishModalExtraContent: undefined,
-  directPublish: false,
-  filesState: undefined,
-  isDOIRequired: undefined,
-  noINeedDOI: undefined,
 };
 
 const mapStateToProps = (state) => ({

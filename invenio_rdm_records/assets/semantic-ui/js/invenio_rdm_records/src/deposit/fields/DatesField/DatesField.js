@@ -26,16 +26,11 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { sortOptions } from "../../utils";
 import Overridable from "react-overridable";
 
-class DatesFieldComponent extends Component {
-  /** Top-level Dates Component */
-
-  /**
-   * Returns the required option if the current value passed does match it
-   * @param  {Object} currentValue The current value
-   * @param  {Array} arrayOfValues The array of values for the field
-   * @return {Object} The required option if any
-   */
-  getRequiredOption = (currentValue, arrayOfValues) => {
+const datesFieldComponentDefaultPropRequiredOptions = [];
+function DatesFieldComponent({requiredOptions = datesFieldComponentDefaultPropRequiredOptions, fieldPath, options, label = i18next.t("Dates"), labelIcon = "calendar", required = false, showEmptyValue = false, placeholder = i18next.t("YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"), helpText = i18next.t(
+    "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
+  ), addButtonLabel = i18next.t("Add date"), optimized = true}) {
+  const getRequiredOption = (currentValue, arrayOfValues) => {
     const { requiredOptions } = this.props;
     for (const requiredOption of requiredOptions) {
       // If more values matched we do take the first value
@@ -47,22 +42,7 @@ class DatesFieldComponent extends Component {
     return null;
   };
 
-  render() {
-    const {
-      fieldPath,
-      options,
-      label,
-      labelIcon,
-      required,
-      requiredOptions,
-      showEmptyValue,
-      placeholder,
-      helpText,
-      addButtonLabel,
-      optimized,
-    } = this.props;
-
-    return (
+  return (
       <Overridable
         id="InvenioRdmRecords.DepositForm.DatesField.Container"
         fieldPath={fieldPath}
@@ -90,7 +70,7 @@ class DatesFieldComponent extends Component {
         >
           {({ array, arrayHelpers, indexPath, value }) => {
             const fieldPathPrefix = `${fieldPath}.${indexPath}`;
-            const requiredOption = this.getRequiredOption(value, array);
+            const requiredOption = getRequiredOption(value, array);
             const hasRequiredDateValue = _has(requiredOption, "date");
             const hasRequiredTypeValue = _has(requiredOption, "type");
             const hasRequiredDescriptionValue = _has(requiredOption, "description");
@@ -154,7 +134,6 @@ class DatesFieldComponent extends Component {
         </ArrayField>
       </Overridable>
     );
-  }
 }
 
 DatesFieldComponent.propTypes = {
@@ -170,20 +149,6 @@ DatesFieldComponent.propTypes = {
   showEmptyValue: PropTypes.bool,
   optimized: PropTypes.bool,
   ...fieldCommonProps,
-};
-
-DatesFieldComponent.defaultProps = {
-  label: i18next.t("Dates"),
-  labelIcon: "calendar",
-  placeholder: i18next.t("YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"),
-  helpText: i18next.t(
-    "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
-  ),
-  addButtonLabel: i18next.t("Add date"),
-  required: false,
-  requiredOptions: [],
-  showEmptyValue: false,
-  optimized: true,
 };
 
 export const DatesField = showHideOverridable(

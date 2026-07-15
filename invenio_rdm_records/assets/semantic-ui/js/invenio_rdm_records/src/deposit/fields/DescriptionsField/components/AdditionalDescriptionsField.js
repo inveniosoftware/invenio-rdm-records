@@ -15,10 +15,9 @@ import { LanguagesField } from "../../LanguagesField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { sortOptions } from "../../../utils";
 
-export class AdditionalDescriptionsField extends Component {
-  render() {
-    const { fieldPath, options, recordUI, editorConfig, optimized } = this.props;
-    const typeOptions = sortOptions(options.type);
+const additionalDescriptionsFieldDefaultPropRecordUI = {};
+export function AdditionalDescriptionsField({fieldPath, options, recordUI = additionalDescriptionsFieldDefaultPropRecordUI, editorConfig = undefined, optimized = true}) {
+  const typeOptions = sortOptions(options.type);
 
     return (
       <ArrayField
@@ -93,7 +92,6 @@ export class AdditionalDescriptionsField extends Component {
         }}
       </ArrayField>
     );
-  }
 }
 
 AdditionalDescriptionsField.propTypes = {
@@ -118,8 +116,3 @@ AdditionalDescriptionsField.propTypes = {
   optimized: PropTypes.bool,
 };
 
-AdditionalDescriptionsField.defaultProps = {
-  recordUI: {},
-  editorConfig: undefined,
-  optimized: true,
-};

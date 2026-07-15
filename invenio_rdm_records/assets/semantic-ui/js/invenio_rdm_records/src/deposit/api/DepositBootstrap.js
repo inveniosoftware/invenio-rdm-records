@@ -23,10 +23,11 @@ import {
 } from "../state/actions";
 import { scrollTop } from "../utils";
 
-class DepositBootstrapComponent extends Component {
-  componentDidMount() {
+function DepositBootstrapComponent({fileUploadOngoing = false, saveAction, publishAction, submitReviewAction, previewAction, deleteAction, reservePIDAction, discardPIDAction, errors = undefined, record, children = undefined}) {
+  React.useEffect(() => {
+    let returnValue;
     window.addEventListener("beforeunload", (e) => {
-      const { fileUploadOngoing } = this.props;
+      
       if (fileUploadOngoing) {
         e.returnValue = "";
         return "";
@@ -37,18 +38,18 @@ class DepositBootstrapComponent extends Component {
       // Investigate if it's possible to wait for the deletion request to complete
       // before unloading the page
     });
-  }
+  }, []);
 
-  submitContext = undefined;
+  submitContext = undefined
 
-  setSubmitContext = (actionName, extra = {}) => {
-    this.submitContext = {
+  const setSubmitContext = (actionName, extra = {}) => {
+    submitContext = {
       actionName: actionName,
       extra: extra,
     };
   };
 
-  onFormSubmit = async (values, formikBag) => {
+  const onFormSubmit = (values, formikBag) => {
     const {
       saveAction,
       publishAction,
@@ -58,7 +59,7 @@ class DepositBootstrapComponent extends Component {
       reservePIDAction,
       discardPIDAction,
     } = this.props;
-    const { actionName, extra } = this.submitContext;
+    const { actionName, extra } = submitContext;
 
     let actionFunc = undefined;
     const params = {};
@@ -109,18 +110,16 @@ class DepositBootstrapComponent extends Component {
       }
     } finally {
       // reset the action name after having handled it
-      this.submitContext = {};
+      submitContext = {};
     }
   };
 
-  render() {
-    const { errors, record, children } = this.props;
-    return (
+  return (
       <DepositFormSubmitContext.Provider
-        value={{ setSubmitContext: this.setSubmitContext }}
+        value={{ setSubmitContext: setSubmitContext }}
       >
         <BaseForm
-          onSubmit={this.onFormSubmit}
+          onSubmit={onFormSubmit}
           formik={{
             // enableReinitialise needed due to
             // updated draft PID (and the endpoint URL as a consequence).
@@ -138,7 +137,6 @@ class DepositBootstrapComponent extends Component {
         </BaseForm>
       </DepositFormSubmitContext.Provider>
     );
-  }
 }
 
 DepositBootstrapComponent.propTypes = {
@@ -153,12 +151,6 @@ DepositBootstrapComponent.propTypes = {
   reservePIDAction: PropTypes.func.isRequired,
   discardPIDAction: PropTypes.func.isRequired,
   fileUploadOngoing: PropTypes.bool,
-};
-
-DepositBootstrapComponent.defaultProps = {
-  errors: undefined,
-  children: undefined,
-  fileUploadOngoing: false,
 };
 
 const mapStateToProps = (state) => {

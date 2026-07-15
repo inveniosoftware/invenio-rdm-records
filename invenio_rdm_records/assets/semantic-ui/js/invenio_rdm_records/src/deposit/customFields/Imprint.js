@@ -14,19 +14,9 @@ import { Divider, Grid } from "semantic-ui-react";
 
 import PropTypes from "prop-types";
 
-class ImprintComponent extends Component {
-  render() {
-    const {
-      fieldPath, // injected by the custom field loader via the `field` config property
-      title,
-      place,
-      isbn,
-      pages,
-      edition,
-      label,
-      labelIcon,
-    } = this.props;
-    return (
+function ImprintComponent({fieldPath, // injected by the custom field loader via the `field` config property
+      title, place, isbn, pages, edition, label = undefined, labelIcon = undefined}) {
+  return (
       <>
         {label && (
           <>
@@ -78,7 +68,6 @@ class ImprintComponent extends Component {
         </Grid>
       </>
     );
-  }
 }
 
 ImprintComponent.propTypes = {
@@ -90,11 +79,6 @@ ImprintComponent.propTypes = {
   edition: PropTypes.object.isRequired,
   labelIcon: PropTypes.string,
   label: PropTypes.string,
-};
-
-ImprintComponent.defaultProps = {
-  labelIcon: undefined,
-  label: undefined,
 };
 
 export const Imprint = showHideOverridableWithDynamicId(ImprintComponent);

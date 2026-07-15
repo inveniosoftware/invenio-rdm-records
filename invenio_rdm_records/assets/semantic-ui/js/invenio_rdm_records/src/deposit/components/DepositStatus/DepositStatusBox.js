@@ -81,7 +81,7 @@ const getStatus = (depositStatus, requireDeletionForDeclinedDraft) => {
 };
 
 const DepositStatusBoxComponent = ({
-  depositReview,
+  depositReview = undefined,
   depositStatus,
   requireDeletionForDeclinedDraft,
 }) => {
@@ -126,10 +126,6 @@ DepositStatusBoxComponent.propTypes = {
   depositReview: PropTypes.bool,
   depositStatus: PropTypes.string.isRequired,
   requireDeletionForDeclinedDraft: PropTypes.bool.isRequired,
-};
-
-DepositStatusBoxComponent.defaultProps = {
-  depositReview: undefined,
 };
 
 const mapStateToProps = (state) => ({

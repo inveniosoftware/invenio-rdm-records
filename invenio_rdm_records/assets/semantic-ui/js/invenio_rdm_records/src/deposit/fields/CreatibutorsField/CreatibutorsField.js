@@ -27,33 +27,17 @@ import { sortOptions } from "../../utils";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
 
-class CreatibutorsFieldForm extends Component {
-  handleOnContributorChange = (selectedCreatibutor) => {
+const creatibutorsFieldFormDefaultPropModal = {
+    addLabel: i18next.t("Add author"),
+    editLabel: i18next.t("Edit author"),
+  };
+function CreatibutorsFieldForm({push, form, errors, initialErrors, initialValues, remove, replace, move, name, label = i18next.t("Authors"), labelIcon = "user", roleOptions, schema, modal = creatibutorsFieldFormDefaultPropModal, autocompleteNames = "search", addButtonLabel = i18next.t("Add author"), addButtonHelpText = undefined, serializeSuggestions = undefined, serializeCreatibutor = undefined, deserializeCreatibutor = undefined}) {
+  const handleOnContributorChange = (selectedCreatibutor) => {
     const { push: formikArrayPush } = this.props;
     formikArrayPush(selectedCreatibutor);
   };
 
-  render() {
-    const {
-      form: { values, errors, initialErrors, initialValues },
-      remove: formikArrayRemove,
-      replace: formikArrayReplace,
-      move: formikArrayMove,
-      name: fieldPath,
-      label,
-      labelIcon,
-      roleOptions,
-      schema,
-      modal,
-      autocompleteNames,
-      addButtonLabel,
-      addButtonHelpText,
-      serializeSuggestions,
-      serializeCreatibutor,
-      deserializeCreatibutor,
-    } = this.props;
-
-    const creatibutorsList = getIn(values, fieldPath, []);
+  const creatibutorsList = getIn(values, fieldPath, []);
     const formikInitialValues = getIn(initialValues, fieldPath, []);
 
     const error = getIn(errors, fieldPath, null);
@@ -132,7 +116,7 @@ class CreatibutorsFieldForm extends Component {
               })}
             </List>
             <CreatibutorsModal
-              onCreatibutorChange={this.handleOnContributorChange}
+              onCreatibutorChange={handleOnContributorChange}
               action="add"
               addLabel={modal.addLabel}
               editLabel={modal.editLabel}
@@ -154,22 +138,17 @@ class CreatibutorsFieldForm extends Component {
         </DndProvider>
       </Overridable>
     );
-  }
 }
 
-export class CreatibutorsFieldComponent extends Component {
-  render() {
-    const { fieldPath } = this.props;
-
-    return (
+export function CreatibutorsFieldComponent({fieldPath}) {
+  return (
       <FieldArray
         name={fieldPath}
         component={(formikProps) => (
-          <CreatibutorsFieldForm {...formikProps} {...this.props} />
+          <CreatibutorsFieldForm {...formikProps} {...props} />
         )}
       />
     );
-  }
 }
 
 CreatibutorsFieldForm.propTypes = {
@@ -192,21 +171,6 @@ CreatibutorsFieldForm.propTypes = {
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
   ...mandatoryFieldCommonProps,
-};
-
-CreatibutorsFieldForm.defaultProps = {
-  autocompleteNames: "search",
-  label: i18next.t("Authors"),
-  labelIcon: "user",
-  modal: {
-    addLabel: i18next.t("Add author"),
-    editLabel: i18next.t("Edit author"),
-  },
-  addButtonLabel: i18next.t("Add author"),
-  addButtonHelpText: undefined,
-  serializeSuggestions: undefined,
-  serializeCreatibutor: undefined,
-  deserializeCreatibutor: undefined,
 };
 
 CreatibutorsFieldComponent.propTypes = {

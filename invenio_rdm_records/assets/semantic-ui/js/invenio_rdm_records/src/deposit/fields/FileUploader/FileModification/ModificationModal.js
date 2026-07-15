@@ -29,34 +29,17 @@ import {
 } from "semantic-ui-react";
 import RadioGroup from "./RadioGroup";
 
-class ModificationModalComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.initState = {
-      loading: false,
-      error: undefined,
-      checklistState: [undefined],
-      checkboxState: [false],
-      messages: [],
-    };
-    this.state = { ...this.initState };
-    this.checklist = [
-      {
-        label: i18next.t("I want to update the files with a new version"),
-        message: i18next.t("Instead, you can make a new version"),
-      },
-    ];
-  }
-
-  handleClose = () => {
+const modificationModalComponentDefaultPropFileModification = {};
+function ModificationModalComponent({handleClose, draft, record, saveAction, open, fileModification = modificationModalComponentDefaultPropFileModification}) {
+  const handleClose = () => {
     this.setState({
-      ...this.initState,
+      ...initState,
     });
     const { handleClose } = this.props;
     handleClose();
   };
 
-  handleRadioUpdate = (index, value) => {
+  const handleRadioUpdate = (index, value) => {
     const { checklistState } = this.state;
     const nextChecklistState = checklistState.map((c, i) => {
       if (i === index) {
@@ -65,14 +48,14 @@ class ModificationModalComponent extends Component {
         return c;
       }
     });
-    const filteredChecklist = this.checklist.filter((_, index) => {
+    const filteredChecklist = checklist.filter((_, index) => {
       return nextChecklistState[index];
     });
     const newMessages = filteredChecklist.map((x) => x["message"]);
     this.setState({ checklistState: nextChecklistState, messages: newMessages });
   };
 
-  handleCheckboxUpdate = (index) => {
+  const handleCheckboxUpdate = (index) => {
     const { checkboxState } = this.state;
     const nextCheckboxState = checkboxState.map((c, i) => {
       if (i === index) {
@@ -84,7 +67,7 @@ class ModificationModalComponent extends Component {
     this.setState({ checkboxState: nextCheckboxState });
   };
 
-  handleSubmit = async (values) => {
+  const handleSubmit = (values) => {
     this.setState({ loading: true });
     const { draft, record, saveAction } = this.props;
     const payload = {
@@ -102,11 +85,11 @@ class ModificationModalComponent extends Component {
     // save draft before reloading the page
     await saveAction(draft, {});
 
-    this.cancellableAction = withCancel(
+    cancellableAction = withCancel(
       http.post(record.links.file_modification, payload)
     );
     try {
-      const response = await this.cancellableAction.promise;
+      const response = await cancellableAction.promise;
       const data = response.data;
 
       if (response.status === 200) {
@@ -122,11 +105,7 @@ class ModificationModalComponent extends Component {
     }
   };
 
-  render() {
-    const { open, fileModification } = this.props;
-    const { loading, error, messages, checklistState, checkboxState } = this.state;
-
-    // The submit button is enabled when:
+  // The submit button is enabled when:
     //  all the checkboxes are true and all the checklist boxes are false
     // by boolean logic: !(A && !B) === !A || B
     // note: radio buttons have three states including undefined
@@ -139,7 +118,7 @@ class ModificationModalComponent extends Component {
         <Modal
           open={open}
           closeIcon
-          onClose={this.handleClose}
+          onClose={handleClose}
           role="dialog"
           aria-modal="true"
           tab-index="-1"
@@ -160,7 +139,7 @@ class ModificationModalComponent extends Component {
             </ModalContent>
           </Overridable>
           <ModalActions className="text-align-left">
-            <Button onClick={this.handleClose} content={i18next.t("Close")} />
+            <Button onClick={handleClose} content={i18next.t("Close")} />
           </ModalActions>
         </Modal>
       );
@@ -170,7 +149,7 @@ class ModificationModalComponent extends Component {
       <Modal
         open={open}
         closeIcon
-        onClose={this.handleClose}
+        onClose={handleClose}
         role="dialog"
         aria-modal="true"
         tab-index="-1"
@@ -181,7 +160,7 @@ class ModificationModalComponent extends Component {
       >
         <ModalHeader>{i18next.t("Edit files")}</ModalHeader>
         <Formik
-          onSubmit={this.handleSubmit}
+          onSubmit={handleSubmit}
           initialValues={{ reason: "", comment: "" }}
           validateOnChange={false}
           validateOnBlur={false}
@@ -196,7 +175,7 @@ class ModificationModalComponent extends Component {
                     { daysUntil: fileModification.context.days_until }
                   )}
                 </p>
-                {this.checklist.length > 0 && (
+                {checklist.length > 0 && (
                   <>
                     <strong>{i18next.t("File modification checklist:")}</strong>
                     <Table basic="very" unstackable className="mt-0">
@@ -208,13 +187,13 @@ class ModificationModalComponent extends Component {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {this.checklist.map((row, index) => (
+                        {checklist.map((row, index) => (
                           <RadioGroup
                             index={index}
                             row={row}
                             key={index}
                             state={checklistState}
-                            onStateChange={this.handleRadioUpdate}
+                            onStateChange={handleRadioUpdate}
                           />
                         ))}
                       </TableBody>
@@ -231,7 +210,7 @@ class ModificationModalComponent extends Component {
                     "I will not modify files that supplement findings/results of an already published work."
                   )}
                   className="mt-5 mb-5"
-                  onChange={() => this.handleCheckboxUpdate(0)}
+                  onChange={() => handleCheckboxUpdate(0)}
                 />
                 {error && (
                   <ErrorMessage
@@ -245,7 +224,7 @@ class ModificationModalComponent extends Component {
               </ModalContent>
               <ModalActions>
                 <Button
-                  onClick={this.handleClose}
+                  onClick={handleClose}
                   content={i18next.t("Close")}
                   floated="left"
                 />
@@ -264,7 +243,6 @@ class ModificationModalComponent extends Component {
         </Formik>
       </Modal>
     );
-  }
 }
 
 ModificationModalComponent.propTypes = {
@@ -274,10 +252,6 @@ ModificationModalComponent.propTypes = {
   handleClose: PropTypes.func.isRequired,
   fileModification: PropTypes.object,
   saveAction: PropTypes.func.isRequired,
-};
-
-ModificationModalComponent.defaultProps = {
-  fileModification: {},
 };
 
 const mapDispatchToProps = (dispatch) => ({

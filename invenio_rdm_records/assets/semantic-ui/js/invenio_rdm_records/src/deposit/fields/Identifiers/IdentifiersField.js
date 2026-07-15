@@ -19,22 +19,8 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { emptyIdentifier } from "./initialValues";
 import Overridable from "react-overridable";
 
-class IdentifiersFieldComponent extends Component {
-  render() {
-    const {
-      fieldPath,
-      label,
-      labelIcon,
-      required,
-      disabled,
-      schemeOptions,
-      showEmptyValue,
-      helpText,
-      placeholder,
-      optimized,
-    } = this.props;
-
-    return (
+function IdentifiersFieldComponent({fieldPath, label = i18next.t("Identifiers"), labelIcon = "barcode", required = false, disabled, schemeOptions = undefined, showEmptyValue = false, helpText, placeholder, optimized = true}) {
+  return (
       <Overridable
         id="InvenioRdmRecords.DepositForm.IdentifiersField.Container"
         defaultNewValue={emptyIdentifier}
@@ -105,7 +91,6 @@ class IdentifiersFieldComponent extends Component {
         </ArrayField>
       </Overridable>
     );
-  }
 }
 
 IdentifiersFieldComponent.propTypes = {
@@ -118,15 +103,6 @@ IdentifiersFieldComponent.propTypes = {
   showEmptyValue: PropTypes.bool,
   optimized: PropTypes.bool,
   ...fieldCommonProps,
-};
-
-IdentifiersFieldComponent.defaultProps = {
-  label: i18next.t("Identifiers"),
-  labelIcon: "barcode",
-  required: false,
-  schemeOptions: undefined,
-  showEmptyValue: false,
-  optimized: true,
 };
 
 export const IdentifiersField = showHideOverridable(

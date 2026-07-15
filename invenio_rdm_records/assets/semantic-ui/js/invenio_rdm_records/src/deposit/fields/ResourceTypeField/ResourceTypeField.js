@@ -17,8 +17,13 @@ import {
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
 
-export class ResourceTypeFieldComponent extends Component {
-  groupErrors = (errors, fieldPath) => {
+export function ResourceTypeFieldComponent({fieldPath, label = i18next.t("Resource type"), labelIcon = "tag", options, placeholder, helpText, schema = "record", optimized = true, ...restProps}) {
+  restProps = {
+    ...restProps,
+    labelclassname: typeof restProps.labelclassname === "undefined" ? "field-label-class" : restProps.labelclassname
+  };
+
+  const groupErrors = (errors, fieldPath) => {
     const fieldErrors = _get(errors, fieldPath);
     if (fieldErrors) {
       return { content: fieldErrors };
@@ -26,25 +31,13 @@ export class ResourceTypeFieldComponent extends Component {
     return null;
   };
 
-  /**
-   * Generate label value
-   *
-   * @param {object} option - back-end option
-   * @returns {string} label
-   */
-  _label = (option) => {
+  const _label = (option) => {
     return option.type_name + (option.subtype_name ? " / " + option.subtype_name : "");
   };
 
-  /**
-   * Convert back-end options to front-end options.
-   *
-   * @param {array} propsOptions - back-end options
-   * @returns {array} front-end options
-   */
-  createOptions = (propsOptions) => {
+  const createOptions = (propsOptions) => {
     return propsOptions
-      .map((o) => ({ ...o, label: this._label(o) }))
+      .map((o) => ({ ...o, label: _label(o) }))
       .sort((o1, o2) => o1.label.localeCompare(o2.label))
       .map((o) => {
         return {
@@ -55,19 +48,7 @@ export class ResourceTypeFieldComponent extends Component {
       });
   };
 
-  render() {
-    const {
-      fieldPath,
-      label,
-      labelIcon: propLabelIcon,
-      options,
-      placeholder,
-      helpText: propHelpText,
-      schema,
-      optimized,
-      ...restProps
-    } = this.props;
-    const frontEndOptions = this.createOptions(options);
+  const frontEndOptions = createOptions(options);
 
     // Cannot show helpText or labelIcon when the field is inside an ArrayField
     const helpText = schema === "record" ? propHelpText : undefined;
@@ -99,7 +80,6 @@ export class ResourceTypeFieldComponent extends Component {
         />
       </Overridable>
     );
-  }
 }
 
 ResourceTypeFieldComponent.propTypes = {
@@ -115,14 +95,6 @@ ResourceTypeFieldComponent.propTypes = {
   schema: PropTypes.oneOf(["record", "relatedWork"]).isRequired,
   optimized: PropTypes.bool,
   ...mandatoryFieldCommonProps,
-};
-
-ResourceTypeFieldComponent.defaultProps = {
-  label: i18next.t("Resource type"),
-  labelIcon: "tag",
-  labelclassname: "field-label-class",
-  schema: "record",
-  optimized: true,
 };
 
 export const ResourceTypeField = showHideOverridable(

@@ -18,26 +18,8 @@ import { Form } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
 
-class SubjectsFieldComponent extends Component {
-  state = {
-    limitTo: "all",
-  };
-
-  render() {
-    const {
-      fieldPath,
-      label,
-      labelIcon,
-      limitToOptions,
-      required,
-      disabled,
-      helpText,
-      placeholder,
-      noQueryMessage,
-      ...dropdownProps
-    } = this.props;
-    const { limitTo } = this.state;
-    const displaySuggestFromField = limitToOptions.length > 2; // 2 because of "all", that is always present
+function SubjectsFieldComponent({fieldPath, label = i18next.t("Keywords and subjects"), labelIcon = "tag", limitToOptions, required, disabled, helpText, placeholder = i18next.t("Search for a subject by name"), noQueryMessage = i18next.t("Search for subjects..."), ...dropdownProps}) {
+  const displaySuggestFromField = limitToOptions.length > 2; // 2 because of "all", that is always present
     const fieldWidth = displaySuggestFromField ? 11 : 16;
 
     const labelComponent = (
@@ -101,7 +83,6 @@ class SubjectsFieldComponent extends Component {
         </GroupField>
       </Overridable>
     );
-  }
 }
 
 SubjectsFieldComponent.propTypes = {
@@ -110,13 +91,6 @@ SubjectsFieldComponent.propTypes = {
   placeholder: PropTypes.string,
   noQueryMessage: PropTypes.string,
   ...fieldCommonProps,
-};
-
-SubjectsFieldComponent.defaultProps = {
-  label: i18next.t("Keywords and subjects"),
-  labelIcon: "tag",
-  placeholder: i18next.t("Search for a subject by name"),
-  noQueryMessage: i18next.t("Search for subjects..."),
 };
 
 export const SubjectsField = showHideOverridable(

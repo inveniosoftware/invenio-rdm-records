@@ -22,22 +22,10 @@ import { emptyRelatedWork } from "./initialValues";
 import { ResourceTypeField } from "../ResourceTypeField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-class RelatedWorksFieldComponent extends Component {
-  render() {
-    const {
-      fieldPath,
-      label,
-      labelIcon,
-      required,
-      disabled,
-      options,
-      showEmptyValue,
-      helpText,
-      addButtonLabel,
-      optimized,
-    } = this.props;
-
-    return (
+function RelatedWorksFieldComponent({fieldPath, label = i18next.t("Related works"), labelIcon = "barcode", required = undefined, disabled, options, showEmptyValue = false, helpText = i18next.t(
+    "Specify identifiers of related works. Supported identifiers include DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, URNs, and URLs."
+  ), addButtonLabel = i18next.t("Add related work"), optimized = true}) {
+  return (
       <Overridable
         id="InvenioRdmRecords.DepositForm.RelatedWorksField.Container"
         required={required}
@@ -132,7 +120,6 @@ class RelatedWorksFieldComponent extends Component {
         </ArrayField>
       </Overridable>
     );
-  }
 }
 
 RelatedWorksFieldComponent.propTypes = {
@@ -141,18 +128,6 @@ RelatedWorksFieldComponent.propTypes = {
   addButtonLabel: PropTypes.string,
   optimized: PropTypes.bool,
   ...fieldCommonProps,
-};
-
-RelatedWorksFieldComponent.defaultProps = {
-  label: i18next.t("Related works"),
-  labelIcon: "barcode",
-  required: undefined,
-  showEmptyValue: false,
-  helpText: i18next.t(
-    "Specify identifiers of related works. Supported identifiers include DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, URNs, and URLs."
-  ),
-  addButtonLabel: i18next.t("Add related work"),
-  optimized: true,
 };
 
 export const RelatedWorksField = showHideOverridable(

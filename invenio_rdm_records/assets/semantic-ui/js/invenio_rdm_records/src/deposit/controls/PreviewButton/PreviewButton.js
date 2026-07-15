@@ -18,10 +18,10 @@ import { Button } from "semantic-ui-react";
 import _omit from "lodash/omit";
 import PropTypes from "prop-types";
 
-export class PreviewButtonComponent extends Component {
-  static contextType = DepositFormSubmitContext;
+export function PreviewButtonComponent({depositFormHandleSubmit = undefined, actionState = undefined, formik, ...ui}) {
+  const contextValue = React.useContext(DepositFormSubmitContext);
 
-  handlePreview = (event, handleSubmit) => {
+  const handlePreview = (event, handleSubmit) => {
     const { setSubmitContext } = this.context;
     const { depositFormHandleSubmit } = this.props;
 
@@ -34,9 +34,7 @@ export class PreviewButtonComponent extends Component {
     }
   };
 
-  render() {
-    const { actionState, formik, depositFormHandleSubmit, ...ui } = this.props;
-    const { handleSubmit, isSubmitting } = formik;
+  const { handleSubmit, isSubmitting } = formik;
 
     const uiProps = _omit(ui, ["dispatch"]);
 
@@ -45,7 +43,7 @@ export class PreviewButtonComponent extends Component {
         name="preview"
         type="button"
         disabled={isSubmitting}
-        onClick={(e) => this.handlePreview(e, handleSubmit)}
+        onClick={(e) => handlePreview(e, handleSubmit)}
         loading={isSubmitting && actionState === DRAFT_PREVIEW_STARTED}
         icon="eye"
         labelPosition="left"
@@ -53,18 +51,12 @@ export class PreviewButtonComponent extends Component {
         {...uiProps}
       />
     );
-  }
 }
 
 PreviewButtonComponent.propTypes = {
   actionState: PropTypes.string,
   formik: PropTypes.object.isRequired,
   depositFormHandleSubmit: PropTypes.func,
-};
-
-PreviewButtonComponent.defaultProps = {
-  actionState: undefined,
-  depositFormHandleSubmit: undefined,
 };
 
 const mapStateToProps = (state) => ({

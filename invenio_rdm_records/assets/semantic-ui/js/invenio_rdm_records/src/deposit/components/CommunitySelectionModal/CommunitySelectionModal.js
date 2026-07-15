@@ -12,37 +12,21 @@ import { CommunityContext } from "./CommunityContext";
 import { CommunitySelectionSearch } from "./CommunitySelectionSearch";
 import _isEmpty from "lodash/isEmpty";
 
-export class CommunitySelectionModalComponent extends Component {
-  constructor(props) {
-    super(props);
-    const { chosenCommunity, userCommunitiesMemberships, displaySelected } = props;
+export function CommunitySelectionModalComponent({chosenCommunity = undefined, userCommunitiesMemberships, displaySelected = false, onCommunityChange, trigger = undefined, modalOpen = false, onModalChange = undefined, extraContentComponents = undefined, modalHeader = i18next.t("Select a community"), apiConfigs = undefined, handleClose, record = null, isInitialSubmission = true, overriddenComponents = undefined}) {
+  const [localChosenCommunity, setLocalChosenCommunity] = React.useState(chosenCommunity);
 
-    this.state = {
-      localChosenCommunity: chosenCommunity,
-    };
-
-    this.contextValue = {
-      setLocalCommunity: this.setCommunity,
-      getChosenCommunity: this.getChosenCommunity,
-      userCommunitiesMemberships: userCommunitiesMemberships ?? {},
-      displaySelected,
-    };
-  }
-
-  getChosenCommunity = () => {
+  const getChosenCommunity = () => {
     const { localChosenCommunity } = this.state;
     return localChosenCommunity;
   };
 
-  setCommunity = (community) => {
+  const setCommunity = (community) => {
     const { onCommunityChange } = this.props;
     onCommunityChange(community);
-    this.setState({
-      localChosenCommunity: community,
-    });
+    setLocalChosenCommunity(community);
   };
 
-  modalTrigger = () => {
+  const modalTrigger = () => {
     const { trigger, modalOpen } = this.props;
     if (!_isEmpty(trigger)) {
       return cloneElement(trigger, {
@@ -52,28 +36,14 @@ export class CommunitySelectionModalComponent extends Component {
     }
   };
 
-  handleModalOpen = () => {
+  const handleModalOpen = () => {
     const { chosenCommunity, onModalChange } = this.props;
-    this.setState({
-      localChosenCommunity: chosenCommunity,
-    });
+    setLocalChosenCommunity(chosenCommunity);
     onModalChange && onModalChange(true);
   };
-  render() {
-    const {
-      extraContentComponents,
-      modalHeader,
-      onModalChange,
-      modalOpen,
-      apiConfigs,
-      handleClose,
-      record,
-      isInitialSubmission,
-      overriddenComponents,
-    } = this.props;
 
-    return (
-      <CommunityContext.Provider value={this.contextValue}>
+  return (
+      <CommunityContext.Provider value={contextValue}>
         <Modal
           role="dialog"
           aria-labelledby="community-modal-header"
@@ -85,8 +55,8 @@ export class CommunitySelectionModalComponent extends Component {
           onClose={() => {
             onModalChange && onModalChange(false);
           }}
-          onOpen={this.handleModalOpen}
-          trigger={this.modalTrigger()}
+          onOpen={handleModalOpen}
+          trigger={modalTrigger()}
         >
           <Modal.Header>
             <Header as="h2" size="small" id="community-modal-header" className="mt-5">
@@ -111,7 +81,6 @@ export class CommunitySelectionModalComponent extends Component {
         </Modal>
       </CommunityContext.Provider>
     );
-  }
 }
 
 CommunitySelectionModalComponent.propTypes = {
@@ -129,20 +98,6 @@ CommunitySelectionModalComponent.propTypes = {
   record: PropTypes.object,
   isInitialSubmission: PropTypes.bool,
   overriddenComponents: PropTypes.object,
-};
-
-CommunitySelectionModalComponent.defaultProps = {
-  chosenCommunity: undefined,
-  extraContentComponents: undefined,
-  modalHeader: i18next.t("Select a community"),
-  onModalChange: undefined,
-  displaySelected: false,
-  modalOpen: false,
-  trigger: undefined,
-  apiConfigs: undefined,
-  isInitialSubmission: true,
-  record: null,
-  overriddenComponents: undefined,
 };
 
 const mapStateToProps = (state) => ({

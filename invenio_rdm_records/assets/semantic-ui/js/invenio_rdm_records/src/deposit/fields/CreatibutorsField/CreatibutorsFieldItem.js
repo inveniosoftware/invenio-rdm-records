@@ -39,21 +39,21 @@ export const getCreatibutorDisplayName = (value) => {
 
 export const CreatibutorsFieldItem = memo(function CreatibutorsFieldItem({
   compKey,
-  creatibutorError,
+  creatibutorError = undefined,
   index,
   replaceCreatibutor,
   removeCreatibutor,
   moveCreatibutor,
-  addLabel,
-  editLabel,
+  addLabel = undefined,
+  editLabel = undefined,
   initialCreatibutor,
-  displayName,
+  displayName = undefined,
   roleOptions,
   schema,
-  autocompleteNames,
-  serializeSuggestions,
-  serializeCreatibutor,
-  deserializeCreatibutor,
+  autocompleteNames = undefined,
+  serializeSuggestions = undefined,
+  serializeCreatibutor = undefined,
+  deserializeCreatibutor = undefined,
 }) {
   const dropRef = useRef(null);
   const modalRef = useRef(null);
@@ -216,15 +216,4 @@ CreatibutorsFieldItem.propTypes = {
   serializeSuggestions: PropTypes.func,
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
-};
-
-CreatibutorsFieldItem.defaultProps = {
-  creatibutorError: undefined,
-  addLabel: undefined,
-  editLabel: undefined,
-  displayName: undefined,
-  autocompleteNames: undefined,
-  serializeSuggestions: undefined,
-  serializeCreatibutor: undefined,
-  deserializeCreatibutor: undefined,
 };

@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Icon, Message } from "semantic-ui-react";
 
-export const AccessMessage = ({ access, metadataOnly, accessCommunity }) => {
+export const AccessMessage = ({ access, metadataOnly = false, accessCommunity }) => {
   const recordPublic = access.record === "public";
   const filesPublic = access.files === "public";
   const communityPublic = accessCommunity === "public";
@@ -121,6 +121,3 @@ AccessMessage.propTypes = {
   accessCommunity: PropTypes.string.isRequired,
 };
 
-AccessMessage.defaultProps = {
-  metadataOnly: false,
-};

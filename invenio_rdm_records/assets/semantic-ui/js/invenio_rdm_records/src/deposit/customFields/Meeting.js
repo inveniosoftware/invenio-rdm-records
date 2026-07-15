@@ -14,21 +14,9 @@ import { Divider, Grid } from "semantic-ui-react";
 
 import PropTypes from "prop-types";
 
-class MeetingComponent extends Component {
-  render() {
-    const {
-      fieldPath, // injected by the custom field loader via the `field` config property
-      title,
-      acronym,
-      dates,
-      place,
-      url,
-      session,
-      session_part: sessionPart,
-      labelIcon,
-      label,
-    } = this.props;
-    return (
+function MeetingComponent({fieldPath, // injected by the custom field loader via the `field` config property
+      title, acronym, dates, place, url, session, session_part, labelIcon = undefined, label = undefined}) {
+  return (
       <>
         {label && (
           <>
@@ -98,7 +86,6 @@ class MeetingComponent extends Component {
         </Grid>
       </>
     );
-  }
 }
 
 MeetingComponent.propTypes = {
@@ -112,11 +99,6 @@ MeetingComponent.propTypes = {
   labelIcon: PropTypes.string,
   label: PropTypes.string,
   url: PropTypes.object.isRequired,
-};
-
-MeetingComponent.defaultProps = {
-  labelIcon: undefined,
-  label: undefined,
 };
 
 export const Meeting = showHideOverridableWithDynamicId(MeetingComponent);

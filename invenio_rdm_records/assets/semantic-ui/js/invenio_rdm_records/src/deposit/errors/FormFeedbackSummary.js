@@ -12,27 +12,18 @@ import { Component } from "react";
 import { Label } from "semantic-ui-react";
 import PropTypes from "prop-types";
 
-export class FormFeedbackSummary extends Component {
-  constructor(props) {
-    super(props);
-    this.sections = {
-      ...props.sectionsConfig,
-    };
-    this.state = {
-      domReady: false,
-    };
-  }
-
-  componentDidMount() {
+export function FormFeedbackSummary({sectionsConfig, errors}) {
+  const [domReady, setDomReady] = React.useState(false);
+  React.useEffect(() => {
     // XXX: This is a workaround to ensure that the component is mounted before we try
     // to access the DOM elements. DO NOT use this pattern in new components, this will
     // be properly fixed in https://github.com/inveniosoftware/invenio-rdm-records/issues/2072
     setTimeout(() => {
-      this.setState({ domReady: true });
+      setDomReady(true);
     }, 0);
-  }
+  }, []);
 
-  getAllErrPaths = (obj, prev = "") => {
+  const getAllErrPaths = (obj, prev = "") => {
     const result = [];
 
     for (let k in obj) {
@@ -42,23 +33,23 @@ export class FormFeedbackSummary extends Component {
       if (typeof obj[k] == "string" || obj[k].severity !== undefined) {
         result.push(path);
       } else if (typeof obj[k] == "object") {
-        result.push(...this.getAllErrPaths(obj[k], path));
+        result.push(...getAllErrPaths(obj[k], path));
       }
     }
 
     return result;
   };
 
-  getErrorSections(errors) {
+  function getErrorSections(errors) {
     const errorSections = new Map();
 
     // Iterate over each error path in the errors object
-    const paths = this.getAllErrPaths(errors);
+    const paths = getAllErrPaths(errors);
 
     paths.forEach((path) => {
       let sectionElement = undefined;
       // Try to match error to a section based on field paths
-      for (const [section, fields] of Object.entries(this.sections)) {
+      for (const [section, fields] of Object.entries(sections)) {
         if (fields.some((field) => path.startsWith(field))) {
           const sectionElement = document.getElementById(section);
           const label =
@@ -109,11 +100,8 @@ export class FormFeedbackSummary extends Component {
     return { orderedSections: orderedSections, errorSections: errorSections };
   }
 
-  render() {
-    const { errors } = this.props;
-    const { domReady } = this.state;
-    const { orderedSections, errorSections } = domReady
-      ? this.getErrorSections(errors)
+  const { orderedSections, errorSections } = domReady
+      ? getErrorSections(errors)
       : [];
     if (_isEmpty(orderedSections)) {
       return null;
@@ -130,7 +118,6 @@ export class FormFeedbackSummary extends Component {
         </a>
       );
     });
-  }
 }
 
 FormFeedbackSummary.propTypes = {

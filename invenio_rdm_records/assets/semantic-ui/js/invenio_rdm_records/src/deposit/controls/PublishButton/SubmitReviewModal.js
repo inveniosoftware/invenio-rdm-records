@@ -16,45 +16,20 @@ import {
   ensureUniqueProps,
 } from "./PublishCheckboxComponent";
 
-class SubmitReviewModalComponent extends Component {
-  constructor(props) {
-    super(props);
-    const { initialReviewComment, extraCheckboxes, record } = props;
-    this.validationSchema = this.getValidationSchema(record);
-    this.initialValues = this.getInitialValues(initialReviewComment, record);
-
-    // Get extra checkbox component and define its schema and defaults
-    if (extraCheckboxes.length > 0) {
-      // Validate id and fieldpath are unique
-      const fieldPaths = extraCheckboxes.map((checkbox) => checkbox.fieldPath);
-      fieldPaths.push("acceptAccessToRecord", "acceptAfterPublishRecord");
-      ensureUniqueProps(fieldPaths, "fieldPath");
-      const ids = extraCheckboxes.map((checkbox) => checkbox.id);
-      ids.push("accept-access-checkbox", "accept-after-publish-checkbox");
-      ensureUniqueProps(ids, "id");
-
-      extraCheckboxes.forEach((checkbox) => {
-        this.validationSchema = this.validationSchema.concat(
-          Yup.object({
-            [checkbox.fieldPath]: Yup.bool().oneOf(
-              [true],
-              i18next.t("You must accept this.")
-            ),
-          })
-        );
-        this.initialValues[checkbox.fieldPath] = false;
-      });
-    }
-  }
-
-  componentDidMount() {
+const submitReviewModalComponentDefaultPropExtraCheckboxes = [];
+const submitReviewModalComponentDefaultPropBeforeContent = () => undefined;
+const submitReviewModalComponentDefaultPropAfterContent = () => undefined;
+function SubmitReviewModalComponent({initialReviewComment = "", extraCheckboxes = submitReviewModalComponentDefaultPropExtraCheckboxes, record, isConfirmModalOpen, community, onClose, onSubmit, publishModalExtraContent = undefined, directPublish = false, errors = "", loading = false, beforeContent = submitReviewModalComponentDefaultPropBeforeContent, afterContent = submitReviewModalComponentDefaultPropAfterContent}) {
+  React.useEffect(() => {
+    let firstFormFieldWrap;
+    let checkboxElem;
     // A11y: Focus the first input field in the form
     const firstFormFieldWrap = document.getElementById("accept-access-checkbox");
     const checkboxElem = firstFormFieldWrap.querySelector("input");
     checkboxElem?.focus();
-  }
+  }, []);
 
-  getValidationSchema = (record) => {
+  const getValidationSchema = (record) => {
     let baseSchema = Yup.object({
       acceptAccessToRecord: Yup.bool().oneOf(
         [true],
@@ -77,7 +52,7 @@ class SubmitReviewModalComponent extends Component {
     return baseSchema;
   };
 
-  getModalContent = (record, directPublish, communityTitle) => {
+  const getModalContent = (record, directPublish, communityTitle) => {
     const modalContent = {
       headerTitle: i18next.t("Submit for review"),
       msgWarningTitle: i18next.t(
@@ -137,36 +112,20 @@ class SubmitReviewModalComponent extends Component {
     return modalContent;
   };
 
-  getInitialValues = (initialReviewComment, record) => ({
+  const getInitialValues = (initialReviewComment, record) => ({
     reviewComment: initialReviewComment || "",
     acceptAccessToRecord: false,
     acceptAfterPublishRecord: record ? undefined : false,
   });
 
-  render() {
-    const {
-      isConfirmModalOpen,
-      community,
-      onClose,
-      onSubmit,
-      publishModalExtraContent,
-      directPublish,
-      errors,
-      loading,
-      record,
-      extraCheckboxes,
-      beforeContent,
-      afterContent,
-    } = this.props;
-
-    const communityTitle = community.metadata.title;
-    const modalContent = this.getModalContent(record, directPublish, communityTitle);
+  const communityTitle = community.metadata.title;
+    const modalContent = getModalContent(record, directPublish, communityTitle);
 
     return (
       <Formik
-        initialValues={this.initialValues}
+        initialValues={initialValues}
         onSubmit={onSubmit}
-        validationSchema={this.validationSchema}
+        validationSchema={validationSchema}
         validateOnChange={false}
         validateOnBlur={false}
       >
@@ -258,7 +217,6 @@ class SubmitReviewModalComponent extends Component {
         }}
       </Formik>
     );
-  }
 }
 
 SubmitReviewModalComponent.propTypes = {
@@ -280,17 +238,6 @@ SubmitReviewModalComponent.propTypes = {
   ),
   beforeContent: PropTypes.func,
   afterContent: PropTypes.func,
-};
-
-SubmitReviewModalComponent.defaultProps = {
-  initialReviewComment: "",
-  publishModalExtraContent: undefined,
-  directPublish: false,
-  errors: "",
-  loading: false,
-  extraCheckboxes: [],
-  beforeContent: () => undefined,
-  afterContent: () => undefined,
 };
 
 export const SubmitReviewModal = Overridable.component(

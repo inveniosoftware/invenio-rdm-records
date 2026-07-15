@@ -125,17 +125,8 @@ const feedbackConfig = {
   warning: { icon: "exclamation triangle", type: "warning" },
 };
 
-class DisconnectedFormFeedback extends Component {
-  constructor(props) {
-    super(props);
-    this.labels = {
-      ...props.labels,
-    };
-  }
-
-  render() {
-    const { errors: errorsProp, actionState, sectionsConfig } = this.props;
-    const errors = errorsProp || {};
+function DisconnectedFormFeedback({labels = undefined, errors = undefined, actionState = undefined, sectionsConfig = undefined}) {
+  const errors = errorsProp || {};
 
     const { feedback: initialFeedback, message } = _get(ACTIONS, actionState, {
       feedback: undefined,
@@ -181,7 +172,6 @@ class DisconnectedFormFeedback extends Component {
         </Grid>
       </Message>
     );
-  }
 }
 
 DisconnectedFormFeedback.propTypes = {
@@ -189,13 +179,6 @@ DisconnectedFormFeedback.propTypes = {
   actionState: PropTypes.string,
   labels: PropTypes.object,
   sectionsConfig: PropTypes.object,
-};
-
-DisconnectedFormFeedback.defaultProps = {
-  errors: undefined,
-  actionState: undefined,
-  labels: undefined,
-  sectionsConfig: undefined,
 };
 
 const mapStateToProps = (state) => ({

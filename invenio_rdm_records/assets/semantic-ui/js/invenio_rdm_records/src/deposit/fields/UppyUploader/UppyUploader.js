@@ -69,14 +69,19 @@ const createDuplicateFileChecker = (uppy, filesList) => {
   };
 };
 
+const uppyUploaderComponentDefaultPropQuota = {
+    maxFiles: 5,
+    maxStorage: 10 ** 10,
+};
+
 export const UppyUploaderComponent = ({
-  config,
-  files,
-  isDraftRecord,
-  hasParentRecord,
-  quota,
-  permissions,
-  record,
+  config = undefined,
+  files = undefined,
+  isDraftRecord = true,
+  hasParentRecord = false,
+  quota = uppyUploaderComponentDefaultPropQuota,
+  permissions = undefined,
+  record = undefined,
   initializeFileUpload,
   finalizeUpload,
   deleteFile,
@@ -84,13 +89,13 @@ export const UppyUploaderComponent = ({
   saveAndFetchDraft,
   setUploadProgress,
   importParentFiles,
-  importButtonIcon,
-  importButtonText,
-  isFileImportInProgress,
-  fileUploadConcurrency,
-  decimalSizeDisplay,
-  filesLocked,
-  allowEmptyFiles,
+  importButtonIcon = "sync",
+  importButtonText = i18next.t("Import files"),
+  isFileImportInProgress = false,
+  fileUploadConcurrency = 3,
+  decimalSizeDisplay = true,
+  filesLocked = false,
+  allowEmptyFiles = true,
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
@@ -389,22 +394,3 @@ UppyUploaderComponent.propTypes = {
   allowEmptyFiles: PropTypes.bool,
 };
 
-UppyUploaderComponent.defaultProps = {
-  permissions: undefined,
-  config: undefined,
-  files: undefined,
-  fileUploadConcurrency: 3,
-  record: undefined,
-  isFileImportInProgress: false,
-  isDraftRecord: true,
-  hasParentRecord: false,
-  quota: {
-    maxFiles: 5,
-    maxStorage: 10 ** 10,
-  },
-  importButtonIcon: "sync",
-  importButtonText: i18next.t("Import files"),
-  decimalSizeDisplay: true,
-  filesLocked: false,
-  allowEmptyFiles: true,
-};

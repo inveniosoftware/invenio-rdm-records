@@ -11,23 +11,12 @@ import { Modal } from "semantic-ui-react";
 import isEmpty from "lodash/isEmpty";
 import { ErrorMessage } from "@js/invenio_administration";
 
-export class DeleteModal extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { loading: false, error: undefined, checked: false };
-  }
+export function DeleteModal({resetErrorState, cleanError, handleOnButtonClick, modalOpen, toggleModal, title}) {
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(undefined);
+  const [checked, setChecked] = React.useState(false);
 
-  render() {
-    const { loading, error, checked } = this.state;
-    const {
-      resetErrorState,
-      cleanError,
-      handleOnButtonClick,
-      modalOpen,
-      toggleModal,
-      title,
-    } = this.props;
-    return (
+  return (
       <Modal role="dialog" open={modalOpen}>
         <Modal.Header as="h2">
           {i18next.t("Delete {{title}}", { title: title })}
@@ -49,7 +38,7 @@ export class DeleteModal extends Component {
               value
               checked={checked}
               onChange={(event, data) => {
-                this.setState({ checked: data.checked });
+                setChecked(data.checked);
               }}
               label={i18next.t(
                 "I have alerted all harvesters that this set will no longer be available."
@@ -84,7 +73,6 @@ export class DeleteModal extends Component {
         </Modal.Actions>
       </Modal>
     );
-  }
 }
 
 DeleteModal.propTypes = {

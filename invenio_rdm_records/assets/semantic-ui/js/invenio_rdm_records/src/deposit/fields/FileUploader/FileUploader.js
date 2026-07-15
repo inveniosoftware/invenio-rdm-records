@@ -27,26 +27,41 @@ import { getFilesList } from "./utils";
 
 // NOTE: This component has to be a function component to allow
 //       the `useFormikContext` hook.
+const fileUploaderComponentDefaultPropQuota = {
+    maxFiles: 5,
+    maxStorage: 10 ** 10,
+  };
+const fileUploaderComponentDefaultPropFileModification = {};
 export const FileUploaderComponent = ({
-  config,
-  files,
-  isDraftRecord,
-  hasParentRecord,
-  quota,
-  permissions,
-  record,
+  config = undefined,
+  files = undefined,
+  isDraftRecord = true,
+  hasParentRecord = false,
+  quota = fileUploaderComponentDefaultPropQuota,
+  permissions = undefined,
+  record = undefined,
   uploadFiles,
   deleteFile,
   importParentFiles,
-  importButtonIcon,
-  importButtonText,
-  isFileImportInProgress,
-  decimalSizeDisplay,
-  filesLocked,
-  allowEmptyFiles,
-  fileModification,
+  importButtonIcon = "sync",
+  importButtonText = i18next.t("Import files"),
+  isFileImportInProgress = false,
+  decimalSizeDisplay = true,
+  filesLocked = false,
+  allowEmptyFiles = true,
+  fileModification = fileUploaderComponentDefaultPropFileModification,
   ...uiProps
 }) => {
+  uiProps = {
+    ...uiProps,
+    dragText: typeof uiProps.dragText === "undefined" ? i18next.t("Drag and drop files") : uiProps.dragText,
+    uploadButtonIcon: typeof uiProps.uploadButtonIcon === "undefined" ? "upload" : uiProps.uploadButtonIcon,
+    uploadButtonText:
+      typeof uiProps.uploadButtonText === "undefined"
+        ? i18next.t("Upload files")
+        : uiProps.uploadButtonText
+  };
+
   // We extract the working copy of the draft stored as `values` in formik
   const { values: formikDraft, errors, initialErrors } = useFormikContext();
   const { filesList, filesNamesSet, filesSize } = getFilesList(files);
@@ -452,25 +467,3 @@ FileUploaderComponent.propTypes = {
   fileModification: PropTypes.object,
 };
 
-FileUploaderComponent.defaultProps = {
-  permissions: undefined,
-  config: undefined,
-  files: undefined,
-  record: undefined,
-  isFileImportInProgress: false,
-  dragText: i18next.t("Drag and drop files"),
-  isDraftRecord: true,
-  hasParentRecord: false,
-  quota: {
-    maxFiles: 5,
-    maxStorage: 10 ** 10,
-  },
-  uploadButtonIcon: "upload",
-  uploadButtonText: i18next.t("Upload files"),
-  importButtonIcon: "sync",
-  importButtonText: i18next.t("Import files"),
-  decimalSizeDisplay: true,
-  filesLocked: false,
-  allowEmptyFiles: true,
-  fileModification: {},
-};
