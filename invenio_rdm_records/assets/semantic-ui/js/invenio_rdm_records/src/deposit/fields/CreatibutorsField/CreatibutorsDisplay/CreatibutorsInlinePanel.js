@@ -17,103 +17,59 @@ const normalizeSearch = (str) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-const getCreatibutorSchemaLabel = (schema) =>
-  schema === "contributors" ? i18next.t("contributors") : i18next.t("authors");
-
 export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePanel({
+  type,
   list,
   keyPrefix,
-  schema,
-  highlightOnAdd,
-  highlightDuration,
   creatibutorErrors,
   removeCreatibutor,
   replaceCreatibutor,
   moveCreatibutor,
-  roleOptions,
-  autocompleteNames,
-  addLabel,
-  editLabel,
-  serializeSuggestions,
-  serializeCreatibutor,
-  deserializeCreatibutor,
   scrollThreshold,
   batchSize,
 }) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [highlightedIndices, setHighlightedIndices] = useState(() => new Set());
   const [scrollToIndex, setScrollToIndex] = useState(null);
 
   const scrollRef = useRef(null);
   const wrapperRef = useRef(null);
   const prevLengthRef = useRef(list.length);
-  const highlightTimerRef = useRef(null);
-  // Holds the latest sync function so it can be called when content height changes
-  // without re-registering the scroll listener.
+  // Holds the latest sync function so it can be called when content height changes without re-registering the scroll listener.
   const syncScrollEdgesRef = useRef(null);
 
-  const type = getCreatibutorSchemaLabel(schema);
+  // When rows are appended: clear search and scroll to the new entries.
+  useEffect(() => {
+    if (list.length <= prevLengthRef.current) {
+      prevLengthRef.current = list.length;
+      return;
+    }
+    prevLengthRef.current = list.length;
+    setSearchQuery((query) => (query ? "" : query));
+    setScrollToIndex(list.length - 1);
+  }, [list.length]);
 
   // Compute display names once per list change rather than on every search keystroke.
+  // highlighted is forwarded from item.highlighted but suppressed on search change.
+  const query = normalizeSearch(searchQuery.trim());
   const entriesWithDisplayNames = useMemo(
     () =>
       list.map((item, idx) => ({
         item,
         idx,
         displayName: getCreatibutorDisplayName(item),
+        highlighted: !!item.highlighted,
       })),
     [list]
   );
 
-  // Filter using the pre-computed display names (cheap string comparison per keystroke).
-  // normalizeSearch strips diacritics so "u" matches "ü", etc.
-  const query = normalizeSearch(searchQuery.trim());
   const filteredEntries = useMemo(() => {
     if (!query) return entriesWithDisplayNames;
-    return entriesWithDisplayNames.filter(({ displayName }) =>
-      normalizeSearch(displayName).includes(query)
-    );
+    return entriesWithDisplayNames
+      .filter(({ displayName }) => normalizeSearch(displayName).includes(query))
+      .map((entry) => ({ ...entry, highlighted: false }));
   }, [entriesWithDisplayNames, query]);
 
   const isScrollable = list.length > scrollThreshold;
-
-  // When creatibutors are added: clear search, scroll to bottom, highlight new rows.
-  // A single timer clears all highlights after the animation completes — no need to
-  // track each index individually via a callback chain.
-  useEffect(() => {
-    if (!highlightOnAdd || list.length <= prevLengthRef.current) {
-      prevLengthRef.current = list.length;
-      return;
-    }
-
-    const prevLen = prevLengthRef.current;
-    prevLengthRef.current = list.length;
-
-    setSearchQuery((query) => (query ? "" : query));
-    setHighlightedIndices((prev) => {
-      const next = new Set(prev);
-      for (let i = prevLen; i < list.length; i++) {
-        next.add(i);
-      }
-      return next;
-    });
-
-    if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
-    highlightTimerRef.current = setTimeout(() => {
-      setHighlightedIndices(new Set());
-      highlightTimerRef.current = null;
-    }, highlightDuration);
-
-    setScrollToIndex(list.length - 1);
-  }, [highlightOnAdd, list.length, highlightDuration]);
-
-  // Clean up the highlight timer on unmount.
-  useEffect(
-    () => () => {
-      if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
-    },
-    []
-  );
 
   // Toggle .can-scroll-up / .can-scroll-down directly
   // no state handling, so scroll events never trigger re-renders
@@ -148,7 +104,7 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
     syncScrollEdgesRef.current?.();
   }, [filteredEntries]);
 
-  // Scroll the container once the new row is in the DOM (double rAF ensures layout is ready).
+  // Scroll the container once the new row is in the DOM.
   useEffect(() => {
     if (scrollToIndex == null || !isScrollable) {
       setScrollToIndex(null);
@@ -180,7 +136,7 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
             className="creatibutors-filter-input"
             icon="search"
             iconPosition="left"
-            placeholder={i18next.t("Filter {{type}}...", { type })}
+            placeholder={i18next.t(`Filter ${type}...`)}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -216,19 +172,9 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
           <CreatibutorsList
             entries={filteredEntries}
             keyPrefix={keyPrefix}
-            filterQuery={query}
             batchSize={batchSize}
             wrapWithDndProvider={false}
-            highlightedIndices={highlightedIndices}
             creatibutorErrors={creatibutorErrors}
-            roleOptions={roleOptions}
-            schema={schema}
-            addLabel={addLabel}
-            editLabel={editLabel}
-            autocompleteNames={autocompleteNames}
-            serializeSuggestions={serializeSuggestions}
-            serializeCreatibutor={serializeCreatibutor}
-            deserializeCreatibutor={deserializeCreatibutor}
             removeCreatibutor={removeCreatibutor}
             replaceCreatibutor={replaceCreatibutor}
             moveCreatibutor={moveCreatibutor}
@@ -262,20 +208,11 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
 CreatibutorsInlinePanel.propTypes = {
   list: PropTypes.array.isRequired,
   keyPrefix: PropTypes.string.isRequired,
-  schema: PropTypes.oneOf(["creators", "contributors"]).isRequired,
-  highlightOnAdd: PropTypes.bool,
-  highlightDuration: PropTypes.number,
+  type: PropTypes.string.isRequired,
   creatibutorErrors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  addLabel: PropTypes.node,
-  editLabel: PropTypes.node,
   removeCreatibutor: PropTypes.func.isRequired,
   replaceCreatibutor: PropTypes.func.isRequired,
   moveCreatibutor: PropTypes.func.isRequired,
-  roleOptions: PropTypes.array.isRequired,
-  autocompleteNames: PropTypes.oneOf(["search", "search_only", "off"]),
-  serializeSuggestions: PropTypes.func,
-  serializeCreatibutor: PropTypes.func,
-  deserializeCreatibutor: PropTypes.func,
   scrollThreshold: PropTypes.number,
   batchSize: PropTypes.number,
 };
@@ -283,13 +220,5 @@ CreatibutorsInlinePanel.propTypes = {
 CreatibutorsInlinePanel.defaultProps = {
   scrollThreshold: 10,
   batchSize: 30,
-  highlightDuration: 2000, // 2 seconds
-  highlightOnAdd: true,
   creatibutorErrors: undefined,
-  addLabel: undefined,
-  editLabel: undefined,
-  autocompleteNames: undefined,
-  serializeSuggestions: undefined,
-  serializeCreatibutor: undefined,
-  deserializeCreatibutor: undefined,
 };

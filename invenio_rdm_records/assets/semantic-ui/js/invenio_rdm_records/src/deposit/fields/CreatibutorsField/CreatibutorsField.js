@@ -20,6 +20,7 @@ import { DndProvider } from "react-dnd";
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import { CreatibutorsInlinePanel } from "./CreatibutorsDisplay/CreatibutorsInlinePanel";
 import { CreatibutorsFileModal } from "./CreatibutorsFileModal";
+import { CreatibutorsItemContext } from "./CreatibutorsFieldItem";
 import { sortOptions } from "../../utils";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
@@ -48,9 +49,47 @@ class CreatibutorsFieldForm extends Component {
     return this._sortedRoleOptions;
   }
 
+  // Cache the context value so CreatibutorsFieldItem consumers only re-render
+  // when one of the static config props actually changes reference.
+  _lastItemContextValue = null;
+  getItemContextValue() {
+    const {
+      roleOptions,
+      schema,
+      autocompleteNames,
+      modal: { addLabel, editLabel },
+      serializeSuggestions,
+      serializeCreatibutor,
+      deserializeCreatibutor,
+    } = this.props;
+    if (
+      !this._lastItemContextValue ||
+      this._lastItemContextValue.roleOptions !== roleOptions ||
+      this._lastItemContextValue.schema !== schema ||
+      this._lastItemContextValue.autocompleteNames !== autocompleteNames ||
+      this._lastItemContextValue.addLabel !== addLabel ||
+      this._lastItemContextValue.editLabel !== editLabel ||
+      this._lastItemContextValue.serializeSuggestions !== serializeSuggestions ||
+      this._lastItemContextValue.serializeCreatibutor !== serializeCreatibutor ||
+      this._lastItemContextValue.deserializeCreatibutor !== deserializeCreatibutor
+    ) {
+      this._lastItemContextValue = {
+        roleOptions,
+        schema,
+        autocompleteNames,
+        addLabel,
+        editLabel,
+        serializeSuggestions,
+        serializeCreatibutor,
+        deserializeCreatibutor,
+      };
+    }
+    return this._lastItemContextValue;
+  }
+
   handleOnCreatibutorChange = (selectedCreatibutor) => {
     const { push: formikArrayPush } = this.props;
-    formikArrayPush(selectedCreatibutor);
+    formikArrayPush({ ...selectedCreatibutor, highlighted: true }); // Highlight the new row on add / bulk-import
   };
 
   handleAddCreatibutorsFromFile = (entries) => {
@@ -113,6 +152,9 @@ class CreatibutorsFieldForm extends Component {
     const isContributors = schema === "contributors";
     const totalCount = creatibutorsList.length;
 
+    // Display label for the inline filter placeholder.
+    const type = isContributors ? "contributors" : "authors/creators";
+
     return (
       <Overridable
         id="InvenioRdmRecords.DepositForm.CreatibutorsField.Container"
@@ -126,80 +168,85 @@ class CreatibutorsFieldForm extends Component {
         addButtonHelpText={addButtonHelpText}
         className={className}
       >
-        <DndProvider backend={HTML5Backend}>
-          <Form.Field required={schema === "creators"} className={className}>
-            <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+        <CreatibutorsItemContext.Provider value={this.getItemContextValue()}>
+          <DndProvider backend={HTML5Backend}>
+            <Form.Field required={schema === "creators"} className={className}>
+              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
 
-            {totalCount > 0 && (
-              <CreatibutorsInlinePanel
-                list={creatibutorsList}
-                keyPrefix={fieldPath}
-                schema={schema}
-                creatibutorErrors={
-                  creatibutorsError && typeof creatibutorsError !== "string"
-                    ? creatibutorsError
-                    : undefined
-                }
-                removeCreatibutor={this.stableRemove}
-                replaceCreatibutor={this.stableReplace}
-                moveCreatibutor={this.stableMove}
-                roleOptions={roleOptions}
-                addLabel={modal.addLabel}
-                editLabel={modal.editLabel}
-                autocompleteNames={autocompleteNames}
-                serializeSuggestions={serializeSuggestions}
-                serializeCreatibutor={serializeCreatibutor}
-                deserializeCreatibutor={deserializeCreatibutor}
-              />
-            )}
+              {totalCount > 0 && (
+                <CreatibutorsInlinePanel
+                  list={creatibutorsList}
+                  keyPrefix={fieldPath}
+                  type={type}
+                  creatibutorErrors={
+                    creatibutorsError && typeof creatibutorsError !== "string"
+                      ? creatibutorsError
+                      : undefined
+                  }
+                  removeCreatibutor={this.stableRemove}
+                  replaceCreatibutor={this.stableReplace}
+                  moveCreatibutor={this.stableMove}
+                />
+              )}
 
-            <div className="creatibutors-action-bar mt-15">
-              <CreatibutorsModal
-                onCreatibutorChange={this.handleOnCreatibutorChange}
-                action="add"
-                addLabel={modal.addLabel}
-                editLabel={modal.editLabel}
-                roleOptions={this.getSortedRoleOptions()}
-                schema={schema}
-                autocompleteNames={autocompleteNames}
-                serializeSuggestions={serializeSuggestions}
-                serializeCreatibutor={serializeCreatibutor}
-                deserializeCreatibutor={deserializeCreatibutor}
-                trigger={
-                  <Button type="button" icon labelPosition="left" className={className}>
-                    <Icon name="add" />
-                    {addButtonLabel}
-                  </Button>
-                }
-              />
+              <div className="creatibutors-action-bar mt-15">
+                <CreatibutorsModal
+                  onCreatibutorChange={this.handleOnCreatibutorChange}
+                  action="add"
+                  addLabel={modal.addLabel}
+                  editLabel={modal.editLabel}
+                  roleOptions={this.getSortedRoleOptions()}
+                  schema={schema}
+                  autocompleteNames={autocompleteNames}
+                  serializeSuggestions={serializeSuggestions}
+                  serializeCreatibutor={serializeCreatibutor}
+                  deserializeCreatibutor={deserializeCreatibutor}
+                  trigger={
+                    <Button
+                      type="button"
+                      icon
+                      labelPosition="left"
+                      className={className}
+                    >
+                      <Icon name="add" />
+                      {addButtonLabel}
+                    </Button>
+                  }
+                />
 
-              <CreatibutorsFileModal
-                roleOptions={roleOptions}
-                schema={schema}
-                autocompleteNames={autocompleteNames}
-                addLabel={modal.addLabel}
-                editLabel={modal.editLabel}
-                serializeSuggestions={serializeSuggestions}
-                serializeCreatibutor={serializeCreatibutor}
-                deserializeCreatibutor={deserializeCreatibutor}
-                onConfirm={this.handleAddCreatibutorsFromFile}
-                trigger={
-                  <Button type="button" icon labelPosition="left" className={className}>
-                    <Icon name="upload" />
-                    {isContributors
-                      ? i18next.t("Add contributors from file")
-                      : i18next.t("Add authors from file")}
-                  </Button>
-                }
-              />
-            </div>
+                <CreatibutorsFileModal
+                  roleOptions={roleOptions}
+                  schema={schema}
+                  autocompleteNames={autocompleteNames}
+                  addLabel={modal.addLabel}
+                  editLabel={modal.editLabel}
+                  serializeSuggestions={serializeSuggestions}
+                  serializeCreatibutor={serializeCreatibutor}
+                  deserializeCreatibutor={deserializeCreatibutor}
+                  onConfirm={this.handleAddCreatibutorsFromFile}
+                  trigger={
+                    <Button
+                      type="button"
+                      icon
+                      labelPosition="left"
+                      className={className}
+                    >
+                      <Icon name="upload" />
+                      {isContributors
+                        ? i18next.t("Add contributors from file")
+                        : i18next.t("Add authors from file")}
+                    </Button>
+                  }
+                />
+              </div>
 
-            {addButtonHelpText && (
-              <label className="helptext">{addButtonHelpText}</label>
-            )}
-            {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
-          </Form.Field>
-        </DndProvider>
+              {addButtonHelpText && (
+                <label className="helptext">{addButtonHelpText}</label>
+              )}
+              {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
+            </Form.Field>
+          </DndProvider>
+        </CreatibutorsItemContext.Provider>
       </Overridable>
     );
   }

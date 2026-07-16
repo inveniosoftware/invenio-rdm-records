@@ -8,13 +8,23 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import _get from "lodash/get";
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useContext,
+  createContext,
+} from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { Button, Label, List, Ref } from "semantic-ui-react";
 import { FeedbackLabel } from "react-invenio-forms";
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import { CREATIBUTOR_TYPE } from "./type";
 import PropTypes from "prop-types";
+
+// Item-level config context provided to all rows by parent components.
+export const CreatibutorsItemContext = createContext(null);
 
 export const getCreatibutorDisplayName = (value) => {
   const creatibutorType = _get(value, "person_or_org.type", CREATIBUTOR_TYPE.PERSON);
@@ -50,21 +60,38 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
   replaceCreatibutor,
   removeCreatibutor,
   moveCreatibutor,
-  addLabel,
-  editLabel,
   initialCreatibutor,
   displayName,
-  roleOptions,
-  schema,
-  autocompleteNames,
-  serializeSuggestions,
-  serializeCreatibutor,
-  deserializeCreatibutor,
   highlighted,
 }) {
+  const {
+    roleOptions,
+    schema,
+    autocompleteNames,
+    addLabel,
+    editLabel,
+    serializeSuggestions,
+    serializeCreatibutor,
+    deserializeCreatibutor,
+  } = useContext(CreatibutorsItemContext);
+
   const dropRef = useRef(null);
   const modalRef = useRef(null);
   const [mountModal, setMountModal] = useState(false);
+  const [isHighlighted, setIsHighlighted] = useState(highlighted);
+
+  useEffect(() => {
+    if (!isHighlighted) return;
+    const timeoutId = setTimeout(() => {
+      setIsHighlighted(false);
+      // Remove highlighted flag from Formik so future remounts (caused by search/drag) don't re-highlight.
+      if (initialCreatibutor?.highlighted) {
+        const { highlighted: _, ...clean } = initialCreatibutor;
+        replaceCreatibutor(index, clean);
+      }
+    }, 2000);
+    return () => clearTimeout(timeoutId);
+  }, [isHighlighted, index, initialCreatibutor, replaceCreatibutor]);
 
   // Only recompute the display string when this author's data actually changes.
   const creatibutorDisplayName = useMemo(
@@ -126,7 +153,7 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
         className={[
           "deposit-drag-listitem",
           hidden && "drag-ghost",
-          highlighted && "highlighted",
+          isHighlighted && "highlighted",
         ]
           .filter(Boolean)
           .join(" ")}
@@ -220,27 +247,13 @@ CreatibutorsFieldItem.propTypes = {
   replaceCreatibutor: PropTypes.func.isRequired,
   removeCreatibutor: PropTypes.func.isRequired,
   moveCreatibutor: PropTypes.func.isRequired,
-  addLabel: PropTypes.node,
-  editLabel: PropTypes.node,
   initialCreatibutor: PropTypes.object.isRequired,
   displayName: PropTypes.string,
-  roleOptions: PropTypes.array.isRequired,
-  schema: PropTypes.string.isRequired,
-  autocompleteNames: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
-  serializeSuggestions: PropTypes.func,
-  serializeCreatibutor: PropTypes.func,
-  deserializeCreatibutor: PropTypes.func,
   highlighted: PropTypes.bool,
 };
 
 CreatibutorsFieldItem.defaultProps = {
   creatibutorError: undefined,
-  addLabel: undefined,
-  editLabel: undefined,
   displayName: undefined,
-  autocompleteNames: undefined,
-  serializeSuggestions: undefined,
-  serializeCreatibutor: undefined,
-  deserializeCreatibutor: undefined,
   highlighted: false,
 };
