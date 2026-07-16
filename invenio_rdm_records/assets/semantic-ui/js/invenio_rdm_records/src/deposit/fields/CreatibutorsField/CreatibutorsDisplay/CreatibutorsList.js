@@ -37,42 +37,23 @@ export const getCreatibutorDisplayName = (value) => {
 export const CreatibutorsList = React.memo(function CreatibutorsList({
   entries,
   keyPrefix,
-  filterQuery,
   batchSize,
   wrapWithDndProvider,
   enableDrag,
   creatibutorErrors,
-  roleOptions,
-  schema,
-  autocompleteNames,
-  addLabel,
-  editLabel,
-  serializeSuggestions,
-  serializeCreatibutor,
-  deserializeCreatibutor,
   removeCreatibutor,
   replaceCreatibutor,
   moveCreatibutor,
-  highlightedIndices,
 }) {
   const useBatchRender = entries.length > batchSize;
   const [renderLimit, setRenderLimit] = useState(batchSize);
   const batchScheduled = useRef(false);
   const prevEntriesLenRef = useRef(entries.length);
 
-  // Reset the batch window when the filter changes or keyPrefix changes.
+  // Reset the batch window when switching to a different field array.
   useEffect(() => {
     setRenderLimit(batchSize);
-  }, [filterQuery, keyPrefix, batchSize]);
-
-  // Extend the batch window when rows are appended so new items at the end mount.
-  useEffect(() => {
-    if (!useBatchRender) return;
-    if (entries.length > prevEntriesLenRef.current) {
-      setRenderLimit((prev) => Math.max(prev, entries.length));
-    }
-    prevEntriesLenRef.current = entries.length;
-  }, [entries.length, useBatchRender]);
+  }, [keyPrefix, batchSize]);
 
   // Mount additional rows one batch per animation frame so the UI stays responsive.
   useEffect(() => {
@@ -93,11 +74,19 @@ export const CreatibutorsList = React.memo(function CreatibutorsList({
     };
   }, [useBatchRender, renderLimit, entries.length, batchSize]);
 
+  // Extend on append so new rows at the end can be mounted.
+  if (entries.length > prevEntriesLenRef.current) {
+    const newLimit = Math.max(renderLimit, entries.length);
+    if (newLimit !== renderLimit) {
+      setRenderLimit(newLimit);
+    }
+  }
+  prevEntriesLenRef.current = entries.length;
   const visibleEntries = useBatchRender ? entries.slice(0, renderLimit) : entries;
 
   const list = (
     <List>
-      {visibleEntries.map(({ item, idx, displayName }) => {
+      {visibleEntries.map(({ item, idx, displayName, highlighted = false }) => {
         const key = `${keyPrefix}.${idx}`;
         return (
           <CreatibutorsFieldItem
@@ -106,20 +95,12 @@ export const CreatibutorsList = React.memo(function CreatibutorsList({
             compKey={key}
             initialCreatibutor={item}
             displayName={displayName}
-            roleOptions={roleOptions}
-            schema={schema}
-            autocompleteNames={autocompleteNames}
-            addLabel={addLabel}
-            editLabel={editLabel}
-            serializeSuggestions={serializeSuggestions}
-            serializeCreatibutor={serializeCreatibutor}
-            deserializeCreatibutor={deserializeCreatibutor}
             removeCreatibutor={removeCreatibutor}
             replaceCreatibutor={replaceCreatibutor}
             moveCreatibutor={moveCreatibutor}
             enableDrag={enableDrag}
-            highlighted={highlightedIndices?.has(idx)}
             creatibutorError={creatibutorErrors?.[idx]}
+            highlighted={highlighted}
           />
         );
       })}
@@ -148,38 +129,21 @@ CreatibutorsList.propTypes = {
       item: PropTypes.object.isRequired,
       idx: PropTypes.number.isRequired,
       displayName: PropTypes.string,
+      highlighted: PropTypes.bool,
     })
   ).isRequired,
   keyPrefix: PropTypes.string.isRequired,
-  filterQuery: PropTypes.string,
   batchSize: PropTypes.number.isRequired,
   wrapWithDndProvider: PropTypes.bool,
   enableDrag: PropTypes.bool,
   creatibutorErrors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  roleOptions: PropTypes.array.isRequired,
-  schema: PropTypes.oneOf(["creators", "contributors"]).isRequired,
-  autocompleteNames: PropTypes.oneOf(["search", "search_only", "off"]),
-  addLabel: PropTypes.node,
-  editLabel: PropTypes.node,
-  serializeSuggestions: PropTypes.func,
-  serializeCreatibutor: PropTypes.func,
-  deserializeCreatibutor: PropTypes.func,
   removeCreatibutor: PropTypes.func.isRequired,
   replaceCreatibutor: PropTypes.func.isRequired,
   moveCreatibutor: PropTypes.func.isRequired,
-  highlightedIndices: PropTypes.instanceOf(Set),
 };
 
 CreatibutorsList.defaultProps = {
-  filterQuery: undefined,
   wrapWithDndProvider: true,
   enableDrag: true,
   creatibutorErrors: undefined,
-  autocompleteNames: undefined,
-  addLabel: undefined,
-  editLabel: undefined,
-  serializeSuggestions: undefined,
-  serializeCreatibutor: undefined,
-  deserializeCreatibutor: undefined,
-  highlightedIndices: undefined,
 };

@@ -9,9 +9,10 @@ import { Button, Header, Icon, Message, Modal, Segment } from "semantic-ui-react
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { validateCreatibutorEntry } from "./CreatibutorsModal";
 import { CreatibutorsInlinePanel } from "./CreatibutorsDisplay/CreatibutorsInlinePanel";
+import { CreatibutorsItemContext } from "./CreatibutorsFieldItem";
 
 const getCreatibutorSchemaLabel = (schema) =>
-  schema === "contributors" ? i18next.t("contributors") : i18next.t("authors");
+  schema === "creators" ? "authors/creators" : "contributors";
 
 const CREATIBUTOR_IMPORT_EXAMPLE = `[
   {
@@ -91,7 +92,7 @@ function CreatibutorsFileImport({
       >
         <Header icon>
           <Icon name="cloud upload" />
-          {i18next.t("Upload {{type}} from file", { type })}
+          {i18next.t(`Upload ${type} from file`)}
           <Header.Subheader>
             {i18next.t("Supported file types: .json, .txt")}
           </Header.Subheader>
@@ -184,27 +185,29 @@ function CreatibutorsFileReview({
           {validEntries.length > 0 && (
             <>
               <Header as="h4" className="mb-10">
-                {i18next.t("Valid {{type}} ({{count}})", {
-                  type,
-                  count: validEntries.length,
-                })}
+                {i18next.t(`Valid ${type} (${validEntries.length})`)}
               </Header>
-              <CreatibutorsInlinePanel
-                list={validEntries}
-                keyPrefix="fileImport"
-                schema={schema}
-                highlightOnAdd={false}
-                roleOptions={roleOptions}
-                addLabel={addLabel}
-                editLabel={editLabel}
-                autocompleteNames={autocompleteNames}
-                serializeSuggestions={serializeSuggestions}
-                serializeCreatibutor={serializeCreatibutor}
-                deserializeCreatibutor={deserializeCreatibutor}
-                removeCreatibutor={onRemove}
-                replaceCreatibutor={onReplace}
-                moveCreatibutor={onMove}
-              />
+              <CreatibutorsItemContext.Provider
+                value={{
+                  roleOptions,
+                  schema,
+                  autocompleteNames,
+                  addLabel,
+                  editLabel,
+                  serializeSuggestions,
+                  serializeCreatibutor,
+                  deserializeCreatibutor,
+                }}
+              >
+                <CreatibutorsInlinePanel
+                  type={type}
+                  list={validEntries}
+                  keyPrefix="fileImport"
+                  removeCreatibutor={onRemove}
+                  replaceCreatibutor={onReplace}
+                  moveCreatibutor={onMove}
+                />
+              </CreatibutorsItemContext.Provider>
             </>
           )}
 
@@ -415,8 +418,8 @@ export class CreatibutorsFileModal extends Component {
 
     const headerText =
       phase === "pick"
-        ? i18next.t("Add {{type}} from file", { type })
-        : i18next.t("Review {{type}} from file", { type });
+        ? i18next.t(`Add ${type} from file`)
+        : i18next.t(`Review ${type} from file`);
 
     return (
       <Modal
@@ -481,10 +484,7 @@ export class CreatibutorsFileModal extends Component {
               type="button"
               icon="check"
               disabled={validEntries.length === 0}
-              content={i18next.t("Import {{count}} {{type}}", {
-                count: validEntries.length,
-                type,
-              })}
+              content={i18next.t(`Import ${validEntries.length} ${type}`)}
               onClick={this.handleConfirm}
             />
           )}
