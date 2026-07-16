@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-07-09T18:52:35.217Z\n"
-"PO-Revision-Date: 2025-07-09T18:52:35.218Z\n"
+"POT-Creation-Date: 2026-06-22T20:52:49.860Z\n"
+"PO-Revision-Date: 2026-06-22T20:52:49.860Z\n"
 "Language: en\n"
 
 msgid "Copy to clipboard"
@@ -203,9 +203,6 @@ msgstr "New version"
 msgid "Preview"
 msgstr "Preview"
 
-msgid "DOI is needed. You need to reserve a DOI before publishing."
-msgstr "DOI is needed. You need to reserve a DOI before publishing."
-
 msgid "Are you sure you want to publish this record?"
 msgstr "Are you sure you want to publish this record?"
 
@@ -236,17 +233,6 @@ msgstr "You must accept this."
 msgid "Before publishing to the community, please read and check the following:"
 msgstr "Before publishing to the community, please read and check the following:"
 
-msgid ""
-"Your upload will be <bold>immediately published</bold> in "
-"'{{communityTitle}}'. You will no longer be able to change the files in the "
-"upload! However, you will still be able to update the record's metadata "
-"later."
-msgstr ""
-"Your upload will be <bold>immediately published</bold> in "
-"'{{communityTitle}}'. You will no longer be able to change the files in the "
-"upload! However, you will still be able to update the record's metadata "
-"later."
-
 msgid "Publish record to community"
 msgstr "Publish record to community"
 
@@ -258,15 +244,6 @@ msgstr "Before submitting to community, please read and check the following:"
 
 msgid "Before requesting review, please read and check the following:"
 msgstr "Before requesting review, please read and check the following:"
-
-msgid ""
-"If your upload is accepted by the community curators, it will be "
-"<bold>immediately published</bold>. Before that, you will still be able to "
-"modify metadata and files of this upload."
-msgstr ""
-"If your upload is accepted by the community curators, it will be "
-"<bold>immediately published</bold>. Before that, you will still be able to "
-"modify metadata and files of this upload."
 
 msgid "Submit record for review"
 msgstr "Submit record for review"
@@ -282,9 +259,6 @@ msgstr "your upload's metadata and files."
 
 msgid "Message to curators (optional)"
 msgstr "Message to curators (optional)"
-
-msgid "msgWarningText1"
-msgstr "msgWarningText1"
 
 msgid "Change community"
 msgstr "Change community"
@@ -464,15 +438,6 @@ msgstr "Copyright (C) {{currentYear}} The Authors."
 
 msgid "Copyright"
 msgstr "Copyright"
-
-msgid "Creators"
-msgstr "Creators"
-
-msgid "Add creator"
-msgstr "Add creator"
-
-msgid "Edit creator"
-msgstr "Edit creator"
 
 msgid "Edit"
 msgstr "Edit"
@@ -752,14 +717,8 @@ msgstr "software"
 msgid "Title"
 msgstr "Title"
 
-msgid "License title"
-msgstr "License title"
-
 msgid "Link"
 msgstr "Link"
-
-msgid "License link"
-msgstr "License link"
 
 msgid "Add license"
 msgstr "Add license"
@@ -911,3 +870,233 @@ msgstr ""
 
 msgid ", but any version string is accepted."
 msgstr ", but any version string is accepted."
+
+msgid "Search in all communities"
+msgstr "Search in all communities"
+
+msgid "Search in my communities"
+msgstr "Search in my communities"
+
+msgid ""
+"The request to submit this upload to the community was declined. Please "
+"discard this version and create a new one with the feedback from the review."
+msgstr ""
+"The request to submit this upload to the community was declined. Please "
+"discard this version and create a new one with the feedback from the review."
+
+msgid "Storage"
+msgstr "Storage"
+
+msgid "Quota overview"
+msgstr "Quota overview"
+
+msgid ""
+"You can now manage your record storage by assigning additional quota as "
+"needed."
+msgstr ""
+"You can now manage your record storage by assigning additional quota as "
+"needed."
+
+msgid "Find out more."
+msgstr "Find out more."
+
+msgid "Default quota per record"
+msgstr "Default quota per record"
+
+msgid "Available of {{total}} GB allowance"
+msgstr "Available of {{total}} GB allowance"
+
+msgid "Quota granted across {{count}} records"
+msgid_plural "Quota granted across {{count}} records"
+msgstr[0] "Quota granted across {{count}} records"
+msgstr[1] "Quota granted across {{count}} records"
+
+msgid "Allocated storage"
+msgstr "Allocated storage"
+
+msgid "Record"
+msgstr "Record"
+
+msgid "Additional quota"
+msgstr "Additional quota"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "{{total}} GB total"
+msgstr "{{total}} GB total"
+
+msgid "used"
+msgstr "used"
+
+msgid "No allocated storage"
+msgstr "No allocated storage"
+
+msgid "No records have been granted any additional quotas yet."
+msgstr "No records have been granted any additional quotas yet."
+
+msgid "If your upload is accepted by the community curators, it will be"
+msgstr "If your upload is accepted by the community curators, it will be"
+
+msgid "immediately published"
+msgstr "immediately published"
+
+msgid ""
+"Before that, you will still be able to modify metadata and files of this "
+"upload."
+msgstr ""
+"Before that, you will still be able to modify metadata and files of this "
+"upload."
+
+msgid "Your upload will be"
+msgstr "Your upload will be"
+
+msgid ""
+"in '{{communityTitle}}'. You will no longer be able to change the files in "
+"the upload!"
+msgstr ""
+"in '{{communityTitle}}'. You will no longer be able to change the files in "
+"the upload!"
+
+msgid "However, you will still be able to update the record's metadata later."
+msgstr "However, you will still be able to update the record's metadata later."
+
+msgid "Unable to submit request."
+msgstr "Unable to submit request."
+
+msgid "Unable to display preview. Please correct validation issues in"
+msgstr "Unable to display preview. Please correct validation issues in"
+
+msgid "Unknown section"
+msgstr "Unknown section"
+
+msgid "Authors"
+msgstr "Authors"
+
+msgid "Add author"
+msgstr "Add author"
+
+msgid "Edit author"
+msgstr "Edit author"
+
+msgid ""
+"To <1>add, modify or remove files</1>, it is recommended that you create a "
+"new version. A new record is created which tracks the evolution of your "
+"work."
+msgstr ""
+"To <1>add, modify or remove files</1>, it is recommended that you create a "
+"new version. A new record is created which tracks the evolution of your "
+"work."
+
+msgid "To <1>correct</1> minor errors, you can unlock the files."
+msgstr "To <1>correct</1> minor errors, you can unlock the files."
+
+msgid "It is not possible to modify the files of this record."
+msgstr "It is not possible to modify the files of this record."
+
+msgid "Edit published files"
+msgstr "Edit published files"
+
+msgid "I want to update the files with a new version"
+msgstr "I want to update the files with a new version"
+
+msgid "Instead, you can make a new version"
+msgstr "Instead, you can make a new version"
+
+msgid "Edit files"
+msgstr "Edit files"
+
+msgid "Once unlocked you will have {{ daysUntil }} days to publish your changes."
+msgstr "Once unlocked you will have {{ daysUntil }} days to publish your changes."
+
+msgid "File modification checklist:"
+msgstr "File modification checklist:"
+
+msgid "Yes"
+msgstr "Yes"
+
+msgid "No"
+msgstr "No"
+
+msgid ""
+"I will not modify files that supplement findings/results of an already "
+"published work."
+msgstr ""
+"I will not modify files that supplement findings/results of an already "
+"published work."
+
+msgid "Unable to unlock files"
+msgstr "Unable to unlock files"
+
+msgid "Enable file editing"
+msgstr "Enable file editing"
+
+msgid "Checksum not yet calculated."
+msgstr "Checksum not yet calculated."
+
+msgid "Manage storage"
+msgstr "Manage storage"
+
+msgid "Default"
+msgstr "Default"
+
+msgid "Additional"
+msgstr "Additional"
+
+msgid "Available"
+msgstr "Available"
+
+msgid "See your <1>storage settings</1> for usage across all records"
+msgstr "See your <1>storage settings</1> for usage across all records"
+
+msgid "Could not submit the quota increase request"
+msgstr "Could not submit the quota increase request"
+
+msgid ""
+"Each record has a default quota of {{defaultStorage}} GB. You have an "
+"additional allowance of up to {{maxAdditionalStorage}} GB that can be "
+"distributed across your uploads as needed."
+msgstr ""
+"Each record has a default quota of {{defaultStorage}} GB. You have an "
+"additional allowance of up to {{maxAdditionalStorage}} GB that can be "
+"distributed across your uploads as needed."
+
+msgid ""
+"Each record has a default quota of {{defaultStorage}} GB. You have already "
+"used your additional allowance of {{maxAdditionalStorage}} GB across your "
+"uploads."
+msgstr ""
+"Each record has a default quota of {{defaultStorage}} GB. You have already "
+"used your additional allowance of {{maxAdditionalStorage}} GB across your "
+"uploads."
+
+msgid "Additional storage"
+msgstr "Additional storage"
+
+msgid "New total:"
+msgstr "New total:"
+
+msgid "Unable to increase quota"
+msgstr "Unable to increase quota"
+
+msgid "Apply"
+msgstr "Apply"
+
+msgid "Search for subjects..."
+msgstr "Search for subjects..."
+
+msgid "{{filename}} is already part of this upload."
+msgstr "{{filename}} is already part of this upload."
+
+msgid ""
+"Maximum 191 characters. For longer descriptions, use 'Additional "
+"descriptions' with type 'Note'."
+msgstr ""
+"Maximum 191 characters. For longer descriptions, use 'Additional "
+"descriptions' with type 'Note'."
+
+msgid "Select a community for this repository's records"
+msgstr "Select a community for this repository's records"
