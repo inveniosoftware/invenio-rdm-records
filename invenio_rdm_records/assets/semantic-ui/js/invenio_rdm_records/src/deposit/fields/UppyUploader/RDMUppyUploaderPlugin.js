@@ -55,9 +55,9 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
   install() {
     AwsS3Multipart.prototype.install.apply(this);
     this.uppy.on("upload-success", this.#completeSinglePartUpload);
+    this.uppy.on("upload-success", this.#removeFileOnSuccess);
     this.uppy.on("upload-progress", this.#onUploadProgress);
     this.uppy.on("file-removed", this.#onFileRemoved);
-    this.uppy.on("complete", this.#resetOnComplete);
     this.uppy.addPreProcessor(this.#saveDraftBeforeUpload);
     // Disable resumable uploads Uppy capability.
     // Currently unsupported, as it requires missing API
@@ -68,9 +68,9 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
   uninstall() {
     AwsS3Multipart.prototype.uninstall.apply(this);
     this.uppy.off("upload-success", this.#completeSinglePartUpload);
+    this.uppy.off("upload-success", this.#removeFileOnSuccess);
     this.uppy.off("upload-progress", this.#onUploadProgress);
     this.uppy.off("file-removed", this.#onFileRemoved);
-    this.uppy.off("complete", this.#resetOnComplete);
     this.uppy.removePreProcessor(this.#saveDraftBeforeUpload);
     this.uppy.removePreProcessor(this.#disableResumableUploadsCapability);
   }
@@ -115,8 +115,10 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
     }
   };
 
-  #resetOnComplete = (result) => {
-    this.uppy.cancelAll();
+  #removeFileOnSuccess = (file) => {
+    // Remove successful uploads from Uppy state so they disappear from the Dashboard.
+    // Failed uploads remain available for retry/removal.
+    this.uppy.removeFile(file.id);
   };
 
   #saveDraftBeforeUpload = async (fileIDs) => {
