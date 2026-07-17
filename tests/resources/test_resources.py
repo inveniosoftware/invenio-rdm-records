@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2020 Northwestern University.
 # SPDX-FileCopyrightText: 2021 TU Wien.
 # SPDX-FileCopyrightText: 2025-2026 Graz University of Technology.
+# SPDX-FileCopyrightText: 2026 Istituto Nazionale di Geofisica e Vulcanologia.
 # SPDX-License-Identifier: MIT
 
 """Module tests."""
@@ -215,6 +216,53 @@ def test_update_draft(
     assert update_response.json["metadata"]["title"] == edited_title
     assert update_response.json["id"] == recid
     _validate_access(update_response.json, minimal_record)
+
+
+def test_create_and_update_draft_with_multiple_geometries(
+    running_app, client_with_login, minimal_record, headers, search_clear
+):
+    """Test creating and updating a draft with multiple geometries."""
+    client = client_with_login
+
+    minimal_record["metadata"]["locations"] = {
+        "features": [
+            {
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [10.2, 5.0],
+                }
+            },
+            {
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [5.1, 1.23],
+                }
+            },
+        ]
+    }
+
+    response = client.post(
+        "/records",
+        data=json.dumps(minimal_record),
+        headers=headers,
+    )
+
+    assert response.status_code == 201
+    assert len(response.json["metadata"]["locations"]["features"]) == 2
+
+    recid = response.json["id"]
+
+    minimal_record["metadata"]["title"] = "Edited title"
+
+    response = client.put(
+        f"/records/{recid}/draft",
+        data=json.dumps(minimal_record),
+        headers=headers,
+    )
+
+    assert response.status_code == 200
+    assert response.json["metadata"]["title"] == "Edited title"
+    assert len(response.json["metadata"]["locations"]["features"]) == 2
 
 
 def test_update_partial_draft(
