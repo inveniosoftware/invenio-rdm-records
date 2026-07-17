@@ -11,24 +11,15 @@ description = "InvenioRDM module for the communities feature."
 readme = "README.rst"
 requires-python = ">=3.9"
 license = "MIT"
-authors = [
-  { name = "CERN", email = "info@inveniosoftware.org" },
-]
-keywords = [
-  "data",
-  "invenio",
-  "model",
-  "rdm",
-]
-classifiers = [
-  "Development Status :: 5 - Production/Stable",
-]
+authors = [{ name = "CERN", email = "info@inveniosoftware.org" }]
+keywords = ["data", "invenio", "model", "rdm"]
+classifiers = ["Development Status :: 5 - Production/Stable"]
 dependencies = [
   "arrow>=0.17.0",
   "babel-edtf>=1.2.0",
   "citeproc-py>=0.6.0",
   "citeproc-py-styles>=0.1.2,<1.0.0",
-  "commonmeta-py>=0.215,<1.0.0",
+  "commonmeta-py>=0.256,<1.0.0",
   "datacite>=1.1.1,<2.0.0",
   "dcxml>=0.1.2,<1.0.0",
   "faker>=2.0.3",
@@ -162,15 +153,9 @@ block = "invenio_rdm_records.requests.user_moderation.actions:on_block"
 restore = "invenio_rdm_records.requests.user_moderation.actions:on_restore"
 
 [project.optional-dependencies]
-elasticsearch7 = [
-  "invenio-search[elasticsearch7]>=3.0.0,<4.0.0",
-]
-opensearch1 = [
-  "invenio-search[opensearch1]>=3.0.0,<4.0.0",
-]
-opensearch2 = [
-  "invenio-search[opensearch2]>=3.0.0,<4.0.0",
-]
+elasticsearch7 = ["invenio-search[elasticsearch7]>=3.0.0,<4.0.0"]
+opensearch1 = ["invenio-search[opensearch1]>=3.0.0,<4.0.0"]
+opensearch2 = ["invenio-search[opensearch2]>=3.0.0,<4.0.0"]
 tests = [
   "invenio-app>=3.0.0,<4.0.0",
   "invenio-db[postgresql,mysql]>=2.2.0,<3.0.0",
@@ -225,9 +210,7 @@ encoding = "utf-8"
 path = "invenio_rdm_records/__init__.py"
 
 [tool.hatch.build.targets.sdist]
-include = [
-  "/invenio_rdm_records",
-]
+include = ["/invenio_rdm_records"]
 
 [tool.isort]
 profile = "black"
@@ -249,5 +232,5 @@ conflicts = [
     { extra = "opensearch1" },
     { extra = "opensearch2" },
     { extra = "elasticsearch7" },
-  ]
+  ],
 ]
