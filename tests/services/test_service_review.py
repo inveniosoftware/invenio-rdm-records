@@ -9,6 +9,7 @@ from invenio_access.permissions import any_user, authenticated_user, system_iden
 from invenio_communities.communities.records.api import Community
 from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.records.api import Member
+from invenio_drafts_resources.resources.records.errors import DraftNotCreatedError
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests import current_requests_service
@@ -712,7 +713,7 @@ def test_review_gives_access_to_curator(running_app, draft, service, requests_se
     assert request.status == "cancelled"
 
     # the owner of the community should not have access anymore
-    with pytest.raises(PermissionDeniedError):
+    with pytest.raises(DraftNotCreatedError):
         item = service.read_draft(identity, draft.pid.pid_value)
 
 
