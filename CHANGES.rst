@@ -8,6 +8,13 @@
 Changes
 =======
 
+Version v33.3.0 (released 2026-07-17)
+
+- feat: add support for crossref schema 5.5 via commonmeta-py
+- fix(iiif): add handlers for more possible IIIF errors
+- fix(iiif): validate expected shape of identifiers
+- fix(tests): add tests for invalid identifiers in IIIF endpoints
+
 Version v33.2.0 (released 2026-07-09)
 
 - feat(ui): make NewVersionButton overridable
