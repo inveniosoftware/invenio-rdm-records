@@ -21,12 +21,12 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
   type,
   list,
   keyPrefix,
-  creatibutorErrors,
+  creatibutorErrors = undefined,
   removeCreatibutor,
   replaceCreatibutor,
   moveCreatibutor,
-  scrollThreshold,
-  batchSize,
+  scrollThreshold = 10,
+  batchSize = 30,
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [scrollToIndex, setScrollToIndex] = useState(null);
@@ -220,10 +220,4 @@ CreatibutorsInlinePanel.propTypes = {
   moveCreatibutor: PropTypes.func.isRequired,
   scrollThreshold: PropTypes.number,
   batchSize: PropTypes.number,
-};
-
-CreatibutorsInlinePanel.defaultProps = {
-  scrollThreshold: 10,
-  batchSize: 30,
-  creatibutorErrors: undefined,
 };

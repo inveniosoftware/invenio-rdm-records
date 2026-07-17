@@ -5,7 +5,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Component } from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 import {
@@ -17,48 +16,44 @@ import {
 import { AdditionalTitlesField } from "./AdditionalTitlesField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-class TitlesFieldComponent extends Component {
-  render() {
-    const {
-      fieldPath,
-      options,
-      label,
-      labelIcon,
-      recordUI,
-      helpText,
-      placeholder,
-      optimized,
-    } = this.props;
-
-    return (
-      <Overridable
-        id="InvenioRdmRecords.DepositForm.TitlesField.Container"
-        options={options}
-        recordUI={recordUI}
-        helpText={helpText}
-        placeholder={placeholder}
-        optimized={optimized}
-      >
-        <>
-          <TextField
-            fieldPath={fieldPath}
-            helpText={helpText}
-            placeholder={placeholder}
-            label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
-            required
-            className="title-field"
-            optimized={optimized}
-          />
-          <AdditionalTitlesField
-            options={options}
-            recordUI={recordUI}
-            fieldPath="metadata.additional_titles"
-            optimized={optimized}
-          />
-        </>
-      </Overridable>
-    );
-  }
+function TitlesFieldComponent({
+  fieldPath,
+  options,
+  label = i18next.t("Title"),
+  labelIcon = "book",
+  recordUI = undefined,
+  helpText,
+  placeholder,
+  optimized = true,
+}) {
+  return (
+    <Overridable
+      id="InvenioRdmRecords.DepositForm.TitlesField.Container"
+      options={options}
+      recordUI={recordUI}
+      helpText={helpText}
+      placeholder={placeholder}
+      optimized={optimized}
+    >
+      <>
+        <TextField
+          fieldPath={fieldPath}
+          helpText={helpText}
+          placeholder={placeholder}
+          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+          required
+          className="title-field"
+          optimized={optimized}
+        />
+        <AdditionalTitlesField
+          options={options}
+          recordUI={recordUI}
+          fieldPath="metadata.additional_titles"
+          optimized={optimized}
+        />
+      </>
+    </Overridable>
+  );
 }
 
 TitlesFieldComponent.propTypes = {
@@ -79,14 +74,6 @@ TitlesFieldComponent.propTypes = {
   }).isRequired,
   recordUI: PropTypes.object,
   ...mandatoryFieldCommonProps,
-};
-
-TitlesFieldComponent.defaultProps = {
-  label: i18next.t("Title"),
-  labelIcon: "book",
-  required: false,
-  recordUI: undefined,
-  optimized: true,
 };
 
 export const TitlesField = showHideOverridable(

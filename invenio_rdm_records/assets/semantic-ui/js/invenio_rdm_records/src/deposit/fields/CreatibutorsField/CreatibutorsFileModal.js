@@ -136,7 +136,7 @@ CreatibutorsFileImport.propTypes = {
 
 function CreatibutorsFileReview({
   schema,
-  fileName,
+  fileName = null,
   parseError,
   validEntries,
   invalidEntries,
@@ -144,12 +144,12 @@ function CreatibutorsFileReview({
   onReplace,
   onMove,
   roleOptions,
-  autocompleteNames,
-  addLabel,
-  editLabel,
-  serializeSuggestions,
-  serializeCreatibutor,
-  deserializeCreatibutor,
+  autocompleteNames = "search",
+  addLabel = undefined,
+  editLabel = undefined,
+  serializeSuggestions = undefined,
+  serializeCreatibutor = undefined,
+  deserializeCreatibutor = undefined,
 }) {
   const type = getCreatibutorSchemaLabel(schema);
 
@@ -259,16 +259,6 @@ CreatibutorsFileReview.propTypes = {
   serializeSuggestions: PropTypes.func,
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
-};
-
-CreatibutorsFileReview.defaultProps = {
-  fileName: null,
-  autocompleteNames: "search",
-  addLabel: undefined,
-  editLabel: undefined,
-  serializeSuggestions: undefined,
-  serializeCreatibutor: undefined,
-  deserializeCreatibutor: undefined,
 };
 
 export class CreatibutorsFileModal extends Component {
@@ -473,9 +463,12 @@ export class CreatibutorsFileModal extends Component {
               onClick={this.resetToCreatibutorsFileImport}
             />
           )}
-          <Button icon="close" type="button" onClick={this.closeModal}>
-            {i18next.t("Cancel")}
-          </Button>
+          <Button
+            icon="close"
+            content={i18next.t("Cancel")}
+            type="button"
+            onClick={this.closeModal}
+          />
           {phase === "review" && (
             <Button
               positive

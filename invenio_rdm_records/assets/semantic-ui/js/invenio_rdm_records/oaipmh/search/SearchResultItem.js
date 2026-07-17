@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 import PropTypes from "prop-types";
-import { Component } from "react";
 import { Table } from "semantic-ui-react";
 import isEmpty from "lodash/isEmpty";
 import { withState } from "react-searchkit";
@@ -18,14 +17,26 @@ const overridenComponents = {
   "InvenioAdministration.DeleteModal.layout": DeleteModal,
 };
 
-class SearchResultItemComponent extends Component {
-  refreshAfterAction = () => {
-    const { updateQueryState, currentQueryState } = this.props;
+function SearchResultItemComponent({
+  updateQueryState,
+  currentQueryState,
+  resourceSchema,
+  title,
+  resourceName,
+  result,
+  columns,
+  displayEdit = true,
+  displayDelete = true,
+  actions = {},
+  apiEndpoint = undefined,
+  idKeyPath,
+  listUIEndpoint,
+}) {
+  const refreshAfterAction = () => {
     updateQueryState(currentQueryState);
   };
 
-  displayAsPre = (result, property) => {
-    const { resourceSchema } = this.props;
+  const displayAsPre = (result, property) => {
     if (property === "spec") {
       return (
         <pre>
@@ -47,79 +58,62 @@ class SearchResultItemComponent extends Component {
     }
   };
 
-  render() {
-    const {
-      title,
-      resourceName,
-      result,
-      columns,
-      displayEdit,
-      displayDelete,
-      actions,
-      apiEndpoint,
-      idKeyPath,
-      listUIEndpoint,
-    } = this.props;
+  const resourceHasActions = displayEdit || displayDelete || !isEmpty(actions);
 
-    const resourceHasActions = displayEdit || displayDelete || !isEmpty(actions);
+  overridenComponents["InvenioAdministration.EditAction"] = parametrize(Edit, {
+    disable: () => result.system_created,
+    disabledMessage: i18next.t(
+      "This set is not editable as it was created by the system."
+    ),
+  });
 
-    overridenComponents["InvenioAdministration.EditAction"] = parametrize(Edit, {
-      disable: () => result.system_created,
-      disabledMessage: i18next.t(
-        "This set is not editable as it was created by the system."
-      ),
-    });
+  overridenComponents["InvenioAdministration.DeleteAction"] = parametrize(Delete, {
+    disable: () => result.system_created,
+    disabledMessage: i18next.t(
+      "This set is not deletable as it was created by the system."
+    ),
+  });
 
-    overridenComponents["InvenioAdministration.DeleteAction"] = parametrize(Delete, {
-      disable: () => result.system_created,
-      disabledMessage: i18next.t(
-        "This set is not deletable as it was created by the system."
-      ),
-    });
-
-    return (
-      <OverridableContext.Provider value={overridenComponents}>
-        <Table.Row>
-          {columns.map(([property, { text, order }], index) => {
-            return (
-              <Table.Cell
-                key={`${text}-${order}`}
-                data-label={text}
-                className="word-break-all"
-              >
-                {index === 0 ? (
-                  <a
-                    href={AdminUIRoutes.detailsView(listUIEndpoint, result, idKeyPath)}
-                  >
-                    {this.displayAsPre(result, property)}
-                  </a>
-                ) : (
-                  this.displayAsPre(result, property)
-                )}
-              </Table.Cell>
-            );
-          })}
-          {resourceHasActions && (
-            <Table.Cell>
-              <Actions
-                title={title}
-                resourceName={resourceName}
-                apiEndpoint={apiEndpoint}
-                actions={actions}
-                editUrl={AdminUIRoutes.editView(listUIEndpoint, result, idKeyPath)}
-                displayEdit={displayEdit}
-                displayDelete={displayDelete}
-                resource={result}
-                idKeyPath={idKeyPath}
-                successCallback={this.refreshAfterAction}
-                listUIEndpoint={listUIEndpoint}
-              />
+  return (
+    <OverridableContext.Provider value={overridenComponents}>
+      <Table.Row>
+        {columns.map(([property, { text, order }], index) => {
+          return (
+            <Table.Cell
+              key={`${text}-${order}`}
+              data-label={text}
+              className="word-break-all"
+            >
+              {index === 0 ? (
+                <a href={AdminUIRoutes.detailsView(listUIEndpoint, result, idKeyPath)}>
+                  {displayAsPre(result, property)}
+                </a>
+              ) : (
+                displayAsPre(result, property)
+              )}
             </Table.Cell>
-          )}
-        </Table.Row>
-      </OverridableContext.Provider>
-    );
-  }
+          );
+        })}
+        {resourceHasActions && (
+          <Table.Cell>
+            <Actions
+              title={title}
+              resourceName={resourceName}
+              apiEndpoint={apiEndpoint}
+              actions={actions}
+              editUrl={AdminUIRoutes.editView(listUIEndpoint, result, idKeyPath)}
+              displayEdit={displayEdit}
+              displayDelete={displayDelete}
+              resource={result}
+              idKeyPath={idKeyPath}
+              successCallback={refreshAfterAction}
+              listUIEndpoint={listUIEndpoint}
+            />
+          </Table.Cell>
+        )}
+      </Table.Row>
+    </OverridableContext.Provider>
+  );
 }
 
 SearchResultItemComponent.propTypes = {
@@ -136,13 +130,6 @@ SearchResultItemComponent.propTypes = {
   idKeyPath: PropTypes.string.isRequired,
   listUIEndpoint: PropTypes.string.isRequired,
   resourceSchema: PropTypes.object.isRequired,
-};
-
-SearchResultItemComponent.defaultProps = {
-  displayDelete: true,
-  displayEdit: true,
-  apiEndpoint: undefined,
-  actions: {},
 };
 
 export const SearchResultItem = withState(SearchResultItemComponent);

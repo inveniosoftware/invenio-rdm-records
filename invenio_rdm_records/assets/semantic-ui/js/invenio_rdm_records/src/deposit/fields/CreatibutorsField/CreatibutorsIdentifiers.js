@@ -5,22 +5,22 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { SelectField } from "react-invenio-forms";
 import _unickBy from "lodash/unionBy";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-export class CreatibutorsIdentifiers extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedOptions: props.initialOptions,
-    };
-  }
+export function CreatibutorsIdentifiers({
+  initialOptions,
+  fieldPath,
+  label = i18next.t("Identifiers"),
+  placeholder = i18next.t("e.g. ORCID, ISNI or GND."),
+}) {
+  const [selectedOptions, setSelectedOptions] = React.useState(initialOptions);
 
-  handleIdentifierAddition = (e, { value }) => {
-    this.setState((prevState) => ({
+  const handleIdentifierAddition = (e, { value }) => {
+    setSelectedOptions((prevSelectedOptions) => ({
       selectedOptions: _unickBy(
         [
           {
@@ -28,51 +28,43 @@ export class CreatibutorsIdentifiers extends Component {
             value: value,
             key: value,
           },
-          ...prevState.selectedOptions,
+          ...prevSelectedOptions,
         ],
         "value"
       ),
     }));
   };
 
-  valuesToOptions = (options) =>
+  const valuesToOptions = (options) =>
     options.map((option) => ({
       text: option,
       value: option,
       key: option,
     }));
 
-  handleChange = ({ data, formikProps }) => {
-    const { fieldPath } = this.props;
-    this.setState({
-      selectedOptions: this.valuesToOptions(data.value),
-    });
+  const handleChange = ({ data, formikProps }) => {
+    setSelectedOptions(valuesToOptions(data.value));
     formikProps.form.setFieldValue(fieldPath, data.value);
   };
 
-  render() {
-    const { fieldPath, label, placeholder } = this.props;
-    const { selectedOptions } = this.state;
-
-    return (
-      <SelectField
-        fieldPath={fieldPath}
-        label={label}
-        options={selectedOptions}
-        placeholder={placeholder}
-        noResultsMessage={i18next.t("Type the value of an identifier...")}
-        search
-        multiple
-        selection
-        allowAdditions
-        onChange={this.handleChange}
-        // `icon` is set to `null` in order to hide the dropdown default icon
-        icon={null}
-        onAddItem={this.handleIdentifierAddition}
-        optimized
-      />
-    );
-  }
+  return (
+    <SelectField
+      fieldPath={fieldPath}
+      label={label}
+      options={selectedOptions}
+      placeholder={placeholder}
+      noResultsMessage={i18next.t("Type the value of an identifier...")}
+      search
+      multiple
+      selection
+      allowAdditions
+      onChange={handleChange}
+      // `icon` is set to `null` in order to hide the dropdown default icon
+      icon={null}
+      onAddItem={handleIdentifierAddition}
+      optimized
+    />
+  );
 }
 
 CreatibutorsIdentifiers.propTypes = {
@@ -86,9 +78,4 @@ CreatibutorsIdentifiers.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   label: PropTypes.string,
   placeholder: PropTypes.string,
-};
-
-CreatibutorsIdentifiers.defaultProps = {
-  label: i18next.t("Identifiers"),
-  placeholder: i18next.t("e.g. ORCID, ISNI or GND."),
 };

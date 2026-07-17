@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
+import React from "react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
 import Overridable from "react-overridable";
 import PropTypes from "prop-types";
-import { Component } from "react";
 import { TextAreaField, ErrorMessage } from "react-invenio-forms";
 import { Button, Form, Icon, Message, Modal } from "semantic-ui-react";
 import * as Yup from "yup";
@@ -16,45 +16,29 @@ import {
   ensureUniqueProps,
 } from "./PublishCheckboxComponent";
 
-class SubmitReviewModalComponent extends Component {
-  constructor(props) {
-    super(props);
-    const { initialReviewComment, extraCheckboxes, record } = props;
-    this.validationSchema = this.getValidationSchema(record);
-    this.initialValues = this.getInitialValues(initialReviewComment, record);
-
-    // Get extra checkbox component and define its schema and defaults
-    if (extraCheckboxes.length > 0) {
-      // Validate id and fieldpath are unique
-      const fieldPaths = extraCheckboxes.map((checkbox) => checkbox.fieldPath);
-      fieldPaths.push("acceptAccessToRecord", "acceptAfterPublishRecord");
-      ensureUniqueProps(fieldPaths, "fieldPath");
-      const ids = extraCheckboxes.map((checkbox) => checkbox.id);
-      ids.push("accept-access-checkbox", "accept-after-publish-checkbox");
-      ensureUniqueProps(ids, "id");
-
-      extraCheckboxes.forEach((checkbox) => {
-        this.validationSchema = this.validationSchema.concat(
-          Yup.object({
-            [checkbox.fieldPath]: Yup.bool().oneOf(
-              [true],
-              i18next.t("You must accept this.")
-            ),
-          })
-        );
-        this.initialValues[checkbox.fieldPath] = false;
-      });
-    }
-  }
-
-  componentDidMount() {
+function SubmitReviewModalComponent({
+  initialReviewComment = "",
+  extraCheckboxes = [],
+  record,
+  isConfirmModalOpen,
+  community,
+  onClose,
+  onSubmit,
+  publishModalExtraContent = undefined,
+  directPublish = false,
+  errors = "",
+  loading = false,
+  beforeContent = () => undefined,
+  afterContent = () => undefined,
+}) {
+  React.useEffect(() => {
     // A11y: Focus the first input field in the form
     const firstFormFieldWrap = document.getElementById("accept-access-checkbox");
-    const checkboxElem = firstFormFieldWrap.querySelector("input");
+    const checkboxElem = firstFormFieldWrap?.querySelector("input");
     checkboxElem?.focus();
-  }
+  }, []);
 
-  getValidationSchema = (record) => {
+  const getValidationSchema = (record) => {
     let baseSchema = Yup.object({
       acceptAccessToRecord: Yup.bool().oneOf(
         [true],
@@ -77,7 +61,7 @@ class SubmitReviewModalComponent extends Component {
     return baseSchema;
   };
 
-  getModalContent = (record, directPublish, communityTitle) => {
+  const getModalContent = (record, directPublish, communityTitle) => {
     const modalContent = {
       headerTitle: i18next.t("Submit for review"),
       msgWarningTitle: i18next.t(
@@ -137,128 +121,109 @@ class SubmitReviewModalComponent extends Component {
     return modalContent;
   };
 
-  getInitialValues = (initialReviewComment, record) => ({
+  const getInitialValues = (initialReviewComment, record) => ({
     reviewComment: initialReviewComment || "",
     acceptAccessToRecord: false,
     acceptAfterPublishRecord: record ? undefined : false,
   });
 
-  render() {
-    const {
-      isConfirmModalOpen,
-      community,
-      onClose,
-      onSubmit,
-      publishModalExtraContent,
-      directPublish,
-      errors,
-      loading,
-      record,
-      extraCheckboxes,
-      beforeContent,
-      afterContent,
-    } = this.props;
+  const communityTitle = community.metadata.title;
+  const modalContent = getModalContent(record, directPublish, communityTitle);
 
-    const communityTitle = community.metadata.title;
-    const modalContent = this.getModalContent(record, directPublish, communityTitle);
-
-    return (
-      <Formik
-        initialValues={this.initialValues}
-        onSubmit={onSubmit}
-        validationSchema={this.validationSchema}
-        validateOnChange={false}
-        validateOnBlur={false}
-      >
-        {({ values, handleSubmit }) => {
-          return (
-            <Modal
-              open={isConfirmModalOpen}
-              onClose={onClose}
-              size="small"
-              closeIcon
-              closeOnDimmerClick={false}
-            >
-              <Modal.Header>{modalContent.headerTitle}</Modal.Header>
-              <Modal.Content>
-                {errors && (
-                  <ErrorMessage
-                    header={i18next.t("Unable to submit request.")}
-                    content={errors}
-                    icon="exclamation"
-                    negative
+  return (
+    <Formik
+      initialValues={getInitialValues(initialReviewComment, record)}
+      onSubmit={onSubmit}
+      validationSchema={getValidationSchema(record)}
+      validateOnChange={false}
+      validateOnBlur={false}
+    >
+      {({ values, handleSubmit }) => {
+        return (
+          <Modal
+            open={isConfirmModalOpen}
+            onClose={onClose}
+            size="small"
+            closeIcon
+            closeOnDimmerClick={false}
+          >
+            <Modal.Header>{modalContent.headerTitle}</Modal.Header>
+            <Modal.Content>
+              {errors && (
+                <ErrorMessage
+                  header={i18next.t("Unable to submit request.")}
+                  content={errors}
+                  icon="exclamation"
+                  negative
+                />
+              )}
+              <Message visible warning>
+                <p>
+                  <Icon name="warning sign" />
+                  {modalContent.msgWarningTitle}
+                </p>
+              </Message>
+              <Form>
+                {beforeContent && <div>{beforeContent()}</div>}
+                <PublishCheckboxComponent
+                  id="accept-access-checkbox"
+                  fieldPath="acceptAccessToRecord"
+                  text={modalContent.acceptAccessToRecordText}
+                />
+                {!record && (
+                  <PublishCheckboxComponent
+                    id="accept-after-publish-checkbox"
+                    fieldPath="acceptAfterPublishRecord"
+                    text={modalContent.acceptAfterPublishRecordText}
                   />
                 )}
-                <Message visible warning>
-                  <p>
-                    <Icon name="warning sign" />
-                    {modalContent.msgWarningTitle}
-                  </p>
-                </Message>
-                <Form>
-                  {beforeContent && <div>{beforeContent()}</div>}
-                  <PublishCheckboxComponent
-                    id="accept-access-checkbox"
-                    fieldPath="acceptAccessToRecord"
-                    text={modalContent.acceptAccessToRecordText}
-                  />
-                  {!record && (
+                {extraCheckboxes.length > 0 &&
+                  extraCheckboxes.map((checkbox) => (
                     <PublishCheckboxComponent
-                      id="accept-after-publish-checkbox"
-                      fieldPath="acceptAfterPublishRecord"
-                      text={modalContent.acceptAfterPublishRecordText}
+                      id={`${checkbox.fieldPath}-checkbox`}
+                      key={checkbox.fieldPath}
+                      fieldPath={checkbox.fieldPath}
+                      text={checkbox.text}
                     />
-                  )}
-                  {extraCheckboxes.length > 0 &&
-                    extraCheckboxes.map((checkbox) => (
-                      <PublishCheckboxComponent
-                        id={`${checkbox.fieldPath}-checkbox`}
-                        key={checkbox.fieldPath}
-                        fieldPath={checkbox.fieldPath}
-                        text={checkbox.text}
-                      />
-                    ))}
-                  {!directPublish && (
-                    <TextAreaField
-                      fieldPath="reviewComment"
-                      label={i18next.t("Message to curators (optional)")}
-                    />
-                  )}
-                  {publishModalExtraContent && (
-                    <div
-                      dangerouslySetInnerHTML={{ __html: publishModalExtraContent }}
-                    />
-                  )}
-                  {afterContent && <div>{afterContent()}</div>}
-                </Form>
-              </Modal.Content>
-              <Modal.Actions>
-                <Button
-                  onClick={onClose}
-                  floated="left"
-                  loading={loading}
-                  disabled={loading}
-                >
-                  {i18next.t("Cancel")}
-                </Button>
-                <Button
-                  name="submitReview"
-                  onClick={(event) => {
-                    handleSubmit(event);
-                  }}
-                  loading={loading}
-                  disabled={loading}
-                  positive={directPublish}
-                  primary={!directPublish}
-                  content={modalContent.submitBtnLbl}
-                />
-              </Modal.Actions>
-            </Modal>
-          );
-        }}
-      </Formik>
-    );
-  }
+                  ))}
+                {!directPublish && (
+                  <TextAreaField
+                    fieldPath="reviewComment"
+                    label={i18next.t("Message to curators (optional)")}
+                  />
+                )}
+                {publishModalExtraContent && (
+                  <div dangerouslySetInnerHTML={{ __html: publishModalExtraContent }} />
+                )}
+                {afterContent && <div>{afterContent()}</div>}
+              </Form>
+            </Modal.Content>
+            <Modal.Actions>
+              <Button
+                onClick={onClose}
+                floated="left"
+                loading={loading}
+                disabled={loading}
+              >
+                {i18next.t("Cancel")}
+              </Button>
+              <Button
+                name="submitReview"
+                onClick={(event) => {
+                  handleSubmit(event);
+                }}
+                loading={loading}
+                disabled={loading}
+                positive={directPublish}
+                primary={!directPublish}
+                content={modalContent.submitBtnLbl}
+              />
+            </Modal.Actions>
+          </Modal>
+        );
+      }}
+    </Formik>
+  );
 }
 
 SubmitReviewModalComponent.propTypes = {
@@ -280,17 +245,6 @@ SubmitReviewModalComponent.propTypes = {
   ),
   beforeContent: PropTypes.func,
   afterContent: PropTypes.func,
-};
-
-SubmitReviewModalComponent.defaultProps = {
-  initialReviewComment: "",
-  publishModalExtraContent: undefined,
-  directPublish: false,
-  errors: "",
-  loading: false,
-  extraCheckboxes: [],
-  beforeContent: () => undefined,
-  afterContent: () => undefined,
 };
 
 export const SubmitReviewModal = Overridable.component(

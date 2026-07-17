@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Component } from "react";
 import {
   FieldLabel,
   InputComponent,
@@ -14,91 +13,88 @@ import { Divider, Grid } from "semantic-ui-react";
 
 import PropTypes from "prop-types";
 
-class MeetingComponent extends Component {
-  render() {
-    const {
-      fieldPath, // injected by the custom field loader via the `field` config property
-      title,
-      acronym,
-      dates,
-      place,
-      url,
-      session,
-      session_part: sessionPart,
-      labelIcon,
-      label,
-    } = this.props;
-    return (
-      <>
-        {label && (
-          <>
-            <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-            <Divider fitted />
-          </>
+function MeetingComponent({
+  fieldPath, // injected by the custom field loader via the `field` config property
+  title,
+  acronym,
+  dates,
+  place,
+  url,
+  session,
+  session_part: sessionPart,
+  labelIcon = undefined,
+  label = undefined,
+}) {
+  return (
+    <>
+      {label && (
+        <>
+          <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+          <Divider fitted />
+        </>
+      )}
+      <Grid padded>
+        <Grid.Column width="12">
+          <InputComponent
+            fieldPath={`${fieldPath}.title`}
+            label={title.label}
+            placeholder={title.placeholder}
+            helpText={title.description}
+          />
+        </Grid.Column>
+        <Grid.Column width="4">
+          <InputComponent
+            fieldPath={`${fieldPath}.acronym`}
+            label={acronym.label}
+            placeholder={acronym.placeholder}
+            helpText={acronym.description}
+          />
+        </Grid.Column>
+        <Grid.Column width="12">
+          <InputComponent
+            fieldPath={`${fieldPath}.place`}
+            label={place.label}
+            placeholder={place.placeholder}
+            helpText={place.description}
+          />
+        </Grid.Column>
+        <Grid.Column width="4">
+          <InputComponent
+            fieldPath={`${fieldPath}.dates`}
+            label={dates.label}
+            placeholder={dates.placeholder}
+            helpText={dates.description}
+          />
+        </Grid.Column>
+        <Grid.Column width="6">
+          <InputComponent
+            fieldPath={`${fieldPath}.session`}
+            label={session.label}
+            placeholder={session.placeholder}
+            helpText={session.description}
+          />
+        </Grid.Column>
+        <Grid.Column width="6">
+          <InputComponent
+            fieldPath={`${fieldPath}.session_part`}
+            label={sessionPart.label}
+            placeholder={sessionPart.placeholder}
+            helpText={sessionPart.description}
+          />
+        </Grid.Column>
+        {url && (
+          <Grid.Column width="12">
+            <InputComponent
+              fieldPath={`${fieldPath}.url`}
+              label={url.label}
+              placeholder={url.placeholder}
+              helpText={url.description}
+            />
+          </Grid.Column>
         )}
-        <Grid padded>
-          <Grid.Column width="12">
-            <InputComponent
-              fieldPath={`${fieldPath}.title`}
-              label={title.label}
-              placeholder={title.placeholder}
-              helpText={title.description}
-            />
-          </Grid.Column>
-          <Grid.Column width="4">
-            <InputComponent
-              fieldPath={`${fieldPath}.acronym`}
-              label={acronym.label}
-              placeholder={acronym.placeholder}
-              helpText={acronym.description}
-            />
-          </Grid.Column>
-          <Grid.Column width="12">
-            <InputComponent
-              fieldPath={`${fieldPath}.place`}
-              label={place.label}
-              placeholder={place.placeholder}
-              helpText={place.description}
-            />
-          </Grid.Column>
-          <Grid.Column width="4">
-            <InputComponent
-              fieldPath={`${fieldPath}.dates`}
-              label={dates.label}
-              placeholder={dates.placeholder}
-              helpText={dates.description}
-            />
-          </Grid.Column>
-          <Grid.Column width="6">
-            <InputComponent
-              fieldPath={`${fieldPath}.session`}
-              label={session.label}
-              placeholder={session.placeholder}
-              helpText={session.description}
-            />
-          </Grid.Column>
-          <Grid.Column width="6">
-            <InputComponent
-              fieldPath={`${fieldPath}.session_part`}
-              label={sessionPart.label}
-              placeholder={sessionPart.placeholder}
-              helpText={sessionPart.description}
-            />
-          </Grid.Column>
-          {url && (
-            <Grid.Column width="12">
-              <InputComponent
-                fieldPath={`${fieldPath}.url`}
-                label={url.label}
-                placeholder={url.placeholder}
-                helpText={url.description}
-              />
-            </Grid.Column>
-          )}
-        </Grid>
-      </>
-    );
-  }
+      </Grid>
+    </>
+  );
 }
 
 MeetingComponent.propTypes = {
@@ -112,11 +108,6 @@ MeetingComponent.propTypes = {
   labelIcon: PropTypes.string,
   label: PropTypes.string,
   url: PropTypes.object.isRequired,
-};
-
-MeetingComponent.defaultProps = {
-  labelIcon: undefined,
-  label: undefined,
 };
 
 export const Meeting = showHideOverridableWithDynamicId(MeetingComponent);

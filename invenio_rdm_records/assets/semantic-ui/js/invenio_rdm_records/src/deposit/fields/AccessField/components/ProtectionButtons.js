@@ -5,24 +5,28 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Component } from "react";
+import React from "react";
 import { Button, Popup, Icon } from "semantic-ui-react";
 import { FastField } from "formik";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
 
-class ProtectionButtonsComponent extends Component {
-  componentDidMount() {
-    const { formik, disabled, fieldPath } = this.props;
+function ProtectionButtonsComponent({
+  formik,
+  disabled = false,
+  fieldPath,
+  active = true,
+  canRestrictRecord = true,
+}) {
+  React.useEffect(() => {
     // If is disabled is set it means community is restricted and recort cannot be public
     // thus it has to be restricted
     if (disabled) {
       formik.form.setFieldValue(fieldPath, "restricted");
     }
-  }
+  }, [disabled, formik, fieldPath]);
 
-  handlePublicButtonClick = () => {
-    const { formik, fieldPath } = this.props;
+  const handlePublicButtonClick = () => {
     formik.form.setFieldValue(fieldPath, "public");
     // NOTE: We reset values, so if embargo filled and click Public,
     //       user needs to fill embargo again. Otherwise, lots of
@@ -32,51 +36,46 @@ class ProtectionButtonsComponent extends Component {
     });
   };
 
-  handleRestrictionButtonClick = () => {
-    const { formik, fieldPath } = this.props;
+  const handleRestrictionButtonClick = () => {
     formik.form.setFieldValue(fieldPath, "restricted");
   };
 
-  render() {
-    const { active, disabled, canRestrictRecord } = this.props;
+  const publicColor = active ? "positive" : "";
+  const restrictedColor = !active ? "negative" : "";
 
-    const publicColor = active ? "positive" : "";
-    const restrictedColor = !active ? "negative" : "";
+  return (
+    <>
+      {!canRestrictRecord && (
+        <Popup
+          trigger={<Icon className="right-floated" name="question circle outline" />}
+          content={i18next.t(
+            "Record visibility can not be changed to restricted anymore. Please contact support if you still need to make these changes."
+          )}
+        />
+      )}
+      <Button.Group widths="2">
+        <Button
+          className={publicColor}
+          data-testid="protection-buttons-component-public"
+          disabled={disabled}
+          onClick={handlePublicButtonClick}
+          active={active}
+        >
+          {i18next.t("Public")}
+        </Button>
 
-    return (
-      <>
-        {!canRestrictRecord && (
-          <Popup
-            trigger={<Icon className="right-floated" name="question circle outline" />}
-            content={i18next.t(
-              "Record visibility can not be changed to restricted anymore. Please contact support if you still need to make these changes."
-            )}
-          />
-        )}
-        <Button.Group widths="2">
-          <Button
-            className={publicColor}
-            data-testid="protection-buttons-component-public"
-            disabled={disabled}
-            onClick={this.handlePublicButtonClick}
-            active={active}
-          >
-            {i18next.t("Public")}
-          </Button>
-
-          <Button
-            disabled={!canRestrictRecord}
-            className={restrictedColor}
-            data-testid="protection-buttons-component-restricted"
-            active={!active}
-            onClick={this.handleRestrictionButtonClick}
-          >
-            {i18next.t("Restricted")}
-          </Button>
-        </Button.Group>
-      </>
-    );
-  }
+        <Button
+          disabled={!canRestrictRecord}
+          className={restrictedColor}
+          data-testid="protection-buttons-component-restricted"
+          active={!active}
+          onClick={handleRestrictionButtonClick}
+        >
+          {i18next.t("Restricted")}
+        </Button>
+      </Button.Group>
+    </>
+  );
 }
 
 ProtectionButtonsComponent.propTypes = {
@@ -87,30 +86,21 @@ ProtectionButtonsComponent.propTypes = {
   disabled: PropTypes.bool,
 };
 
-ProtectionButtonsComponent.defaultProps = {
-  active: true,
-  disabled: false,
-  canRestrictRecord: true,
-};
-
-export class ProtectionButtons extends Component {
-  render() {
-    const { fieldPath } = this.props;
-
-    return (
-      <FastField
-        name={fieldPath}
-        component={(formikProps) => (
-          <ProtectionButtonsComponent formik={formikProps} {...this.props} />
-        )}
-      />
-    );
-  }
+export function ProtectionButtons({ fieldPath, canRestrictRecord = true, ...props }) {
+  return (
+    <FastField
+      name={fieldPath}
+      component={(formikProps) => (
+        <ProtectionButtonsComponent
+          formik={formikProps}
+          fieldPath={fieldPath}
+          canRestrictRecord={canRestrictRecord}
+          {...props}
+        />
+      )}
+    />
+  );
 }
-
-ProtectionButtons.defaultProps = {
-  canRestrictRecord: true,
-};
 
 ProtectionButtons.propTypes = {
   canRestrictRecord: PropTypes.bool,

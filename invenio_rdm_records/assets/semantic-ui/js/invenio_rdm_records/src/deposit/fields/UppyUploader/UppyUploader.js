@@ -135,13 +135,17 @@ export const createFileValidator = (
 };
 
 export const UppyUploaderComponent = ({
-  config,
-  files,
-  isDraftRecord,
-  hasParentRecord,
-  quota,
-  permissions,
-  record,
+  config = undefined,
+  files = undefined,
+  isDraftRecord = true,
+  hasParentRecord = false,
+  quota = {
+    maxFiles: 5,
+    maxStorage: 10 ** 10,
+    maxFileSize: undefined,
+  },
+  permissions = undefined,
+  record = undefined,
   initializeFileUpload,
   finalizeUpload,
   deleteFile,
@@ -149,15 +153,17 @@ export const UppyUploaderComponent = ({
   saveAndFetchDraft,
   setUploadProgress,
   importParentFiles,
-  importButtonIcon,
-  importButtonText,
-  isFileImportInProgress,
-  fileUploadConcurrency,
-  decimalSizeDisplay,
-  filesLocked,
-  allowEmptyFiles,
-  ...uiProps
+  importButtonIcon = "sync",
+  importButtonText = i18next.t("Import files"),
+  isFileImportInProgress = false,
+  fileUploadConcurrency = 3,
+  decimalSizeDisplay = true,
+  filesLocked = false,
+  allowEmptyFiles = true,
+  fileActions = undefined,
+  ...restProps
 }) => {
+  const uiProps = { ...restProps, fileActions };
   // We extract the working copy of the draft stored as `values` in formik
   const { values: formikDraft, errors, initialErrors } = useFormikContext();
   const { filesList } = getFilesList(files ?? {});
@@ -511,26 +517,4 @@ UppyUploaderComponent.propTypes = {
   permissions: PropTypes.object,
   allowEmptyFiles: PropTypes.bool,
   fileActions: PropTypes.func,
-};
-
-UppyUploaderComponent.defaultProps = {
-  permissions: undefined,
-  config: undefined,
-  files: undefined,
-  fileUploadConcurrency: 3,
-  record: undefined,
-  isFileImportInProgress: false,
-  isDraftRecord: true,
-  hasParentRecord: false,
-  quota: {
-    maxFiles: 5,
-    maxStorage: 10 ** 10,
-    maxFileSize: undefined,
-  },
-  importButtonIcon: "sync",
-  importButtonText: i18next.t("Import files"),
-  decimalSizeDisplay: true,
-  filesLocked: false,
-  allowEmptyFiles: true,
-  fileActions: undefined,
 };

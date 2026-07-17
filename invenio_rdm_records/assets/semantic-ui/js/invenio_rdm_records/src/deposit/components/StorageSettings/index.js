@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import StorageOverview from "./StorageOverview";
 
-const root = document.getElementById("storage-overview-root");
+const rootElement = document.getElementById("storage-overview-root");
 
-if (root) {
-  const storage = JSON.parse(root.dataset.storage);
+if (rootElement) {
+  const storage = JSON.parse(rootElement.dataset.storage);
+  const root = createRoot(rootElement);
 
-  ReactDOM.render(<StorageOverview storage={storage} />, root);
+  root.render(<StorageOverview storage={storage} />);
 }

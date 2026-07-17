@@ -14,7 +14,11 @@ import { CommunityCompactItem } from "@js/invenio_communities/community";
 import { CommunityContext } from "./CommunityContext";
 import { InvenioPopup } from "react-invenio-forms";
 
-export const CommunityListItem = ({ result, record, isInitialSubmission }) => {
+export const CommunityListItem = ({
+  result,
+  record = null,
+  isInitialSubmission = true,
+}) => {
   const {
     setLocalCommunity,
     getChosenCommunity,
@@ -127,9 +131,4 @@ CommunityListItem.propTypes = {
   result: PropTypes.object.isRequired,
   record: PropTypes.object,
   isInitialSubmission: PropTypes.bool,
-};
-
-CommunityListItem.defaultProps = {
-  isInitialSubmission: true,
-  record: null,
 };

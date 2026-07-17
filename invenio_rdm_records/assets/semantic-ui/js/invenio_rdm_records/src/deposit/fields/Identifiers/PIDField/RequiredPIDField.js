@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+import React from "react";
 import _debounce from "lodash/debounce";
 import PropTypes from "prop-types";
-import { Component } from "react";
+import { useRef } from "react";
 import { FieldLabel } from "react-invenio-forms";
 import { Form } from "semantic-ui-react";
 import {
@@ -24,152 +25,133 @@ const UPDATE_PID_DEBOUNCE_MS = 200;
  * The field value has the following format:
  * { 'doi': { identifier: '<value>', provider: '<value>', client: '<value>' } }
  */
-export class RequiredPIDField extends Component {
-  constructor(props) {
-    super(props);
-
-    const { canBeManaged, canBeUnmanaged, record, field } = this.props;
-    this.canBeManagedAndUnmanaged = canBeManaged && canBeUnmanaged;
-    const value = field?.value;
-    const isInternalProvider = value?.provider !== PROVIDER_EXTERNAL;
+export function RequiredPIDField({
+  canBeManaged,
+  canBeUnmanaged,
+  record,
+  field = undefined,
+  form,
+  fieldPath,
+  btnLabelDiscardPID,
+  btnLabelGetPID,
+  fieldLabel,
+  isEditingPublishedRecord,
+  managedHelpText = null,
+  pidLabel,
+  pidIcon,
+  pidPlaceholder,
+  required,
+  unmanagedHelpText = null,
+  pidType,
+  doiDefaultSelection,
+}) {
+  const [isManagedSelected, setIsManagedSelected] = React.useState(() => {
+    const fieldValue = field?.value;
+    const isInternalProvider = fieldValue?.provider !== PROVIDER_EXTERNAL;
     const isDraft = record?.is_draft === true;
-    const hasIdentifier = value?.identifier;
-    const isManagedSelected =
-      isDraft && hasIdentifier && isInternalProvider ? true : undefined;
+    const hasIdentifier = fieldValue?.identifier;
+    return isDraft && hasIdentifier && isInternalProvider ? true : undefined;
+  });
+  const debouncedRef = useRef(null);
 
-    this.state = {
-      isManagedSelected: isManagedSelected,
-    };
-  }
-
-  onExternalIdentifierChanged = (identifier) => {
-    const { form, fieldPath } = this.props;
-
+  const onExternalIdentifierChanged = (identifier) => {
     const pid = {
       identifier: identifier,
       provider: PROVIDER_EXTERNAL,
     };
 
-    this.debounced && this.debounced.cancel();
-    this.debounced = _debounce(() => {
+    debouncedRef.current && debouncedRef.current.cancel();
+    debouncedRef.current = _debounce(() => {
       form.setFieldValue(fieldPath, pid);
     }, UPDATE_PID_DEBOUNCE_MS);
-    this.debounced();
+    debouncedRef.current();
   };
 
-  render() {
-    const { isManagedSelected } = this.state;
-    const {
-      btnLabelDiscardPID,
-      btnLabelGetPID,
-      canBeManaged,
-      canBeUnmanaged,
-      form,
-      fieldPath,
-      fieldLabel,
-      isEditingPublishedRecord,
-      managedHelpText,
-      pidLabel,
-      pidIcon,
-      pidPlaceholder,
-      required,
-      unmanagedHelpText,
-      pidType,
-      field,
-      record,
-    } = this.props;
+  const value = field?.value || {};
+  const currentIdentifier = value.identifier || "";
+  const currentProvider = value.provider || "";
 
-    let { doiDefaultSelection } = this.props;
-
-    const value = field.value || {};
-    const currentIdentifier = value.identifier || "";
-    const currentProvider = value.provider || "";
-
-    let managedIdentifier = "",
-      unmanagedIdentifier = "";
-    if (currentIdentifier !== "") {
-      const isProviderExternal = currentProvider === PROVIDER_EXTERNAL;
-      managedIdentifier = !isProviderExternal ? currentIdentifier : "";
-      unmanagedIdentifier = isProviderExternal ? currentIdentifier : "";
-    }
-
-    const hasManagedIdentifier = managedIdentifier !== "";
-    const doi = record?.pids?.doi?.identifier || "";
-    const parentDoi = record.parent?.pids?.doi?.identifier || "";
-
-    const hasDoi = doi !== "";
-    const hasParentDoi = parentDoi !== "";
-    const isDoiCreated = currentIdentifier !== "";
-
-    const _isManagedSelected =
-      isManagedSelected === undefined
-        ? hasManagedIdentifier ||
-          (currentIdentifier === "" && doiDefaultSelection === "no") // i.e pids: {}
-        : isManagedSelected;
-
-    const fieldError = getFieldErrors(form, fieldPath);
-
-    return (
-      <>
-        <Form.Field
-          required={required || hasParentDoi}
-          error={fieldError ? true : false}
-        >
-          <FieldLabel htmlFor={fieldPath} icon={pidIcon} label={fieldLabel} />
-        </Form.Field>
-
-        {this.canBeManagedAndUnmanaged && (
-          <ManagedUnmanagedSwitch
-            disabled={
-              (isEditingPublishedRecord || hasManagedIdentifier) &&
-              (hasDoi || isDoiCreated)
-            }
-            isManagedSelected={_isManagedSelected}
-            onManagedUnmanagedChange={(userSelectedManaged) => {
-              if (userSelectedManaged) {
-                form.setFieldValue("pids", {});
-              } else {
-                this.onExternalIdentifierChanged("");
-              }
-              form.setFieldError(fieldPath, false);
-              this.setState({
-                isManagedSelected: userSelectedManaged,
-              });
-            }}
-            pidLabel={pidLabel}
-          />
-        )}
-
-        {canBeManaged && _isManagedSelected && (
-          <ManagedIdentifierCmp
-            disabled={hasDoi && isEditingPublishedRecord}
-            btnLabelDiscardPID={btnLabelDiscardPID}
-            btnLabelGetPID={btnLabelGetPID}
-            form={form}
-            fieldPath={fieldPath}
-            identifier={managedIdentifier}
-            helpText={managedHelpText}
-            pidPlaceholder={pidPlaceholder}
-            pidType={pidType}
-            pidLabel={pidLabel}
-          />
-        )}
-
-        {canBeUnmanaged && !_isManagedSelected && (
-          <UnmanagedIdentifierCmp
-            identifier={unmanagedIdentifier}
-            onIdentifierChanged={(identifier) => {
-              this.onExternalIdentifierChanged(identifier);
-            }}
-            form={form}
-            fieldPath={fieldPath}
-            pidPlaceholder={pidPlaceholder}
-            helpText={unmanagedHelpText}
-          />
-        )}
-      </>
-    );
+  let managedIdentifier = "",
+    unmanagedIdentifier = "";
+  if (currentIdentifier !== "") {
+    const isProviderExternal = currentProvider === PROVIDER_EXTERNAL;
+    managedIdentifier = !isProviderExternal ? currentIdentifier : "";
+    unmanagedIdentifier = isProviderExternal ? currentIdentifier : "";
   }
+
+  const hasManagedIdentifier = managedIdentifier !== "";
+  const doi = record?.pids?.doi?.identifier || "";
+  const parentDoi = record?.parent?.pids?.doi?.identifier || "";
+
+  const hasDoi = doi !== "";
+  const hasParentDoi = parentDoi !== "";
+  const isDoiCreated = currentIdentifier !== "";
+
+  const _isManagedSelected =
+    isManagedSelected === undefined
+      ? hasManagedIdentifier ||
+        (currentIdentifier === "" && doiDefaultSelection === "no") // i.e pids: {}
+      : isManagedSelected;
+
+  const canBeManagedAndUnmanaged = canBeManaged && canBeUnmanaged;
+
+  const fieldError = getFieldErrors(form, fieldPath);
+
+  return (
+    <>
+      <Form.Field required={required || hasParentDoi} error={fieldError ? true : false}>
+        <FieldLabel htmlFor={fieldPath} icon={pidIcon} label={fieldLabel} />
+      </Form.Field>
+
+      {canBeManagedAndUnmanaged && (
+        <ManagedUnmanagedSwitch
+          disabled={
+            (isEditingPublishedRecord || hasManagedIdentifier) &&
+            (hasDoi || isDoiCreated)
+          }
+          isManagedSelected={_isManagedSelected}
+          onManagedUnmanagedChange={(userSelectedManaged) => {
+            if (userSelectedManaged) {
+              form.setFieldValue("pids", {});
+            } else {
+              onExternalIdentifierChanged("");
+            }
+            form.setFieldError(fieldPath, false);
+            setIsManagedSelected(userSelectedManaged);
+          }}
+          pidLabel={pidLabel}
+        />
+      )}
+
+      {canBeManaged && _isManagedSelected && (
+        <ManagedIdentifierCmp
+          disabled={hasDoi && isEditingPublishedRecord}
+          btnLabelDiscardPID={btnLabelDiscardPID}
+          btnLabelGetPID={btnLabelGetPID}
+          form={form}
+          fieldPath={fieldPath}
+          identifier={managedIdentifier}
+          helpText={managedHelpText}
+          pidPlaceholder={pidPlaceholder}
+          pidType={pidType}
+          pidLabel={pidLabel}
+        />
+      )}
+
+      {canBeUnmanaged && !_isManagedSelected && (
+        <UnmanagedIdentifierCmp
+          identifier={unmanagedIdentifier}
+          onIdentifierChanged={(identifier) => {
+            onExternalIdentifierChanged(identifier);
+          }}
+          form={form}
+          fieldPath={fieldPath}
+          pidPlaceholder={pidPlaceholder}
+          helpText={unmanagedHelpText}
+        />
+      )}
+    </>
+  );
 }
 
 RequiredPIDField.propTypes = {
@@ -190,11 +172,5 @@ RequiredPIDField.propTypes = {
   required: PropTypes.bool.isRequired,
   unmanagedHelpText: PropTypes.string,
   record: PropTypes.object.isRequired,
-  doiDefaultSelection: PropTypes.object.isRequired,
-};
-
-RequiredPIDField.defaultProps = {
-  managedHelpText: null,
-  unmanagedHelpText: null,
-  field: undefined,
+  doiDefaultSelection: PropTypes.string.isRequired,
 };

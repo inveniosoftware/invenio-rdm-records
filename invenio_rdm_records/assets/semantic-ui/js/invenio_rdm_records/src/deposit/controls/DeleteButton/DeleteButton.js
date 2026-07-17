@@ -5,7 +5,7 @@
  */
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { connect as connectFormik } from "formik";
 import { Button, Modal } from "semantic-ui-react";
@@ -51,84 +51,77 @@ const DialogText = ({ actionLbl }) => {
   return text;
 };
 
-export class DeleteButtonComponent extends Component {
-  state = { modalOpen: false };
-  static contextType = DepositFormSubmitContext;
+export function DeleteButtonComponent({
+  isPublished = false,
+  isVersion = false,
+  formik,
+  draftExists = false,
+  actionState = undefined,
+  ...ui
+}) {
+  const { setSubmitContext } = React.useContext(DepositFormSubmitContext);
+  const [modalOpen, setModalOpen] = React.useState(false);
 
-  openConfirmModal = () => this.setState({ modalOpen: true });
+  const openConfirmModal = () => setModalOpen(true);
 
-  closeConfirmModal = () => this.setState({ modalOpen: false });
+  const closeConfirmModal = () => setModalOpen(false);
 
-  handleDelete = async (event) => {
-    const { isPublished, isVersion, formik } = this.props;
+  const handleDelete = (event) => {
     const { handleSubmit } = formik;
-    const { setSubmitContext } = this.context;
 
     setSubmitContext(DepositFormSubmitActions.DELETE, {
       isDiscardingVersion: isPublished || isVersion,
     });
     handleSubmit(event);
-    this.closeConfirmModal();
+    closeConfirmModal();
   };
 
-  render() {
-    const {
-      draftExists,
-      isPublished,
-      isVersion,
-      actionState,
-      formik,
-      ...ui // only has ActionButton props
-    } = this.props;
-    const { modalOpen } = this.state;
+  const { isSubmitting } = formik;
 
-    const { isSubmitting } = formik;
+  const uiProps = _omit(ui, ["dispatch"]);
 
-    const uiProps = _omit(ui, ["dispatch"]);
-
-    let actionLbl = "";
-    if (!isPublished) {
-      actionLbl = isVersion ? DISCARD_VERSION_LBL : DELETE_LBL;
-    } else {
-      actionLbl = DISCARD_CHANGES_LBL;
-    }
-    const color = isPublished ? "warning" : "negative";
-    const icon = isPublished ? "close" : "trash alternate outline";
-    const capitalizedActionLbl = _capitalize(actionLbl);
-
-    return (
-      <>
-        <Button
-          disabled={!draftExists || isSubmitting}
-          onClick={this.openConfirmModal}
-          className={color}
-          icon={icon}
-          loading={isSubmitting && actionState === DRAFT_DELETE_STARTED}
-          labelPosition="left"
-          {...uiProps}
-          content={capitalizedActionLbl}
-        />
-
-        <Modal open={modalOpen} onClose={this.closeConfirmModal} size="tiny">
-          <Modal.Content>
-            <DialogText actionLbl={actionLbl} />
-          </Modal.Content>
-          <Modal.Actions>
-            <Button onClick={this.closeConfirmModal} floated="left">
-              {i18next.t("Cancel")}
-            </Button>
-            <Button
-              className={color}
-              onClick={this.handleDelete}
-              loading={isSubmitting && actionState === DRAFT_DELETE_STARTED}
-              icon="trash alternate outline"
-              content={capitalizedActionLbl}
-            />
-          </Modal.Actions>
-        </Modal>
-      </>
-    );
+  let actionLbl = "";
+  if (!isPublished) {
+    actionLbl = isVersion ? DISCARD_VERSION_LBL : DELETE_LBL;
+  } else {
+    actionLbl = DISCARD_CHANGES_LBL;
   }
+  const color = isPublished ? "warning" : "negative";
+  const icon = isPublished ? "close" : "trash alternate outline";
+  const capitalizedActionLbl = _capitalize(actionLbl);
+
+  return (
+    <>
+      <Button
+        disabled={!draftExists || isSubmitting}
+        onClick={openConfirmModal}
+        className={color}
+        icon={icon}
+        loading={isSubmitting && actionState === DRAFT_DELETE_STARTED}
+        labelPosition="left"
+        {...uiProps}
+        content={capitalizedActionLbl}
+      />
+
+      <Modal open={modalOpen} onClose={closeConfirmModal} size="tiny">
+        <Modal.Content>
+          <DialogText actionLbl={actionLbl} />
+        </Modal.Content>
+        <Modal.Actions>
+          <Button onClick={closeConfirmModal} floated="left">
+            {i18next.t("Cancel")}
+          </Button>
+          <Button
+            className={color}
+            onClick={handleDelete}
+            loading={isSubmitting && actionState === DRAFT_DELETE_STARTED}
+            icon="trash alternate outline"
+            content={capitalizedActionLbl}
+          />
+        </Modal.Actions>
+      </Modal>
+    </>
+  );
 }
 
 DeleteButtonComponent.propTypes = {
@@ -137,13 +130,6 @@ DeleteButtonComponent.propTypes = {
   isVersion: PropTypes.bool,
   actionState: PropTypes.string,
   formik: PropTypes.object.isRequired,
-};
-
-DeleteButtonComponent.defaultProps = {
-  draftExists: false,
-  isPublished: false,
-  isVersion: false,
-  actionState: undefined,
 };
 
 const mapStateToProps = (state) => ({

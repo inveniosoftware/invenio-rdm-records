@@ -29,13 +29,13 @@ const renderRole = (role, roleOptions) => {
 
 export const CreatibutorsFieldItem = memo(function CreatibutorsFieldItem({
   compKey,
-  creatibutorError,
+  creatibutorError = undefined,
   index,
   replaceCreatibutor,
   removeCreatibutor,
   moveCreatibutor,
   initialCreatibutor,
-  displayName,
+  displayName = undefined,
 }) {
   const {
     roleOptions,
@@ -215,9 +215,4 @@ CreatibutorsFieldItem.propTypes = {
   moveCreatibutor: PropTypes.func.isRequired,
   initialCreatibutor: PropTypes.object.isRequired,
   displayName: PropTypes.string,
-};
-
-CreatibutorsFieldItem.defaultProps = {
-  creatibutorError: undefined,
-  displayName: undefined,
 };

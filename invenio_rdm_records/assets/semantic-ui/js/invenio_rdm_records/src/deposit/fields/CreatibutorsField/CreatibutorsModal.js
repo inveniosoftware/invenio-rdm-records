@@ -13,7 +13,7 @@ import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
 import _map from "lodash/map";
 import PropTypes from "prop-types";
-import { Component, createRef } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import {
   RadioField,
   RemoteSelectField,
@@ -77,100 +77,156 @@ const NamesAutocompleteOptions = {
   OFF: "off",
 };
 
-export class CreatibutorsModal extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      open: false,
-      saveAndContinueLabel: i18next.t("Save and add another"),
-      action: null,
-      showPersonForm:
-        props.autocompleteNames !== NamesAutocompleteOptions.SEARCH_ONLY ||
-        !_isEmpty(props.initialCreatibutor),
-      isOrganization:
-        !_isEmpty(props.initialCreatibutor) &&
-        props.initialCreatibutor.person_or_org.type === CREATIBUTOR_TYPE.ORGANIZATION,
-      personIdentifiers: [],
-      personAffiliations: [],
-      organizationIdentifiers: [],
-      organizationAffiliations: [],
-    };
-    this.inputRef = createRef();
-    this.identifiersRef = createRef();
-    this.affiliationsRef = createRef();
-    this.namesAutocompleteRef = createRef();
-  }
+// Kept at module level so the defaults keep a stable identity across renders.
+const EMPTY_CREATIBUTOR = {};
+const EMPTY_ROLE_OPTIONS = [];
 
-  initStatesFromInitialCreatibutor(initialCreatibutor) {
-    const { affiliations = [] } = initialCreatibutor;
-    const { isOrganization } = this.state;
-    const identifiers = initialCreatibutor.person_or_org.identifiers?.map(
+const updateIdentifiersAndAffiliations = (
+  formikProps,
+  identifiers,
+  affiliations,
+  identifiersRef,
+  affiliationsRef
+) => {
+  const personOrOrgPath = `person_or_org`;
+  const identifiersFieldPath = `${personOrOrgPath}.identifiers`;
+  const affiliationsFieldPath = "affiliations";
+
+  let chosen = {
+    [identifiersFieldPath]: identifiers,
+    [affiliationsFieldPath]: affiliations,
+  };
+
+  Object.entries(chosen).forEach(([path, value]) => {
+    formikProps.form.setFieldValue(path, value);
+  });
+
+  // Update identifiers render
+  identifiersRef.current.setState({
+    selectedOptions: identifiersRef.current.valuesToOptions(identifiers),
+  });
+
+  // Update affiliations render
+  const affiliationsState = affiliations.map(({ id, name }) => ({
+    text: name,
+    value: id ?? name,
+    key: id ?? name,
+    name,
+  }));
+  affiliationsRef.current.setState({
+    suggestions: affiliationsState,
+    selectedSuggestions: affiliationsState,
+    searchQuery: null,
+    error: false,
+    open: false,
+  });
+};
+
+export const CreatibutorsModal = forwardRef(function CreatibutorsModal(
+  {
+    schema,
+    action,
+    addLabel,
+    editLabel,
+    onCreatibutorChange,
+    autocompleteNames = "search",
+    initialCreatibutor = EMPTY_CREATIBUTOR,
+    roleOptions = EMPTY_ROLE_OPTIONS,
+    trigger = undefined,
+    serializeSuggestions: serializeSuggestionsProp = undefined,
+    serializeCreatibutor: serializeCreatibutorProp = undefined,
+    deserializeCreatibutor: deserializeCreatibutorProp = undefined,
+  },
+  ref
+) {
+  const [open, setOpen] = useState(false);
+  const [saveAndContinueLabel, setSaveAndContinueLabel] = useState(
+    i18next.t("Save and add another")
+  );
+  const [showPersonForm, setShowPersonForm] = useState(
+    autocompleteNames !== NamesAutocompleteOptions.SEARCH_ONLY ||
+      !_isEmpty(initialCreatibutor)
+  );
+  const [isOrganization, setIsOrganization] = useState(
+    !_isEmpty(initialCreatibutor) &&
+      initialCreatibutor.person_or_org.type === CREATIBUTOR_TYPE.ORGANIZATION
+  );
+  const [personIdentifiers, setPersonIdentifiers] = useState([]);
+  const [personAffiliations, setPersonAffiliations] = useState([]);
+  const [organizationIdentifiers, setOrganizationIdentifiers] = useState([]);
+  const [organizationAffiliations, setOrganizationAffiliations] = useState([]);
+
+  // `action` was previously component state, but it is never rendered: it is a
+  // transient flag that `onSubmit` must observe synchronously right after a button
+  // click triggers `handleSubmit()`. A ref gives us that without a render cycle.
+  const submitActionRef = useRef(null);
+
+  const inputRef = useRef(null);
+  const identifiersRef = useRef(null);
+  const affiliationsRef = useRef(null);
+  const namesAutocompleteRef = useRef(null);
+
+  const isCreator = schema === "creators";
+
+  const initStatesFromInitialCreatibutor = (creatibutor, isOrg) => {
+    const { affiliations = [] } = creatibutor;
+    const identifiers = creatibutor.person_or_org.identifiers?.map(
       (identifier) => identifier.identifier
     );
-    this.setState({
-      personIdentifiers: isOrganization ? [] : identifiers,
-      personAffiliations: isOrganization ? [] : affiliations,
-      organizationIdentifiers: isOrganization ? identifiers : [],
-      organizationAffiliations: isOrganization ? affiliations : [],
-    });
-  }
+    setPersonIdentifiers(isOrg ? [] : identifiers);
+    setPersonAffiliations(isOrg ? [] : affiliations);
+    setOrganizationIdentifiers(isOrg ? identifiers : []);
+    setOrganizationAffiliations(isOrg ? affiliations : []);
+  };
 
-  openModal = () => {
-    this.setState({ open: true, action: null }, () => {
-      const { initialCreatibutor } = this.props;
-      if (!_isEmpty(initialCreatibutor)) {
-        const { isOrganization } = this.state;
+  const openModal = () => {
+    setOpen(true);
+    submitActionRef.current = null;
 
-        if (isOrganization) {
-          // Set family and given name to empty for organizations
-          initialCreatibutor.person_or_org.family_name = "";
-          initialCreatibutor.person_or_org.given_name = "";
-        } else {
-          // Set name to empty for persons
-          initialCreatibutor.person_or_org.name = "";
-        }
-
-        this.initStatesFromInitialCreatibutor(initialCreatibutor);
+    if (!_isEmpty(initialCreatibutor)) {
+      if (isOrganization) {
+        // Set family and given name to empty for organizations
+        initialCreatibutor.person_or_org.family_name = "";
+        initialCreatibutor.person_or_org.given_name = "";
+      } else {
+        // Set name to empty for persons
+        initialCreatibutor.person_or_org.name = "";
       }
-    });
+
+      initStatesFromInitialCreatibutor(initialCreatibutor, isOrganization);
+    }
   };
 
-  closeModal = () => {
-    this.setState({
-      personAffiliations: [],
-      personIdentifiers: [],
-      organizationAffiliations: [],
-      organizationIdentifiers: [],
-      open: false,
-      action: null,
-    });
+  // `CreatibutorsFieldItem` mounts this modal lazily and then opens it
+  // imperatively, so `openModal` has to stay reachable through the ref.
+  useImperativeHandle(ref, () => ({ openModal }));
+
+  const closeModal = () => {
+    setPersonAffiliations([]);
+    setPersonIdentifiers([]);
+    setOrganizationAffiliations([]);
+    setOrganizationIdentifiers([]);
+    setOpen(false);
+    submitActionRef.current = null;
   };
 
-  changeContent = () => {
-    this.setState({ saveAndContinueLabel: i18next.t("Added") });
+  const changeContent = () => {
+    setSaveAndContinueLabel(i18next.t("Added"));
     // change in 2 sec
     setTimeout(() => {
-      this.setState({
-        saveAndContinueLabel: i18next.t("Save and add another"),
-      });
+      setSaveAndContinueLabel(i18next.t("Save and add another"));
     }, 2000);
   };
 
-  displayActionLabel = () => {
-    const { action, addLabel, editLabel } = this.props;
-
-    return action === ModalActions.ADD ? addLabel : editLabel;
-  };
+  const displayActionLabel = () => (action === ModalActions.ADD ? addLabel : editLabel);
 
   /**
    * Function to transform formik creatibutor state
    * back to the external format.
    */
-  serializeCreatibutor = (submittedCreatibutor) => {
-    const { personIdentifiers } = this.state;
-    const { initialCreatibutor, serializeCreatibutor } = this.props;
-    if (serializeCreatibutor) {
-      return serializeCreatibutor(submittedCreatibutor, initialCreatibutor);
+  const serializeCreatibutor = (submittedCreatibutor) => {
+    if (serializeCreatibutorProp) {
+      return serializeCreatibutorProp(submittedCreatibutor, initialCreatibutor);
     }
 
     const identifiersFieldPath = "person_or_org.identifiers";
@@ -215,10 +271,9 @@ export class CreatibutorsModal extends Component {
    * to simple arrays. This is needed as SUI dropdowns accept only
    * array of strings as values.
    */
-  deserializeCreatibutor = (initialCreatibutor) => {
-    const { deserializeCreatibutor } = this.props;
-    if (deserializeCreatibutor) {
-      return deserializeCreatibutor(initialCreatibutor);
+  const deserializeCreatibutor = (creatibutor) => {
+    if (deserializeCreatibutorProp) {
+      return deserializeCreatibutorProp(creatibutor);
     }
     const identifiersFieldPath = "person_or_org.identifiers";
 
@@ -226,537 +281,441 @@ export class CreatibutorsModal extends Component {
       // default type to personal
       person_or_org: {
         type: CREATIBUTOR_TYPE.PERSON,
-        ...initialCreatibutor.person_or_org,
-        identifiers: _map(
-          _get(initialCreatibutor, identifiersFieldPath, []),
-          "identifier"
-        ),
+        ...creatibutor.person_or_org,
+        identifiers: _map(_get(creatibutor, identifiersFieldPath, []), "identifier"),
       },
-      affiliations: _get(initialCreatibutor, "affiliations", []),
-      role: _get(initialCreatibutor, "role", ""),
+      affiliations: _get(creatibutor, "affiliations", []),
+      role: _get(creatibutor, "role", ""),
     };
   };
 
-  isCreator = () => {
-    const { schema } = this.props;
-
-    return schema === "creators";
-  };
-
-  onSubmit = (values, formikBag) => {
-    const { onCreatibutorChange } = this.props;
-    const { action } = this.state;
-
-    onCreatibutorChange(this.serializeCreatibutor(values));
+  const onSubmit = (values, formikBag) => {
+    onCreatibutorChange(serializeCreatibutor(values));
     formikBag.setSubmitting(false);
     formikBag.resetForm();
-    switch (action) {
+    switch (submitActionRef.current) {
       case "saveAndContinue":
         // Needed to close and open the modal to reset the internal
         // state of the cmp inside the modal
-        this.closeModal();
-        this.openModal();
-        this.changeContent();
+        closeModal();
+        openModal();
+        changeContent();
         break;
       case "saveAndClose":
-        this.closeModal();
+        closeModal();
         break;
       default:
         break;
     }
   };
 
-  serializeSuggestions = (creatibutors) => {
-    const { isOrganization } = this.state;
+  const serializeSuggestions = (creatibutors) => {
     // TODO: AffiliationsSuggestions is wrongly named, since it also serializes authors,
     // this has to be fixed upstream though
     return AffiliationsSuggestions(creatibutors, isOrganization);
   };
 
-  updateIdentifiersAndAffiliations(
-    formikProps,
-    identifiers,
-    affiliations,
-    identifiersRef,
-    affiliationsRef
-  ) {
-    const personOrOrgPath = `person_or_org`;
-    const identifiersFieldPath = `${personOrOrgPath}.identifiers`;
-    const affiliationsFieldPath = "affiliations";
-
-    let chosen = {
-      [identifiersFieldPath]: identifiers,
-      [affiliationsFieldPath]: affiliations,
-    };
-
-    Object.entries(chosen).forEach(([path, value]) => {
-      formikProps.form.setFieldValue(path, value);
-    });
-
-    // Update identifiers render
-    identifiersRef.current.setState({
-      selectedOptions: identifiersRef.current.valuesToOptions(identifiers),
-    });
-
-    // Update affiliations render
-    const affiliationsState = affiliations.map(({ id, name }) => ({
-      text: name,
-      value: id ?? name,
-      key: id ?? name,
-      name,
-    }));
-    affiliationsRef.current.setState({
-      suggestions: affiliationsState,
-      selectedSuggestions: affiliationsState,
-      searchQuery: null,
-      error: false,
-      open: false,
-    });
-  }
-
-  onOrganizationSearchChange = ({ formikProps }, selectedSuggestions) => {
+  const onOrganizationSearchChange = ({ formikProps }, selectedSuggestions) => {
     const selectedSuggestion = selectedSuggestions[0].extra;
-    this.setState(
-      {
-        organizationIdentifiers: selectedSuggestion.identifiers
-          .filter((identifier) => identifier.scheme !== "grid") // Filtering out org scheme (RDM_RECORDS_PERSONORG_SCHEMES) for unsupported one i.e. "grid"
-          .map((identifier) => identifier.identifier),
-        organizationAffiliations: [],
-      },
-      () => {
-        const { organizationIdentifiers, organizationAffiliations } = this.state;
+    const nextOrganizationIdentifiers = selectedSuggestion.identifiers
+      .filter((identifier) => identifier.scheme !== "grid") // Filtering out org scheme (RDM_RECORDS_PERSONORG_SCHEMES) for unsupported one i.e. "grid"
+      .map((identifier) => identifier.identifier);
+    const nextOrganizationAffiliations = [];
 
-        formikProps.form.setFieldValue("person_or_org.name", selectedSuggestion.name);
+    setOrganizationIdentifiers(nextOrganizationIdentifiers);
+    setOrganizationAffiliations(nextOrganizationAffiliations);
 
-        this.updateIdentifiersAndAffiliations(
-          formikProps,
-          organizationIdentifiers,
-          organizationAffiliations,
-          this.identifiersRef,
-          this.affiliationsRef
-        );
-      }
+    formikProps.form.setFieldValue("person_or_org.name", selectedSuggestion.name);
+
+    updateIdentifiersAndAffiliations(
+      formikProps,
+      nextOrganizationIdentifiers,
+      nextOrganizationAffiliations,
+      identifiersRef,
+      affiliationsRef
     );
   };
 
-  onPersonSearchChange = ({ formikProps }, selectedSuggestions) => {
+  const onPersonSearchChange = ({ formikProps }, selectedSuggestions) => {
     if (selectedSuggestions[0].key === "manual-entry") {
       // Empty the autocomplete's selected values
-      this.namesAutocompleteRef.current.setState({
+      namesAutocompleteRef.current.setState({
         suggestions: [],
         selectedSuggestions: [],
       });
-      this.setState({
-        showPersonForm: true,
-      });
+      setShowPersonForm(true);
       return;
     }
 
     const selectedSuggestion = selectedSuggestions[0].extra;
-    this.setState(
-      {
-        showPersonForm: true,
-        personIdentifiers: selectedSuggestion.identifiers.map(
-          (identifier) => identifier
-        ),
-        personAffiliations: selectedSuggestion.affiliations.map(
-          (affiliation) => affiliation
-        ),
-      },
-      () => {
-        const { personIdentifiers, personAffiliations } = this.state;
-        const personOrOrgPath = `person_or_org`;
-        const familyNameFieldPath = `${personOrOrgPath}.family_name`;
-        const givenNameFieldPath = `${personOrOrgPath}.given_name`;
+    const nextPersonIdentifiers = selectedSuggestion.identifiers.map(
+      (identifier) => identifier
+    );
+    const nextPersonAffiliations = selectedSuggestion.affiliations.map(
+      (affiliation) => affiliation
+    );
 
-        let chosen = {
-          [givenNameFieldPath]: selectedSuggestion.given_name,
-          [familyNameFieldPath]: selectedSuggestion.family_name,
-        };
-        Object.entries(chosen).forEach(([path, value]) => {
-          formikProps.form.setFieldValue(path, value);
-        });
+    setShowPersonForm(true);
+    setPersonIdentifiers(nextPersonIdentifiers);
+    setPersonAffiliations(nextPersonAffiliations);
 
-        this.updateIdentifiersAndAffiliations(
-          formikProps,
-          personIdentifiers.map((identifier) => identifier.identifier), // Only identifer value is needed for the form
-          personAffiliations,
-          this.identifiersRef,
-          this.affiliationsRef
-        );
-      }
+    const personOrOrgPath = `person_or_org`;
+    const familyNameFieldPath = `${personOrOrgPath}.family_name`;
+    const givenNameFieldPath = `${personOrOrgPath}.given_name`;
+
+    let chosen = {
+      [givenNameFieldPath]: selectedSuggestion.given_name,
+      [familyNameFieldPath]: selectedSuggestion.family_name,
+    };
+    Object.entries(chosen).forEach(([path, value]) => {
+      formikProps.form.setFieldValue(path, value);
+    });
+
+    updateIdentifiersAndAffiliations(
+      formikProps,
+      nextPersonIdentifiers.map((identifier) => identifier.identifier), // Only identifer value is needed for the form
+      nextPersonAffiliations,
+      identifiersRef,
+      affiliationsRef
     );
   };
 
-  render() {
-    const {
-      initialCreatibutor,
-      autocompleteNames,
-      roleOptions,
-      schema,
-      trigger,
-      action,
-      serializeSuggestions,
-    } = this.props;
-    const {
-      open,
-      showPersonForm,
-      personIdentifiers,
-      personAffiliations,
-      organizationIdentifiers,
-      organizationAffiliations,
-      saveAndContinueLabel,
-    } = this.state;
-
-    const ActionLabel = this.displayActionLabel();
-    return (
-      <Formik
-        initialValues={this.deserializeCreatibutor(initialCreatibutor)}
-        onSubmit={this.onSubmit}
-        enableReinitialize
-        validationSchema={getCreatibutorValidationSchema(schema)}
-        validateOnChange={false}
-        validateOnBlur={false}
-      >
-        {({ values, resetForm, handleSubmit }) => {
-          const personOrOrgPath = `person_or_org`;
-          const typeFieldPath = `${personOrOrgPath}.type`;
-          const familyNameFieldPath = `${personOrOrgPath}.family_name`;
-          const givenNameFieldPath = `${personOrOrgPath}.given_name`;
-          const organizationNameFieldPath = `${personOrOrgPath}.name`;
-          const identifiersFieldPath = `${personOrOrgPath}.identifiers`;
-          const affiliationsFieldPath = "affiliations";
-          const roleFieldPath = "role";
-          return (
-            <Modal
-              centered={false}
-              onOpen={() => this.openModal()}
-              open={open}
-              trigger={trigger}
-              onClose={() => {
-                this.closeModal();
-                resetForm();
-              }}
-              closeIcon
-              closeOnDimmerClick={false}
-            >
-              <Modal.Header as="h2" className="pt-10 pb-10">
-                {ActionLabel}
-              </Modal.Header>
-              <Modal.Content>
-                <Form>
-                  <Form.Group>
-                    <RadioField
-                      fieldPath={typeFieldPath}
-                      label={i18next.t("Person")}
-                      checked={_get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON}
-                      value={CREATIBUTOR_TYPE.PERSON}
-                      onChange={({ formikProps }) => {
-                        this.setState({
-                          isOrganization: false,
-                        });
-                        formikProps.form.setFieldValue(
-                          typeFieldPath,
-                          CREATIBUTOR_TYPE.PERSON
-                        );
-                        formikProps.form.setFieldValue(
-                          identifiersFieldPath,
-                          personIdentifiers
-                        );
-                        formikProps.form.setFieldValue(
-                          affiliationsFieldPath,
-                          personAffiliations
-                        );
-                      }}
-                      // eslint-disable-next-line
-                      autoFocus
-                      optimized
-                    />
-                    <RadioField
-                      fieldPath={typeFieldPath}
-                      label={i18next.t("Organization")}
-                      checked={
-                        _get(values, typeFieldPath) === CREATIBUTOR_TYPE.ORGANIZATION
-                      }
-                      value={CREATIBUTOR_TYPE.ORGANIZATION}
-                      onChange={({ formikProps }) => {
-                        this.setState({
-                          isOrganization: true,
-                        });
-                        formikProps.form.setFieldValue(
-                          typeFieldPath,
-                          CREATIBUTOR_TYPE.ORGANIZATION
-                        );
-                        formikProps.form.setFieldValue(
-                          affiliationsFieldPath,
-                          organizationAffiliations
-                        );
-                        formikProps.form.setFieldValue(
-                          identifiersFieldPath,
-                          organizationIdentifiers
-                        );
-                      }}
-                      optimized
-                    />
-                  </Form.Group>
-                  {_get(values, typeFieldPath, "") === CREATIBUTOR_TYPE.PERSON ? (
-                    <>
-                      {autocompleteNames !== NamesAutocompleteOptions.OFF && (
-                        <Overridable
-                          id="InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonRemoteSelectField"
-                          initialCreatibutor={initialCreatibutor}
-                          serializeSuggestions={
-                            serializeSuggestions || this.serializeSuggestions
-                          }
-                          onValueChange={this.onPersonSearchChange}
-                          ref={this.namesAutocompleteRef}
-                        >
-                          <RemoteSelectField
-                            selectOnBlur={false}
-                            selectOnNavigation={false}
-                            searchInput={{
-                              autoFocus: _isEmpty(initialCreatibutor),
-                            }}
-                            fieldPath="creators"
-                            clearable
-                            multiple={false}
-                            allowAdditions={false}
-                            placeholder={i18next.t(
-                              "Search for persons by name, identifier, or affiliation..."
-                            )}
-                            noQueryMessage={i18next.t(
-                              "Search for persons by name, identifier, or affiliation..."
-                            )}
-                            required={false}
-                            // Disable UI-side filtering of search results
-                            search={(options) => options}
-                            suggestionAPIUrl="/api/names"
-                            serializeSuggestions={
-                              serializeSuggestions || this.serializeSuggestions
-                            }
-                            onValueChange={this.onPersonSearchChange}
-                            ref={this.namesAutocompleteRef}
-                          />
-                        </Overridable>
-                      )}
-                      {showPersonForm && (
-                        <>
-                          <Overridable
-                            id="InvenioRdmRecords.DepositForm.CreatibutorsModal.FullNameField"
-                            familyNameFieldPath={familyNameFieldPath}
-                            givenNameFieldPath={givenNameFieldPath}
-                            isCreator={this.isCreator()}
-                          >
-                            <Form.Group widths="equal">
-                              <TextField
-                                label={i18next.t("Family name")}
-                                placeholder={i18next.t("Family name")}
-                                fieldPath={familyNameFieldPath}
-                                required={this.isCreator()}
-                              />
-                              <TextField
-                                label={i18next.t("Given names")}
-                                placeholder={i18next.t("Given names")}
-                                fieldPath={givenNameFieldPath}
-                              />
-                            </Form.Group>
-                          </Overridable>
-                          <Overridable
-                            id="InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonIdentifiersField"
-                            ref={this.identifiersRef}
-                            fieldPath={identifiersFieldPath}
-                            values={values}
-                          >
-                            <CreatibutorsIdentifiers
-                              initialOptions={_map(
-                                _get(values, identifiersFieldPath, []),
-                                (identifier) => ({
-                                  text: identifier,
-                                  value: identifier,
-                                  key: identifier,
-                                })
-                              )}
-                              fieldPath={identifiersFieldPath}
-                              ref={this.identifiersRef}
-                            />
-                          </Overridable>
-                          <Overridable
-                            id="InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonAffiliationsField"
-                            ref={this.affiliationsRef}
-                            fieldPath={affiliationsFieldPath}
-                          >
-                            <AffiliationsField
-                              fieldPath={affiliationsFieldPath}
-                              selectRef={this.affiliationsRef}
-                            />
-                          </Overridable>
-                        </>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      {autocompleteNames !== NamesAutocompleteOptions.OFF && (
-                        <Overridable
-                          id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationRemoteSelectField"
-                          initialCreatibutor={initialCreatibutor}
-                          serializeSuggestions={
-                            serializeSuggestions || this.serializeSuggestions
-                          }
-                          onValueChange={this.onOrganizationSearchChange}
-                        >
-                          <RemoteSelectField
-                            selectOnBlur={false}
-                            selectOnNavigation={false}
-                            searchInput={{
-                              autoFocus: _isEmpty(initialCreatibutor),
-                            }}
-                            fieldPath="creators"
-                            clearable
-                            multiple={false}
-                            allowAdditions={false}
-                            placeholder={i18next.t(
-                              "Search for an organization by name, identifier, or affiliation..."
-                            )}
-                            noQueryMessage={i18next.t(
-                              "Search for organization by name, identifier, or affiliation..."
-                            )}
-                            required={false}
-                            // Disable UI-side filtering of search results
-                            search={(options) => options}
-                            suggestionAPIUrl="/api/affiliations"
-                            serializeSuggestions={
-                              serializeSuggestions || this.serializeSuggestions
-                            }
-                            onValueChange={this.onOrganizationSearchChange}
-                          />
-                        </Overridable>
-                      )}
-                      <Overridable
-                        id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationNameField"
-                        fieldPath={organizationNameFieldPath}
-                        ref={this.inputRef}
-                        isCreator={this.isCreator()}
-                      >
-                        <TextField
-                          label={i18next.t("Name")}
-                          placeholder={i18next.t("Organization name")}
-                          fieldPath={organizationNameFieldPath}
-                          required={this.isCreator()}
-                          // forward ref to Input component because Form.Input
-                          // doesn't handle it
-                          input={{ ref: this.inputRef }}
-                        />
-                      </Overridable>
-                      <Overridable
-                        id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationIdentifiersField"
-                        ref={this.identifiersRef}
-                        values={values}
-                        fieldPath={identifiersFieldPath}
-                      >
-                        <CreatibutorsIdentifiers
-                          initialOptions={_map(
-                            _get(values, identifiersFieldPath, []),
-                            (identifier) => ({
-                              text: identifier,
-                              value: identifier,
-                              key: identifier,
-                            })
-                          )}
-                          fieldPath={identifiersFieldPath}
-                          ref={this.identifiersRef}
-                          placeholder={i18next.t("e.g. ROR, ISNI or GND.")}
-                        />
-                      </Overridable>
-                      <Overridable
-                        id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationAffiliationsField"
-                        fieldPath={affiliationsFieldPath}
-                        ref={this.affiliationsRef}
-                      >
-                        <AffiliationsField
-                          fieldPath={affiliationsFieldPath}
-                          selectRef={this.affiliationsRef}
-                        />
-                      </Overridable>
-                    </>
-                  )}
-                  {(_get(values, typeFieldPath) === CREATIBUTOR_TYPE.ORGANIZATION ||
-                    (showPersonForm &&
-                      _get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON)) && (
-                    <Overridable
-                      id="InvenioRdmRecords.DepositForm.CreatibutorsModal.RoleSelectField"
-                      fieldPath={roleFieldPath}
-                      roleOptions={roleOptions}
-                      isCreator={this.isCreator()}
-                    >
-                      <SelectField
-                        fieldPath={roleFieldPath}
-                        label={i18next.t("Role")}
-                        options={roleOptions}
-                        placeholder={i18next.t("Select role")}
-                        {...(this.isCreator() && { clearable: true })}
-                        required={!this.isCreator()}
-                        optimized
-                        scrolling
-                      />
-                    </Overridable>
-                  )}
-                </Form>
-              </Modal.Content>
-              <Modal.Actions>
-                <Button
-                  name="cancel"
-                  onClick={() => {
-                    resetForm();
-                    this.closeModal();
-                  }}
-                  icon="remove"
-                  content={i18next.t("Cancel")}
-                  floated="left"
-                />
-                {action === ModalActions.ADD && (
-                  <Button
-                    name="submit"
-                    onClick={() => {
-                      this.setState(
-                        {
-                          action: "saveAndContinue",
-                          showPersonForm:
-                            autocompleteNames !== NamesAutocompleteOptions.SEARCH_ONLY,
-                        },
-                        () => {
-                          handleSubmit();
-                        }
+  const ActionLabel = displayActionLabel();
+  return (
+    <Formik
+      initialValues={deserializeCreatibutor(initialCreatibutor)}
+      onSubmit={onSubmit}
+      enableReinitialize
+      validationSchema={getCreatibutorValidationSchema(schema)}
+      validateOnChange={false}
+      validateOnBlur={false}
+    >
+      {({ values, resetForm, handleSubmit }) => {
+        const personOrOrgPath = `person_or_org`;
+        const typeFieldPath = `${personOrOrgPath}.type`;
+        const familyNameFieldPath = `${personOrOrgPath}.family_name`;
+        const givenNameFieldPath = `${personOrOrgPath}.given_name`;
+        const organizationNameFieldPath = `${personOrOrgPath}.name`;
+        const identifiersFieldPath = `${personOrOrgPath}.identifiers`;
+        const affiliationsFieldPath = "affiliations";
+        const roleFieldPath = "role";
+        return (
+          <Modal
+            centered={false}
+            onOpen={() => openModal()}
+            open={open}
+            trigger={trigger}
+            onClose={() => {
+              closeModal();
+              resetForm();
+            }}
+            closeIcon
+            closeOnDimmerClick={false}
+          >
+            <Modal.Header as="h2" className="pt-10 pb-10">
+              {ActionLabel}
+            </Modal.Header>
+            <Modal.Content>
+              <Form>
+                <Form.Group>
+                  <RadioField
+                    fieldPath={typeFieldPath}
+                    label={i18next.t("Person")}
+                    checked={_get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON}
+                    value={CREATIBUTOR_TYPE.PERSON}
+                    onChange={({ formikProps }) => {
+                      setIsOrganization(false);
+                      formikProps.form.setFieldValue(
+                        typeFieldPath,
+                        CREATIBUTOR_TYPE.PERSON
+                      );
+                      formikProps.form.setFieldValue(
+                        identifiersFieldPath,
+                        personIdentifiers
+                      );
+                      formikProps.form.setFieldValue(
+                        affiliationsFieldPath,
+                        personAffiliations
                       );
                     }}
-                    primary
-                    icon="checkmark"
-                    content={saveAndContinueLabel}
+                    // eslint-disable-next-line
+                    autoFocus
+                    optimized
                   />
+                  <RadioField
+                    fieldPath={typeFieldPath}
+                    label={i18next.t("Organization")}
+                    checked={
+                      _get(values, typeFieldPath) === CREATIBUTOR_TYPE.ORGANIZATION
+                    }
+                    value={CREATIBUTOR_TYPE.ORGANIZATION}
+                    onChange={({ formikProps }) => {
+                      setIsOrganization(true);
+                      formikProps.form.setFieldValue(
+                        typeFieldPath,
+                        CREATIBUTOR_TYPE.ORGANIZATION
+                      );
+                      formikProps.form.setFieldValue(
+                        affiliationsFieldPath,
+                        organizationAffiliations
+                      );
+                      formikProps.form.setFieldValue(
+                        identifiersFieldPath,
+                        organizationIdentifiers
+                      );
+                    }}
+                    optimized
+                  />
+                </Form.Group>
+                {_get(values, typeFieldPath, "") === CREATIBUTOR_TYPE.PERSON ? (
+                  <>
+                    {autocompleteNames !== NamesAutocompleteOptions.OFF && (
+                      <Overridable
+                        id="InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonRemoteSelectField"
+                        initialCreatibutor={initialCreatibutor}
+                        serializeSuggestions={
+                          serializeSuggestionsProp || serializeSuggestions
+                        }
+                        onValueChange={onPersonSearchChange}
+                        ref={namesAutocompleteRef}
+                      >
+                        <RemoteSelectField
+                          selectOnBlur={false}
+                          selectOnNavigation={false}
+                          searchInput={{
+                            autoFocus: _isEmpty(initialCreatibutor),
+                          }}
+                          fieldPath="creators"
+                          clearable
+                          multiple={false}
+                          allowAdditions={false}
+                          placeholder={i18next.t(
+                            "Search for persons by name, identifier, or affiliation..."
+                          )}
+                          noQueryMessage={i18next.t(
+                            "Search for persons by name, identifier, or affiliation..."
+                          )}
+                          required={false}
+                          // Disable UI-side filtering of search results
+                          search={(options) => options}
+                          suggestionAPIUrl="/api/names"
+                          serializeSuggestions={
+                            serializeSuggestionsProp || serializeSuggestions
+                          }
+                          onValueChange={onPersonSearchChange}
+                          ref={namesAutocompleteRef}
+                        />
+                      </Overridable>
+                    )}
+                    {showPersonForm && (
+                      <>
+                        <Overridable
+                          id="InvenioRdmRecords.DepositForm.CreatibutorsModal.FullNameField"
+                          familyNameFieldPath={familyNameFieldPath}
+                          givenNameFieldPath={givenNameFieldPath}
+                          isCreator={isCreator}
+                        >
+                          <Form.Group widths="equal">
+                            <TextField
+                              label={i18next.t("Family name")}
+                              placeholder={i18next.t("Family name")}
+                              fieldPath={familyNameFieldPath}
+                              required={isCreator}
+                            />
+                            <TextField
+                              label={i18next.t("Given names")}
+                              placeholder={i18next.t("Given names")}
+                              fieldPath={givenNameFieldPath}
+                            />
+                          </Form.Group>
+                        </Overridable>
+                        <Overridable
+                          id="InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonIdentifiersField"
+                          ref={identifiersRef}
+                          fieldPath={identifiersFieldPath}
+                          values={values}
+                        >
+                          <CreatibutorsIdentifiers
+                            initialOptions={_map(
+                              _get(values, identifiersFieldPath, []),
+                              (identifier) => ({
+                                text: identifier,
+                                value: identifier,
+                                key: identifier,
+                              })
+                            )}
+                            fieldPath={identifiersFieldPath}
+                            ref={identifiersRef}
+                          />
+                        </Overridable>
+                        <Overridable
+                          id="InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonAffiliationsField"
+                          ref={affiliationsRef}
+                          fieldPath={affiliationsFieldPath}
+                        >
+                          <AffiliationsField
+                            fieldPath={affiliationsFieldPath}
+                            selectRef={affiliationsRef}
+                          />
+                        </Overridable>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {autocompleteNames !== NamesAutocompleteOptions.OFF && (
+                      <Overridable
+                        id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationRemoteSelectField"
+                        initialCreatibutor={initialCreatibutor}
+                        serializeSuggestions={
+                          serializeSuggestionsProp || serializeSuggestions
+                        }
+                        onValueChange={onOrganizationSearchChange}
+                      >
+                        <RemoteSelectField
+                          selectOnBlur={false}
+                          selectOnNavigation={false}
+                          searchInput={{
+                            autoFocus: _isEmpty(initialCreatibutor),
+                          }}
+                          fieldPath="creators"
+                          clearable
+                          multiple={false}
+                          allowAdditions={false}
+                          placeholder={i18next.t(
+                            "Search for an organization by name, identifier, or affiliation..."
+                          )}
+                          noQueryMessage={i18next.t(
+                            "Search for organization by name, identifier, or affiliation..."
+                          )}
+                          required={false}
+                          // Disable UI-side filtering of search results
+                          search={(options) => options}
+                          suggestionAPIUrl="/api/affiliations"
+                          serializeSuggestions={
+                            serializeSuggestionsProp || serializeSuggestions
+                          }
+                          onValueChange={onOrganizationSearchChange}
+                        />
+                      </Overridable>
+                    )}
+                    <Overridable
+                      id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationNameField"
+                      fieldPath={organizationNameFieldPath}
+                      ref={inputRef}
+                      isCreator={isCreator}
+                    >
+                      <TextField
+                        label={i18next.t("Name")}
+                        placeholder={i18next.t("Organization name")}
+                        fieldPath={organizationNameFieldPath}
+                        required={isCreator}
+                        // forward ref to Input component because Form.Input
+                        // doesn't handle it
+                        input={{ ref: inputRef }}
+                      />
+                    </Overridable>
+                    <Overridable
+                      id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationIdentifiersField"
+                      ref={identifiersRef}
+                      values={values}
+                      fieldPath={identifiersFieldPath}
+                    >
+                      <CreatibutorsIdentifiers
+                        initialOptions={_map(
+                          _get(values, identifiersFieldPath, []),
+                          (identifier) => ({
+                            text: identifier,
+                            value: identifier,
+                            key: identifier,
+                          })
+                        )}
+                        fieldPath={identifiersFieldPath}
+                        ref={identifiersRef}
+                        placeholder={i18next.t("e.g. ROR, ISNI or GND.")}
+                      />
+                    </Overridable>
+                    <Overridable
+                      id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationAffiliationsField"
+                      fieldPath={affiliationsFieldPath}
+                      ref={affiliationsRef}
+                    >
+                      <AffiliationsField
+                        fieldPath={affiliationsFieldPath}
+                        selectRef={affiliationsRef}
+                      />
+                    </Overridable>
+                  </>
                 )}
+                {(_get(values, typeFieldPath) === CREATIBUTOR_TYPE.ORGANIZATION ||
+                  (showPersonForm &&
+                    _get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON)) && (
+                  <Overridable
+                    id="InvenioRdmRecords.DepositForm.CreatibutorsModal.RoleSelectField"
+                    fieldPath={roleFieldPath}
+                    roleOptions={roleOptions}
+                    isCreator={isCreator}
+                  >
+                    <SelectField
+                      fieldPath={roleFieldPath}
+                      label={i18next.t("Role")}
+                      options={roleOptions}
+                      placeholder={i18next.t("Select role")}
+                      {...(isCreator && { clearable: true })}
+                      required={!isCreator}
+                      optimized
+                      scrolling
+                    />
+                  </Overridable>
+                )}
+              </Form>
+            </Modal.Content>
+            <Modal.Actions>
+              <Button
+                name="cancel"
+                onClick={() => {
+                  resetForm();
+                  closeModal();
+                }}
+                icon="remove"
+                content={i18next.t("Cancel")}
+                floated="left"
+              />
+              {action === ModalActions.ADD && (
                 <Button
                   name="submit"
                   onClick={() => {
-                    this.setState(
-                      {
-                        action: "saveAndClose",
-                        showPersonForm:
-                          autocompleteNames !== NamesAutocompleteOptions.SEARCH_ONLY,
-                      },
-                      () => handleSubmit()
+                    submitActionRef.current = "saveAndContinue";
+                    setShowPersonForm(
+                      autocompleteNames !== NamesAutocompleteOptions.SEARCH_ONLY
                     );
+                    handleSubmit();
                   }}
                   primary
                   icon="checkmark"
-                  content={i18next.t("Save")}
+                  content={saveAndContinueLabel}
                 />
-              </Modal.Actions>
-            </Modal>
-          );
-        }}
-      </Formik>
-    );
-  }
-}
+              )}
+              <Button
+                name="submit"
+                onClick={() => {
+                  submitActionRef.current = "saveAndClose";
+                  setShowPersonForm(
+                    autocompleteNames !== NamesAutocompleteOptions.SEARCH_ONLY
+                  );
+                  handleSubmit();
+                }}
+                primary
+                icon="checkmark"
+                content={i18next.t("Save")}
+              />
+            </Modal.Actions>
+          </Modal>
+        );
+      }}
+    </Formik>
+  );
+});
 
 CreatibutorsModal.propTypes = {
   schema: PropTypes.oneOf(["creators", "contributors"]).isRequired,
@@ -787,14 +746,4 @@ CreatibutorsModal.propTypes = {
   serializeSuggestions: PropTypes.func,
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
-};
-
-CreatibutorsModal.defaultProps = {
-  roleOptions: [],
-  initialCreatibutor: {},
-  autocompleteNames: "search",
-  trigger: undefined,
-  serializeSuggestions: undefined,
-  serializeCreatibutor: undefined,
-  deserializeCreatibutor: undefined,
 };

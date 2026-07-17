@@ -17,7 +17,7 @@ const getRepositoryItemContainer = (repoSwitchElement) => {
   return currentEl;
 };
 
-export const VCSCommunitiesApp = ({ communityRequiredToPublish }) => {
+export const VCSCommunitiesApp = ({ communityRequiredToPublish = false }) => {
   const [selectedRepoSwitch, setSelectedRepoSwitch] = useState(null);
 
   useEffect(() => {
@@ -86,8 +86,4 @@ export const VCSCommunitiesApp = ({ communityRequiredToPublish }) => {
 
 VCSCommunitiesApp.propTypes = {
   communityRequiredToPublish: PropTypes.bool,
-};
-
-VCSCommunitiesApp.defaultProps = {
-  communityRequiredToPublish: false,
 };

@@ -5,7 +5,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Component } from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 import {
@@ -16,45 +15,40 @@ import {
 } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-class PublicationDateFieldComponent extends Component {
-  render() {
-    const { fieldPath, helpText, label, labelIcon, placeholder } = this.props;
-
-    return (
-      <Overridable
-        id="InvenioRdmRecords.DepositForm.PublicationDateField.Container"
+function PublicationDateFieldComponent({
+  fieldPath,
+  helpText = i18next.t(
+    "In case your upload was already published elsewhere, please use the date of the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals use DATE/DATE, e.g. 1939/1945."
+  ),
+  label = i18next.t("Publication date"),
+  labelIcon = "calendar",
+  placeholder = i18next.t(
+    "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
+  ),
+}) {
+  return (
+    <Overridable
+      id="InvenioRdmRecords.DepositForm.PublicationDateField.Container"
+      fieldPath={fieldPath}
+      helpText={helpText}
+      placeholder={placeholder}
+      icon={labelIcon}
+      label={label}
+    >
+      <TextField
         fieldPath={fieldPath}
         helpText={helpText}
+        label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
         placeholder={placeholder}
-        icon={labelIcon}
-        label={label}
-      >
-        <TextField
-          fieldPath={fieldPath}
-          helpText={helpText}
-          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
-          placeholder={placeholder}
-        />
-      </Overridable>
-    );
-  }
+      />
+    </Overridable>
+  );
 }
 
 PublicationDateFieldComponent.propTypes = {
   helpText: PropTypes.string,
   placeholder: PropTypes.string,
   ...mandatoryFieldCommonProps,
-};
-
-PublicationDateFieldComponent.defaultProps = {
-  helpText: i18next.t(
-    "In case your upload was already published elsewhere, please use the date of the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals use DATE/DATE, e.g. 1939/1945."
-  ),
-  label: i18next.t("Publication date"),
-  labelIcon: "calendar",
-  placeholder: i18next.t(
-    "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
-  ),
 };
 
 export const PublicationDateField = showHideOverridable(

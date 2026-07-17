@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+import React from "react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { Component } from "react";
 import Overridable, { OverridableContext, parametrize } from "react-overridable";
 import {
   EmptyResults,
@@ -18,194 +18,11 @@ import {
   SearchBar,
 } from "react-searchkit";
 import { Grid, Menu, Modal } from "semantic-ui-react";
-import { CommunityListItem } from "./CommunityListItem";
+import { CommunityListItem as DefaultCommunityListItem } from "./CommunityListItem";
 import PropTypes from "prop-types";
 
-export class CommunitySelectionSearch extends Component {
-  constructor(props) {
-    super(props);
-    const {
-      apiConfigs: { allCommunities },
-    } = this.props;
-
-    this.state = {
-      selectedConfig: allCommunities,
-    };
-  }
-
-  render() {
-    const {
-      selectedConfig: {
-        searchApi: selectedSearchApi,
-        appId: selectedAppId,
-        initialQueryState: selectedInitialQueryState,
-        toggleText,
-      },
-    } = this.state;
-
-    const {
-      apiConfigs: { allCommunities, myCommunities },
-      record,
-      isInitialSubmission,
-      CommunityListItem,
-      pagination,
-      myCommunitiesEnabled,
-      autofocus,
-      overriddenComponents: extraOverriddenComponents,
-    } = this.props;
-
-    const searchApi = new InvenioSearchApi(selectedSearchApi);
-    const overriddenComponents = {
-      [`${selectedAppId}.ResultsList.item`]: parametrize(CommunityListItem, {
-        record,
-        isInitialSubmission,
-      }),
-      ...extraOverriddenComponents,
-    };
-
-    return (
-      <OverridableContext.Provider value={overriddenComponents}>
-        <ReactSearchKit
-          appName={selectedAppId}
-          urlHandlerApi={{ enabled: false }}
-          searchApi={searchApi}
-          key={selectedAppId}
-          initialQueryState={selectedInitialQueryState}
-          defaultSortingOnEmptyQueryString={{ sortBy: "bestmatch" }}
-        >
-          <>
-            <Modal.Content as={Grid} className="m-0 pb-0 centered">
-              <Overridable
-                id="InvenioRdmRecords.CommunityHeader.CommunitySelectionSearch.TabMenu.Container"
-                allCommunities={allCommunities}
-                myCommunities={myCommunities}
-                selectedAppId={selectedAppId}
-                onSelectConfig={(config) => this.setState({ selectedConfig: config })}
-                myCommunitiesEnabled={myCommunitiesEnabled}
-              >
-                {myCommunitiesEnabled && (
-                  <Grid.Column
-                    mobile={16}
-                    tablet={8}
-                    computer={8}
-                    textAlign="left"
-                    floated="left"
-                    className="pt-0 pl-0"
-                  >
-                    <Menu role="tablist" className="theme-primary-menu" compact>
-                      <Menu.Item
-                        as="button"
-                        role="tab"
-                        id="all-communities-tab"
-                        aria-selected={selectedAppId === allCommunities.appId}
-                        aria-controls={allCommunities.appId}
-                        name="All"
-                        active={selectedAppId === allCommunities.appId}
-                        onClick={() =>
-                          this.setState({
-                            selectedConfig: allCommunities,
-                          })
-                        }
-                      >
-                        {i18next.t("All")}
-                      </Menu.Item>
-                      <Menu.Item
-                        as="button"
-                        role="tab"
-                        id="my-communities-tab"
-                        aria-selected={selectedAppId === myCommunities.appId}
-                        aria-controls={myCommunities.appId}
-                        name="My communities"
-                        active={selectedAppId === myCommunities.appId}
-                        onClick={() =>
-                          this.setState({
-                            selectedConfig: myCommunities,
-                          })
-                        }
-                      >
-                        {i18next.t("My communities")}
-                      </Menu.Item>
-                    </Menu>
-                  </Grid.Column>
-                )}
-              </Overridable>
-              <Grid.Column
-                mobile={16}
-                tablet={8}
-                computer={8}
-                floated={myCommunitiesEnabled ? "right" : "null"}
-                verticalAlign="middle"
-                className="pt-0 pr-0 pl-0"
-              >
-                <SearchBar
-                  placeholder={toggleText}
-                  autofocus={autofocus}
-                  actionProps={{
-                    "icon": "search",
-                    "content": null,
-                    "className": "search",
-                    "aria-label": i18next.t("Search"),
-                  }}
-                />
-              </Grid.Column>
-            </Modal.Content>
-
-            <Modal.Content
-              role="tabpanel"
-              id={selectedAppId}
-              scrolling
-              className="community-list-results"
-            >
-              <ResultsLoader>
-                <EmptyResults />
-                <Error />
-                <ResultsList />
-              </ResultsLoader>
-            </Modal.Content>
-
-            {pagination && (
-              <Modal.Content className="text-align-center">
-                <Pagination />
-              </Modal.Content>
-            )}
-          </>
-        </ReactSearchKit>
-      </OverridableContext.Provider>
-    );
-  }
-}
-
-CommunitySelectionSearch.propTypes = {
-  apiConfigs: PropTypes.shape({
-    allCommunities: PropTypes.shape({
-      appId: PropTypes.string.isRequired,
-      initialQueryState: PropTypes.object.isRequired,
-      searchApi: PropTypes.object.isRequired,
-    }),
-    myCommunities: PropTypes.shape({
-      appId: PropTypes.string.isRequired,
-      initialQueryState: PropTypes.object.isRequired,
-      searchApi: PropTypes.object.isRequired,
-    }),
-  }),
-  record: PropTypes.object,
-  isInitialSubmission: PropTypes.bool,
-  CommunityListItem: PropTypes.elementType,
-  pagination: PropTypes.bool,
-  myCommunitiesEnabled: PropTypes.bool,
-  autofocus: PropTypes.bool,
-  overriddenComponents: PropTypes.object,
-};
-
-CommunitySelectionSearch.defaultProps = {
-  isInitialSubmission: true,
-  pagination: true,
-  myCommunitiesEnabled: true,
-  autofocus: true,
-  CommunityListItem: CommunityListItem,
-  record: null,
-  overriddenComponents: undefined,
-  apiConfigs: {
+export function CommunitySelectionSearch({
+  apiConfigs = {
     allCommunities: {
       initialQueryState: { size: 5, page: 1, sortBy: "bestmatch" },
       searchApi: {
@@ -229,4 +46,152 @@ CommunitySelectionSearch.defaultProps = {
       toggleText: i18next.t("Search in my communities"),
     },
   },
+  record = null,
+  isInitialSubmission = true,
+  CommunityListItem = DefaultCommunityListItem,
+  pagination = true,
+  myCommunitiesEnabled = true,
+  autofocus = true,
+  overriddenComponents: extraOverriddenComponents = undefined,
+}) {
+  const allCommunities = apiConfigs.allCommunities;
+  const myCommunities = apiConfigs.myCommunities;
+  const [selectedConfig, setSelectedConfig] = React.useState(allCommunities);
+
+  const selectedSearchApi = selectedConfig.searchApi;
+  const selectedAppId = selectedConfig.appId;
+  const selectedInitialQueryState = selectedConfig.initialQueryState;
+  const toggleText = selectedConfig.toggleText;
+  const searchApi = new InvenioSearchApi(selectedSearchApi);
+  const overriddenComponents = {
+    [`${selectedAppId}.ResultsList.item`]: parametrize(CommunityListItem, {
+      record,
+      isInitialSubmission,
+    }),
+    ...extraOverriddenComponents,
+  };
+
+  return (
+    <OverridableContext.Provider value={overriddenComponents}>
+      <ReactSearchKit
+        appName={selectedAppId}
+        urlHandlerApi={{ enabled: false }}
+        searchApi={searchApi}
+        key={selectedAppId}
+        initialQueryState={selectedInitialQueryState}
+        defaultSortingOnEmptyQueryString={{ sortBy: "bestmatch" }}
+      >
+        <>
+          <Modal.Content as={Grid} className="m-0 pb-0 centered">
+            <Overridable
+              id="InvenioRdmRecords.CommunityHeader.CommunitySelectionSearch.TabMenu.Container"
+              allCommunities={allCommunities}
+              myCommunities={myCommunities}
+              selectedAppId={selectedAppId}
+              onSelectConfig={(config) => setSelectedConfig(config)}
+              myCommunitiesEnabled={myCommunitiesEnabled}
+            >
+              {myCommunitiesEnabled && (
+                <Grid.Column
+                  mobile={16}
+                  tablet={8}
+                  computer={8}
+                  textAlign="left"
+                  floated="left"
+                  className="pt-0 pl-0"
+                >
+                  <Menu role="tablist" className="theme-primary-menu" compact>
+                    <Menu.Item
+                      as="button"
+                      role="tab"
+                      id="all-communities-tab"
+                      aria-selected={selectedAppId === allCommunities.appId}
+                      aria-controls={allCommunities.appId}
+                      name="All"
+                      active={selectedAppId === allCommunities.appId}
+                      onClick={() => setSelectedConfig(allCommunities)}
+                    >
+                      {i18next.t("All")}
+                    </Menu.Item>
+                    <Menu.Item
+                      as="button"
+                      role="tab"
+                      id="my-communities-tab"
+                      aria-selected={selectedAppId === myCommunities.appId}
+                      aria-controls={myCommunities.appId}
+                      name="My communities"
+                      active={selectedAppId === myCommunities.appId}
+                      onClick={() => setSelectedConfig(myCommunities)}
+                    >
+                      {i18next.t("My communities")}
+                    </Menu.Item>
+                  </Menu>
+                </Grid.Column>
+              )}
+            </Overridable>
+            <Grid.Column
+              mobile={16}
+              tablet={8}
+              computer={8}
+              floated={myCommunitiesEnabled ? "right" : "null"}
+              verticalAlign="middle"
+              className="pt-0 pr-0 pl-0"
+            >
+              <SearchBar
+                placeholder={toggleText}
+                autofocus={autofocus}
+                actionProps={{
+                  "icon": "search",
+                  "content": null,
+                  "className": "search",
+                  "aria-label": i18next.t("Search"),
+                }}
+              />
+            </Grid.Column>
+          </Modal.Content>
+
+          <Modal.Content
+            role="tabpanel"
+            id={selectedAppId}
+            scrolling
+            className="community-list-results"
+          >
+            <ResultsLoader>
+              <EmptyResults />
+              <Error />
+              <ResultsList />
+            </ResultsLoader>
+          </Modal.Content>
+
+          {pagination && (
+            <Modal.Content className="text-align-center">
+              <Pagination />
+            </Modal.Content>
+          )}
+        </>
+      </ReactSearchKit>
+    </OverridableContext.Provider>
+  );
+}
+
+CommunitySelectionSearch.propTypes = {
+  apiConfigs: PropTypes.shape({
+    allCommunities: PropTypes.shape({
+      appId: PropTypes.string.isRequired,
+      initialQueryState: PropTypes.object.isRequired,
+      searchApi: PropTypes.object.isRequired,
+    }),
+    myCommunities: PropTypes.shape({
+      appId: PropTypes.string.isRequired,
+      initialQueryState: PropTypes.object.isRequired,
+      searchApi: PropTypes.object.isRequired,
+    }),
+  }),
+  record: PropTypes.object,
+  isInitialSubmission: PropTypes.bool,
+  CommunityListItem: PropTypes.elementType,
+  pagination: PropTypes.bool,
+  myCommunitiesEnabled: PropTypes.bool,
+  autofocus: PropTypes.bool,
+  overriddenComponents: PropTypes.object,
 };
