@@ -25,7 +25,8 @@ class BlockedPrefixes:
     def prefixes(self):
         """Get list of blocked prefixes. Can be string, list or dict in config.
 
-        Do not include empty strings."""
+        Do not include empty strings.
+        """
         _prefixes = []
         for name in self._config_names:
             val = current_app.config[name]
