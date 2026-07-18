@@ -161,8 +161,22 @@ class CrossrefXMLSerializer(MarshmallowSerializer):
                 parent = getattr(record, "parent", None)
                 if parent is None and isinstance(record, dict):
                     parent = record.get("parent")
-                parent_doi = ((parent or {}).get("pids") or {}).get("doi") or {}
-                add(parent_doi.get("identifier"), "IsVersionOf")
+                if isinstance(parent, dict):
+                    parent_doi = ((parent.get("pids") or {}).get("doi")) or {}
+                    parent_identifier = parent_doi.get("identifier")
+                else:
+                    parent_pids = getattr(parent, "pids", {}) if parent else {}
+                    parent_doi = (
+                        parent_pids.get("doi", {})
+                        if isinstance(parent_pids, dict)
+                        else getattr(parent_pids, "doi", {})
+                    ) or {}
+                    parent_identifier = (
+                        parent_doi.get("identifier")
+                        if isinstance(parent_doi, dict)
+                        else getattr(parent_doi, "identifier", None)
+                    )
+                add(parent_identifier, "IsVersionOf")
 
             metadata.relations = relations
         except Exception as e:  # noqa: BLE001 - never block a DOI registration
