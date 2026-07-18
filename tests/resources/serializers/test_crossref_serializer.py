@@ -140,6 +140,21 @@ def test_add_version_relations_child_isversionof():
     } in metadata.relations
 
 
+def test_add_version_relations_child_isversionof_parent_object():
+    """A version deposit links to concept DOI when parent is object-like."""
+    serializer = CrossrefXMLSerializer.__new__(CrossrefXMLSerializer)
+    record = SimpleNamespace(
+        parent=SimpleNamespace(pids={"doi": {"identifier": "10.53731/3jbwv-w1332"}})
+    )
+    metadata = Metadata(_version_record("10.53731/kdqkf-nf052"), via="inveniordm")
+    metadata.relations = []
+    serializer._add_version_relations(record, metadata)
+    assert {
+        "id": "https://doi.org/10.53731/3jbwv-w1332",
+        "type": "IsVersionOf",
+    } in metadata.relations
+
+
 def test_add_version_relations_parent_hasversion_all_versions():
     """The concept deposit lists every version via HasVersion (scan_versions).
 
