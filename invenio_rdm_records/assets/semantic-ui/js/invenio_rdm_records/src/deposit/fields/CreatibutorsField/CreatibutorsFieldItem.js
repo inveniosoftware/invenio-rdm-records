@@ -8,44 +8,18 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import _get from "lodash/get";
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useMemo,
-  useContext,
-  createContext,
-} from "react";
+import React, { useRef, useState, useEffect, useContext, createContext } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { Button, Label, List, Ref } from "semantic-ui-react";
 import { FeedbackLabel } from "react-invenio-forms";
 import { CreatibutorsModal } from "./CreatibutorsModal";
-import { CREATIBUTOR_TYPE } from "./type";
 import PropTypes from "prop-types";
 
 // Item-level config context provided to all rows by parent components.
 export const CreatibutorsItemContext = createContext(null);
 
-export const getCreatibutorDisplayName = (value) => {
-  const creatibutorType = _get(value, "person_or_org.type", CREATIBUTOR_TYPE.PERSON);
-  const isPerson = creatibutorType === CREATIBUTOR_TYPE.PERSON;
-
-  const familyName = _get(value, "person_or_org.family_name", "");
-  const givenName = _get(value, "person_or_org.given_name", "");
-  const affiliations = value?.affiliations.map(
-    (affiliation) => affiliation.text || affiliation.name
-  );
-  const name = _get(value, `person_or_org.name`);
-
-  const affiliation = affiliations.length ? ` (${affiliations.join(", ")})` : "";
-
-  if (isPerson) {
-    const givenNameSuffix = givenName ? `, ${givenName}` : "";
-    return `${familyName}${givenNameSuffix}${affiliation}`;
-  }
-
-  return `${name}${affiliation}`;
-};
+// until: 0 keeps Date.now() >= until true until an add sets a future expiry.
+const NO_HIGHLIGHT = { from: 0, until: 0, shown: new Set() };
 
 const renderRole = (role, roleOptions) => {
   if (!role) return null;
@@ -62,7 +36,6 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
   moveCreatibutor,
   initialCreatibutor,
   displayName,
-  highlighted,
 }) {
   const {
     roleOptions,
@@ -73,31 +46,32 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
     serializeSuggestions,
     serializeCreatibutor,
     deserializeCreatibutor,
-  } = useContext(CreatibutorsItemContext);
+    highlight = NO_HIGHLIGHT,
+  } = useContext(CreatibutorsItemContext) ?? {};
+
+  const [isHighlighted, setIsHighlighted] = useState(() => {
+    if (
+      index < highlight.from ||
+      Date.now() >= highlight.until ||
+      highlight.shown.has(index)
+    )
+      return false;
+    highlight.shown.add(index);
+    return true;
+  });
+
+  useEffect(() => {
+    if (!isHighlighted) return;
+    const t = setTimeout(
+      () => setIsHighlighted(false),
+      Math.max(0, highlight.until - Date.now())
+    );
+    return () => clearTimeout(t);
+  }, [isHighlighted, highlight]);
 
   const dropRef = useRef(null);
   const modalRef = useRef(null);
   const [mountModal, setMountModal] = useState(false);
-  const [isHighlighted, setIsHighlighted] = useState(highlighted);
-
-  useEffect(() => {
-    if (!isHighlighted) return;
-    const timeoutId = setTimeout(() => {
-      setIsHighlighted(false);
-      // Remove highlighted flag from Formik so future remounts (caused by search/drag) don't re-highlight.
-      if (initialCreatibutor?.highlighted) {
-        const { highlighted: _, ...clean } = initialCreatibutor;
-        replaceCreatibutor(index, clean);
-      }
-    }, 2000);
-    return () => clearTimeout(timeoutId);
-  }, [isHighlighted, index, initialCreatibutor, replaceCreatibutor]);
-
-  // Only recompute the display string when this author's data actually changes.
-  const creatibutorDisplayName = useMemo(
-    () => getCreatibutorDisplayName(initialCreatibutor),
-    [initialCreatibutor]
-  );
 
   // eslint-disable-next-line no-unused-vars
   const [_, drag, preview] = useDrag({
@@ -226,8 +200,7 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
                     height="16"
                   />
                 )}
-                {displayName || creatibutorDisplayName}{" "}
-                {renderRole(initialCreatibutor?.role, roleOptions)}
+                {displayName} {renderRole(initialCreatibutor?.role, roleOptions)}
               </span>
             </List.Description>
             {creatibutorError && (
@@ -249,11 +222,9 @@ CreatibutorsFieldItem.propTypes = {
   moveCreatibutor: PropTypes.func.isRequired,
   initialCreatibutor: PropTypes.object.isRequired,
   displayName: PropTypes.string,
-  highlighted: PropTypes.bool,
 };
 
 CreatibutorsFieldItem.defaultProps = {
   creatibutorError: undefined,
   displayName: undefined,
-  highlighted: false,
 };

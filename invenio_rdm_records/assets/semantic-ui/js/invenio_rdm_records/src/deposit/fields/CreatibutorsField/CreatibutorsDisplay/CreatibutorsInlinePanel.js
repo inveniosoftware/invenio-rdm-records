@@ -37,39 +37,43 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
   // Holds the latest sync function so it can be called when content height changes without re-registering the scroll listener.
   const syncScrollEdgesRef = useRef(null);
 
-  // When rows are appended: clear search and scroll to the new entries.
-  useEffect(() => {
-    if (list.length <= prevLengthRef.current) {
-      prevLengthRef.current = list.length;
-      return;
-    }
-    prevLengthRef.current = list.length;
-    setSearchQuery((query) => (query ? "" : query));
-    setScrollToIndex(list.length - 1);
-  }, [list.length]);
-
   // Compute display names once per list change rather than on every search keystroke.
-  // highlighted is forwarded from item.highlighted but suppressed on search change.
   const query = normalizeSearch(searchQuery.trim());
   const entriesWithDisplayNames = useMemo(
     () =>
-      list.map((item, idx) => ({
-        item,
-        idx,
-        displayName: getCreatibutorDisplayName(item),
-        highlighted: !!item.highlighted,
-      })),
+      list.map((item, idx) => {
+        const displayName = getCreatibutorDisplayName(item);
+        return {
+          item,
+          idx,
+          displayName,
+          searchName: normalizeSearch(displayName),
+        };
+      }),
     [list]
   );
 
   const filteredEntries = useMemo(() => {
     if (!query) return entriesWithDisplayNames;
-    return entriesWithDisplayNames
-      .filter(({ displayName }) => normalizeSearch(displayName).includes(query))
-      .map((entry) => ({ ...entry, highlighted: false }));
+    return entriesWithDisplayNames.filter(({ searchName }) =>
+      searchName.includes(query)
+    );
   }, [entriesWithDisplayNames, query]);
 
   const isScrollable = list.length > scrollThreshold;
+
+  // When creatibutors are added: clear search and scroll to bottom.
+  useEffect(() => {
+    if (list.length <= prevLengthRef.current) {
+      prevLengthRef.current = list.length;
+      return;
+    }
+
+    prevLengthRef.current = list.length;
+
+    setSearchQuery((q) => (q ? "" : q));
+    setScrollToIndex(list.length - 1);
+  }, [list.length]);
 
   // Toggle .can-scroll-up / .can-scroll-down directly
   // no state handling, so scroll events never trigger re-renders
@@ -173,6 +177,7 @@ export const CreatibutorsInlinePanel = React.memo(function CreatibutorsInlinePan
             entries={filteredEntries}
             keyPrefix={keyPrefix}
             batchSize={batchSize}
+            totalCount={list.length}
             wrapWithDndProvider={false}
             creatibutorErrors={creatibutorErrors}
             removeCreatibutor={removeCreatibutor}
