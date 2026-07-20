@@ -119,9 +119,7 @@ function CreatibutorsFileImport({
 
       <Message info size="small" className="text-left mt-15">
         <Message.Header>{i18next.t("File format")}</Message.Header>
-        <p>
-          {i18next.t("Upload a JSON file containing a list of {{type}}.", { type })}
-        </p>
+        <p>{i18next.t(`Upload a JSON file containing a list of ${type}.`)}</p>
         <pre className="creatibutors-import-example">{CREATIBUTOR_IMPORT_EXAMPLE}</pre>
       </Message>
     </>
