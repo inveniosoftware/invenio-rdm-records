@@ -38,8 +38,8 @@ export const CreatibutorsList = React.memo(function CreatibutorsList({
   entries,
   keyPrefix,
   batchSize,
+  totalCount,
   wrapWithDndProvider,
-  enableDrag,
   creatibutorErrors,
   removeCreatibutor,
   replaceCreatibutor,
@@ -48,12 +48,25 @@ export const CreatibutorsList = React.memo(function CreatibutorsList({
   const useBatchRender = entries.length > batchSize;
   const [renderLimit, setRenderLimit] = useState(batchSize);
   const batchScheduled = useRef(false);
-  const prevEntriesLenRef = useRef(entries.length);
+  const prevTotalCountRef = useRef(totalCount);
 
   // Reset the batch window when switching to a different field array.
   useEffect(() => {
     setRenderLimit(batchSize);
   }, [keyPrefix, batchSize]);
+
+  // Extend on append (full list grew), not when filter results widen.
+  useEffect(() => {
+    if (totalCount > prevTotalCountRef.current) {
+      setRenderLimit((prev) => Math.max(prev, entries.length));
+    }
+    prevTotalCountRef.current = totalCount;
+  }, [totalCount, entries.length]);
+
+  // If the list gets shorter (like after filtering), lower the number of rendered items so loading more starts again when needed.
+  useEffect(() => {
+    setRenderLimit((prev) => Math.min(prev, entries.length));
+  }, [entries.length]);
 
   // Mount additional rows one batch per animation frame so the UI stays responsive.
   useEffect(() => {
@@ -74,19 +87,11 @@ export const CreatibutorsList = React.memo(function CreatibutorsList({
     };
   }, [useBatchRender, renderLimit, entries.length, batchSize]);
 
-  // Extend on append so new rows at the end can be mounted.
-  if (entries.length > prevEntriesLenRef.current) {
-    const newLimit = Math.max(renderLimit, entries.length);
-    if (newLimit !== renderLimit) {
-      setRenderLimit(newLimit);
-    }
-  }
-  prevEntriesLenRef.current = entries.length;
   const visibleEntries = useBatchRender ? entries.slice(0, renderLimit) : entries;
 
   const list = (
     <List>
-      {visibleEntries.map(({ item, idx, displayName, highlighted = false }) => {
+      {visibleEntries.map(({ item, idx, displayName }) => {
         const key = `${keyPrefix}.${idx}`;
         return (
           <CreatibutorsFieldItem
@@ -98,9 +103,7 @@ export const CreatibutorsList = React.memo(function CreatibutorsList({
             removeCreatibutor={removeCreatibutor}
             replaceCreatibutor={replaceCreatibutor}
             moveCreatibutor={moveCreatibutor}
-            enableDrag={enableDrag}
             creatibutorError={creatibutorErrors?.[idx]}
-            highlighted={highlighted}
           />
         );
       })}
@@ -129,13 +132,12 @@ CreatibutorsList.propTypes = {
       item: PropTypes.object.isRequired,
       idx: PropTypes.number.isRequired,
       displayName: PropTypes.string,
-      highlighted: PropTypes.bool,
     })
   ).isRequired,
   keyPrefix: PropTypes.string.isRequired,
   batchSize: PropTypes.number.isRequired,
+  totalCount: PropTypes.number.isRequired,
   wrapWithDndProvider: PropTypes.bool,
-  enableDrag: PropTypes.bool,
   creatibutorErrors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   removeCreatibutor: PropTypes.func.isRequired,
   replaceCreatibutor: PropTypes.func.isRequired,
@@ -144,6 +146,5 @@ CreatibutorsList.propTypes = {
 
 CreatibutorsList.defaultProps = {
   wrapWithDndProvider: true,
-  enableDrag: true,
   creatibutorErrors: undefined,
 };

@@ -26,16 +26,30 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
 
 class CreatibutorsFieldForm extends Component {
+  // Re-render only when related Formik data changed, helps immesely with performance due to inline search changing the list
+  shouldComponentUpdate(nextProps) {
+    const { name, form } = this.props;
+    const nextForm = nextProps.form;
+    if (getIn(form.values, name) !== getIn(nextForm.values, name)) return true;
+    if (getIn(form.errors, name) !== getIn(nextForm.errors, name)) return true;
+    if (getIn(form.initialErrors, name) !== getIn(nextForm.initialErrors, name))
+      return true;
+    if (getIn(form.initialValues, name) !== getIn(nextForm.initialValues, name))
+      return true;
+    return false;
+  }
+
   // Refs hold the latest Formik array helpers. Formik recreates these functions
   // on every render, but we need stable references so the list doesn't re-render
   // when unrelated fields change.
-  _removeRef = { current: null };
-  _replaceRef = { current: null };
-  _moveRef = { current: null };
+  _removeRef = null;
+  _replaceRef = null;
+  _moveRef = null;
+  _highlight = { from: 0, until: 0, shown: new Set() };
 
-  stableRemove = (index) => this._removeRef.current(index);
-  stableReplace = (index, newValue) => this._replaceRef.current(index, newValue);
-  stableMove = (from, to) => this._moveRef.current(from, to);
+  stableRemove = (index) => this._removeRef(index);
+  stableReplace = (index, newValue) => this._replaceRef(index, newValue);
+  stableMove = (from, to) => this._moveRef(from, to);
 
   // Cache sorted role options so a new array isn't created on every render.
   _lastRoleOptions = null;
@@ -62,34 +76,31 @@ class CreatibutorsFieldForm extends Component {
       serializeCreatibutor,
       deserializeCreatibutor,
     } = this.props;
-    if (
-      !this._lastItemContextValue ||
-      this._lastItemContextValue.roleOptions !== roleOptions ||
-      this._lastItemContextValue.schema !== schema ||
-      this._lastItemContextValue.autocompleteNames !== autocompleteNames ||
-      this._lastItemContextValue.addLabel !== addLabel ||
-      this._lastItemContextValue.editLabel !== editLabel ||
-      this._lastItemContextValue.serializeSuggestions !== serializeSuggestions ||
-      this._lastItemContextValue.serializeCreatibutor !== serializeCreatibutor ||
-      this._lastItemContextValue.deserializeCreatibutor !== deserializeCreatibutor
-    ) {
-      this._lastItemContextValue = {
-        roleOptions,
-        schema,
-        autocompleteNames,
-        addLabel,
-        editLabel,
-        serializeSuggestions,
-        serializeCreatibutor,
-        deserializeCreatibutor,
-      };
-    }
+    this._lastItemContextValue = {
+      roleOptions,
+      schema,
+      autocompleteNames,
+      addLabel,
+      editLabel,
+      serializeSuggestions,
+      serializeCreatibutor,
+      deserializeCreatibutor,
+      highlight: this._highlight,
+    };
     return this._lastItemContextValue;
   }
 
   handleOnCreatibutorChange = (selectedCreatibutor) => {
-    const { push: formikArrayPush } = this.props;
-    formikArrayPush({ ...selectedCreatibutor, highlighted: true }); // Highlight the new row on add / bulk-import
+    const {
+      push: formikArrayPush,
+      form: { values },
+      name: fieldPath,
+    } = this.props;
+    const h = this._highlight;
+    h.from = getIn(values, fieldPath, []).length;
+    h.until = Date.now() + 2000; // 2 seconds
+    h.shown.clear();
+    formikArrayPush(selectedCreatibutor);
   };
 
   handleAddCreatibutorsFromFile = (entries) => {
@@ -117,9 +128,9 @@ class CreatibutorsFieldForm extends Component {
     } = this.props;
 
     // Keep refs pointing at the latest helpers without changing their identity.
-    this._removeRef.current = formikArrayRemove;
-    this._replaceRef.current = formikArrayReplace;
-    this._moveRef.current = formikArrayMove;
+    this._removeRef = formikArrayRemove;
+    this._replaceRef = formikArrayReplace;
+    this._moveRef = formikArrayMove;
 
     const creatibutorsList = getIn(values, fieldPath, []);
     const formikInitialValues = getIn(initialValues, fieldPath, []);
