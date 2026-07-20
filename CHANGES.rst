@@ -9,6 +9,13 @@
 Changes
 =======
 
+Version v32.0.4 (released 2026-07-20)
+
+- fix: fixed isParentAlreadyPublished not working on /new
+- feat: add support for crossref schema 5.5 via commonmeta-py
+- fix: emtpry DOI prefixes
+- fix(alembic): alter index safely
+
 Version v32.0.3 (released 2026-07-10)
 
 - chore(git): ignore uv.lock
