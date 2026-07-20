@@ -130,6 +130,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         IfRestricted("files", then_=SameAs("can_view"), else_=SameAs("can_all")),
         ResourceAccessToken("read"),
     ]
+    can_extract_file_metadata = [SystemProcess()]
     can_get_content_files = [
         # note: even though this is closer to business logic than permissions,
         # it was simpler and less coupling to implement this as permission check
@@ -178,6 +179,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     ]
     can_draft_update_files = SameAs("can_review")
     can_draft_delete_files = SameAs("can_review")
+    can_draft_extract_file_metadata = [SystemProcess()]
 
     can_draft_get_file_transfer_metadata = [SystemProcess()]
     can_draft_update_file_transfer_metadata = [SystemProcess()]
@@ -293,6 +295,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     ]
     can_draft_media_update_files = SameAs("can_review")
     can_draft_media_delete_files = SameAs("can_review")
+    can_draft_media_extract_file_metadata = [SystemProcess()]
 
     #
     # Media files - record
@@ -301,6 +304,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         IfRestricted("record", then_=SameAs("can_view"), else_=SameAs("can_all")),
         ResourceAccessToken("read"),
     ]
+    can_media_extract_file_metadata = [SystemProcess()]
     can_media_get_content_files = [
         # note: even though this is closer to business logic than permissions,
         # it was simpler and less coupling to implement this as permission check
