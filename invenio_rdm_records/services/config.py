@@ -49,6 +49,7 @@ from invenio_records_resources.services.base.config import (
     SearchOptionsMixin,
     ServiceConfig,
 )
+from invenio_records_resources.services.files.components import FileProcessorComponent
 from invenio_records_resources.services.files.links import FileEndpointLink
 from invenio_records_resources.services.files.schema import FileSchema
 from invenio_records_resources.services.records.config import (
@@ -70,7 +71,7 @@ from invenio_rdm_records.services.review.policy import NewRecordVersionReviewPol
 from ..records import RDMDraft, RDMRecord
 from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 from . import facets
-from .components import DefaultRecordsComponents
+from .components import DefaultRecordsComponents, RDMFileProcessorComponent
 from .customizations import (
     FromConfigConditionalPIDs,
     FromConfigPIDsProviders,
@@ -552,6 +553,16 @@ class FileServiceConfig(
 
     name_of_file_blueprint = ""  # Has to be overridden by descendants
     allow_archive_download = FromConfig("RDM_ARCHIVE_DOWNLOAD_ENABLED", True)
+
+    # Keep RDM's draft-to-published retry local to its file processor task.
+    components = [
+        (
+            RDMFileProcessorComponent
+            if component is FileProcessorComponent
+            else component
+        )
+        for component in BaseFileServiceConfig.components
+    ]
 
     file_extractors = FromConfig("RDM_RECORD_FILE_EXTRACTORS", default=[])
 

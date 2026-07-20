@@ -11,10 +11,13 @@ from celery import shared_task
 from celery.schedules import crontab
 from flask import current_app
 from invenio_access.permissions import system_identity
+from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_records_resources.proxies import current_service_registry
 from invenio_search.engine import dsl
 from invenio_search.proxies import current_search_client
 from invenio_search.utils import prefix_index
 from invenio_stats.bookmark import BookmarkAPI
+from sqlalchemy.exc import NoResultFound
 
 from invenio_rdm_records.services.signals import post_publish_signal
 
@@ -33,6 +36,41 @@ StatsRDMReindexTask = {
         )
     ],
 }
+
+_FILE_METADATA_FALLBACK_SERVICES = {
+    "draft-files": "files",
+    "draft-media-files": "media-files",
+}
+
+
+@shared_task(ignore_result=True)
+def extract_rdm_file_metadata(service_id, record_id, file_key):
+    """Extract RDM file metadata, including after draft publication."""
+    active_service_id = service_id
+    try:
+        service = current_service_registry.get(active_service_id)
+        try:
+            service.extract_file_metadata(system_identity, record_id, file_key)
+        except (NoResultFound, PIDDoesNotExistError):
+            # Publication removes the draft, but leaves the file on the record.
+            active_service_id = _FILE_METADATA_FALLBACK_SERVICES.get(service_id)
+            if active_service_id is None:
+                raise
+
+            service = current_service_registry.get(active_service_id)
+            service.extract_published_file_metadata(
+                system_identity, record_id, file_key
+            )
+    except Exception as error:
+        current_app.logger.exception(
+            "Failed to extract file metadata. service_id=%s record_id=%s "
+            "file_key=%s exception_type=%s exception=%s",
+            active_service_id,
+            record_id,
+            file_key,
+            type(error).__name__,
+            error,
+        )
 
 
 @shared_task(ignore_result=True)

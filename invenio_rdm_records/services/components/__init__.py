@@ -12,7 +12,7 @@ from invenio_drafts_resources.services.records.components import (
 
 from .access import AccessComponent
 from .custom_fields import CustomFieldsComponent
-from .files import RDMDraftFilesComponent
+from .files import RDMDraftFilesComponent, RDMFileProcessorComponent
 from .internal_notes import InternalNotesComponent
 from .metadata import MetadataComponent
 from .pids import ParentPIDsComponent, PIDsComponent
@@ -48,6 +48,7 @@ __all__ = (
     "ContentModerationComponent",
     "CustomFieldsComponent",
     "MetadataComponent",
+    "RDMFileProcessorComponent",
     "PIDsComponent",
     "ParentPIDsComponent",
     "RecordDeletionComponent",
