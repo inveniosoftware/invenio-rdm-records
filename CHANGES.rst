@@ -8,6 +8,12 @@
 Changes
 =======
 
+Version v34.0.0 (released 2026-07-21)
+
+- feat!(Creatibutors): Add optimized inline scrolling and file import for large author/contributor lists in the deposit form.
+- fix(alembic): Safely alter indices in database migrations to support upgrades regardless of the module version.
+- fix: fixed isParentAlreadyPublished not working on /new
+
 Version v33.3.0 (released 2026-07-17)
 
 - feat: add support for crossref schema 5.5 via commonmeta-py
