@@ -9,6 +9,12 @@
 Changes
 =======
 
+Version v32.0.5 (released 2026-07-21)
+
+- chore(setup): migrate from setuptools to hatchling
+- chore(cleanup): remove outdated and unnecessary files
+- chore(format): reformat with black
+
 Version v32.0.4 (released 2026-07-20)
 
 - fix: fixed isParentAlreadyPublished not working on /new
