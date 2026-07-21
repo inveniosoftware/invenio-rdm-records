@@ -227,9 +227,8 @@ class UserAcceptAction(actions.AcceptAction):
 
         # NOTE: we're using the system identity here to avoid the grant creation
         #       potentially being blocked by the requesting user's profile visibility
-        service.access.bulk_create_grants(system_identity, record.pid.pid_value, data)
-        uow.register(
-            ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))
+        service.access.bulk_create_grants(
+            system_identity, record.pid.pid_value, data, uow=uow
         )
         uow.register(
             NotificationOp(
