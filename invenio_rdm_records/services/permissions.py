@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2019-2024 CERN.
+# SPDX-FileCopyrightText: 2019-2026 CERN.
 # SPDX-FileCopyrightText: 2019 Northwestern University.
 # SPDX-FileCopyrightText: 2023 TU Wien.
 # SPDX-FileCopyrightText: 2024-2026 CESNET.
@@ -22,13 +22,13 @@ from invenio_records_resources.services.files.transfer import (
     LOCAL_TRANSFER_TYPE,
     MULTIPART_TRANSFER_TYPE,
 )
-from invenio_requests.services.generators import IfLocked, Receiver, Status
+from invenio_requests.services.generators import IfLocked, Receiver, Status, Topic
 from invenio_requests.services.permissions import (
     PermissionPolicy as RequestPermissionPolicy,
 )
 from invenio_users_resources.services.permissions import UserManager
 
-from ..requests.access import GuestAccessRequest
+from ..requests.access import GuestAccessRequest, UserAccessRequest
 from .generators import (
     AccessGrant,
     CommunityInclusionReviewers,
@@ -371,12 +371,21 @@ guest_token_locked = IfRequestType(
 
 
 class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
-    """Permission policy for requets, adapted to the needs for RDM-Records."""
+    """Permission policy for requests, adapted to the needs for RDM-Records."""
 
     can_read = RequestPermissionPolicy.can_read + [guest_token]
     can_update = RequestPermissionPolicy.can_update + [guest_token]
     can_action_submit = RequestPermissionPolicy.can_action_submit + [guest_token]
     can_action_cancel = RequestPermissionPolicy.can_action_cancel + [guest_token]
+    # Allow users with manage access on the topic record to accept/decline requests.
+    can_action_accept = RequestPermissionPolicy.can_action_accept + [
+        IfRequestType(UserAccessRequest, then_=[Topic()], else_=[]),
+        IfRequestType(GuestAccessRequest, then_=[Topic()], else_=[]),
+    ]
+    can_action_decline = RequestPermissionPolicy.can_action_decline + [
+        IfRequestType(UserAccessRequest, then_=[Topic()], else_=[]),
+        IfRequestType(GuestAccessRequest, then_=[Topic()], else_=[]),
+    ]
     can_create_comment = RequestPermissionPolicy.can_create_comment + [
         guest_token_locked
     ]
