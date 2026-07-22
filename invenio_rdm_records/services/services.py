@@ -65,6 +65,10 @@ class RDMRecordService(RecordService):
         self._access = access_service
         self._pids = pids_service
         self._review = review_service
+        self._schema_tombstone = ServiceSchemaWrapper(
+            self, schema=self.config.schema_tombstone
+        )
+        self._schema_quota = ServiceSchemaWrapper(self, schema=self.config.schema_quota)
 
     #
     # Subservices
@@ -103,12 +107,12 @@ class RDMRecordService(RecordService):
     @property
     def schema_tombstone(self):
         """Schema for tombstone information."""
-        return ServiceSchemaWrapper(self, schema=self.config.schema_tombstone)
+        return self._schema_tombstone
 
     @property
     def schema_quota(self):
         """Returns the featured data schema instance."""
-        return ServiceSchemaWrapper(self, schema=self.config.schema_quota)
+        return self._schema_quota
 
     #
     # Service methods

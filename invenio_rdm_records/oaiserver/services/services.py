@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2022-2025 Graz University of Technology.
+# SPDX-FileCopyrightText: 2026 TU Wien.
 # SPDX-License-Identifier: MIT
 
 """OAI-PMH service."""
@@ -56,11 +57,15 @@ class OAIPMHServerService(Service):
         """Init service with config."""
         super().__init__(config)
         self.extra_reserved_prefixes = extra_reserved_prefixes or {}
+        self._schema = ServiceSchemaWrapper(self, schema=self.config.schema)
+        self._metadata_format_schema = ServiceSchemaWrapper(
+            self, schema=self.config.metadata_format_schema
+        )
 
     @property
     def schema(self):
         """Returns the data schema instance."""
-        return ServiceSchemaWrapper(self, schema=self.config.schema)
+        return self._schema
 
     @property
     def links_item_tpl(self):
@@ -247,9 +252,7 @@ class OAIPMHServerService(Service):
             self,
             identity,
             results,
-            schema=ServiceSchemaWrapper(
-                self, schema=self.config.metadata_format_schema
-            ),
+            schema=self._metadata_format_schema,
         )
 
     def rebuild_index(self, identity):
