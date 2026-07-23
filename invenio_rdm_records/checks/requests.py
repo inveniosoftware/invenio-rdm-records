@@ -37,7 +37,7 @@ class SubmissionCreateAction(BaseCommunitySubmissionCreateAction):
             if community.parent:
                 community_ids.add(str(community.parent.id))
 
-            configs = ChecksAPI.get_configs(community_ids)
+            configs = ChecksAPI.get_configs(community_ids, target_type="record")
             for config in configs:
                 ChecksAPI.run_check(config, draft, uow)
 
@@ -115,7 +115,7 @@ class InclusionSubmitAction(community_inclusion.SubmitAction):
                 if community_parent_id:
                     community_ids.add(community_parent_id)
 
-            configs = ChecksAPI.get_configs(community_ids)
+            configs = ChecksAPI.get_configs(community_ids, target_type="record")
             for config in configs:
                 ChecksAPI.run_check(config, record, uow, is_draft=record.has_draft)
 
