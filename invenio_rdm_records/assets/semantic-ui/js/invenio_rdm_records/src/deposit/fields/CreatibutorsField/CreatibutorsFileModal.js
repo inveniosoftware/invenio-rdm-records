@@ -94,7 +94,7 @@ function CreatibutorsFileImport({
           <Icon name="cloud upload" />
           {i18next.t(`Upload ${type} from file`)}
           <Header.Subheader>
-            {i18next.t("Supported file types: .json, .txt")}
+            {i18next.t("Only .json files are supported")}
           </Header.Subheader>
         </Header>
         <Button
@@ -112,7 +112,7 @@ function CreatibutorsFileImport({
           type="file"
           hidden
           ref={fileInputRef}
-          accept=".json,.txt"
+          accept=".json"
           onChange={onFileChange}
         />
       </Segment>
