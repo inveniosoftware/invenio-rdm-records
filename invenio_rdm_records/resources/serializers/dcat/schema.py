@@ -46,6 +46,7 @@ class DcatSchema(DataCite45Schema):
                     access_url=access_url,
                     download_url=url,
                     key=value["key"],
+                    checksum=value["checksum"],
                 )
             )
 
