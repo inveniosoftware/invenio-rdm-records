@@ -9,6 +9,11 @@
 Changes
 =======
 
+
+Version v32.0.6 (released 2026-07-23)
+
+- mappings: disable draft geometry doc values
+
 Version v32.0.5 (released 2026-07-21)
 
 - chore(setup): migrate from setuptools to hatchling
