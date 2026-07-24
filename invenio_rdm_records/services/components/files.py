@@ -9,9 +9,22 @@ from datetime import datetime, timezone
 from flask import current_app
 from invenio_drafts_resources.services.records.components import DraftFilesComponent
 from invenio_i18n import lazy_gettext as _
+from invenio_records_resources.proxies import current_service_registry
+from invenio_records_resources.services.files.components import FileProcessorComponent
+from invenio_records_resources.services.uow import TaskOp
 from marshmallow import ValidationError
 
 from ...records.api import get_files_quota
+from ..tasks import extract_rdm_file_metadata
+
+
+class RDMFileProcessorComponent(FileProcessorComponent):
+    """Queue the RDM-specific file metadata extraction task."""
+
+    def commit_file(self, identity, id, file_key, record):
+        """Queue metadata extraction after a file is committed."""
+        service_id = current_service_registry.get_service_id(self.service)
+        self.uow.register(TaskOp(extract_rdm_file_metadata, service_id, id, file_key))
 
 
 class RDMDraftFilesComponent(DraftFilesComponent):

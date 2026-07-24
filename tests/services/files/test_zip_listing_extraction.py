@@ -7,10 +7,137 @@ import io
 import sys
 import zipfile
 from pathlib import Path
+from unittest.mock import ANY, MagicMock, call
 
 import pytest
+from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_records_resources.services.files.service import FileService
+from sqlalchemy.exc import NoResultFound
 
 from invenio_rdm_records.proxies import current_rdm_records_service
+from invenio_rdm_records.services import tasks as file_tasks
+from invenio_rdm_records.services.components import (
+    RDMFileProcessorComponent,
+)
+from invenio_rdm_records.services.components import files as file_processor_module
+
+
+def test_file_processor_queues_rdm_extraction(monkeypatch):
+    """Queue the RDM-specific metadata extraction task."""
+    service = MagicMock()
+    uow = MagicMock()
+    registry = MagicMock()
+    registry.get_service_id.return_value = "draft-files"
+    component = RDMFileProcessorComponent(service)
+    component.uow = uow
+    monkeypatch.setattr(file_processor_module, "current_service_registry", registry)
+
+    component.commit_file(None, "record-id", "test.zip", None)
+
+    operation = uow.register.call_args.args[0]
+    assert operation._celery_task is file_tasks.extract_rdm_file_metadata
+    assert operation._args == ("draft-files", "record-id", "test.zip")
+
+
+@pytest.mark.parametrize(
+    ("service_id", "fallback_service_id", "error"),
+    [
+        ("draft-files", "files", NoResultFound()),
+        (
+            "draft-media-files",
+            "media-files",
+            PIDDoesNotExistError("recid", "record-id"),
+        ),
+    ],
+)
+def test_rdm_extraction_uses_published_fallback(
+    service_id, fallback_service_id, error, monkeypatch
+):
+    """Retry through the matching published service when the draft is gone."""
+    draft_service = MagicMock()
+    draft_service.extract_file_metadata.side_effect = error
+    published_service = MagicMock()
+    registry = MagicMock()
+    registry.get.side_effect = {
+        service_id: draft_service,
+        fallback_service_id: published_service,
+    }.get
+    monkeypatch.setattr(file_tasks, "current_service_registry", registry)
+
+    file_tasks.extract_rdm_file_metadata(service_id, "record-id", "test.zip")
+
+    assert registry.get.call_args_list == [call(service_id), call(fallback_service_id)]
+    published_service.extract_published_file_metadata.assert_called_once_with(
+        ANY, "record-id", "test.zip"
+    )
+
+
+def test_rdm_extraction_logs_file_context(monkeypatch):
+    """Log the affected file and original processor error."""
+    service = MagicMock()
+    service.extract_file_metadata.side_effect = RuntimeError("processor failed")
+    registry = MagicMock()
+    registry.get.return_value = service
+    app = MagicMock()
+    monkeypatch.setattr(file_tasks, "current_service_registry", registry)
+    monkeypatch.setattr(file_tasks, "current_app", app)
+
+    file_tasks.extract_rdm_file_metadata("draft-files", "record-id", "test.zip")
+
+    app.logger.exception.assert_called_once_with(
+        "Failed to extract file metadata. service_id=%s record_id=%s "
+        "file_key=%s exception_type=%s exception=%s",
+        "draft-files",
+        "record-id",
+        "test.zip",
+        "RuntimeError",
+        service.extract_file_metadata.side_effect,
+    )
+
+
+@pytest.mark.skipif(
+    not hasattr(FileService, "extract_published_file_metadata"),
+    reason="Requires invenio-records-resources#702",
+)
+def test_rdm_extraction_after_draft_publication(
+    running_app,
+    db,
+    location,
+    minimal_record,
+    identity_simple,
+    search_clear,
+    monkeypatch,
+):
+    """Extract metadata when publication finishes before the queued task."""
+    queued_task = MagicMock()
+    monkeypatch.setattr(
+        "invenio_rdm_records.services.components.files.extract_rdm_file_metadata",
+        queued_task,
+    )
+    service = current_rdm_records_service
+    data = minimal_record.copy()
+    data["files"] = {"enabled": True}
+    draft = service.create(identity_simple, data)
+
+    service.draft_files.init_files(
+        identity_simple,
+        draft.id,
+        data=[{"key": "test.zip", "metadata": {}, "access": {"hidden": False}}],
+    )
+    zip_path = Path(__file__).parent.parent / "data" / "test_zip.zip"
+    with open(zip_path, "rb") as fp:
+        service.draft_files.set_file_content(identity_simple, draft.id, "test.zip", fp)
+
+    service.draft_files.commit_file(identity_simple, draft.id, "test.zip")
+    assert queued_task.apply_async.called
+    service.publish(identity_simple, draft.id)
+
+    file_tasks.extract_rdm_file_metadata(
+        *queued_task.apply_async.call_args.kwargs["args"]
+    )
+
+    file_item = service.files.read_file_metadata(identity_simple, draft.id, "test.zip")
+    assert isinstance(file_item.data["metadata"]["zip_toc_position"], int)
 
 
 def test_zip_file_listing(
