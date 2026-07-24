@@ -5,8 +5,31 @@
 """Resources serializers tests."""
 
 import re
+from types import SimpleNamespace
+from unittest.mock import MagicMock, patch
+
+from commonmeta import Metadata
 
 from invenio_rdm_records.resources.serializers import CrossrefXMLSerializer
+
+CROSSREF_MOD = "invenio_rdm_records.resources.serializers.crossref"
+
+
+def _version_record(own_doi, parent_doi=None, parent_id="3jbwv-w1332"):
+    """Minimal InvenioRDM version record dict for relation tests."""
+    parent = {"id": parent_id}
+    if parent_doi:
+        parent["pids"] = {"doi": {"identifier": parent_doi}}
+    return {
+        "pids": {"doi": {"identifier": own_doi}},
+        "parent": parent,
+        "metadata": {
+            "title": "t",
+            "publication_date": "2024-01-01",
+            "resource_type": {"id": "blogpost"},
+            "creators": [],
+        },
+    }
 
 
 def test_crossref_serializer(running_app, full_record_to_dict):
@@ -102,6 +125,64 @@ def test_crossref_serializer(running_app, full_record_to_dict):
     serializer = CrossrefXMLSerializer()
     result = serializer.serialize_object(full_record_to_dict)
     assert strip_dynamic(expected_data) == strip_dynamic(result)
+
+
+def test_add_version_relations_child_isversionof():
+    """A version deposit links to its concept DOI via IsVersionOf."""
+    serializer = CrossrefXMLSerializer.__new__(CrossrefXMLSerializer)
+    record = _version_record("10.53731/kdqkf-nf052", parent_doi="10.53731/3jbwv-w1332")
+    metadata = Metadata(record, via="inveniordm")
+    metadata.relations = []
+    serializer._add_version_relations(record, metadata)
+    assert {
+        "id": "https://doi.org/10.53731/3jbwv-w1332",
+        "type": "IsVersionOf",
+    } in metadata.relations
+
+
+def test_add_version_relations_child_isversionof_parent_object():
+    """A version deposit links to concept DOI when parent is object-like."""
+    serializer = CrossrefXMLSerializer.__new__(CrossrefXMLSerializer)
+    record = SimpleNamespace(
+        parent=SimpleNamespace(pids={"doi": {"identifier": "10.53731/3jbwv-w1332"}})
+    )
+    metadata = Metadata(_version_record("10.53731/kdqkf-nf052"), via="inveniordm")
+    metadata.relations = []
+    serializer._add_version_relations(record, metadata)
+    assert {
+        "id": "https://doi.org/10.53731/3jbwv-w1332",
+        "type": "IsVersionOf",
+    } in metadata.relations
+
+
+def test_add_version_relations_parent_hasversion_all_versions():
+    """The concept deposit lists every version via HasVersion (scan_versions).
+
+    Unlike the ChainObject (which exposes only the latest child), this reaches
+    DataCite parity: the concept DOI links to *all* versions.
+    """
+    serializer = CrossrefXMLSerializer.__new__(CrossrefXMLSerializer)
+    record = _version_record("10.53731/kdqkf-nf052")
+    metadata = Metadata(record, via="inveniordm")
+    metadata.relations = []
+    # The parent/concept deposit is passed as a ChainObject.
+    chain = SimpleNamespace(_child={"id": "kid"}, _parent={})
+    svc = MagicMock()
+    svc.scan_versions.return_value = [
+        {"pids": {"doi": {"identifier": "10.53731/kdqkf-nf052"}}},
+        {"pids": {"doi": {"identifier": "10.53731/older-v1"}}},
+    ]
+    with patch(f"{CROSSREF_MOD}.current_rdm_records_service", new=svc):
+        serializer._add_version_relations(chain, metadata)
+    assert {
+        "id": "https://doi.org/10.53731/kdqkf-nf052",
+        "type": "HasVersion",
+    } in metadata.relations
+    assert {
+        "id": "https://doi.org/10.53731/older-v1",
+        "type": "HasVersion",
+    } in metadata.relations
+    svc.indexer.refresh.assert_called_once()
 
 
 def strip_dynamic(xml_str):

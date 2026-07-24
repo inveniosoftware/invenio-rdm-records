@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v32.0.7 (released 2026-07-27)
+
+- fix: add IsVersionOf relations to concept doi in crossref serializer
+- fix: bump commonmeta version
 
 Version v32.0.6 (released 2026-07-23)
 
