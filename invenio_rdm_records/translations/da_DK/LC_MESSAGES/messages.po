@@ -4,9 +4,6 @@
 # project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 # 
-# Translators:
-# Tibor Simko <tibor.simko@cern.ch>, 2026
-# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -14,14 +11,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
 "POT-Creation-Date: 2026-06-22 20:52+0000\n"
 "PO-Revision-Date: 2021-07-12 14:31+0000\n"
-"Last-Translator: Tibor Simko <tibor.simko@cern.ch>, 2026\n"
-"Language-Team: Japanese (https://app.transifex.com/inveniosoftware/teams/23537/ja/)\n"
+"Language-Team: Danish (Denmark) (https://app.transifex.com/inveniosoftware/teams/23537/da_DK/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
-"Language: ja\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: da_DK\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: invenio_rdm_records/config.py:100 invenio_rdm_records/config.py:566
 #: invenio_rdm_records/config.py:572 invenio_rdm_records/config.py:586
@@ -493,7 +489,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/journal.html:7
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:6
 msgid "Title"
-msgstr "タイトル"
+msgstr ""
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:83
 msgid "Title of the journal in which the article was published"
@@ -657,7 +653,7 @@ msgstr ""
 
 #: invenio_rdm_records/oaiserver/services/config.py:42
 msgid "Name"
-msgstr "名前"
+msgstr ""
 
 #: invenio_rdm_records/oaiserver/services/config.py:46
 msgid "Spec"
@@ -971,7 +967,7 @@ msgstr ""
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:453
 msgid "Owner"
-msgstr "所有者"
+msgstr ""
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:455
 msgid "Admin"
@@ -1044,7 +1040,7 @@ msgstr ""
 
 #: invenio_rdm_records/services/facets.py:39
 msgid "Status"
-msgstr "状態"
+msgstr ""
 
 #: invenio_rdm_records/services/facets.py:40
 msgid "Published"
@@ -1745,7 +1741,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:50
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:92
 msgid "Message:"
-msgstr "メッセージ："
+msgstr ""
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:62
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:35

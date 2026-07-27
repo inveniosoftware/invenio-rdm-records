@@ -1,19 +1,19 @@
-# 
 # Translators:
 # yyones, 2024
 # Rim Sharif, 2024
-# Mattias Vesterlund, 2025
-# Tibor Simko <tibor.simko@cern.ch>, 2025
-# Sam Arbid, 2025
+# Lina Andrén, 2025
+# Tibor Simko <tibor.simko@cern.ch>, 2026
+# Sam Arbid, 2026
+# Mattias Vesterlund, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
+"POT-Creation-Date: 2026-06-22T20:52:49.860Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Sam Arbid, 2025\n"
+"Last-Translator: Mattias Vesterlund, 2026\n"
 "Language-Team: Swedish (https://app.transifex.com/inveniosoftware/teams/23537/sv/)\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -98,8 +98,7 @@ msgstr ""
 "Inlämning till communityn är endast tillåtet om posten är åtkomstbegränsad."
 
 msgid "Submission to this community is only allowed to community members."
-msgstr ""
-"Inlämning till denna community är endast tillåten för communitymedlemmar."
+msgstr "Endast communitymedlemmar kan skicka in till denna community."
 
 msgid "Community submission conditions information"
 msgstr "Information om villkor för inlämning till communityn"
@@ -221,9 +220,6 @@ msgstr "Ny version"
 msgid "Preview"
 msgstr "Förhandsgranska"
 
-msgid "DOI is needed. You need to reserve a DOI before publishing."
-msgstr "DOI krävs. Du måste reservera en DOI innan publicering."
-
 msgid "Are you sure you want to publish this record?"
 msgstr "Är du säker på att du vill publicera denna post?"
 
@@ -255,17 +251,6 @@ msgid ""
 "Before publishing to the community, please read and check the following:"
 msgstr "Innan du publicerar till communityn, läs och kontrollera följande:"
 
-msgid ""
-"Your upload will be <bold>immediately published</bold> in "
-"'{{communityTitle}}'. You will no longer be able to change the files in the "
-"upload! However, you will still be able to update the record's metadata "
-"later."
-msgstr ""
-"Din uppladdning kommer <bold>omedelbart publiceras</bold> i "
-"'{{communityTitle}}'. Du kommer inte längre att kunna ändra filerna i "
-"uppladdningen! Du kommer dock fortfarande att kunna uppdatera postens "
-"metadata senare."
-
 msgid "Publish record to community"
 msgstr "Publicera posten i communityn"
 
@@ -277,15 +262,6 @@ msgstr "Innan du skickar in till communityn, läs och kontrollera följande:"
 
 msgid "Before requesting review, please read and check the following:"
 msgstr "Innan du begär granskning, läs och kontrollera följande:"
-
-msgid ""
-"If your upload is accepted by the community curators, it will be "
-"<bold>immediately published</bold>. Before that, you will still be able to "
-"modify metadata and files of this upload."
-msgstr ""
-"Om din uppladdning accepteras av communityns granskare kommer den att "
-"<bold>publiceras omedelbart</bold>. Innan dess kommer du fortfarande att "
-"kunna ändra metadata och filer för denna uppladdning."
 
 msgid "Submit record for review"
 msgstr "Skicka in posten för granskning"
@@ -301,10 +277,6 @@ msgstr "metadata och filer för din uppladdning."
 
 msgid "Message to curators (optional)"
 msgstr "Meddelande till granskare (valfritt)"
-
-msgid "msgWarningText1"
-msgstr ""
-"varning: du måste fylla i alla obligatoriska fält innan du kan fortsätta"
 
 msgid "Change community"
 msgstr "Byt community"
@@ -487,15 +459,6 @@ msgstr "Copyright (C) {{currentYear}} Författarna."
 
 msgid "Copyright"
 msgstr "Copyright"
-
-msgid "Creators"
-msgstr "Skapare"
-
-msgid "Add creator"
-msgstr "Lägg till skapare"
-
-msgid "Edit creator"
-msgstr "Redigera skapare"
 
 msgid "Edit"
 msgstr "Redigera"
@@ -780,14 +743,8 @@ msgstr "mjukvara"
 msgid "Title"
 msgstr "Titel"
 
-msgid "License title"
-msgstr "Licenstitel"
-
 msgid "Link"
 msgstr "Länk"
-
-msgid "License link"
-msgstr "Licenslänk"
 
 msgid "Add license"
 msgstr "Lägg till licens"
@@ -796,7 +753,7 @@ msgid "Change license"
 msgstr "Ändra licens"
 
 msgid "Did not find your license? "
-msgstr "Hittade du inte din licens? "
+msgstr "Hittade du inte den licens du sökte efter? "
 
 msgid "Add a custom license."
 msgstr "Lägg till en anpassad licens."
@@ -884,17 +841,17 @@ msgid ""
 "the record will automatically be made publicly accessible. Until then, the "
 "record can"
 msgstr ""
-" kommer posten automatiskt att göras offentligt tillgänglig. Fram tills dess"
-" kan posten"
+"kommer posten automatiskt att göras offentligt tillgänglig. Fram tills dess "
+"kan posten"
 
 msgid "only"
 msgstr "endast"
 
 msgid "be accessed by"
-msgstr "åtkommas av"
+msgstr "kommas åt av"
 
 msgid "users specified"
-msgstr "angivna användare"
+msgstr "de användare som anges"
 
 msgid "in the permissions."
 msgstr "i behörigheterna."
@@ -912,14 +869,14 @@ msgid ""
 "the files will automatically be made publicly accessible. Until then, the "
 "files can"
 msgstr ""
-" kommer filerna automatiskt att göras offentligt tillgängliga. Fram tills "
+"kommer filerna automatiskt att göras offentligt tillgängliga. Fram tills "
 "dess kan filerna"
 
 msgid "Record or files protection must be"
 msgstr "Post- eller filskydd måste vara"
 
 msgid "restricted"
-msgstr "åtkomstbegränsad"
+msgstr "åtkomstbegränsat"
 
 msgid "to apply an embargo."
 msgstr "för att tillämpa ett embargo."
@@ -936,7 +893,242 @@ msgid ""
 "is preferred see"
 msgstr ""
 "Mestadels relevant för uppladdning av programvara och dataset. En semantisk "
-"versionssträng föredras, se"
+"versionssträng är att föredra, se"
 
 msgid ", but any version string is accepted."
-msgstr ", men vilken versionssträng som helst accepteras."
+msgstr ", men vilken versionssträng som helst kommer att accepteras."
+
+msgid "Search in all communities"
+msgstr "Sök i alla communities"
+
+msgid "Search in my communities"
+msgstr "Sök i mina communities"
+
+msgid ""
+"The request to submit this upload to the community was declined. Please "
+"discard this version and create a new one with the feedback from the review."
+msgstr ""
+"Begäran om att skicka in denna uppladdning till communityn avslogs. Kasta "
+"denna version och skapa en ny med feedbacken från granskningen."
+
+msgid "Storage"
+msgstr "Lagring"
+
+msgid "Quota overview"
+msgstr "Kvotöversikt"
+
+msgid ""
+"You can now manage your record storage by assigning additional quota as "
+"needed."
+msgstr ""
+"Du kan nu hantera lagringen för dina poster genom att tilldela ytterligare "
+"kvot vid behov."
+
+msgid "Find out more."
+msgstr "Läs mer."
+
+msgid "Default quota per record"
+msgstr "Standardkvot per post"
+
+msgid "Available of {{total}} GB allowance"
+msgstr "Tillgängligt av {{total}} GB tilldelning"
+
+msgid "Quota granted across {{count}} records"
+msgid_plural "Quota granted across {{count}} records"
+msgstr[0] "Kvot beviljad för {{count}} post"
+msgstr[1] "Kvot beviljad för {{count}} poster"
+
+msgid "Allocated storage"
+msgstr "Tilldelad lagring"
+
+msgid "Record"
+msgstr "Post"
+
+msgid "Additional quota"
+msgstr "Ytterligare kvot"
+
+msgid "Usage"
+msgstr "Användning"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "{{total}} GB total"
+msgstr "{{total}} GB totalt"
+
+msgid "used"
+msgstr "använt"
+
+msgid "No allocated storage"
+msgstr "Ingen tilldelad lagring"
+
+msgid "No records have been granted any additional quotas yet."
+msgstr "Inga poster har beviljats några ytterligare kvoter ännu."
+
+msgid "If your upload is accepted by the community curators, it will be"
+msgstr "Om din uppladdning godkänns av communityns kuratorer kommer den att"
+
+msgid "immediately published"
+msgstr "publiceras omedelbart"
+
+msgid ""
+"Before that, you will still be able to modify metadata and files of this "
+"upload."
+msgstr ""
+"Innan dess kan du fortfarande ändra metadata och filer för denna "
+"uppladdning."
+
+msgid "Your upload will be"
+msgstr "Din uppladdning kommer att"
+
+msgid ""
+"in '{{communityTitle}}'. You will no longer be able to change the files in "
+"the upload!"
+msgstr ""
+"i '{{communityTitle}}'. Du kommer inte längre att kunna ändra filerna i "
+"uppladdningen!"
+
+msgid "However, you will still be able to update the record's metadata later."
+msgstr ""
+"Du kommer dock fortfarande att kunna uppdatera postens metadata senare."
+
+msgid "Unable to submit request."
+msgstr "Det gick inte att skicka förfrågan."
+
+msgid "Unable to display preview. Please correct validation issues in"
+msgstr ""
+"Det går inte att visa förhandsgranskning. Åtgärda valideringsproblemen i"
+
+msgid "Unknown section"
+msgstr "Okänt avsnitt"
+
+msgid "Authors"
+msgstr "Författare"
+
+msgid "Add author"
+msgstr "Lägg till författare"
+
+msgid "Edit author"
+msgstr "Redigera författare"
+
+msgid ""
+"To <1>add, modify or remove files</1>, it is recommended that you create a "
+"new version. A new record is created which tracks the evolution of your "
+"work."
+msgstr ""
+"För att <1>lägga till, ändra eller ta bort filer</1> rekommenderas att du "
+"skapar en ny version. En ny post skapas som följer utvecklingen av ditt "
+"arbete."
+
+msgid "To <1>correct</1> minor errors, you can unlock the files."
+msgstr "För att <1>korrigera</1> mindre fel kan du låsa upp filerna."
+
+msgid "It is not possible to modify the files of this record."
+msgstr "Det är inte möjligt att ändra filerna i denna post."
+
+msgid "Edit published files"
+msgstr "Redigera publicerade filer"
+
+msgid "I want to update the files with a new version"
+msgstr "Jag vill uppdatera filerna med en ny version"
+
+msgid "Instead, you can make a new version"
+msgstr "Du kan istället skapa en ny version"
+
+msgid "Edit files"
+msgstr "Redigera filer"
+
+msgid ""
+"Once unlocked you will have {{ daysUntil }} days to publish your changes."
+msgstr ""
+"När de har låsts upp har du {{ daysUntil }} dagar på dig att publicera dina "
+"ändringar."
+
+msgid "File modification checklist:"
+msgstr "Checklista för filändringar:"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nej"
+
+msgid ""
+"I will not modify files that supplement findings/results of an already "
+"published work."
+msgstr ""
+"Jag kommer inte att ändra filer som kompletterar resultat från ett redan "
+"publicerat arbete."
+
+msgid "Unable to unlock files"
+msgstr "Det gick inte att låsa upp filer"
+
+msgid "Enable file editing"
+msgstr "Aktivera filredigering"
+
+msgid "Checksum not yet calculated."
+msgstr "Kontrollsumman har ännu inte beräknats."
+
+msgid "Manage storage"
+msgstr "Hantera lagring"
+
+msgid "Default"
+msgstr "Standard"
+
+msgid "Additional"
+msgstr "Ytterligare"
+
+msgid "Available"
+msgstr "Tillgängligt"
+
+msgid "See your <1>storage settings</1> for usage across all records"
+msgstr "Se dina <1>lagringsinställningar</1> för användning över alla poster"
+
+msgid "Could not submit the quota increase request"
+msgstr "Det gick inte att skicka begäran om kvotökning"
+
+msgid ""
+"Each record has a default quota of {{defaultStorage}} GB. You have an "
+"additional allowance of up to {{maxAdditionalStorage}} GB that can be "
+"distributed across your uploads as needed."
+msgstr ""
+"Varje post har en standardkvot på {{defaultStorage}} GB. Du har en "
+"ytterligare tilldelning på upp till {{maxAdditionalStorage}} GB som kan "
+"fördelas mellan dina uppladdningar efter behov."
+
+msgid ""
+"Each record has a default quota of {{defaultStorage}} GB. You have already "
+"used your additional allowance of {{maxAdditionalStorage}} GB across your "
+"uploads."
+msgstr ""
+"Varje post har en standardkvot på {{defaultStorage}} GB. Du har redan använt"
+" din ytterligare tilldelning på {{maxAdditionalStorage}} GB för dina "
+"uppladdningar."
+
+msgid "Additional storage"
+msgstr "Ytterligare lagring"
+
+msgid "New total:"
+msgstr "Ny total:"
+
+msgid "Unable to increase quota"
+msgstr "Det gick inte att öka kvoten"
+
+msgid "Apply"
+msgstr "Verkställ"
+
+msgid "Search for subjects..."
+msgstr "Sök efter ämnen..."
+
+msgid "{{filename}} is already part of this upload."
+msgstr "{{filename}} ingår redan i denna uppladdning."
+
+msgid ""
+"Maximum 191 characters. For longer descriptions, use 'Additional "
+"descriptions' with type 'Note'."
+msgstr ""
+"Max 191 tecken. För längre beskrivningar, använd 'Ytterligare beskrivningar'"
+" med typen 'Anteckning'."
+
+msgid "Select a community for this repository's records"
+msgstr "Välj en community för detta repositoriums poster"

@@ -1,25 +1,24 @@
-# 
 # Translators:
 # David Eckhard <dabombeeer@gmail.com>, 2024
 # Alizee Pace <alizee.pace@gmail.com>, 2024
 # Zacharias Zacharodimos <zacharias.zacharodimos@cern.ch>, 2024
 # Mojib Wali <mojib.wali@tugraz.at>, 2024
-# c960a0736ea0fb7507bb1c3555e7d33f_88b575f <3cef15c38ce2563e884ec389656c9161_1006830>, 2024
 # Hermann Schranzhofer <hermann.schranzhofer@tugraz.at>, 2024
 # Alexander Gruber <alexander.gruber@tugraz.at>, 2024
 # Frank Berkemeier, 2024
-# Tibor Simko <tibor.simko@cern.ch>, 2025
-# Sarah Wiechers, 2025
-# Adienne Karsten-Welker, 2025
+# c960a0736ea0fb7507bb1c3555e7d33f_88b575f <3cef15c38ce2563e884ec389656c9161_1006830>, 2026
+# Tibor Simko <tibor.simko@cern.ch>, 2026
+# Adienne Karsten-Welker, 2026
+# Sarah Wiechers, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
+"POT-Creation-Date: 2026-06-22T20:52:49.860Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Adienne Karsten-Welker, 2025\n"
+"Last-Translator: Sarah Wiechers, 2026\n"
 "Language-Team: German (https://app.transifex.com/inveniosoftware/teams/23537/de/)\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -233,11 +232,6 @@ msgstr "Neue Version"
 msgid "Preview"
 msgstr "Vorschau"
 
-msgid "DOI is needed. You need to reserve a DOI before publishing."
-msgstr ""
-"Eine DOI ist erforderlich. Sie müssen eine DOI reservieren, bevor Sie "
-"veröffentlichen."
-
 msgid "Are you sure you want to publish this record?"
 msgstr "Sind Sie sicher, dass Sie diesen Eintrag veröffentlichen wollen?"
 
@@ -269,16 +263,6 @@ msgid ""
 "Before publishing to the community, please read and check the following:"
 msgstr "Stellen Sie sicher, dass Sie die folgenden Punkte überprüft haben:"
 
-msgid ""
-"Your upload will be <bold>immediately published</bold> in "
-"'{{communityTitle}}'. You will no longer be able to change the files in the "
-"upload! However, you will still be able to update the record's metadata "
-"later."
-msgstr ""
-"Ihr Eintrag wird <bold>sofort veröffentlicht</bold> in '{{communityTitle}}'."
-" Sie können die Dateien des Eintrags nicht mehr ändern! Die Metadaten des "
-"Eintrags können jedoch weiterhin aktualisiert werden."
-
 msgid "Publish record to community"
 msgstr "Eintrag in der Community veröffentlichen"
 
@@ -291,32 +275,22 @@ msgstr "Stellen Sie sicher, dass Sie die folgenden Punkte überprüft haben:"
 msgid "Before requesting review, please read and check the following:"
 msgstr "Stellen Sie sicher, dass Sie die folgenden Punkte überprüft haben:"
 
-msgid ""
-"If your upload is accepted by the community curators, it will be "
-"<bold>immediately published</bold>. Before that, you will still be able to "
-"modify metadata and files of this upload."
-msgstr ""
-"Sobald Ihr Eintrag von den Kurator*innen der Community akzeptiert wurde, "
-"wird er <bold>sofort veröffentlicht</bold>. Bis dahin können Sie die "
-"Metadaten und Dateien des Eintrags weiterhin ändern."
-
 msgid "Submit record for review"
 msgstr "Eintrag zur Begutachtung einreichen"
 
 msgid "The '{{communityTitle}}' curators will have access to"
-msgstr "Die Kuratoren der '{{communityTitle}}'-Community haben Zugriff auf"
+msgstr ""
+"Die Kurator*innen der '{{communityTitle}}'-Community haben Zugriff auf die "
+"Funktionen"
 
 msgid "view and edit"
 msgstr "anzeigen und bearbeiten"
 
 msgid "your upload's metadata and files."
-msgstr "die Metadaten und Dateien Ihres Uploads."
+msgstr "der Metadaten und Dateien Ihres Uploads."
 
 msgid "Message to curators (optional)"
 msgstr "Nachricht an die Kurator*innen (optional)"
-
-msgid "msgWarningText1"
-msgstr "Warnmeldung 1"
 
 msgid "Change community"
 msgstr "Community ändern"
@@ -387,15 +361,15 @@ msgid ""
 "Identifier reservation failed. Please try again. If the problem persists, "
 "contact user support."
 msgstr ""
-"Die Kennung konnte nicht reserviert werden. Bitte versuchen Sie es erneut. "
-"Falls das Problem weiterhin besteht, kontaktieren Sie den Support."
+"Der Identifier konnte nicht reserviert werden. Bitte versuchen Sie es "
+"erneut. Falls das Problem weiterhin besteht, kontaktieren Sie den Support."
 
 msgid ""
 "Identifier could not be discarded. Please try again. If the problem "
 "persists, contact user support."
 msgstr ""
-"Die Kennung konnte nicht verworfen werden. Bitte versuchen Sie es erneut. "
-"Falls das Problem weiterhin besteht, kontaktieren Sie den Support."
+"Der Identifier konnte nicht verworfen werden. Bitte versuchen Sie es erneut."
+" Falls das Problem weiterhin besteht, kontaktieren Sie den Support."
 
 msgid ""
 "Draft save failed before file upload. Please try again. If the problem "
@@ -428,7 +402,7 @@ msgid "Embargoed (full record)"
 msgstr "Datensatz mit Embargo-Zeitraum belegt (vollständiger Eintrag)"
 
 msgid "Restricted"
-msgstr "Eingeschränkt"
+msgstr "Zugriffsbeschränkt"
 
 msgid "Public with restricted files"
 msgstr "Öffentlich, mit zugriffsbeschränkten Dateien"
@@ -481,13 +455,13 @@ msgstr ""
 "kontaktieren Sie bitte den Support."
 
 msgid "Search or create affiliation"
-msgstr "Affiliation suchen oder eine neue Affiliation anlegen"
+msgstr "Affiliation suchen oder neu anlegen"
 
 msgid "Affiliations"
-msgstr "Zugehörigkeiten"
+msgstr "Affiliationen"
 
 msgid "Search for affiliations.."
-msgstr "Suche nach Zugehörigkeiten ..."
+msgstr "Suche nach Affiliationen ..."
 
 msgid "Coming soon"
 msgstr "Erscheint bald"
@@ -504,15 +478,6 @@ msgstr "Urheberrecht (C) {{currentYear}} Die Autoren."
 msgid "Copyright"
 msgstr "Urheberrecht"
 
-msgid "Creators"
-msgstr "Ersteller*innen"
-
-msgid "Add creator"
-msgstr "Ersteller*in hinzufügen"
-
-msgid "Edit creator"
-msgstr "Ersteller*in bearbeiten"
-
 msgid "Edit"
 msgstr "Editieren"
 
@@ -526,10 +491,10 @@ msgid "GND logo"
 msgstr "GND-Logo"
 
 msgid "Type the value of an identifier..."
-msgstr "Geben Sie eine Kennung ein ..."
+msgstr "Geben Sie einen Identifier ein ..."
 
 msgid "Identifiers"
-msgstr "Kennungen"
+msgstr "Identifier"
 
 msgid "e.g. ORCID, ISNI or GND."
 msgstr "z.B. ORCID, ISNI oder GND."
@@ -557,8 +522,8 @@ msgstr "Organisation"
 
 msgid "Search for persons by name, identifier, or affiliation..."
 msgstr ""
-"Suche nach Personen anhand des Namens, der Kennung oder Organisations-"
-"Zugehörigkeit ..."
+"Suche nach Personen anhand des Namens, des Identifiers oder der Affiliation "
+"..."
 
 msgid "Family name"
 msgstr "Familienname"
@@ -568,13 +533,13 @@ msgstr "Vorname"
 
 msgid "Search for an organization by name, identifier, or affiliation..."
 msgstr ""
-"Suche nach einer Organisation anhand des Namens, der Kennung oder der "
-"Organisations-Zugehörigkeit ..."
+"Suche nach einer Organisation anhand des Namens, des Identifiers oder der "
+"Affiliation ..."
 
 msgid "Search for organization by name, identifier, or affiliation..."
 msgstr ""
-"Suche nach einer Organisation anhand des Namens, der Kennung oder der "
-"Organisations-Zugehörigkeit ..."
+"Suche nach einer Organisation anhand des Namens, des Identifiers oder der "
+"Affiliation ..."
 
 msgid "Name"
 msgstr "Name"
@@ -722,10 +687,10 @@ msgid "out of"
 msgstr "von"
 
 msgid "Add identifier"
-msgstr "Kennung hinzufügen"
+msgstr "Identifier hinzufügen"
 
 msgid "Identifier"
-msgstr "Kennung"
+msgstr "Identifier"
 
 msgid "Scheme"
 msgstr "Schema"
@@ -772,10 +737,10 @@ msgid "Link must be a valid URL"
 msgstr "Als Link muss eine gültige URL angegeben werden."
 
 msgid "Add {{mode}} license"
-msgstr "Lizenz {{mode}} hinzufügen"
+msgstr "Lizenz „{{mode}}“ hinzufügen"
 
 msgid "Change {{mode}} license"
-msgstr "Lizenz {{mode}} ändern"
+msgstr "Lizenz „{{mode}}“ ändern"
 
 msgid "Search for licenses"
 msgstr "Lizenzen suchen"
@@ -804,14 +769,8 @@ msgstr "Software"
 msgid "Title"
 msgstr "Titel"
 
-msgid "License title"
-msgstr "Lizenz-Titel"
-
 msgid "Link"
 msgstr "Link"
-
-msgid "License link"
-msgstr "Link auf die Lizenz"
 
 msgid "Add license"
 msgstr "Lizenz hinzufügen"
@@ -869,7 +828,7 @@ msgid ""
 "Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
 "URNs, and URLs."
 msgstr ""
-"Geben Sie Persistente IDs der verknüpften Arbeiten an. Unterstützt werden "
+"Geben Sie persistente IDs der verknüpften Arbeiten an. Unterstützt werden "
 "DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS "
 "Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
 "URNs und URLs."
@@ -881,7 +840,7 @@ msgid "Relation"
 msgstr "Zusammenhang"
 
 msgid "Related works"
-msgstr "Verwandte Arbeiten"
+msgstr "Verknüpfte Arbeiten"
 
 msgid "Resource type"
 msgstr "Art der Ressource"
@@ -918,7 +877,7 @@ msgid "only"
 msgstr "nur"
 
 msgid "be accessed by"
-msgstr "zugreifen von"
+msgstr "eingesehen werden von"
 
 msgid "users specified"
 msgstr "Benutzer*innen, die"
@@ -943,13 +902,13 @@ msgstr ""
 "können die Dateien"
 
 msgid "Record or files protection must be"
-msgstr "Der Schutz des Datensatzes oder der Dateien muss"
+msgstr "Die Sichtbarkeit des Datensatzes oder der Dateien muss"
 
 msgid "restricted"
-msgstr "privat"
+msgstr "zugriffsbeschränkt"
 
 msgid "to apply an embargo."
-msgstr "um ein Embargo zu verhängen."
+msgstr "sein, um ein Embargo zu verhängen."
 
 msgid ""
 "Uploading the selected files would result in {{total}} of storage use, "
@@ -962,8 +921,249 @@ msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
 "is preferred see"
 msgstr ""
-"Vor allem für Software- und Datensatz-Uploads relevant. Eine semantische "
-"Versionszeichenfolge wird bevorzugt, siehe"
+"Vor allem für Software- und Datensatz-Uploads relevant. Eine der "
+"semantischen Versionierung folgende Versionsnummer wird bevorzugt, siehe"
 
 msgid ", but any version string is accepted."
-msgstr ", aber jede Versionszeichenfolge wird akzeptiert."
+msgstr ", aber jede Zeichenfolge wird als Versionsnummer akzeptiert."
+
+msgid "Search in all communities"
+msgstr "Suche in allen Communitys"
+
+msgid "Search in my communities"
+msgstr "Suche in meinen Communitys"
+
+msgid ""
+"The request to submit this upload to the community was declined. Please "
+"discard this version and create a new one with the feedback from the review."
+msgstr ""
+"Der Antrag, diesen Upload bei der Community einzureichen, wurde abgelehnt. "
+"Bitte verwerfen Sie diese Version und erstellen Sie unter Berücksichtigung "
+"des Feedbacks aus der Überprüfung eine neue Version. "
+
+msgid "Storage"
+msgstr "Speicher"
+
+msgid "Quota overview"
+msgstr "Kontingent-Übersicht"
+
+msgid ""
+"You can now manage your record storage by assigning additional quota as "
+"needed."
+msgstr ""
+"Sie können den Speicherplatz für Ihre Datensätze nun verwalten, indem Sie "
+"bei Bedarf zusätzliches Kontingent zuweisen. "
+
+msgid "Find out more."
+msgstr "Mehr erfahren."
+
+msgid "Default quota per record"
+msgstr "Standardkontingent pro Datensatz"
+
+msgid "Available of {{total}} GB allowance"
+msgstr "Verfügbar: {{total}} GB Speicherkontingent"
+
+msgid "Quota granted across {{count}} records"
+msgid_plural "Quota granted across {{count}} records"
+msgstr[0] "Kontingent für {{count}} Datensatz zugewiesen"
+msgstr[1] "Kontingent für {{count}} Datensätze zugewiesen"
+
+msgid "Allocated storage"
+msgstr "Zugewiesener Speicher"
+
+msgid "Record"
+msgstr "Eintrag"
+
+msgid "Additional quota"
+msgstr "Zusätzliches Kontingent"
+
+msgid "Usage"
+msgstr "Nutzung"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "{{total}} GB total"
+msgstr "{{total}} GB insgesamt"
+
+msgid "used"
+msgstr "verwendet"
+
+msgid "No allocated storage"
+msgstr "Kein zugewiesener Speicher"
+
+msgid "No records have been granted any additional quotas yet."
+msgstr "Bisher wurden keinen Datensätzen zusätzliche Kontingente zugewiesen."
+
+msgid "If your upload is accepted by the community curators, it will be"
+msgstr ""
+"Wenn Ihr Upload von den Community-Kurator*innen akzeptiert wird, wird er"
+
+msgid "immediately published"
+msgstr "sofort veröffentlicht"
+
+msgid ""
+"Before that, you will still be able to modify metadata and files of this "
+"upload."
+msgstr ""
+"Bis dahin können Sie Metadaten und Dateien dieses Uploads noch ändern."
+
+msgid "Your upload will be"
+msgstr "Ihr Upload wird"
+
+msgid ""
+"in '{{communityTitle}}'. You will no longer be able to change the files in "
+"the upload!"
+msgstr ""
+"in „{{communityTitle}}\" sein. Sie können die Dateien im Upload nicht mehr "
+"ändern!"
+
+msgid "However, you will still be able to update the record's metadata later."
+msgstr ""
+"Sie können jedoch die Metadaten des Datensatzes weiterhin später "
+"aktualisieren."
+
+msgid "Unable to submit request."
+msgstr "Anfrage kann nicht übermittelt werden."
+
+msgid "Unable to display preview. Please correct validation issues in"
+msgstr ""
+"Vorschau kann nicht angezeigt werden. Bitte beheben Sie die "
+"Validierungsprobleme in"
+
+msgid "Unknown section"
+msgstr "Unbekannter Abschnitt"
+
+msgid "Authors"
+msgstr "Autor*innen"
+
+msgid "Add author"
+msgstr "Autor*in hinzufügen"
+
+msgid "Edit author"
+msgstr "Autor*in bearbeiten"
+
+msgid ""
+"To <1>add, modify or remove files</1>, it is recommended that you create a "
+"new version. A new record is created which tracks the evolution of your "
+"work."
+msgstr ""
+"Um <1>Dateien hinzuzufügen, zu ändern oder zu entfernen</1>, wird empfohlen,"
+" eine neue Version zu erstellen. Es wird ein neuer Datensatz erstellt, der "
+"den Versionsverlauf Ihrer Arbeit dokumentiert."
+
+msgid "To <1>correct</1> minor errors, you can unlock the files."
+msgstr ""
+"Um <1>kleinere Fehler</1> zu korrigieren, können Sie die Dateien entsperren."
+
+msgid "It is not possible to modify the files of this record."
+msgstr "Es ist nicht möglich, die Dateien dieses Datensatzes zu ändern."
+
+msgid "Edit published files"
+msgstr "Veröffentlichte Dateien bearbeiten"
+
+msgid "I want to update the files with a new version"
+msgstr "Ich möchte die Dateien mit einer neuen Version aktualisieren"
+
+msgid "Instead, you can make a new version"
+msgstr "Stattdessen können Sie eine neue Version erstellen"
+
+msgid "Edit files"
+msgstr "Dateien bearbeiten"
+
+msgid ""
+"Once unlocked you will have {{ daysUntil }} days to publish your changes."
+msgstr ""
+"Nach dem Entsperren haben Sie {{ daysUntil }} Tage Zeit, um Ihre Änderungen "
+"zu veröffentlichen."
+
+msgid "File modification checklist:"
+msgstr "Checkliste zur Dateibearbeitung:"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nein"
+
+msgid ""
+"I will not modify files that supplement findings/results of an already "
+"published work."
+msgstr ""
+"Ich werde keine Dateien ändern, die die Ergebnisse einer bereits "
+"veröffentlichten Arbeit ergänzen."
+
+msgid "Unable to unlock files"
+msgstr "Dateien können nicht entsperrt werden"
+
+msgid "Enable file editing"
+msgstr "Dateibearbeitung aktivieren"
+
+msgid "Checksum not yet calculated."
+msgstr "Prüfsumme noch nicht berechnet."
+
+msgid "Manage storage"
+msgstr "Speicher verwalten"
+
+msgid "Default"
+msgstr "Standard"
+
+msgid "Additional"
+msgstr "Zusätzlich"
+
+msgid "Available"
+msgstr "Verfügbar"
+
+msgid "See your <1>storage settings</1> for usage across all records"
+msgstr ""
+"In Ihren <1>Speichereinstellungen</1> wird die Speichernutzung aller "
+"Datensätze angezeigt"
+
+msgid "Could not submit the quota increase request"
+msgstr "Anfrage zur Kontingenterhöhung konnte nicht übermittelt werden"
+
+msgid ""
+"Each record has a default quota of {{defaultStorage}} GB. You have an "
+"additional allowance of up to {{maxAdditionalStorage}} GB that can be "
+"distributed across your uploads as needed."
+msgstr ""
+"Jeder Datensatz hat ein Standardkontingent von {{defaultStorage}} GB. Sie "
+"haben eine zusätzliche Zuteilung von bis zu {{maxAdditionalStorage}} GB, die"
+" Sie nach Bedarf auf Ihre Uploads verteilen können."
+
+msgid ""
+"Each record has a default quota of {{defaultStorage}} GB. You have already "
+"used your additional allowance of {{maxAdditionalStorage}} GB across your "
+"uploads."
+msgstr ""
+"Jeder Datensatz verfügt über ein Standardkontingent von {{defaultStorage}} "
+"GB. Ihr zusätzliches Speicherkontingent von {{maxAdditionalStorage}} GB ist "
+"bereits vollständig vergeben."
+
+msgid "Additional storage"
+msgstr "Zusätzlicher Speicher"
+
+msgid "New total:"
+msgstr "Neuer Gesamtwert:"
+
+msgid "Unable to increase quota"
+msgstr "Kontingent kann nicht erhöht werden"
+
+msgid "Apply"
+msgstr "Anwenden"
+
+msgid "Search for subjects..."
+msgstr "Suche nach Schlagwörtern ..."
+
+msgid "{{filename}} is already part of this upload."
+msgstr "{{filename}} ist bereits Teil dieses Uploads."
+
+msgid ""
+"Maximum 191 characters. For longer descriptions, use 'Additional "
+"descriptions' with type 'Note'."
+msgstr ""
+"Maximal 191 Zeichen. Für längere Beschreibungen verwenden Sie „Zusätzliche "
+"Beschreibungen\" mit dem Typ „Notiz\"."
+
+msgid "Select a community for this repository's records"
+msgstr "Wählen Sie eine Community für die Datensätze dieses Repositories"

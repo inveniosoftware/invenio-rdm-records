@@ -1,19 +1,18 @@
-# 
 # Translators:
 # Jiří Kunčar <jiri.kuncar@gmail.com>, 2024
 # Ivan Masár <helix84@centrum.sk>, 2024
-# Mirek Simek <miroslav.simek@gmail.com>, 2025
-# Tibor Simko <tibor.simko@cern.ch>, 2025
-# daniela.hornickova, 2025
+# Tibor Simko <tibor.simko@cern.ch>, 2026
+# Mirek Simek <miroslav.simek@gmail.com>, 2026
+# daniela.hornickova, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
+"POT-Creation-Date: 2026-06-22T20:52:49.860Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: daniela.hornickova, 2025\n"
+"Last-Translator: daniela.hornickova, 2026\n"
 "Language-Team: Czech (https://app.transifex.com/inveniosoftware/teams/23537/cs/)\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: cs\n"
 "Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
@@ -216,9 +215,6 @@ msgstr "Nová verze"
 msgid "Preview"
 msgstr "Náhled"
 
-msgid "DOI is needed. You need to reserve a DOI before publishing."
-msgstr "Je třeba doplnit DOI. DOI si musíte rezervovat před publikováním."
-
 msgid "Are you sure you want to publish this record?"
 msgstr "Jste si jisti, že chcete tento záznam publikovat?"
 
@@ -250,16 +246,6 @@ msgid ""
 msgstr ""
 "Před publikováním do komunity si prosím přečtěte a zkontrolujte následující:"
 
-msgid ""
-"Your upload will be <bold>immediately published</bold> in "
-"'{{communityTitle}}'. You will no longer be able to change the files in the "
-"upload! However, you will still be able to update the record's metadata "
-"later."
-msgstr ""
-"Váš záznam bude <bold>okamžitě publikován</bold> v '{{communityTitle}}'. "
-"Nebudete moci změnit soubory v záznamu! Nicméně budete stále moci později "
-"aktualizovat metadata záznamu."
-
 msgid "Publish record to community"
 msgstr "Publikovat záznam do komunity"
 
@@ -273,15 +259,6 @@ msgstr ""
 msgid "Before requesting review, please read and check the following:"
 msgstr ""
 "Před požádáním o posouzení si prosím přečtěte a zkontrolujte následující:"
-
-msgid ""
-"If your upload is accepted by the community curators, it will be "
-"<bold>immediately published</bold>. Before that, you will still be able to "
-"modify metadata and files of this upload."
-msgstr ""
-"Pokud bude váš záznam přijat kurátory komunity, bude <bold>okamžitě "
-"publikován</bold>. Před tím budete stále moci upravovat metadata a soubory "
-"tohoto konceptu."
 
 msgid "Submit record for review"
 msgstr "Odeslat záznam k posouzení"
@@ -297,9 +274,6 @@ msgstr "metadata a soubory vašeho záznamu."
 
 msgid "Message to curators (optional)"
 msgstr "Zpráva pro kurátory (nepovinná)"
-
-msgid "msgWarningText1"
-msgstr "msgWarningText1"
 
 msgid "Change community"
 msgstr "Změnit komunitu"
@@ -482,15 +456,6 @@ msgstr "Copyright (C) {{currentYear}} Autoři"
 
 msgid "Copyright"
 msgstr "Autorská práva"
-
-msgid "Creators"
-msgstr "Autoři"
-
-msgid "Add creator"
-msgstr "Přidat autora"
-
-msgid "Edit creator"
-msgstr "Upravit autora"
 
 msgid "Edit"
 msgstr "Upravit"
@@ -773,14 +738,8 @@ msgstr "software"
 msgid "Title"
 msgstr "Název"
 
-msgid "License title"
-msgstr "Název licence"
-
 msgid "Link"
 msgstr "Odkaz"
-
-msgid "License link"
-msgstr "Odkaz na licenci"
 
 msgid "Add license"
 msgstr "Přidat licenci"
@@ -892,7 +851,7 @@ msgid "in the permissions."
 msgstr "v oprávněních."
 
 msgid "The record can"
-msgstr "Záznam může"
+msgstr "K záznamu mohou"
 
 msgid "The record is publicly accessible. The files can"
 msgstr "Záznam je veřejně přístupný. Soubory mohou"
@@ -908,7 +867,7 @@ msgstr ""
 "souborům"
 
 msgid "Record or files protection must be"
-msgstr "Ochrana záznamu nebou souborů musí být"
+msgstr "Ochrana záznamu nebo souborů musí být"
 
 msgid "restricted"
 msgstr "chráněno"
@@ -932,3 +891,233 @@ msgstr ""
 
 msgid ", but any version string is accepted."
 msgstr " , ale je přijímán jakýkoli řetězec verze."
+
+msgid "Search in all communities"
+msgstr "Hledat ve všech komunitách"
+
+msgid "Search in my communities"
+msgstr "Hledat v mých komunitách"
+
+msgid ""
+"The request to submit this upload to the community was declined. Please "
+"discard this version and create a new one with the feedback from the review."
+msgstr ""
+"Požadavek na zařazení tohoto příspěvku do repozitáře byl zamítnut. Tuto "
+"verzi prosím zahoďte a vytvořte novou podle připomínek z kontroly."
+
+msgid "Storage"
+msgstr "Úložiště"
+
+msgid "Quota overview"
+msgstr "Přehled kvót"
+
+msgid ""
+"You can now manage your record storage by assigning additional quota as "
+"needed."
+msgstr ""
+"Nyní můžete správu svého úložiště záznamů řešit přiřazením další kvóty podle"
+" potřeby."
+
+msgid "Find out more."
+msgstr "Zjistit více."
+
+msgid "Default quota per record"
+msgstr "Výchozí kvóta na záznam"
+
+msgid "Available of {{total}} GB allowance"
+msgstr "K dispozici je limit {{total}} GB "
+
+msgid "Quota granted across {{count}} records"
+msgid_plural "Quota granted across {{count}} records"
+msgstr[0] "Kvóta udělena napříč {{count}} záznamy"
+msgstr[1] "Kvóta udělena napříč {{count}} záznamy"
+msgstr[2] "Kvóta udělena napříč {{count}} záznamy"
+msgstr[3] "Kvóta udělena napříč {{count}} záznamy"
+
+msgid "Allocated storage"
+msgstr "Přidělené úložiště"
+
+msgid "Record"
+msgstr "Záznam"
+
+msgid "Additional quota"
+msgstr "Dodatečná kvóta"
+
+msgid "Usage"
+msgstr "Užití"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "{{total}} GB total"
+msgstr "Celkem {{total}} GB"
+
+msgid "used"
+msgstr "využito"
+
+msgid "No allocated storage"
+msgstr "Žádné přidělené úložiště"
+
+msgid "No records have been granted any additional quotas yet."
+msgstr "Žádným záznamům zatím nebyly uděleny žádné dodatečné kvóty."
+
+msgid "If your upload is accepted by the community curators, it will be"
+msgstr "Pokud váš nahraný soubor přijmou správci komunity, bude"
+
+msgid "immediately published"
+msgstr "okamžitě publikován"
+
+msgid ""
+"Before that, you will still be able to modify metadata and files of this "
+"upload."
+msgstr ""
+"Předtím budete moci metadata a soubory tohoto nahrávání stále upravovat."
+
+msgid "Your upload will be"
+msgstr "Váš záznam bude"
+
+msgid ""
+"in '{{communityTitle}}'. You will no longer be able to change the files in "
+"the upload!"
+msgstr "v '{{communityTitle}}'. Nahrané soubory již nebudete moci upravovat!"
+
+msgid "However, you will still be able to update the record's metadata later."
+msgstr "Metadata záznamu však budete moci i nadále později aktualizovat."
+
+msgid "Unable to submit request."
+msgstr "Nelze poslat žádost."
+
+msgid "Unable to display preview. Please correct validation issues in"
+msgstr "Nelze zobrazit náhled. Opravte prosím problémy s ověřením v"
+
+msgid "Unknown section"
+msgstr "Neznámá část"
+
+msgid "Authors"
+msgstr "Autoři"
+
+msgid "Add author"
+msgstr "Přidat autora"
+
+msgid "Edit author"
+msgstr "Upravit autora"
+
+msgid ""
+"To <1>add, modify or remove files</1>, it is recommended that you create a "
+"new version. A new record is created which tracks the evolution of your "
+"work."
+msgstr ""
+"Pro <1> přidání, úpravu nebo odstranění souborů </1> doporučujeme vytvořit "
+"novou verzi. Vytvoří se tak nový záznam, který sleduje vývoj vaší práce."
+
+msgid "To <1>correct</1> minor errors, you can unlock the files."
+msgstr "Chcete-li <1> opravit </1> drobné chyby, můžete soubory odemknout."
+
+msgid "It is not possible to modify the files of this record."
+msgstr "Není možné upravovat soubory v tomto záznamu."
+
+msgid "Edit published files"
+msgstr "Upravit publikované soubory"
+
+msgid "I want to update the files with a new version"
+msgstr "Chci aktualizovat soubory novou verzí."
+
+msgid "Instead, you can make a new version"
+msgstr "Místo toho můžete vytvořit novou verzi"
+
+msgid "Edit files"
+msgstr "Upravit soubory"
+
+msgid ""
+"Once unlocked you will have {{ daysUntil }} days to publish your changes."
+msgstr ""
+"Po odemčení budete mít {{ daysUntil }} dní na publikaci Vámi provedených "
+"změn."
+
+msgid "File modification checklist:"
+msgstr "Kontrolní seznam pro úpravu souboru:"
+
+msgid "Yes"
+msgstr "Ano"
+
+msgid "No"
+msgstr "Ne"
+
+msgid ""
+"I will not modify files that supplement findings/results of an already "
+"published work."
+msgstr ""
+"Nebudu upravovat soubory, které doplňují zjištění/výsledky již publikované "
+"práce."
+
+msgid "Unable to unlock files"
+msgstr "Nelze odemknout soubory"
+
+msgid "Enable file editing"
+msgstr "Nelze upravit soubor"
+
+msgid "Checksum not yet calculated."
+msgstr "Kontrolní součet nebyl zatím vypočítán."
+
+msgid "Manage storage"
+msgstr "Spravovat úložiště"
+
+msgid "Default"
+msgstr "Výchozí"
+
+msgid "Additional"
+msgstr "Dodatečný"
+
+msgid "Available"
+msgstr "K dispozici"
+
+msgid "See your <1>storage settings</1> for usage across all records"
+msgstr "Viz <1> nastavení úložiště </1> na využití ve všech záznamech"
+
+msgid "Could not submit the quota increase request"
+msgstr "Nebylo možno odeslat žádost o navýšení kvóty"
+
+msgid ""
+"Each record has a default quota of {{defaultStorage}} GB. You have an "
+"additional allowance of up to {{maxAdditionalStorage}} GB that can be "
+"distributed across your uploads as needed."
+msgstr ""
+"Každý záznam má výchozí kvótu {{defaultStorage}} GB. Máte k dispozici "
+"dalších až {{maxAdditionalStorage}} navíc, které lze podle potřeby rozdělit "
+"mezi své nahrané sobory."
+
+msgid ""
+"Each record has a default quota of {{defaultStorage}} GB. You have already "
+"used your additional allowance of {{maxAdditionalStorage}} GB across your "
+"uploads."
+msgstr ""
+"Každý záznam má výchozí kvótu {{defaultStorage}} GB. Využili jste již "
+"dodatečných {{maxAdditionalStorage}} GB mezi své nahrané soubory."
+
+msgid "Additional storage"
+msgstr "Dodatečné úložiště"
+
+msgid "New total:"
+msgstr "Celkem po změně:"
+
+msgid "Unable to increase quota"
+msgstr "Nelze zvýšit kvótu"
+
+msgid "Apply"
+msgstr "Použít"
+
+msgid "Search for subjects..."
+msgstr "Hledat téma..."
+
+msgid "{{filename}} is already part of this upload."
+msgstr "{{filename}} již je součástí tohoto záznamu."
+
+msgid ""
+"Maximum 191 characters. For longer descriptions, use 'Additional "
+"descriptions' with type 'Note'."
+msgstr ""
+"Maximálně 191 znaků. Pro delší popisy použijte 'Dodatečné popisy' s typem "
+"'Poznámka' "
+
+msgid "Select a community for this repository's records"
+msgstr "Pro záznamy této komunity vyberte komunitu"

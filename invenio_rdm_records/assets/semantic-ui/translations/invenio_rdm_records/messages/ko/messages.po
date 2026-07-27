@@ -1,771 +1,739 @@
-# 
 # Translators:
-# Minjae Kwon, 2024
+# Minjae Kwon, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
+"POT-Creation-Date: 2026-06-22T20:52:49.860Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Minjae Kwon, 2024\n"
+"Last-Translator: Minjae Kwon, 2026\n"
 "Language-Team: Korean (https://app.transifex.com/inveniosoftware/teams/23537/ko/)\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ko\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "mime-version: 1.0\n"
 
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "클립보드에 복사"
 
 msgid "Copied!"
-msgstr ""
+msgstr "복사됨."
 
 msgid "This set is not editable as it was created by the system."
-msgstr ""
+msgstr "이 세트는 시스템이 생성했으므로 수정할 수 없습니다."
 
 msgid "This set is not deletable as it was created by the system."
-msgstr ""
+msgstr "이 세트는 시스템이 생성했으므로 제거할 수 없습니다."
 
 msgid "Fetch error"
-msgstr ""
+msgstr "가져오기 오류"
 
 msgid "Error fetching OAI set formats."
-msgstr ""
+msgstr "OAI 세트 형식을 가져오는 중 오류가 발생했습니다."
 
 msgid "Links"
-msgstr ""
+msgstr "링크"
 
 msgid "Format"
-msgstr ""
+msgstr "형식"
 
 msgid "List records"
-msgstr ""
+msgstr "레코드 목록"
 
 msgid "Opens in new tab"
-msgstr ""
+msgstr "새 탭에서 열림"
 
 msgid "List identifiers"
-msgstr ""
+msgstr "식별자 목록"
 
 msgid ""
 "Before deleting, make sure to alert all harvesters that this set will no "
 "longer be available."
-msgstr ""
+msgstr "제거하기 전에 이 세트가 더 이상 제공되지 않는다는 것을 모든 하베스터에게 알리십시오."
 
 msgid ""
 "I have alerted all harvesters that this set will no longer be available."
-msgstr ""
+msgstr "이 세트가 더 이상 제공되지 않는다는 것을 모든 하베스터에게 알렸습니다."
 
 msgid "Cancel"
-msgstr ""
+msgstr "취소"
 
 msgid "Delete"
-msgstr ""
+msgstr "제거"
 
 msgid "Delete {{title}}"
-msgstr ""
+msgstr "{{title}} 제거"
 
 msgid "This will delete the set '{{title}}'."
-msgstr ""
+msgstr "이 작업은 세트 '{{title}}'을(를) 제거합니다."
 
 msgid "Select the community where you want to submit your record."
-msgstr ""
+msgstr "레코드를 제출할 커뮤니티를 선택하십시오."
 
 msgid "Change"
-msgstr ""
+msgstr "변경"
 
 msgid "Select a community"
-msgstr ""
+msgstr "커뮤니티 선택"
 
 msgid "Remove"
-msgstr ""
+msgstr "제거"
 
 msgid "Community inclusion information"
-msgstr ""
+msgstr "커뮤니티 포함 정보"
 
 msgid ""
 "Submission to this community is only allowed if the record is restricted."
-msgstr ""
+msgstr "이 커뮤니티에는 레코드가 제한된 경우에만 제출할 수 있습니다."
 
 msgid "Submission to this community is only allowed to community members."
-msgstr ""
+msgstr "이 커뮤니티에는 커뮤니티 구성원만 제출할 수 있습니다."
 
 msgid "Community submission conditions information"
-msgstr ""
+msgstr "커뮤니티 제출 조건 정보"
 
 msgid ""
 "Submission to this community is only allowed by dedicated upload form. Use "
 "the button to jump to the form."
-msgstr ""
+msgstr "이 커뮤니티에는 전용 업로드 양식으로만 제출할 수 있습니다. 버튼을 사용하여 양식으로 이동하십시오."
 
 msgid "Go to the community"
-msgstr ""
+msgstr "커뮤니티로 이동"
 
 msgid "Selected"
-msgstr ""
+msgstr "선택됨"
 
 msgid "Select"
-msgstr ""
+msgstr "선택"
 
 msgid "Select {{title}}"
-msgstr ""
+msgstr "{{title}} 선택"
 
 msgid "Verified"
-msgstr ""
+msgstr "인증됨"
 
 msgid "Close"
-msgstr ""
+msgstr "닫기"
 
 msgid "All"
-msgstr ""
+msgstr "전체"
 
 msgid "My communities"
-msgstr ""
+msgstr "내 커뮤니티"
 
 msgid "Search"
 msgstr "검색"
 
 msgid "In review"
-msgstr ""
+msgstr "검토 중"
 
 msgid ""
 "Community curators will review your upload. Once accepted, it will be "
 "published."
-msgstr ""
+msgstr "커뮤니티 큐레이터가 업로드를 검토합니다. 수락되면 게시됩니다."
 
 msgid "Declined"
-msgstr ""
+msgstr "거절됨"
 
 msgid "The request to submit this upload to the community was declined."
-msgstr ""
+msgstr "이 업로드를 커뮤니티에 제출하려는 요청이 거절되었습니다."
 
 msgid "Expired"
-msgstr ""
+msgstr "만료됨"
 
 msgid "The request to submit this upload to the community has expired."
-msgstr ""
+msgstr "이 업로드를 커뮤니티에 제출하려는 요청이 만료되었습니다."
 
 msgid "Published"
-msgstr ""
+msgstr "게시됨"
 
 msgid "Your upload is published."
-msgstr ""
+msgstr "업로드가 게시되었습니다."
 
 msgid "Draft"
-msgstr ""
+msgstr "초안"
 
 msgid ""
 "Once your upload is complete, you can submit it for review to the community "
 "curators."
-msgstr ""
+msgstr "업로드가 완료되면 커뮤니티 큐레이터에게 검토를 요청할 수 있습니다."
 
 msgid ""
 "Once your upload is complete, you can publish or submit it for review to the"
 " community curators."
-msgstr ""
+msgstr "업로드가 완료되면 게시하거나 커뮤니티 큐레이터에게 검토를 요청할 수 있습니다."
 
 msgid "New version draft"
-msgstr ""
+msgstr "새 버전 초안"
 
 msgid "Once your upload is complete, you can publish it."
-msgstr ""
+msgstr "업로드가 완료되면 게시할 수 있습니다."
 
 msgid "View request"
-msgstr ""
+msgstr "요청 보기"
 
 msgid "discard changes"
-msgstr ""
+msgstr "변경 사항 취소"
 
 msgid "discard version"
-msgstr ""
+msgstr "버전 취소"
 
 msgid "delete"
-msgstr ""
+msgstr "삭제"
 
 msgid "Are you sure you want to discard the changes to this draft?"
-msgstr ""
+msgstr "이 초안의 변경 사항을 취소하시겠습니까?"
 
 msgid "Are you sure you want to delete this new version?"
-msgstr ""
+msgstr "이 새 버전을 제거하시겠습니까?"
 
 msgid "Are you sure you want to delete this draft?"
-msgstr ""
+msgstr "이 초안을 제거하시겠습니까?"
 
 msgid "You don't have permissions to create a new version."
-msgstr ""
+msgstr "새 버전을 만들 권한이 없습니다."
 
 msgid "New version"
-msgstr ""
+msgstr "새 버전"
 
 msgid "Preview"
-msgstr ""
-
-msgid "DOI is needed. You need to reserve a DOI before publishing."
-msgstr ""
+msgstr "미리보기"
 
 msgid "Are you sure you want to publish this record?"
-msgstr ""
+msgstr "이 레코드를 게시하시겠습니까?"
 
 msgid ""
 "Once the record is published you will no longer be able to change the files "
 "in the upload! However, you will still be able to update the record's "
 "metadata later."
 msgstr ""
+"레코드가 게시되면 업로드의 파일을 더 이상 변경할 수 없습니다. 다만 나중에 레코드의 메타데이터는 계속 업데이트할 수 있습니다."
 
 msgid "Publish"
-msgstr ""
+msgstr "게시"
 
 msgid "Submitted for review"
-msgstr ""
+msgstr "검토 요청됨"
 
 msgid "Submit for review"
-msgstr ""
+msgstr "검토 요청"
 
 msgid "Publish to community"
-msgstr ""
+msgstr "커뮤니티에 게시"
 
 msgid "You must accept this."
-msgstr ""
+msgstr "이 항목에 동의해야 합니다."
 
 msgid ""
 "Before publishing to the community, please read and check the following:"
-msgstr ""
-
-msgid ""
-"Your upload will be <bold>immediately published</bold> in "
-"'{{communityTitle}}'. You will no longer be able to change the files in the "
-"upload! However, you will still be able to update the record's metadata "
-"later."
-msgstr ""
+msgstr "커뮤니티에 게시하기 전에 다음을 읽고 확인하십시오:"
 
 msgid "Publish record to community"
-msgstr ""
+msgstr "레코드를 커뮤니티에 게시"
 
 msgid "Submit to community"
-msgstr ""
+msgstr "커뮤니티에 제출"
 
 msgid "Before submitting to community, please read and check the following:"
-msgstr ""
+msgstr "커뮤니티에 제출하기 전에 다음을 읽고 확인하십시오:"
 
 msgid "Before requesting review, please read and check the following:"
-msgstr ""
-
-msgid ""
-"If your upload is accepted by the community curators, it will be "
-"<bold>immediately published</bold>. Before that, you will still be able to "
-"modify metadata and files of this upload."
-msgstr ""
+msgstr "검토를 요청하기 전에 다음을 읽고 확인하십시오:"
 
 msgid "Submit record for review"
-msgstr ""
+msgstr "레코드 검토 요청"
 
 msgid "The '{{communityTitle}}' curators will have access to"
-msgstr ""
+msgstr "'{{communityTitle}}' 큐레이터가 다음에 접근할 수 있습니다:"
 
 msgid "view and edit"
-msgstr ""
+msgstr "보기 및 수정"
 
 msgid "your upload's metadata and files."
-msgstr ""
+msgstr "업로드의 메타데이터와 파일."
 
 msgid "Message to curators (optional)"
-msgstr ""
-
-msgid "msgWarningText1"
-msgstr ""
+msgstr "큐레이터에게 보낼 메시지 (선택)"
 
 msgid "Change community"
-msgstr ""
+msgstr "커뮤니티 변경"
 
 msgid "Publish without community"
-msgstr ""
+msgstr "커뮤니티 없이 게시"
 
 msgid "Save draft"
-msgstr ""
+msgstr "초안 저장"
 
 msgid "Record successfully saved."
-msgstr ""
+msgstr "레코드를 저장했습니다."
 
 msgid "Record saved with validation feedback in"
-msgstr ""
+msgstr "다음에 검증 피드백이 있는 상태로 레코드가 저장되었습니다:"
 
 msgid "Draft has validation feedback in"
-msgstr ""
+msgstr "초안의 다음에 검증 피드백이 있습니다:"
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
 "user support."
-msgstr ""
+msgstr "초안이 저장되지 않았습니다. 다시 시도하십시오. 문제가 계속되면 사용자 지원에 문의하십시오."
 
 msgid ""
 "The draft was not published. Please try again. If the problem persists, "
 "contact user support."
-msgstr ""
+msgstr "초안이 게시되지 않았습니다. 다시 시도하십시오. 문제가 계속되면 사용자 지원에 문의하십시오."
 
 msgid "The draft was not published. Record saved with validation feedback in"
-msgstr ""
+msgstr "초안이 게시되지 않았습니다. 다음에 검증 피드백이 있는 상태로 레코드가 저장되었습니다:"
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
 "persists, contact user support."
-msgstr ""
+msgstr "초안이 검토 요청되지 않았습니다. 다시 시도하십시오. 문제가 계속되면 사용자 지원에 문의하십시오."
 
 msgid ""
 "The draft was not submitted for review. Record saved with validation "
 "feedback in"
-msgstr ""
+msgstr "초안이 검토 요청되지 않았습니다. 다음에 검증 피드백이 있는 상태로 레코드가 저장되었습니다:"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
 "user support."
-msgstr ""
+msgstr "초안 제거에 실패했습니다. 다시 시도하십시오. 문제가 계속되면 사용자 지원에 문의하십시오."
 
 msgid ""
 "Draft preview failed. Please try again. If the problem persists, contact "
 "user support."
-msgstr ""
+msgstr "초안 미리보기에 실패했습니다. 다시 시도하십시오. 문제가 계속되면 사용자 지원에 문의하십시오."
 
 msgid ""
 "Identifier reservation failed. Please try again. If the problem persists, "
 "contact user support."
-msgstr ""
+msgstr "식별자 예약에 실패했습니다. 다시 시도하십시오. 문제가 계속되면 사용자 지원에 문의하십시오."
 
 msgid ""
 "Identifier could not be discarded. Please try again. If the problem "
 "persists, contact user support."
-msgstr ""
+msgstr "식별자를 취소할 수 없습니다. 다시 시도하십시오. 문제가 계속되면 사용자 지원에 문의하십시오."
 
 msgid ""
 "Draft save failed before file upload. Please try again. If the problem "
 "persists, contact user support."
-msgstr ""
+msgstr "파일 업로드 전에 초안 저장에 실패했습니다. 다시 시도하십시오. 문제가 계속되면 사용자 지원에 문의하십시오."
 
 msgid ""
 "Files import from the previous version failed. Please try again. If the "
 "problem persists, contact user support."
-msgstr ""
+msgstr "이전 버전에서 파일 가져오기에 실패했습니다. 다시 시도하십시오. 문제가 계속되면 사용자 지원에 문의하십시오."
 
 msgid "Options"
-msgstr ""
+msgstr "옵션"
 
 msgid "Public"
-msgstr ""
+msgstr "공개"
 
 msgid "The record is publicly accessible."
-msgstr ""
+msgstr "레코드가 공개적으로 접근 가능합니다."
 
 msgid "The record and files are publicly accessible."
-msgstr ""
+msgstr "레코드와 파일이 공개적으로 접근 가능합니다."
 
 msgid "Embargoed (full record)"
-msgstr ""
+msgstr "엠바고 (전체 레코드)"
 
 msgid "Restricted"
-msgstr ""
+msgstr "제한"
 
 msgid "Public with restricted files"
-msgstr ""
+msgstr "공개(파일 제한)"
 
 msgid "Embargoed (files-only)"
-msgstr ""
+msgstr "엠바고 (파일만)"
 
 msgid "Apply an embargo"
-msgstr ""
+msgstr "엠바고 적용"
 
 msgid "Embargo reason"
-msgstr ""
+msgstr "엠바고 사유"
 
 msgid "Optionally, describe the reason for the embargo."
-msgstr ""
+msgstr "선택적으로 엠바고 사유를 설명하십시오."
 
 msgid "Embargo was lifted on {{fmtDate}}."
-msgstr ""
+msgstr "엠바고가 {{fmtDate}}에 해제되었습니다."
 
 msgid "Reason"
-msgstr ""
+msgstr "사유"
 
 msgid "YYYY-MM-DD"
-msgstr ""
+msgstr "YYYY-MM-DD"
 
 msgid "Embargo until"
-msgstr ""
+msgstr "엠바고 종료일"
 
 msgid "The record has no files."
-msgstr ""
+msgstr "레코드에 파일이 없습니다."
 
 msgid "Files only"
-msgstr ""
+msgstr "파일만"
 
 msgid "The full record is restricted."
-msgstr ""
+msgstr "전체 레코드가 제한됩니다."
 
 msgid "The files of this record are restricted."
-msgstr ""
+msgstr "이 레코드의 파일이 제한됩니다."
 
 msgid "Full record"
-msgstr ""
+msgstr "전체 레코드"
 
 msgid ""
 "Record visibility can not be changed to restricted anymore. Please contact "
 "support if you still need to make these changes."
-msgstr ""
+msgstr "레코드 공개 범위를 더 이상 제한으로 변경할 수 없습니다. 이 변경이 필요하면 지원팀에 문의하십시오."
 
 msgid "Search or create affiliation"
-msgstr ""
+msgstr "소속 검색 또는 생성"
 
 msgid "Affiliations"
-msgstr ""
+msgstr "소속"
 
 msgid "Search for affiliations.."
-msgstr ""
+msgstr "소속 검색.."
 
 msgid "Coming soon"
-msgstr ""
+msgstr "곧 제공 예정"
 
 msgid ""
 "A copyright statement describing the ownership of the uploaded resource."
-msgstr ""
+msgstr "업로드한 자원의 소유권을 설명하는 저작권 표시입니다."
 
 msgid "Copyright (C) {{currentYear}} The Authors."
-msgstr ""
+msgstr "Copyright (C) {{currentYear}} The Authors."
 
 msgid "Copyright"
-msgstr ""
-
-msgid "Creators"
-msgstr ""
-
-msgid "Add creator"
-msgstr ""
-
-msgid "Edit creator"
-msgstr ""
+msgstr "저작권"
 
 msgid "Edit"
-msgstr ""
+msgstr "수정"
 
 msgid "ORCID logo"
-msgstr ""
+msgstr "ORCID 로고"
 
 msgid "ROR logo"
-msgstr ""
+msgstr "ROR 로고"
 
 msgid "GND logo"
-msgstr ""
+msgstr "GND 로고"
 
 msgid "Type the value of an identifier..."
-msgstr ""
+msgstr "식별자 값을 입력하십시오..."
 
 msgid "Identifiers"
-msgstr ""
+msgstr "식별자"
 
 msgid "e.g. ORCID, ISNI or GND."
-msgstr ""
+msgstr "예: ORCID, ISNI 또는 GND."
 
 msgid "Save and add another"
-msgstr ""
+msgstr "저장 후 다른 항목 추가"
 
 msgid "Family name is a required field."
-msgstr ""
+msgstr "성은 필수 항목입니다."
 
 msgid "Name is a required field."
-msgstr ""
+msgstr "이름은 필수 항목입니다."
 
 msgid "Role is a required field."
-msgstr ""
+msgstr "역할은 필수 항목입니다."
 
 msgid "Added"
-msgstr ""
+msgstr "추가됨"
 
 msgid "Person"
-msgstr ""
+msgstr "사람"
 
 msgid "Organization"
-msgstr ""
+msgstr "기관"
 
 msgid "Search for persons by name, identifier, or affiliation..."
-msgstr ""
+msgstr "이름, 식별자 또는 소속으로 사람 검색..."
 
 msgid "Family name"
-msgstr ""
+msgstr "성"
 
 msgid "Given names"
-msgstr ""
+msgstr "이름"
 
 msgid "Search for an organization by name, identifier, or affiliation..."
-msgstr ""
+msgstr "이름, 식별자 또는 소속으로 기관 검색..."
 
 msgid "Search for organization by name, identifier, or affiliation..."
-msgstr ""
+msgstr "이름, 식별자 또는 소속으로 기관 검색..."
 
 msgid "Name"
 msgstr "이름"
 
 msgid "Organization name"
-msgstr ""
+msgstr "기관 이름"
 
 msgid "e.g. ROR, ISNI or GND."
-msgstr ""
+msgstr "예: ROR, ISNI 또는 GND."
 
 msgid "Role"
-msgstr ""
+msgstr "역할"
 
 msgid "Select role"
-msgstr ""
+msgstr "역할 선택"
 
 msgid "Save"
-msgstr ""
+msgstr "저장"
 
 msgid "Add date"
-msgstr ""
+msgstr "날짜 추가"
 
 msgid "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
-msgstr ""
+msgstr "형식: DATE 또는 DATE/DATE(DATE는 YYYY, YYYY-MM 또는 YYYY-MM-DD)."
 
 msgid "Date"
-msgstr ""
+msgstr "날짜"
 
 msgid "Type"
-msgstr ""
+msgstr "유형"
 
 msgid "Description"
-msgstr ""
+msgstr "설명"
 
 msgid "Remove field"
-msgstr ""
+msgstr "필드 제거"
 
 msgid "Dates"
-msgstr ""
+msgstr "날짜"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
-msgstr ""
+msgstr "YYYY-MM-DD 또는 YYYY-MM-DD/YYYY-MM-DD"
 
 msgid "Add description"
-msgstr ""
+msgstr "설명 추가"
 
 msgid "Additional Description"
-msgstr ""
+msgstr "추가 설명"
 
 msgid "Language"
-msgstr ""
+msgstr "언어"
 
 msgid "Select language"
-msgstr ""
+msgstr "언어 선택"
 
 msgid "Could not upload files."
-msgstr ""
+msgstr "파일을 업로드할 수 없습니다."
 
 msgid "The following files already exist"
-msgstr ""
+msgstr "다음 파일이 이미 있습니다"
 
 msgid "Could not upload all files."
-msgstr ""
+msgstr "모든 파일을 업로드할 수 없습니다."
 
 msgid "Empty files were skipped."
-msgstr ""
+msgstr "빈 파일은 건너뛰었습니다."
 
 msgid "You can import files from the previous version."
-msgstr ""
+msgstr "이전 버전에서 파일을 가져올 수 있습니다."
 
 msgid ""
 "File addition, removal or modification are not allowed after you have "
 "published your upload."
-msgstr ""
+msgstr "업로드를 게시한 후에는 파일 추가, 제거, 수정이 허용되지 않습니다."
 
 msgid "You must create a new version to add, modify or delete files."
-msgstr ""
+msgstr "파일을 추가, 수정 또는 제거하려면 새 버전을 만들어야 합니다."
 
 msgid "Drag and drop files"
-msgstr ""
+msgstr "파일을 끌어다 놓기"
 
 msgid "Upload files"
-msgstr ""
+msgstr "파일 업로드"
 
 msgid "Import files"
-msgstr ""
+msgstr "파일 가져오기"
 
 msgid "Choose which file to preview on the published record landing page"
-msgstr ""
+msgstr "게시된 레코드 랜딩 페이지에서 미리 볼 파일을 선택하십시오"
 
 msgid "Filename"
-msgstr ""
+msgstr "파일 이름"
 
 msgid "Size"
-msgstr ""
+msgstr "크기"
 
 msgid "Progress"
-msgstr ""
+msgstr "진행률"
 
 msgid "Default preview"
-msgstr ""
+msgstr "기본 미리보기"
 
 msgid ""
 "This is the file fingerprint (MD5 checksum), which can be used to verify the"
 " file integrity."
-msgstr ""
+msgstr "이것은 파일 지문(MD5 체크섬)으로, 파일 무결성을 확인하는 데 사용할 수 있습니다."
 
 msgid "N/A"
-msgstr ""
+msgstr "해당 없음"
 
 msgid "Pending"
-msgstr ""
+msgstr "대기 중"
 
 msgid "Delete file"
-msgstr ""
+msgstr "파일 제거"
 
 msgid "or"
 msgstr "또는"
 
 msgid "This is a Metadata-only record."
-msgstr ""
+msgstr "이것은 메타데이터 전용 레코드입니다."
 
 msgid "Metadata-only record"
-msgstr ""
+msgstr "메타데이터 전용 레코드"
 
 msgid "Disable files for this record"
-msgstr ""
+msgstr "이 레코드의 파일 비활성화"
 
 msgid "Storage available"
-msgstr ""
+msgstr "사용 가능한 저장 공간"
 
 msgid "{{length}} out of {{maxfiles}} files"
-msgstr ""
+msgstr "파일 {{maxfiles}}개 중 {{length}}개"
 
 msgid "out of"
-msgstr ""
+msgstr "중"
 
 msgid "Add identifier"
-msgstr ""
+msgstr "식별자 추가"
 
 msgid "Identifier"
-msgstr ""
+msgstr "식별자"
 
 msgid "Scheme"
-msgstr ""
+msgstr "스킴"
 
 msgid "Do you already have a {{pidLabel}} for this upload?"
-msgstr ""
+msgstr "이 업로드에 대한 {{pidLabel}}이(가) 이미 있으신가요?"
 
 msgid "Yes, I already have one"
-msgstr ""
+msgstr "예, 이미 있습니다"
 
 msgid "No, I need one"
-msgstr ""
+msgstr "아니요, 필요합니다"
 
 msgid "No, I don't need one"
-msgstr ""
+msgstr "아니요, 필요하지 않습니다"
 
 msgid "Search for languages..."
-msgstr ""
+msgstr "언어 검색..."
 
 msgid "Languages"
-msgstr ""
+msgstr "언어"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
-msgstr ""
+msgstr "이름으로 언어 검색 (예: \"eng\", \"fr\" 또는 \"Polish\")"
 
 msgid "Add standard"
-msgstr ""
+msgstr "표준 추가"
 
 msgid "Add custom"
-msgstr ""
+msgstr "직접 추가"
 
 msgid "Licenses"
-msgstr ""
+msgstr "라이선스"
 
 msgid "Read more"
-msgstr ""
+msgstr "자세히 보기"
 
 msgid "Title is a required field."
-msgstr ""
+msgstr "제목은 필수 항목입니다."
 
 msgid "Link must be a valid URL"
-msgstr ""
+msgstr "링크는 올바른 URL이어야 합니다"
 
 msgid "Add {{mode}} license"
-msgstr ""
+msgstr "{{mode}} 라이선스 추가"
 
 msgid "Change {{mode}} license"
-msgstr ""
+msgstr "{{mode}} 라이선스 변경"
 
 msgid "Search for licenses"
-msgstr ""
+msgstr "라이선스 검색"
 
 msgid "Recommended"
-msgstr ""
+msgstr "권장"
 
 msgid "recommended"
-msgstr ""
+msgstr "권장"
 
 msgid "all"
-msgstr ""
+msgstr "전체"
 
 msgid "Data"
-msgstr ""
+msgstr "데이터"
 
 msgid "data"
-msgstr ""
+msgstr "데이터"
 
 msgid "Software"
-msgstr ""
+msgstr "소프트웨어"
 
 msgid "software"
-msgstr ""
+msgstr "소프트웨어"
 
 msgid "Title"
-msgstr ""
-
-msgid "License title"
-msgstr ""
+msgstr "제목"
 
 msgid "Link"
-msgstr ""
-
-msgid "License link"
-msgstr ""
+msgstr "링크"
 
 msgid "Add license"
-msgstr ""
+msgstr "라이선스 추가"
 
 msgid "Change license"
-msgstr ""
+msgstr "라이선스 변경"
 
 msgid "Did not find your license? "
-msgstr ""
+msgstr "라이선스를 찾지 못하셨나요? "
 
 msgid "Add a custom license."
-msgstr ""
+msgstr "사용자 지정 라이선스를 추가하십시오."
 
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
 "use DATE/DATE, e.g. 1939/1945."
 msgstr ""
+"업로드가 이미 다른 곳에서 발행된 경우 최초 발행일을 사용하십시오. 형식: YYYY-MM-DD, YYYY-MM 또는 YYYY. 기간은 "
+"DATE/DATE를 사용하십시오(예: 1939/1945)."
 
 msgid "Publication date"
-msgstr ""
+msgstr "발행일"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
-msgstr ""
+msgstr "YYYY-MM-DD 또는 기간의 경우 YYYY-MM-DD/YYYY-MM-DD. MM과 DD는 선택 사항입니다."
 
 msgid ""
 "The publisher is used to formulate the citation, so consider the prominence "
 "of the role."
-msgstr ""
+msgstr "발행처는 인용을 구성하는 데 사용되므로 역할의 중요성을 고려하십시오."
 
 msgid "Publisher"
-msgstr ""
+msgstr "발행처"
 
 msgid "Add reference"
-msgstr ""
+msgstr "참고문헌 추가"
 
 msgid "Reference string"
-msgstr ""
+msgstr "참고문헌 문자열"
 
 msgid "References"
-msgstr ""
+msgstr "참고문헌"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -773,89 +741,306 @@ msgid ""
 "Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
 "URNs, and URLs."
 msgstr ""
+"관련 자료의 식별자를 지정하십시오. 지원되는 식별자로는 DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed "
+"ID, PubMed Central ID, ADS Bibliographic Code, arXiv, Life Science "
+"Identifiers(LSID), EAN-13, ISTC, URN, URL이 있습니다."
 
 msgid "Add related work"
-msgstr ""
+msgstr "관련 자료 추가"
 
 msgid "Relation"
-msgstr ""
+msgstr "관계"
 
 msgid "Related works"
-msgstr ""
+msgstr "관련 자료"
 
 msgid "Resource type"
-msgstr ""
+msgstr "자원 유형"
 
 msgid "Suggest from"
-msgstr ""
+msgstr "다음에서 제안"
 
 msgid "Keywords and subjects"
-msgstr ""
+msgstr "키워드 및 주제"
 
 msgid "Search for a subject by name"
-msgstr ""
+msgstr "이름으로 주제 검색"
 
 msgid "Add titles"
-msgstr ""
+msgstr "제목 추가"
 
 msgid "Additional title"
-msgstr ""
+msgstr "추가 제목"
 
 msgid "Version"
-msgstr ""
+msgstr "버전"
 
 msgid "On"
-msgstr ""
+msgstr "다음 날짜:"
 
 msgid ""
 "the record will automatically be made publicly accessible. Until then, the "
 "record can"
-msgstr ""
+msgstr "에 레코드가 자동으로 공개됩니다. 그때까지 레코드는"
 
 msgid "only"
-msgstr ""
+msgstr "오직"
 
 msgid "be accessed by"
-msgstr ""
+msgstr "다음에 의해서만 접근할 수 있습니다:"
 
 msgid "users specified"
-msgstr ""
+msgstr "지정된 사용자"
 
 msgid "in the permissions."
-msgstr ""
+msgstr "(권한에 지정됨)."
 
 msgid "The record can"
-msgstr ""
+msgstr "레코드는"
 
 msgid "The record is publicly accessible. The files can"
-msgstr ""
+msgstr "레코드가 공개적으로 접근 가능합니다. 파일은"
 
 msgid "The record is publicly accessible. On"
-msgstr ""
+msgstr "레코드가 공개적으로 접근 가능합니다. 다음 날짜:"
 
 msgid ""
 "the files will automatically be made publicly accessible. Until then, the "
 "files can"
-msgstr ""
+msgstr "에 파일이 자동으로 공개됩니다. 그때까지 파일은"
 
 msgid "Record or files protection must be"
-msgstr ""
+msgstr "레코드 또는 파일 보호가"
 
 msgid "restricted"
-msgstr ""
+msgstr "제한"
 
 msgid "to apply an embargo."
-msgstr ""
+msgstr "(으)로 설정되어야 엠바고를 적용할 수 있습니다."
 
 msgid ""
 "Uploading the selected files would result in {{total}} of storage use, "
 "exceeding the limit of {{limit}}."
-msgstr ""
+msgstr "선택한 파일을 업로드하면 저장 공간 사용량이 {{total}}이(가) 되어 제한 {{limit}}을(를) 초과합니다."
 
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
 "is preferred see"
-msgstr ""
+msgstr "주로 소프트웨어 및 데이터셋 업로드에 해당합니다. 시맨틱 버전 문자열이 권장됩니다. 참고:"
 
 msgid ", but any version string is accepted."
+msgstr ", 다만 어떤 버전 문자열도 허용됩니다."
+
+msgid "Search in all communities"
+msgstr "모든 커뮤니티에서 검색"
+
+msgid "Search in my communities"
+msgstr "내 커뮤니티에서 검색"
+
+msgid ""
+"The request to submit this upload to the community was declined. Please "
+"discard this version and create a new one with the feedback from the review."
+msgstr "이 업로드를 커뮤니티에 제출하려는 요청이 거절되었습니다. 이 버전을 취소하고 검토 피드백을 반영하여 새 버전을 만드십시오."
+
+msgid "Storage"
+msgstr "저장 공간"
+
+msgid "Quota overview"
+msgstr "할당량 개요"
+
+msgid ""
+"You can now manage your record storage by assigning additional quota as "
+"needed."
+msgstr "이제 필요에 따라 추가 할당량을 배정하여 레코드 저장 공간을 관리할 수 있습니다."
+
+msgid "Find out more."
+msgstr "자세히 알아보기."
+
+msgid "Default quota per record"
+msgstr "레코드당 기본 할당량"
+
+msgid "Available of {{total}} GB allowance"
+msgstr "{{total}} GB 허용량 중 사용 가능"
+
+msgid "Quota granted across {{count}} records"
+msgid_plural "Quota granted across {{count}} records"
+msgstr[0] "레코드 {{count}}개에 부여된 할당량"
+
+msgid "Allocated storage"
+msgstr "할당된 저장 공간"
+
+msgid "Record"
+msgstr "레코드"
+
+msgid "Additional quota"
+msgstr "추가 할당량"
+
+msgid "Usage"
+msgstr "사용량"
+
+msgid "Status"
+msgstr "상태"
+
+msgid "{{total}} GB total"
+msgstr "총 {{total}} GB"
+
+msgid "used"
+msgstr "사용됨"
+
+msgid "No allocated storage"
+msgstr "할당된 저장 공간 없음"
+
+msgid "No records have been granted any additional quotas yet."
+msgstr "아직 어떤 레코드에도 추가 할당량이 부여되지 않았습니다."
+
+msgid "If your upload is accepted by the community curators, it will be"
+msgstr "커뮤니티 큐레이터가 업로드를 수락하면"
+
+msgid "immediately published"
+msgstr "즉시 게시됩니다"
+
+msgid ""
+"Before that, you will still be able to modify metadata and files of this "
+"upload."
+msgstr "그 전까지는 이 업로드의 메타데이터와 파일을 수정할 수 있습니다."
+
+msgid "Your upload will be"
+msgstr "업로드가 다음 상태가 됩니다:"
+
+msgid ""
+"in '{{communityTitle}}'. You will no longer be able to change the files in "
+"the upload!"
+msgstr "'{{communityTitle}}'에서. 업로드의 파일을 더 이상 변경할 수 없게 됩니다."
+
+msgid "However, you will still be able to update the record's metadata later."
+msgstr "다만 나중에 레코드의 메타데이터는 계속 업데이트할 수 있습니다."
+
+msgid "Unable to submit request."
+msgstr "요청을 제출할 수 없습니다."
+
+msgid "Unable to display preview. Please correct validation issues in"
+msgstr "미리보기를 표시할 수 없습니다. 다음의 검증 문제를 수정하십시오:"
+
+msgid "Unknown section"
+msgstr "알 수 없는 섹션"
+
+msgid "Authors"
+msgstr "저자"
+
+msgid "Add author"
+msgstr "저자 추가"
+
+msgid "Edit author"
+msgstr "저자 수정"
+
+msgid ""
+"To <1>add, modify or remove files</1>, it is recommended that you create a "
+"new version. A new record is created which tracks the evolution of your "
+"work."
 msgstr ""
+"<1>파일을 추가, 수정 또는 제거</1>하려면 새 버전을 만드는 것이 좋습니다. 작업의 변천을 추적하는 새 레코드가 생성됩니다."
+
+msgid "To <1>correct</1> minor errors, you can unlock the files."
+msgstr "사소한 오류를 <1>수정</1>하려면 파일 잠금을 해제할 수 있습니다."
+
+msgid "It is not possible to modify the files of this record."
+msgstr "이 레코드의 파일은 수정할 수 없습니다."
+
+msgid "Edit published files"
+msgstr "게시된 파일 수정"
+
+msgid "I want to update the files with a new version"
+msgstr "새 버전으로 파일을 업데이트하고 싶습니다"
+
+msgid "Instead, you can make a new version"
+msgstr "대신 새 버전을 만들 수 있습니다"
+
+msgid "Edit files"
+msgstr "파일 수정"
+
+msgid ""
+"Once unlocked you will have {{ daysUntil }} days to publish your changes."
+msgstr "잠금을 해제하면 {{ daysUntil }}일 이내에 변경 사항을 게시해야 합니다."
+
+msgid "File modification checklist:"
+msgstr "파일 수정 체크리스트:"
+
+msgid "Yes"
+msgstr "예"
+
+msgid "No"
+msgstr "아니요"
+
+msgid ""
+"I will not modify files that supplement findings/results of an already "
+"published work."
+msgstr "이미 게시된 저작물의 발견/결과를 보완하는 파일은 수정하지 않겠습니다."
+
+msgid "Unable to unlock files"
+msgstr "파일 잠금을 해제할 수 없습니다"
+
+msgid "Enable file editing"
+msgstr "파일 편집 활성화"
+
+msgid "Checksum not yet calculated."
+msgstr "체크섬이 아직 계산되지 않았습니다."
+
+msgid "Manage storage"
+msgstr "저장 공간 관리"
+
+msgid "Default"
+msgstr "기본"
+
+msgid "Additional"
+msgstr "추가"
+
+msgid "Available"
+msgstr "사용 가능"
+
+msgid "See your <1>storage settings</1> for usage across all records"
+msgstr "모든 레코드의 사용량은 <1>저장 공간 설정</1>에서 확인하십시오"
+
+msgid "Could not submit the quota increase request"
+msgstr "할당량 증가 요청을 제출할 수 없습니다"
+
+msgid ""
+"Each record has a default quota of {{defaultStorage}} GB. You have an "
+"additional allowance of up to {{maxAdditionalStorage}} GB that can be "
+"distributed across your uploads as needed."
+msgstr ""
+"각 레코드에는 기본 할당량 {{defaultStorage}} GB가 있습니다. 필요에 따라 업로드에 배분할 수 있는 추가 허용량이 최대 "
+"{{maxAdditionalStorage}} GB 있습니다."
+
+msgid ""
+"Each record has a default quota of {{defaultStorage}} GB. You have already "
+"used your additional allowance of {{maxAdditionalStorage}} GB across your "
+"uploads."
+msgstr ""
+"각 레코드에는 기본 할당량 {{defaultStorage}} GB가 있습니다. 업로드 전반에서 추가 허용량 "
+"{{maxAdditionalStorage}} GB를 이미 모두 사용했습니다."
+
+msgid "Additional storage"
+msgstr "추가 저장 공간"
+
+msgid "New total:"
+msgstr "새 총계:"
+
+msgid "Unable to increase quota"
+msgstr "할당량을 늘릴 수 없습니다"
+
+msgid "Apply"
+msgstr "적용"
+
+msgid "Search for subjects..."
+msgstr "주제 검색..."
+
+msgid "{{filename}} is already part of this upload."
+msgstr "{{filename}}은(는) 이미 이 업로드에 포함되어 있습니다."
+
+msgid ""
+"Maximum 191 characters. For longer descriptions, use 'Additional "
+"descriptions' with type 'Note'."
+msgstr "최대 191자입니다. 더 긴 설명은 유형 'Note'의 '추가 설명'을 사용하십시오."
+
+msgid "Select a community for this repository's records"
+msgstr "이 저장소의 레코드에 대한 커뮤니티를 선택하십시오"

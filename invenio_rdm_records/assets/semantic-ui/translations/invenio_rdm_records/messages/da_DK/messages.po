@@ -1,17 +1,14 @@
-# Translators:
-# Tibor Simko <tibor.simko@cern.ch>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2026-06-22T20:52:49.860Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Tibor Simko <tibor.simko@cern.ch>, 2026\n"
-"Language-Team: Georgian (https://app.transifex.com/inveniosoftware/teams/23537/ka/)\n"
+"Language-Team: Danish (Denmark) (https://app.transifex.com/inveniosoftware/teams/23537/da_DK/)\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ka\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"Language: da_DK\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "mime-version: 1.0\n"
 
 msgid "Copy to clipboard"
@@ -57,10 +54,10 @@ msgid ""
 msgstr ""
 
 msgid "Cancel"
-msgstr "გაუქმება"
+msgstr ""
 
 msgid "Delete"
-msgstr "წაშლა"
+msgstr ""
 
 msgid "Delete {{title}}"
 msgstr ""
@@ -78,7 +75,7 @@ msgid "Select a community"
 msgstr ""
 
 msgid "Remove"
-msgstr "წაშლა"
+msgstr ""
 
 msgid "Community inclusion information"
 msgstr ""
@@ -105,7 +102,7 @@ msgid "Selected"
 msgstr ""
 
 msgid "Select"
-msgstr "არჩევა"
+msgstr ""
 
 msgid "Select {{title}}"
 msgstr ""
@@ -117,13 +114,13 @@ msgid "Close"
 msgstr ""
 
 msgid "All"
-msgstr "ყველა"
+msgstr ""
 
 msgid "My communities"
 msgstr ""
 
 msgid "Search"
-msgstr "ძებნა"
+msgstr ""
 
 msgid "In review"
 msgstr ""
@@ -180,7 +177,7 @@ msgid "discard version"
 msgstr ""
 
 msgid "delete"
-msgstr "წაშლა"
+msgstr ""
 
 msgid "Are you sure you want to discard the changes to this draft?"
 msgstr ""
@@ -210,7 +207,7 @@ msgid ""
 msgstr ""
 
 msgid "Publish"
-msgstr "გამოქვეყნება"
+msgstr ""
 
 msgid "Submitted for review"
 msgstr ""
@@ -327,7 +324,7 @@ msgid ""
 msgstr ""
 
 msgid "Options"
-msgstr "პარამეტრები"
+msgstr ""
 
 msgid "Public"
 msgstr ""
@@ -414,7 +411,7 @@ msgid "Copyright"
 msgstr ""
 
 msgid "Edit"
-msgstr "რედაქტირება"
+msgstr ""
 
 msgid "ORCID logo"
 msgstr ""
@@ -471,7 +468,7 @@ msgid "Search for organization by name, identifier, or affiliation..."
 msgstr ""
 
 msgid "Name"
-msgstr "სახელი"
+msgstr ""
 
 msgid "Organization name"
 msgstr ""
@@ -486,7 +483,7 @@ msgid "Select role"
 msgstr ""
 
 msgid "Save"
-msgstr "დამახსოვრება"
+msgstr ""
 
 msgid "Add date"
 msgstr ""
@@ -495,13 +492,13 @@ msgid "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
 msgstr ""
 
 msgid "Date"
-msgstr "თარიღი"
+msgstr ""
 
 msgid "Type"
-msgstr "ტიპი "
+msgstr ""
 
 msgid "Description"
-msgstr "აღწერა"
+msgstr ""
 
 msgid "Remove field"
 msgstr ""
@@ -577,16 +574,16 @@ msgid ""
 msgstr ""
 
 msgid "N/A"
-msgstr "არ არის ხელმისაწვდომი"
+msgstr ""
 
 msgid "Pending"
-msgstr "რიგშია"
+msgstr ""
 
 msgid "Delete file"
 msgstr ""
 
 msgid "or"
-msgstr "ან"
+msgstr ""
 
 msgid "This is a Metadata-only record."
 msgstr ""
@@ -685,7 +682,7 @@ msgid "software"
 msgstr ""
 
 msgid "Title"
-msgstr "სათაური"
+msgstr ""
 
 msgid "Link"
 msgstr ""
@@ -709,7 +706,7 @@ msgid ""
 msgstr ""
 
 msgid "Publication date"
-msgstr "გამოქვეყნების თარიღი"
+msgstr ""
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -721,7 +718,7 @@ msgid ""
 msgstr ""
 
 msgid "Publisher"
-msgstr "გამომქვეყნებელი"
+msgstr ""
 
 msgid "Add reference"
 msgstr ""
@@ -730,7 +727,7 @@ msgid "Reference string"
 msgstr ""
 
 msgid "References"
-msgstr "წყაროები"
+msgstr ""
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -807,7 +804,7 @@ msgid "Record or files protection must be"
 msgstr ""
 
 msgid "restricted"
-msgstr "აკრძალული"
+msgstr ""
 
 msgid "to apply an embargo."
 msgstr ""
@@ -865,7 +862,7 @@ msgid "Allocated storage"
 msgstr ""
 
 msgid "Record"
-msgstr "ჩანაწერი"
+msgstr ""
 
 msgid "Additional quota"
 msgstr ""
@@ -874,7 +871,7 @@ msgid "Usage"
 msgstr ""
 
 msgid "Status"
-msgstr "სტატუსი"
+msgstr ""
 
 msgid "{{total}} GB total"
 msgstr ""
@@ -960,10 +957,10 @@ msgid "File modification checklist:"
 msgstr ""
 
 msgid "Yes"
-msgstr "დიახ"
+msgstr ""
 
 msgid "No"
-msgstr "არა"
+msgstr ""
 
 msgid ""
 "I will not modify files that supplement findings/results of an already "
@@ -1019,7 +1016,7 @@ msgid "Unable to increase quota"
 msgstr ""
 
 msgid "Apply"
-msgstr "გამოყენება"
+msgstr ""
 
 msgid "Search for subjects..."
 msgstr ""
