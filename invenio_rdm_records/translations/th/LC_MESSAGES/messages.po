@@ -5,7 +5,7 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 # 
 # Translators:
-# Tibor Simko <tibor.simko@cern.ch>, 2026
+# Suthep Yonphimai <tomztt@gmail.com>, 2026
 # 
 #, fuzzy
 msgid ""
@@ -14,13 +14,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
 "POT-Creation-Date: 2026-06-22 20:52+0000\n"
 "PO-Revision-Date: 2021-07-12 14:31+0000\n"
-"Last-Translator: Tibor Simko <tibor.simko@cern.ch>, 2026\n"
-"Language-Team: Japanese (https://app.transifex.com/inveniosoftware/teams/23537/ja/)\n"
+"Last-Translator: Suthep Yonphimai <tomztt@gmail.com>, 2026\n"
+"Language-Team: Thai (https://app.transifex.com/inveniosoftware/teams/23537/th/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
-"Language: ja\n"
+"Language: th\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: invenio_rdm_records/config.py:100 invenio_rdm_records/config.py:566
@@ -47,7 +47,7 @@ msgstr ""
 #: tests/services/pids/test_pids_tasks.py:65
 #: tests/services/pids/test_pids_tasks.py:74
 msgid "DOI"
-msgstr ""
+msgstr "DOI"
 
 #: invenio_rdm_records/config.py:591 tests/conftest.py:294
 #: tests/services/pids/providers/conftest.py:49
@@ -56,7 +56,7 @@ msgstr ""
 #: tests/services/pids/test_parent_child_consistency.py:56
 #: tests/services/pids/test_pids_tasks.py:79
 msgid "OAI ID"
-msgstr ""
+msgstr "OAI ID"
 
 #: invenio_rdm_records/config.py:639 invenio_rdm_records/config.py:649
 #: tests/conftest.py:303
@@ -69,7 +69,7 @@ msgstr ""
 #: tests/services/pids/test_pids_tasks.py:89
 #: tests/services/pids/test_pids_tasks.py:96
 msgid "Concept DOI"
-msgstr ""
+msgstr "Concept DOI"
 
 #: invenio_rdm_records/config.py:619 tests/conftest.py:322
 #: tests/services/pids/providers/conftest.py:64
@@ -77,167 +77,167 @@ msgstr ""
 #: tests/services/pids/providers/test_crossref_republish.py:100
 #: tests/services/pids/test_parent_child_consistency.py:88
 msgid "OAI"
-msgstr ""
+msgstr "OAI"
 
 #: invenio_rdm_records/config.py:80
 msgid "ORCID"
-msgstr ""
+msgstr "ORCID"
 
 #: invenio_rdm_records/config.py:81 invenio_rdm_records/config.py:111
 msgid "ISNI"
-msgstr ""
+msgstr "ISNI"
 
 #: invenio_rdm_records/config.py:82
 msgid "GND"
-msgstr ""
+msgstr "GND"
 
 #: invenio_rdm_records/config.py:83
 msgid "ROR"
-msgstr ""
+msgstr "ROR"
 
 #: invenio_rdm_records/config.py:87
 msgid "ARK"
-msgstr ""
+msgstr "ARK"
 
 #: invenio_rdm_records/config.py:88
 msgid "arXiv"
-msgstr ""
+msgstr "arXiv"
 
 #: invenio_rdm_records/config.py:90
 msgid "Bibcode"
-msgstr ""
+msgstr "Bibcode"
 
 #: invenio_rdm_records/config.py:95
 msgid "Crossref Funder ID"
-msgstr ""
+msgstr "Crossref Funder ID"
 
 #: invenio_rdm_records/config.py:99
 msgid "CSTR"
-msgstr ""
+msgstr "CSTR"
 
 #: invenio_rdm_records/config.py:101
 msgid "EAN13"
-msgstr ""
+msgstr "EAN13"
 
 #: invenio_rdm_records/config.py:102
 msgid "EISSN"
-msgstr ""
+msgstr "EISSN"
 
 #: invenio_rdm_records/config.py:103
 msgid "GRID"
-msgstr ""
+msgstr "GRID"
 
 #: invenio_rdm_records/config.py:105
 msgid "Handle"
-msgstr ""
+msgstr "Handle"
 
 #: invenio_rdm_records/config.py:109
 msgid "IGSN"
-msgstr ""
+msgstr "IGSN"
 
 #: invenio_rdm_records/config.py:110
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:83
 #: invenio_rdm_records/templates/semantic-ui/imprint.html:16
 msgid "ISBN"
-msgstr ""
+msgstr "ISBN"
 
 #: invenio_rdm_records/config.py:112
 #: invenio_rdm_records/contrib/journal/custom_fields.py:102
 #: invenio_rdm_records/templates/semantic-ui/journal.html:27
 msgid "ISSN"
-msgstr ""
+msgstr "ISSN"
 
 #: invenio_rdm_records/config.py:113
 msgid "ISTC"
-msgstr ""
+msgstr "ISTC"
 
 #: invenio_rdm_records/config.py:114
 msgid "LISSN"
-msgstr ""
+msgstr "LISSN"
 
 #: invenio_rdm_records/config.py:115
 msgid "LSID"
-msgstr ""
+msgstr "LSID"
 
 #: invenio_rdm_records/config.py:116
 msgid "PMID"
-msgstr ""
+msgstr "PMID"
 
 #: invenio_rdm_records/config.py:117
 msgid "PURL"
-msgstr ""
+msgstr "PURL"
 
 #: invenio_rdm_records/config.py:118
 msgid "RRID"
-msgstr ""
+msgstr "RRID"
 
 #: invenio_rdm_records/config.py:119
 msgid "UPC"
-msgstr ""
+msgstr "UPC"
 
 #: invenio_rdm_records/config.py:120
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: invenio_rdm_records/config.py:121
 msgid "URN"
-msgstr ""
+msgstr "URN"
 
 #: invenio_rdm_records/config.py:123 invenio_rdm_records/config.py:137
 msgid "Wikidata"
-msgstr ""
+msgstr "Wikidata"
 
 #: invenio_rdm_records/config.py:127
 msgid "W3ID"
-msgstr ""
+msgstr "W3ID"
 
 #: invenio_rdm_records/config.py:128
 msgid "Other"
-msgstr ""
+msgstr "อื่นๆ"
 
 #: invenio_rdm_records/config.py:138
 msgid "GeoNames"
-msgstr ""
+msgstr "GeoNames"
 
 #: invenio_rdm_records/config.py:416
 msgid "Best match"
-msgstr ""
+msgstr "ตรงที่สุด"
 
 #: invenio_rdm_records/config.py:420
 msgid "Newest"
-msgstr ""
+msgstr "ใหม่ที่สุด"
 
 #: invenio_rdm_records/config.py:424
 msgid "Oldest"
-msgstr ""
+msgstr "เก่าที่สุด"
 
 #: invenio_rdm_records/config.py:428
 msgid "Version"
-msgstr ""
+msgstr "เวอร์ชัน"
 
 #: invenio_rdm_records/config.py:432
 msgid "Recently updated"
-msgstr ""
+msgstr "อัปเดตล่าสุด"
 
 #: invenio_rdm_records/config.py:436
 msgid "Least recently updated"
-msgstr ""
+msgstr "อัปเดตนานที่สุด"
 
 #: invenio_rdm_records/config.py:440
 msgid "Most viewed"
-msgstr ""
+msgstr "ดูมากที่สุด"
 
 #: invenio_rdm_records/config.py:443
 msgid "Most downloaded"
-msgstr ""
+msgstr "ดาวน์โหลดมากที่สุด"
 
 #: invenio_rdm_records/config.py:446
 msgid "Newest activity"
-msgstr ""
+msgstr "กิจกรรมล่าสุด"
 
 #: invenio_rdm_records/config.py:450
 msgid "Oldest activity"
-msgstr ""
+msgstr "กิจกรรมเก่าสุด"
 
 #: invenio_rdm_records/administration/views/oai.py:36
 #: invenio_rdm_records/administration/views/oai.py:65
@@ -245,7 +245,7 @@ msgstr ""
 #: invenio_rdm_records/administration/views/oai.py:145
 #: invenio_rdm_records/config.py:534
 msgid "Set name"
-msgstr ""
+msgstr "ชื่อชุดข้อมูล"
 
 #: invenio_rdm_records/administration/views/oai.py:35
 #: invenio_rdm_records/administration/views/oai.py:70
@@ -253,66 +253,66 @@ msgstr ""
 #: invenio_rdm_records/administration/views/oai.py:146
 #: invenio_rdm_records/config.py:538
 msgid "Set spec"
-msgstr ""
+msgstr "รหัสชุดข้อมูล"
 
 #: invenio_rdm_records/administration/views/oai.py:38
 #: invenio_rdm_records/administration/views/oai.py:148
 #: invenio_rdm_records/config.py:542
 #: invenio_rdm_records/oaiserver/services/config.py:50
 msgid "Created"
-msgstr ""
+msgstr "สร้างเมื่อ"
 
 #: invenio_rdm_records/administration/views/oai.py:39
 #: invenio_rdm_records/administration/views/oai.py:149
 #: invenio_rdm_records/config.py:546
 #: invenio_rdm_records/oaiserver/services/config.py:54
 msgid "Updated"
-msgstr ""
+msgstr "อัปเดตเมื่อ"
 
 #: invenio_rdm_records/ext.py:318
 #, python-format
 msgid "%(icon)s Storage"
-msgstr ""
+msgstr "%(icon)s พื้นที่จัดเก็บ"
 
 #: invenio_rdm_records/utils.py:113
 msgid "Your shared link has expired."
-msgstr ""
+msgstr "ลิงก์ที่แชร์ของคุณหมดอายุแล้ว"
 
 #: invenio_rdm_records/administration/views/oai.py:24
 msgid "OAI-PMH Sets"
-msgstr ""
+msgstr "ชุดข้อมูล OAI-PMH"
 
 #: invenio_rdm_records/administration/views/oai.py:25
 msgid "Site management"
-msgstr ""
+msgstr "การจัดการเว็บไซต์"
 
 #: invenio_rdm_records/administration/views/oai.py:37
 #: invenio_rdm_records/administration/views/oai.py:78
 #: invenio_rdm_records/administration/views/oai.py:118
 #: invenio_rdm_records/administration/views/oai.py:147
 msgid "Search query"
-msgstr ""
+msgstr "คำค้นหา"
 
 #: invenio_rdm_records/administration/views/oai.py:58
 msgid "Edit OAI-PMH set"
-msgstr ""
+msgstr "แก้ไขชุดข้อมูล OAI-PMH"
 
 #: invenio_rdm_records/administration/views/oai.py:60
 #: invenio_rdm_records/administration/views/oai.py:100
 #: invenio_rdm_records/administration/views/oai.py:141
 msgid "OAI-PMH"
-msgstr ""
+msgstr "OAI-PMH"
 
 #: invenio_rdm_records/administration/views/oai.py:66
 #: invenio_rdm_records/administration/views/oai.py:106
 msgid "A short human-readable string naming the set."
-msgstr ""
+msgstr "ข้อความสั้นที่อ่านได้สำหรับตั้งชื่อชุดข้อมูล"
 
 #: invenio_rdm_records/administration/views/oai.py:72
 #: invenio_rdm_records/administration/views/oai.py:112
 msgid ""
 "An identifier for the set, which cannot be edited after the set is created."
-msgstr ""
+msgstr "ตัวระบุสำหรับชุดข้อมูล ซึ่งไม่สามารถแก้ไขได้หลังจากสร้างชุดข้อมูลแล้ว"
 
 #: invenio_rdm_records/administration/views/oai.py:80
 #: invenio_rdm_records/administration/views/oai.py:120
@@ -320,26 +320,29 @@ msgid ""
 "See the supported query syntax in the <a href='/help/search'>Search "
 "Guide</a>."
 msgstr ""
+"ดูไวยากรณ์การค้นหาที่รองรับได้ใน<a href='/help/search'>คู่มือการค้นหา</a>"
 
 #: invenio_rdm_records/administration/views/oai.py:98
 msgid "Create OAI-PMH set"
-msgstr ""
+msgstr "สร้างชุดข้อมูล OAI-PMH"
 
 #: invenio_rdm_records/administration/views/oai.py:135
 msgid "OAI-PMH Details"
-msgstr ""
+msgstr "รายละเอียด OAI-PMH"
 
 #: invenio_rdm_records/auditlog/actions.py:43
 #, python-brace-format
 msgid ""
 "User {user_id} updated access of {resource_type} {resource_id} via record."
 msgstr ""
+"ผู้ใช้ {user_id} อัปเดตการเข้าถึง {resource_type} {resource_id} ผ่านระเบียน"
 
 #: invenio_rdm_records/auditlog/actions.py:64
 #, python-brace-format
 msgid ""
 "User {user_id} updated access of {resource_type} {resource_id} via draft."
 msgstr ""
+"ผู้ใช้ {user_id} อัปเดตการเข้าถึง {resource_type} {resource_id} ผ่านฉบับร่าง"
 
 #: invenio_rdm_records/auditlog/actions.py:85
 #, python-brace-format
@@ -347,6 +350,7 @@ msgid ""
 "User {user_id} updated secret link of {resource_type} {resource_id} via "
 "record."
 msgstr ""
+"ผู้ใช้ {user_id} อัปเดตลิงก์ลับของ {resource_type} {resource_id} ผ่านระเบียน"
 
 #: invenio_rdm_records/auditlog/actions.py:100
 #, python-brace-format
@@ -354,6 +358,8 @@ msgid ""
 "User {user_id} updated secret link of {resource_type} {resource_id} via "
 "draft."
 msgstr ""
+"ผู้ใช้ {user_id} อัปเดตลิงก์ลับของ {resource_type} {resource_id} "
+"ผ่านฉบับร่าง"
 
 #: invenio_rdm_records/auditlog/actions.py:109
 #, python-brace-format
@@ -361,6 +367,8 @@ msgid ""
 "User {user_id} updated access settings of {resource_type} {resource_id} via "
 "record."
 msgstr ""
+"ผู้ใช้ {user_id} อัปเดตการตั้งค่าการเข้าถึง {resource_type} {resource_id} "
+"ผ่านระเบียน"
 
 #: invenio_rdm_records/auditlog/actions.py:124
 #, python-brace-format
@@ -368,124 +376,126 @@ msgid ""
 "User {user_id} updated access settings of {resource_type} {resource_id} via "
 "draft."
 msgstr ""
+"ผู้ใช้ {user_id} อัปเดตการตั้งค่าการเข้าถึง {resource_type} {resource_id} "
+"ผ่านฉบับร่าง"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:33
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:44
 msgid "You must provide a valid URL."
-msgstr ""
+msgstr "กรุณาระบุ URL ที่ถูกต้อง"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:51
 msgid "Software"
-msgstr ""
+msgstr "ซอฟต์แวร์"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:58
 msgid "Repository URL"
-msgstr ""
+msgstr "URL ของที่เก็บโค้ด"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:60
 msgid "URL or link where the code repository is hosted."
-msgstr ""
+msgstr "URL หรือลิงก์ที่โฮสต์ที่เก็บโค้ด"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:67
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:108
 msgid "Programming language"
-msgstr ""
+msgstr "ภาษาโปรแกรม"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:69
 msgid "Repository's programming language."
-msgstr ""
+msgstr "ภาษาโปรแกรมของที่เก็บโค้ด"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:70
 msgid "e.g. Python ..."
-msgstr ""
+msgstr "เช่น Python ..."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:82
 msgid "Development Status"
-msgstr ""
+msgstr "สถานะการพัฒนา"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:83
 msgid "Repository status"
-msgstr ""
+msgstr "สถานะที่เก็บโค้ด"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:85
 msgid "Repository current status."
-msgstr ""
+msgstr "สถานะปัจจุบันของที่เก็บโค้ด"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:98
 msgid "Development status"
-msgstr ""
+msgstr "สถานะการพัฒนา"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:33
 msgid "Please provide a valid ISBN."
-msgstr ""
+msgstr "กรุณาระบุ ISBN ที่ถูกต้อง"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:69
 msgid "Book / Report / Conference proceedings"
-msgstr ""
+msgstr "หนังสือ / รายงาน / เอกสารการประชุม"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:76
 msgid "Imprint (Book, Report, or Conference proceedings)"
-msgstr ""
+msgstr "สำนักพิมพ์ (หนังสือ รายงาน หรือเอกสารการประชุม)"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:78
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:117
 #: invenio_rdm_records/templates/semantic-ui/imprint.html:11
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:21
 msgid "Place"
-msgstr ""
+msgstr "สถานที่"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:79
 msgid "e.g. city, country"
-msgstr ""
+msgstr "เช่น เมือง ประเทศ"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:80
 msgid "Place where the book or report was published"
-msgstr ""
+msgstr "สถานที่ที่หนังสือหรือรายงานได้รับการเผยแพร่"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:84
 msgid "e.g. 0-06-251587-X"
-msgstr ""
+msgstr "เช่น 0-06-251587-X"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:85
 msgid "International Standard Book Number"
-msgstr ""
+msgstr "เลขมาตรฐานสากลประจำหนังสือ"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:88
 msgid "Book, report, or proceedings title"
-msgstr ""
+msgstr "ชื่อหนังสือ รายงาน หรือเอกสารการประชุม"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:91
 msgid "Title of the book, report, or proceedings which this upload is part of"
-msgstr ""
+msgstr "ชื่อหนังสือ รายงาน หรือเอกสารการประชุมที่การอัปโหลดนี้เป็นส่วนหนึ่ง"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:95
 msgid "Pagination"
-msgstr ""
+msgstr "หน้า"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:96
 msgid "e.g. 15-23 or 158"
-msgstr ""
+msgstr "เช่น 15-23 หรือ 158"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:100
 msgid "Edition"
-msgstr ""
+msgstr "ฉบับที่"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:101
 msgid "e.g. 3"
-msgstr ""
+msgstr "เช่น 3"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:102
 msgid "The edition of the book"
-msgstr ""
+msgstr "ฉบับที่ของหนังสือ"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:36
 msgid "Please provide a valid ISSN."
-msgstr ""
+msgstr "กรุณาระบุ ISSN ที่ถูกต้อง"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:71
 #: invenio_rdm_records/contrib/journal/custom_fields.py:78
 msgid "Journal"
-msgstr ""
+msgstr "วารสาร"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:80
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:102
@@ -493,447 +503,450 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/journal.html:7
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:6
 msgid "Title"
-msgstr "タイトル"
+msgstr "ชื่อเรื่อง"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:83
 msgid "Title of the journal in which the article was published"
-msgstr ""
+msgstr "ชื่อวารสารที่บทความได้รับการเผยแพร่"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:87
 #: invenio_rdm_records/templates/semantic-ui/journal.html:12
 msgid "Volume"
-msgstr ""
+msgstr "เล่มที่"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:88
 msgid "e.g. 645"
-msgstr ""
+msgstr "เช่น 645"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:92
 #: invenio_rdm_records/templates/semantic-ui/journal.html:17
 msgid "Issue"
-msgstr ""
+msgstr "ฉบับที่"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:93
 msgid "e.g. 7"
-msgstr ""
+msgstr "เช่น 7"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:97
 msgid "Page range or article number"
-msgstr ""
+msgstr "ช่วงหน้าหรือหมายเลขบทความ"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:98
 msgid "e.g. 15-23 or A29"
-msgstr ""
+msgstr "เช่น 15-23 หรือ A29"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:103
 msgid "e.g. 2077-9550"
-msgstr ""
+msgstr "เช่น 2077-9550"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:104
 msgid "International Standard Serial Number"
-msgstr ""
+msgstr "เลขมาตรฐานสากลประจำวารสาร"
 
 #: invenio_rdm_records/contrib/journal/sort.py:10
 msgid "Journal [Newest]"
-msgstr ""
+msgstr "วารสาร [ใหม่ที่สุด]"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:94
 msgid "Conference"
-msgstr ""
+msgstr "การประชุม"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:107
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:11
 msgid "Acronym"
-msgstr ""
+msgstr "ชื่อย่อ"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:112
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:16
 msgid "Dates"
-msgstr ""
+msgstr "วันที่"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:113
 msgid "e.g. 21-22 November 2022."
-msgstr ""
+msgstr "เช่น 21-22 พฤศจิกายน 2565"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:119
 msgid "Location where the conference took place."
-msgstr ""
+msgstr "สถานที่จัดการประชุม"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:122
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:26
 msgid "Website"
-msgstr ""
+msgstr "เว็บไซต์"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:127
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:31
 msgid "Session"
-msgstr ""
+msgstr "ช่วง"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:128
 msgid "e.g. VI"
-msgstr ""
+msgstr "เช่น VI"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:129
 msgid "Session within the conference."
-msgstr ""
+msgstr "ช่วงภายในการประชุม"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:132
 msgid "Part"
-msgstr ""
+msgstr "ส่วน"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:133
 msgid "e.g. 1"
-msgstr ""
+msgstr "เช่น 1"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:134
 msgid "Part within the session."
-msgstr ""
+msgstr "ส่วนภายในช่วงการประชุม"
 
 #: invenio_rdm_records/contrib/meeting/sort.py:10
 msgid "Conference session [Newest]"
-msgstr ""
+msgstr "ช่วงการประชุม [ใหม่ที่สุด]"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:60
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:67
 msgid "Thesis"
-msgstr ""
+msgstr "วิทยานิพนธ์"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:70
 #: invenio_rdm_records/templates/semantic-ui/thesis.html:6
 msgid "Awarding university"
-msgstr ""
+msgstr "มหาวิทยาลัยที่มอบปริญญา"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:75
 #: invenio_rdm_records/templates/semantic-ui/thesis.html:11
 msgid "Awarding department"
-msgstr ""
+msgstr "ภาควิชาที่มอบปริญญา"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:80
 #: invenio_rdm_records/templates/semantic-ui/thesis.html:16
 msgid "Thesis type"
-msgstr ""
+msgstr "ประเภทวิทยานิพนธ์"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:81
 msgid "PhD"
-msgstr ""
+msgstr "ปริญญาเอก"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:83
 msgid "The type of thesis (e.g. Masters, PhD, Engineers, Bachelors)"
-msgstr ""
+msgstr "ประเภทของวิทยานิพนธ์ (เช่น ปริญญาโท ปริญญาเอก วิศวกร ปริญญาตรี)"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:87
 #: invenio_rdm_records/templates/semantic-ui/thesis.html:21
 msgid "Submission date"
-msgstr ""
+msgstr "วันที่ยื่น"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:89
 msgid "Submission date in YYYY-MM-DD format."
-msgstr ""
+msgstr "วันที่ยื่นในรูปแบบ YYYY-MM-DD"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:92
 #: invenio_rdm_records/templates/semantic-ui/thesis.html:26
 msgid "Defense date"
-msgstr ""
+msgstr "วันที่สอบป้องกัน"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:94
 msgid "Defense date in YYYY-MM-DD format."
-msgstr ""
+msgstr "วันที่สอบป้องกันในรูปแบบ YYYY-MM-DD"
 
 #: invenio_rdm_records/jobs/jobs.py:17
 msgid "Updates expired embargoes"
-msgstr ""
+msgstr "อัปเดตการระงับการเข้าถึงที่หมดอายุ"
 
 #: invenio_rdm_records/jobs/jobs.py:18
 msgid "Update expired embargoes"
-msgstr ""
+msgstr "อัปเดตการระงับการเข้าถึงที่หมดอายุ"
 
 #: invenio_rdm_records/oaiserver/services/config.py:31
 msgid "Ascending"
-msgstr ""
+msgstr "จากน้อยไปมาก"
 
 #: invenio_rdm_records/oaiserver/services/config.py:35
 msgid "Descending"
-msgstr ""
+msgstr "จากมากไปน้อย"
 
 #: invenio_rdm_records/oaiserver/services/config.py:42
 msgid "Name"
-msgstr "名前"
+msgstr "ชื่อ"
 
 #: invenio_rdm_records/oaiserver/services/config.py:46
 msgid "Spec"
-msgstr ""
+msgstr "รหัส"
 
 #: invenio_rdm_records/oaiserver/services/errors.py:26
 #, python-format
 msgid "A set where %(query_arguments)s does not exist."
-msgstr ""
+msgstr "ไม่พบชุดข้อมูลที่มีเงื่อนไข %(query_arguments)s"
 
 #: invenio_rdm_records/oaiserver/services/errors.py:37
 #, python-format
 msgid "A set with id %(id)s does not exist."
-msgstr ""
+msgstr "ไม่พบชุดข้อมูลที่มีรหัส %(id)s"
 
 #: invenio_rdm_records/oaiserver/services/errors.py:46
 #, python-format
 msgid "A set with spec '%(spec)s' already exists."
-msgstr ""
+msgstr "ชุดข้อมูลที่มีรหัส '%(spec)s' มีอยู่แล้ว"
 
 #: invenio_rdm_records/oaiserver/services/errors.py:56
 #, python-format
 msgid "The set with id %(id)s is not editable."
-msgstr ""
+msgstr "ชุดข้อมูลที่มีรหัส %(id)s ไม่สามารถแก้ไขได้"
 
 #: invenio_rdm_records/oaiserver/services/schema.py:26
 msgid "Search pattern"
-msgstr ""
+msgstr "รูปแบบการค้นหา"
 
 #: invenio_rdm_records/oaiserver/services/services.py:97
 #, python-brace-format
 msgid "The spec must not start with any of the following list '{prefix}'."
-msgstr ""
+msgstr "รหัสต้องไม่ขึ้นต้นด้วยรายการต่อไปนี้ '{prefix}'"
 
 #: invenio_rdm_records/oaiserver/services/services.py:109
 #, python-brace-format
 msgid "The spec must only consist of letters, numbers or {marks}."
-msgstr ""
+msgstr "รหัสต้องประกอบด้วยตัวอักษร ตัวเลข หรือ {marks} เท่านั้น"
 
 #: invenio_rdm_records/records/systemfields/draft_status.py:95
 #, python-brace-format
 msgid "Unknown draft status for review: {reviewstatus}."
-msgstr ""
+msgstr "สถานะฉบับร่างที่ไม่รู้จักสำหรับการพิจารณา: {reviewstatus}"
 
 #: invenio_rdm_records/requests/community_inclusion.py:98
 msgid "Community inclusion"
-msgstr ""
+msgstr "การรวมเข้าชุมชน"
 
 #: invenio_rdm_records/requests/community_submission.py:215
 msgid "Community submission"
-msgstr ""
+msgstr "การส่งเข้าชุมชน"
 
 #: invenio_rdm_records/requests/file_modification.py:27
 msgid "A file modification request for this record already exists."
-msgstr ""
+msgstr "มีคำขอแก้ไขไฟล์สำหรับระเบียนนี้อยู่แล้ว"
 
 #: invenio_rdm_records/requests/file_modification.py:31
 #, python-brace-format
 msgid "File modification request for \"{record_title}\""
-msgstr ""
+msgstr "คำขอแก้ไขไฟล์สำหรับ \"{record_title}\""
 
 #: invenio_rdm_records/requests/file_modification.py:69
 msgid "File modification"
-msgstr ""
+msgstr "การแก้ไขไฟล์"
 
 #: invenio_rdm_records/requests/quota_increase.py:27
 #, python-format
 msgid "Quota increase request for \"%(record_title)s\""
-msgstr ""
+msgstr "คำขอเพิ่มโควต้าสำหรับ \"%(record_title)s\""
 
 #: invenio_rdm_records/requests/quota_increase.py:31
 msgid "Quota increase request"
-msgstr ""
+msgstr "คำขอเพิ่มโควต้า"
 
 #: invenio_rdm_records/requests/quota_increase.py:57
 msgid "Quota increase"
-msgstr ""
+msgstr "การเพิ่มโควต้า"
 
 #: invenio_rdm_records/requests/record_deletion.py:36
 msgid "A deletion request for this record already exists."
-msgstr ""
+msgstr "มีคำขอลบสำหรับระเบียนนี้อยู่แล้ว"
 
 #: invenio_rdm_records/requests/record_deletion.py:41
 #, python-format
 msgid "Deletion request for \"%(record_title)s\""
-msgstr ""
+msgstr "คำขอลบสำหรับ \"%(record_title)s\""
 
 #: invenio_rdm_records/requests/record_deletion.py:62
 msgid "Invalid removal reason"
-msgstr ""
+msgstr "เหตุผลการลบไม่ถูกต้อง"
 
 #: invenio_rdm_records/requests/record_deletion.py:132
 msgid "Record deletion"
-msgstr ""
+msgstr "การลบระเบียน"
 
 #: invenio_rdm_records/requests/access/requests.py:189
 #, python-format
 msgid "Click <a href=\"%(url)s\">here</a> to access the record."
-msgstr ""
+msgstr "คลิก<a href=\"%(url)s\">ที่นี่</a>เพื่อเข้าถึงระเบียน"
 
 #: invenio_rdm_records/requests/access/requests.py:270
 #: invenio_rdm_records/requests/access/requests.py:307
 msgid "Access request"
-msgstr ""
+msgstr "คำขอสิทธิ์เข้าถึง"
 
 #: invenio_rdm_records/requests/access/requests.py:354
 #: invenio_rdm_records/requests/access/requests.py:359
 msgid "Not a valid number of days."
-msgstr ""
+msgstr "จำนวนวันไม่ถูกต้อง"
 
 #: invenio_rdm_records/resources/config.py:155
 msgid "Citation string style not found."
-msgstr ""
+msgstr "ไม่พบรูปแบบการอ้างอิง"
 
 #: invenio_rdm_records/resources/config.py:161
 msgid "Review for draft not found"
-msgstr ""
+msgstr "ไม่พบการพิจารณาสำหรับฉบับร่าง"
 
 #: invenio_rdm_records/resources/config.py:199
 #: invenio_rdm_records/resources/config.py:210
 #: invenio_rdm_records/resources/config.py:310
 #: invenio_rdm_records/resources/config.py:360
 msgid "Record not found"
-msgstr ""
+msgstr "ไม่พบระเบียน"
 
 #: invenio_rdm_records/resources/config.py:203
 #: invenio_rdm_records/resources/config.py:314
 #: invenio_rdm_records/resources/config.py:364
 msgid "Record deleted"
-msgstr ""
+msgstr "ระเบียนถูกลบแล้ว"
 
 #: invenio_rdm_records/resources/config.py:214
 msgid "Record in unexpected deletion status."
-msgstr ""
+msgstr "ระเบียนอยู่ในสถานะการลบที่ไม่คาดคิด"
 
 #: invenio_rdm_records/resources/config.py:227
 msgid "Cannot publish without selecting a community."
-msgstr ""
+msgstr "ไม่สามารถเผยแพร่ได้โดยไม่เลือกชุมชน"
 
 #: invenio_rdm_records/resources/config.py:413
 msgid "No secret link found with the given ID."
-msgstr ""
+msgstr "ไม่พบลิงก์ลับที่มีรหัสที่ระบุ"
 
 #: invenio_rdm_records/resources/config.py:421
 msgid "No grant found with the given ID."
-msgstr ""
+msgstr "ไม่พบสิทธิ์การเข้าถึงที่มีรหัสที่ระบุ"
 
 #: invenio_rdm_records/resources/config.py:434
 msgid "No grant found by given user id."
-msgstr ""
+msgstr "ไม่พบสิทธิ์การเข้าถึงตามรหัสผู้ใช้ที่ระบุ"
 
 #: invenio_rdm_records/resources/config.py:441
 msgid "No grant found by given group id."
-msgstr ""
+msgstr "ไม่พบสิทธิ์การเข้าถึงตามรหัสกลุ่มที่ระบุ"
 
 #: invenio_rdm_records/resources/errors.py:18
 msgid "A validation error occurred."
-msgstr ""
+msgstr "เกิดข้อผิดพลาดในการตรวจสอบ"
 
 #: invenio_rdm_records/resources/iiif.py:97
 msgid "Image size limit exceeded"
-msgstr ""
+msgstr "ขนาดภาพเกินขีดจำกัด"
 
 #: invenio_rdm_records/resources/iiif.py:104
 msgid ""
 "The record associated with this file has been deleted. See deletion notice."
-msgstr ""
+msgstr "ระเบียนที่เชื่อมโยงกับไฟล์นี้ถูกลบแล้ว ดูประกาศการลบ"
 
 #: invenio_rdm_records/resources/iiif.py:110
 msgid "The requested image cannot be found."
-msgstr ""
+msgstr "ไม่พบภาพที่ร้องขอ"
 
 #: invenio_rdm_records/resources/resources.py:231
 msgid ""
 "Your record was deleted and from now on will resolve to this tombstone page."
-msgstr ""
+msgstr "ระเบียนของคุณถูกลบแล้ว และต่อจากนี้จะนำไปยังหน้าบันทึกลบนี้"
 
 #: invenio_rdm_records/resources/deserializers/rocrate/__init__.py:27
 msgid "Invalid RO-Crate metadata format, missing '@graph' key."
-msgstr ""
+msgstr "รูปแบบเมตาดาตา RO-Crate ไม่ถูกต้อง ไม่พบคีย์ '@graph'"
 
 #: invenio_rdm_records/resources/deserializers/rocrate/schema.py:30
 #: invenio_rdm_records/services/schemas/metadata.py:365
 msgid "Missing data for required field."
-msgstr ""
+msgstr "ไม่มีข้อมูลสำหรับฟิลด์ที่จำเป็น"
 
 #: invenio_rdm_records/resources/deserializers/rocrate/schema.py:100
 msgid "'@type' must be 'Person' or 'Organization'"
-msgstr ""
+msgstr "'@type' ต้องเป็น 'Person' หรือ 'Organization'"
 
 #: invenio_rdm_records/resources/deserializers/rocrate/schema.py:136
 msgid "Format must be a list of strings."
-msgstr ""
+msgstr "รูปแบบต้องเป็นรายการของข้อความ"
 
 #: invenio_rdm_records/resources/serializers/utils.py:34
 #, python-format
 msgid "The '%(vocabulary)s' vocabulary item '%(id_)s' was not found."
-msgstr ""
+msgstr "ไม่พบรายการ '%(id_)s' ในคำศัพท์ '%(vocabulary)s'"
 
 #: invenio_rdm_records/resources/serializers/cff/schema.py:28
 msgid "One of 'family-names' or 'given-names' is required."
-msgstr ""
+msgstr "ต้องระบุ 'family-names' หรือ 'given-names' อย่างน้อยหนึ่งอย่าง"
 
 #: invenio_rdm_records/resources/serializers/datacite/schema.py:281
 #: invenio_rdm_records/resources/serializers/datacite/schema.py:773
 msgid "Invalid publication date value."
-msgstr ""
+msgstr "ค่าวันที่เผยแพร่ไม่ถูกต้อง"
 
 #: invenio_rdm_records/resources/serializers/iiif/schema.py:164
 msgid "Current Page Order"
-msgstr ""
+msgstr "ลำดับหน้าปัจจุบัน"
 
 #: invenio_rdm_records/resources/serializers/iiif/schema.py:191
 msgid "Manifest generated by InvenioRDM"
-msgstr ""
+msgstr "Manifest สร้างโดย InvenioRDM"
 
 #: invenio_rdm_records/resources/serializers/iiif/schema.py:210
 msgid "Publication Date"
-msgstr ""
+msgstr "วันที่เผยแพร่"
 
 #: invenio_rdm_records/resources/serializers/schemaorg/schema.py:120
 msgid ""
 "Affiliation failed to serialize: one of 'id' or 'name' must be provided."
 msgstr ""
+"การประมวลผลสังกัดล้มเหลว: ต้องระบุ 'id' หรือ 'name' อย่างน้อยหนึ่งอย่าง"
 
 #: invenio_rdm_records/resources/serializers/schemaorg/schema.py:366
 msgid ""
 "Funding serialization failed on award: one of 'id', 'number', or 'title' are"
 " required."
 msgstr ""
+"การประมวลผลแหล่งทุนล้มเหลวที่รางวัล: ต้องระบุ 'id', 'number' หรือ 'title' "
+"อย่างน้อยหนึ่งอย่าง"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:35
 #: invenio_rdm_records/services/facets.py:29
 msgid "Open"
-msgstr ""
+msgstr "เปิด"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:36
 #: invenio_rdm_records/services/facets.py:30
 msgid "Embargoed"
-msgstr ""
+msgstr "ระงับการเข้าถึงชั่วคราว"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:37
 #: invenio_rdm_records/services/facets.py:31
 msgid "Restricted"
-msgstr ""
+msgstr "จำกัดการเข้าถึง"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:38
 #: invenio_rdm_records/services/facets.py:32
 msgid "Metadata-only"
-msgstr ""
+msgstr "เมตาดาตาเท่านั้น"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:65
 msgid "The record and files are publicly accessible."
-msgstr ""
+msgstr "ระเบียนและไฟล์เข้าถึงได้สาธารณะ"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:67
 msgid "No files are available for this record."
-msgstr ""
+msgstr "ไม่มีไฟล์สำหรับระเบียนนี้"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:76
 #, python-format
 msgid "The record and files will be made publicly available on %(date)s."
-msgstr ""
+msgstr "ระเบียนและไฟล์จะเปิดให้เข้าถึงสาธารณะในวันที่ %(date)s"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:81
 msgid "The record and files are restricted to users with access."
-msgstr ""
+msgstr "ระเบียนและไฟล์จำกัดเฉพาะผู้ใช้ที่มีสิทธิ์เข้าถึง"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:90
 #, python-format
 msgid "The record will be made publicly available on %(date)s."
-msgstr ""
+msgstr "ระเบียนจะเปิดให้เข้าถึงสาธารณะในวันที่ %(date)s"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:94
 msgid "The record is restricted to users with access."
-msgstr ""
+msgstr "ระเบียนจำกัดเฉพาะผู้ใช้ที่มีสิทธิ์เข้าถึง"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:102
 #, python-format
@@ -941,145 +954,147 @@ msgid ""
 "The record is publicly accessible, but files are restricted. <a "
 "href=\"%(login_url)s\">Log in</a> to check if you have access."
 msgstr ""
+"ระเบียนเข้าถึงได้สาธารณะ แต่ไฟล์ถูกจำกัด <a "
+"href=\"%(login_url)s\">เข้าสู่ระบบ</a>เพื่อตรวจสอบสิทธิ์การเข้าถึงของคุณ"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:107
 msgid ""
 "The record is publicly accessible, but files are restricted to users with "
 "access."
-msgstr ""
+msgstr "ระเบียนเข้าถึงได้สาธารณะ แต่ไฟล์จำกัดเฉพาะผู้ใช้ที่มีสิทธิ์เข้าถึง"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:112
 #, python-format
 msgid "The files will be made publicly available on %(date)s."
-msgstr ""
+msgstr "ไฟล์จะเปิดให้เข้าถึงสาธารณะในวันที่ %(date)s"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:288
 msgid "Submitted: "
-msgstr ""
+msgstr "ยื่นเมื่อ: "
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:290
 msgid "Defended: "
-msgstr ""
+msgstr "สอบป้องกันเมื่อ: "
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:446
 msgid "NA"
-msgstr ""
+msgstr "ไม่ระบุ"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:451
 msgid "System (automatic)"
-msgstr ""
+msgstr "ระบบ (อัตโนมัติ)"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:453
 msgid "Owner"
-msgstr "所有者"
+msgstr "เจ้าของ"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:455
 msgid "Admin"
-msgstr ""
+msgstr "ผู้ดูแลระบบ"
 
 #: invenio_rdm_records/secret_links/errors.py:22
 #, python-format
 msgid "Invalid permission level: %(permission_level)s"
-msgstr ""
+msgstr "ระดับสิทธิ์ไม่ถูกต้อง: %(permission_level)s"
 
 #: invenio_rdm_records/services/errors.py:18
 msgid "Grant for this user/role already exists within this record."
-msgstr ""
+msgstr "สิทธิ์การเข้าถึงสำหรับผู้ใช้/บทบาทนี้มีอยู่แล้วในระเบียนนี้"
 
 #: invenio_rdm_records/services/errors.py:50
 #, python-format
 msgid "Embargo could not be lifted for record: %(record_id)s"
-msgstr ""
+msgstr "ไม่สามารถยกเลิกการระงับการเข้าถึงสำหรับระเบียน: %(record_id)s"
 
 #: invenio_rdm_records/services/errors.py:62
 msgid "Review not found."
-msgstr ""
+msgstr "ไม่พบการพิจารณา"
 
 #: invenio_rdm_records/services/errors.py:80
 msgid "The record is already included in this community."
-msgstr ""
+msgstr "ระเบียนนี้รวมอยู่ในชุมชนนี้แล้ว"
 
 #: invenio_rdm_records/services/errors.py:90
 msgid "A public record cannot be included in a restricted community."
-msgstr ""
+msgstr "ระเบียนสาธารณะไม่สามารถรวมอยู่ในชุมชนที่จำกัดได้"
 
 #: invenio_rdm_records/services/errors.py:103
 msgid "There is already an open inclusion request for this community."
-msgstr ""
+msgstr "มีคำขอรวมที่เปิดอยู่สำหรับชุมชนนี้แล้ว"
 
 #: invenio_rdm_records/services/errors.py:159
 #, python-format
 msgid "The record %(rec_id)s in not included in the community %(com_id)s."
-msgstr ""
+msgstr "ระเบียน %(rec_id)s ไม่ได้รวมอยู่ในชุมชน %(com_id)s"
 
 #: invenio_rdm_records/services/errors.py:175
 #, python-format
 msgid "Cannot modify community visibility: %(reason)s"
-msgstr ""
+msgstr "ไม่สามารถแก้ไขการมองเห็นชุมชน: %(reason)s"
 
 #: invenio_rdm_records/services/errors.py:194
 #, python-format
 msgid "Identical access requests already exist: %(request_id)s"
-msgstr ""
+msgstr "มีคำขอสิทธิ์เข้าถึงที่เหมือนกันอยู่แล้ว: %(request_id)s"
 
 #: invenio_rdm_records/services/errors.py:198
 msgid "The access request is a duplicate"
-msgstr ""
+msgstr "คำขอสิทธิ์เข้าถึงนี้ซ้ำกัน"
 
 #: invenio_rdm_records/services/errors.py:205
 msgid "Submission to this community is only allowed to community members."
-msgstr ""
+msgstr "การส่งเข้าชุมชนนี้อนุญาตเฉพาะสมาชิกชุมชนเท่านั้น"
 
 #: invenio_rdm_records/services/errors.py:212
 msgid "Cannot publish without a community."
-msgstr ""
+msgstr "ไม่สามารถเผยแพร่ได้โดยไม่มีชุมชน"
 
 #: invenio_rdm_records/services/errors.py:218
 msgid "A record should be part of at least 1 community."
-msgstr ""
+msgstr "ระเบียนควรเป็นส่วนหนึ่งของชุมชนอย่างน้อย 1 ชุมชน"
 
 #: invenio_rdm_records/services/facets.py:27
 msgid "Access status"
-msgstr ""
+msgstr "สถานะการเข้าถึง"
 
 #: invenio_rdm_records/services/facets.py:39
 msgid "Status"
-msgstr "状態"
+msgstr "สถานะ"
 
 #: invenio_rdm_records/services/facets.py:40
 msgid "Published"
-msgstr ""
+msgstr "เผยแพร่แล้ว"
 
 #: invenio_rdm_records/services/facets.py:40
 msgid "Unpublished"
-msgstr ""
+msgstr "ยังไม่ได้เผยแพร่"
 
 #: invenio_rdm_records/services/facets.py:46
 msgid "File type"
-msgstr ""
+msgstr "ประเภทไฟล์"
 
 #: invenio_rdm_records/services/facets.py:53
 msgid "Languages"
-msgstr ""
+msgstr "ภาษา"
 
 #: invenio_rdm_records/services/facets.py:62
 msgid "Resource types"
-msgstr ""
+msgstr "ประเภททรัพยากร"
 
 #: invenio_rdm_records/services/facets.py:79
 #: invenio_rdm_records/services/facets.py:89
 #: invenio_rdm_records/services/facets.py:105
 msgid "Subjects"
-msgstr ""
+msgstr "หัวเรื่อง"
 
 #: invenio_rdm_records/services/facets.py:112
 msgid "Publication date"
-msgstr ""
+msgstr "วันที่เผยแพร่"
 
 #: invenio_rdm_records/services/request_policies.py:48
 #, python-brace-format
 msgid "You can delete your records within {grace_period} days of publishing."
-msgstr ""
+msgstr "คุณสามารถลบระเบียนของคุณได้ภายใน {grace_period} วันหลังจากเผยแพร่"
 
 #: invenio_rdm_records/services/request_policies.py:51
 #, python-brace-format
@@ -1087,6 +1102,7 @@ msgid ""
 "Record owners can delete their records within {grace_period} days of "
 "publishing."
 msgstr ""
+"เจ้าของระเบียนสามารถลบระเบียนของตนได้ภายใน {grace_period} วันหลังจากเผยแพร่"
 
 #: invenio_rdm_records/services/request_policies.py:77
 #, python-brace-format
@@ -1094,103 +1110,111 @@ msgid ""
 "You must submit a deletion request with a detailed justification because the"
 " record has been published for more than {grace_period} days."
 msgstr ""
+"คุณต้องยื่นคำขอลบพร้อมเหตุผลโดยละเอียด "
+"เนื่องจากระเบียนได้รับการเผยแพร่มากกว่า {grace_period} วันแล้ว"
 
 #: invenio_rdm_records/services/request_policies.py:101
 #, python-brace-format
 msgid ""
 "You can edit the files of your records within {grace_period} days of "
 "publishing."
-msgstr ""
+msgstr "คุณสามารถแก้ไขไฟล์ของระเบียนได้ภายใน {grace_period} วันหลังจากเผยแพร่"
 
 #: invenio_rdm_records/services/request_policies.py:122
 msgid "You can edit the files of the record as you are an admin."
-msgstr ""
+msgstr "คุณสามารถแก้ไขไฟล์ของระเบียนได้เนื่องจากคุณเป็นผู้ดูแลระบบ"
 
 #: invenio_rdm_records/services/request_policies.py:139
 msgid "You can increase the quota of your drafts."
-msgstr ""
+msgstr "คุณสามารถเพิ่มโควต้าของฉบับร่างได้"
 
 #: invenio_rdm_records/services/request_policies.py:181
 msgid "You can increase the quota of a draft as you are an admin."
-msgstr ""
+msgstr "คุณสามารถเพิ่มโควต้าของฉบับร่างได้เนื่องจากคุณเป็นผู้ดูแลระบบ"
 
 #: invenio_rdm_records/services/services.py:734
 msgid ""
 "Record visibility can not be changed to restricted anymore. Please contact "
 "support if you still need to make these changes."
 msgstr ""
+"ไม่สามารถเปลี่ยนการมองเห็นระเบียนเป็นจำกัดได้อีกต่อไป "
+"กรุณาติดต่อฝ่ายสนับสนุนหากคุณยังต้องการเปลี่ยนแปลง"
 
 #: invenio_rdm_records/services/access/service.py:143
 msgid "Expiration date is required"
-msgstr ""
+msgstr "จำเป็นต้องระบุวันหมดอายุ"
 
 #: invenio_rdm_records/services/access/service.py:152
 #: invenio_rdm_records/services/access/service.py:187
 msgid "Expiration date must be set to the future"
-msgstr ""
+msgstr "วันหมดอายุต้องเป็นวันที่ในอนาคต"
 
 #: invenio_rdm_records/services/access/service.py:181
 msgid "Cannot postpone expiration of links"
-msgstr ""
+msgstr "ไม่สามารถเลื่อนวันหมดอายุของลิงก์ได้"
 
 #: invenio_rdm_records/services/access/service.py:208
 msgid "An access permission level is required"
-msgstr ""
+msgstr "จำเป็นต้องระบุระดับสิทธิ์การเข้าถึง"
 
 #: invenio_rdm_records/services/access/service.py:223
 msgid "Invalid access permission level."
-msgstr ""
+msgstr "ระดับสิทธิ์การเข้าถึงไม่ถูกต้อง"
 
 #: invenio_rdm_records/services/access/service.py:485
 #: invenio_rdm_records/services/access/service.py:607
 #: invenio_rdm_records/services/access/service.py:1079
 msgid "Could not find the specified subject."
-msgstr ""
+msgstr "ไม่พบเรื่องที่ระบุ"
 
 #: invenio_rdm_records/services/access/service.py:856
 msgid "Verification link sent out, please check your e-mail inbox"
-msgstr ""
+msgstr "ส่งลิงก์ยืนยันแล้ว กรุณาตรวจสอบกล่องอีเมลของคุณ"
 
 #: invenio_rdm_records/services/communities/components.py:48
 msgid "Cannot restrict a community with public records."
-msgstr ""
+msgstr "ไม่สามารถจำกัดชุมชนที่มีระเบียนสาธารณะได้"
 
 #: invenio_rdm_records/services/communities/service.py:191
 msgid "Community not found."
-msgstr ""
+msgstr "ไม่พบชุมชน"
 
 #: invenio_rdm_records/services/communities/service.py:467
 msgid "Community already included."
-msgstr ""
+msgstr "รวมชุมชนไว้แล้ว"
 
 #: invenio_rdm_records/services/community_inclusion/service.py:41
 #: invenio_rdm_records/services/community_inclusion/service.py:55
 msgid "Invalid request type."
-msgstr ""
+msgstr "ประเภทคำขอไม่ถูกต้อง"
 
 #: invenio_rdm_records/services/community_inclusion/service.py:74
 msgid ""
 "This request has been automatically accepted, as the uploader can submit to "
 "community directly without review."
 msgstr ""
+"คำขอนี้ได้รับการยอมรับโดยอัตโนมัติ "
+"เนื่องจากผู้อัปโหลดสามารถส่งเข้าชุมชนได้โดยตรงโดยไม่ต้องพิจารณา"
 
 #: invenio_rdm_records/services/community_records/service.py:134
 msgid "The record does not exist."
-msgstr ""
+msgstr "ระเบียนไม่มีอยู่"
 
 #: invenio_rdm_records/services/community_records/service.py:141
 msgid "Permission denied."
-msgstr ""
+msgstr "ไม่มีสิทธิ์"
 
 #: invenio_rdm_records/services/components/access.py:35
 msgid "You don't have permissions to manage record access."
-msgstr ""
+msgstr "คุณไม่มีสิทธิ์จัดการการเข้าถึงระเบียน"
 
 #: invenio_rdm_records/services/components/files.py:57
 msgid ""
 "File modification grace period has passed. Please discard this draft to make"
 " any changes."
 msgstr ""
+"ระยะเวลาผ่อนผันสำหรับการแก้ไขไฟล์ผ่านไปแล้ว "
+"กรุณาทิ้งฉบับร่างนี้เพื่อทำการเปลี่ยนแปลง"
 
 #: invenio_rdm_records/services/components/pids.py:24
 #, python-brace-format
@@ -1198,6 +1222,8 @@ msgid ""
 "A previous version used a DOI registered from {sitename}. This version must "
 "also use a DOI from {sitename}."
 msgstr ""
+"เวอร์ชันก่อนหน้าใช้ DOI ที่ลงทะเบียนจาก {sitename} เวอร์ชันนี้ต้องใช้ DOI "
+"จาก {sitename} ด้วย"
 
 #: invenio_rdm_records/services/components/pids.py:33
 #: invenio_rdm_records/services/components/pids.py:42
@@ -1207,85 +1233,90 @@ msgid ""
 "without one. You cannot use a DOI registered from {sitename} for this "
 "version."
 msgstr ""
+"เวอร์ชันก่อนหน้าเผยแพร่ด้วย DOI จากผู้ให้บริการภายนอกหรือไม่มี DOI "
+"คุณไม่สามารถใช้ DOI ที่ลงทะเบียนจาก {sitename} สำหรับเวอร์ชันนี้"
 
 #: invenio_rdm_records/services/components/review.py:37
 msgid ""
 "You cannot delete a draft with an open review. Please cancel the review "
 "first."
 msgstr ""
+"คุณไม่สามารถลบฉบับร่างที่มีการพิจารณาเปิดอยู่ได้ กรุณายกเลิกการพิจารณาก่อน"
 
 #: invenio_rdm_records/services/components/review.py:55
 msgid ""
 "You cannot publish a draft with an open review request. Please cancel the "
 "review request first."
 msgstr ""
+"คุณไม่สามารถเผยแพร่ฉบับร่างที่มีคำขอพิจารณาเปิดอยู่ได้ "
+"กรุณายกเลิกคำขอพิจารณาก่อน"
 
 #: invenio_rdm_records/services/github/metadata.py:56
 #: invenio_rdm_records/services/vcs/metadata.py:63
 msgid "No description provided."
-msgstr ""
+msgstr "ไม่มีคำอธิบาย"
 
 #: invenio_rdm_records/services/github/metadata.py:175
 #: invenio_rdm_records/services/vcs/metadata.py:178
 msgid "Citation schema is needed to load citation metadata."
-msgstr ""
+msgstr "จำเป็นต้องใช้สคีมาการอ้างอิงเพื่อโหลดเมตาดาตาการอ้างอิง"
 
 #: invenio_rdm_records/services/github/release.py:57
 #: invenio_rdm_records/services/vcs/release.py:103
 msgid "Unknown"
-msgstr ""
+msgstr "ไม่ทราบ"
 
 #: invenio_rdm_records/services/pids/errors.py:18
 #, python-format
 msgid "No configuration defined for PIDs %(schemes)s"
-msgstr ""
+msgstr "ไม่มีการกำหนดค่าสำหรับ PID %(schemes)s"
 
 #: invenio_rdm_records/services/pids/errors.py:29
 #, python-format
 msgid "Unknown PID provider %(provider)s for %(scheme)s"
-msgstr ""
+msgstr "ไม่รู้จักผู้ให้บริการ PID %(provider)s สำหรับ %(scheme)s"
 
 #: invenio_rdm_records/services/pids/manager.py:82
 #, python-format
 msgid "Invalid %(scheme)s"
-msgstr ""
+msgstr "%(scheme)s ไม่ถูกต้อง"
 
 #: invenio_rdm_records/services/pids/manager.py:166
 #, python-format
 msgid "A PID already exists for type %(scheme)s"
-msgstr ""
+msgstr "มี PID อยู่แล้วสำหรับประเภท %(scheme)s"
 
 #: invenio_rdm_records/services/pids/manager.py:172
 msgid "External identifier value is required."
-msgstr ""
+msgstr "จำเป็นต้องระบุค่าตัวระบุภายนอก"
 
 #: invenio_rdm_records/services/pids/manager.py:237
 #: invenio_rdm_records/services/pids/manager.py:263
 #, python-format
 msgid "PID not found for type %(scheme)s"
-msgstr ""
+msgstr "ไม่พบ PID สำหรับประเภท %(scheme)s"
 
 #: invenio_rdm_records/services/pids/manager.py:285
 msgid "Cannot discard a reserved or registered persistent identifier."
-msgstr ""
+msgstr "ไม่สามารถทิ้งตัวระบุถาวรที่สงวนไว้หรือลงทะเบียนแล้ว"
 
 #: invenio_rdm_records/services/pids/providers/base.py:81
 msgid "You must provide a pid value."
-msgstr ""
+msgstr "คุณต้องระบุค่า PID"
 
 #: invenio_rdm_records/services/pids/providers/base.py:177
 #, python-format
 msgid "%(pid_type)s:%(identifier)s already exists."
-msgstr ""
+msgstr "%(pid_type)s:%(identifier)s มีอยู่แล้ว"
 
 #: invenio_rdm_records/services/pids/providers/crossref.py:322
 msgid "Missing or invalid DOI for registration."
-msgstr ""
+msgstr "DOI ขาดหายหรือไม่ถูกต้องสำหรับการลงทะเบียน"
 
 #: invenio_rdm_records/services/pids/providers/crossref.py:332
 #: invenio_rdm_records/services/pids/providers/datacite.py:301
 msgid "Missing publisher field required for DOI registration."
-msgstr ""
+msgstr "ขาดฟิลด์ผู้เผยแพร่ที่จำเป็นสำหรับการลงทะเบียน DOI"
 
 #: invenio_rdm_records/services/pids/providers/external.py:44
 #, python-format
@@ -1293,163 +1324,168 @@ msgid ""
 "The prefix '%(prefix)s' is managed by %(sitename)s. Please supply an "
 "external DOI or select 'No' to have a DOI generated for you."
 msgstr ""
+"คำนำหน้า '%(prefix)s' บริหารจัดการโดย %(sitename)s กรุณาระบุ DOI ภายนอก "
+"หรือเลือก 'ไม่' เพื่อให้สร้าง DOI ให้คุณ"
 
 #: invenio_rdm_records/services/pids/providers/external.py:92
 #, python-format
 msgid "Missing %(scheme)s for required field."
-msgstr ""
+msgstr "ขาด %(scheme)s สำหรับฟิลด์ที่จำเป็น"
 
 #: invenio_rdm_records/services/review/service.py:58
 msgid "Invalid review type."
-msgstr ""
+msgstr "ประเภทการพิจารณาไม่ถูกต้อง"
 
 #: invenio_rdm_records/services/review/service.py:76
 msgid "A review already exists for this record"
-msgstr ""
+msgstr "มีการพิจารณาอยู่แล้วสำหรับระเบียนนี้"
 
 #: invenio_rdm_records/services/review/service.py:80
 msgid "You cannot create a review for an already published record."
-msgstr ""
+msgstr "คุณไม่สามารถสร้างการพิจารณาสำหรับระเบียนที่เผยแพร่แล้ว"
 
 #: invenio_rdm_records/services/review/service.py:86
 msgid "You cannot create a review for a new version of a published record."
-msgstr ""
+msgstr "คุณไม่สามารถสร้างการพิจารณาสำหรับเวอร์ชันใหม่ของระเบียนที่เผยแพร่แล้ว"
 
 #: invenio_rdm_records/services/review/service.py:184
 msgid ""
 "You cannot delete a review for a draft that has already been published."
-msgstr ""
+msgstr "คุณไม่สามารถลบการพิจารณาสำหรับฉบับร่างที่เผยแพร่แล้ว"
 
 #: invenio_rdm_records/services/review/service.py:190
 msgid "An open review cannot be deleted."
-msgstr ""
+msgstr "ไม่สามารถลบการพิจารณาที่เปิดอยู่ได้"
 
 #: invenio_rdm_records/services/review/service.py:219
 msgid "Must be a boolean, true or false"
-msgstr ""
+msgstr "ต้องเป็นค่าบูลีน จริงหรือเท็จ"
 
 #: invenio_rdm_records/services/schemas/access.py:38
 msgid "Embargo end date must be set to a future date."
-msgstr ""
+msgstr "วันสิ้นสุดการระงับการเข้าถึงต้องเป็นวันที่ในอนาคต"
 
 #: invenio_rdm_records/services/schemas/access.py:47
 msgid "Embargo end date must be unset or in the past."
-msgstr ""
+msgstr "วันสิ้นสุดการระงับการเข้าถึงต้องไม่ได้ตั้งค่าหรือเป็นวันที่ผ่านมาแล้ว"
 
 #: invenio_rdm_records/services/schemas/access.py:65
 #, python-format
 msgid "'%(field_name)s' must be either 'public' or 'restricted'"
-msgstr ""
+msgstr "'%(field_name)s' ต้องเป็น 'public' หรือ 'restricted'"
 
 #: invenio_rdm_records/services/schemas/community_records.py:33
 #, python-format
 msgid "Too many records passed, %(max_number)s max allowed."
-msgstr ""
+msgstr "ส่งระเบียนมากเกินไป อนุญาตสูงสุด %(max_number)s"
 
 #: invenio_rdm_records/services/schemas/community_records.py:49
 #, python-format
 msgid "Duplicated records %(rec_ids)s."
-msgstr ""
+msgstr "ระเบียนซ้ำ %(rec_ids)s"
 
 #: invenio_rdm_records/services/schemas/metadata.py:76
 msgid "Only one value is accepted."
-msgstr ""
+msgstr "ยอมรับได้เพียงค่าเดียว"
 
 #: invenio_rdm_records/services/schemas/metadata.py:78
 msgid "Not a valid locale."
-msgstr ""
+msgstr "ค่า locale ไม่ถูกต้อง"
 
 #: invenio_rdm_records/services/schemas/metadata.py:90
 #: invenio_rdm_records/services/schemas/metadata.py:94
 #, python-format
 msgid "Invalid value. Choose one of %(names)s."
-msgstr ""
+msgstr "ค่าไม่ถูกต้อง กรุณาเลือกหนึ่งในรายการ %(names)s"
 
 #: invenio_rdm_records/services/schemas/metadata.py:117
 msgid "Family name cannot be blank."
-msgstr ""
+msgstr "นามสกุลต้องไม่ว่างเปล่า"
 
 #: invenio_rdm_records/services/schemas/metadata.py:122
 msgid "Name cannot be blank."
-msgstr ""
+msgstr "ชื่อต้องไม่ว่างเปล่า"
 
 #: invenio_rdm_records/services/schemas/metadata.py:158
 msgid "Duplicated affiliations: "
-msgstr ""
+msgstr "สังกัดซ้ำ: "
 
 #: invenio_rdm_records/services/schemas/metadata.py:217
 #: invenio_rdm_records/services/schemas/metadata.py:229
 msgid "Not a valid URL."
-msgstr ""
+msgstr "URL ไม่ถูกต้อง"
 
 #: invenio_rdm_records/services/schemas/metadata.py:249
 msgid "An existing id or a free text title must be present"
-msgstr ""
+msgstr "ต้องมี ID ที่มีอยู่หรือชื่อเรื่องแบบข้อความอิสระ"
 
 #: invenio_rdm_records/services/schemas/metadata.py:254
 msgid ""
 "Only an existing id or free text title/description/link is accepted, but not"
 " both cases at the same time"
 msgstr ""
+"ยอมรับเฉพาะ ID ที่มีอยู่หรือชื่อเรื่อง/คำอธิบาย/ลิงก์แบบข้อความอิสระ "
+"แต่ไม่ใช่ทั้งสองกรณีพร้อมกัน"
 
 #: invenio_rdm_records/services/schemas/metadata.py:345
 msgid ""
 "At least one of ['geometry', 'place',                 identifiers', "
 "'description'] must be present."
 msgstr ""
+"ต้องมีอย่างน้อยหนึ่งใน ['geometry', 'place', 'identifiers', 'description']"
 
 #: invenio_rdm_records/services/schemas/metadata.py:383
 msgid "Size cannot be a blank string."
-msgstr ""
+msgstr "ขนาดต้องไม่เป็นข้อความว่างเปล่า"
 
 #: invenio_rdm_records/services/schemas/metadata.py:386
 msgid "Format cannot be a blank string."
-msgstr ""
+msgstr "รูปแบบต้องไม่เป็นข้อความว่างเปล่า"
 
 #: invenio_rdm_records/services/schemas/record.py:40
 msgid "Invalid persistent identifier scheme."
-msgstr ""
+msgstr "รูปแบบตัวระบุถาวรไม่ถูกต้อง"
 
 #: invenio_rdm_records/services/schemas/record_communities.py:36
 #, python-format
 msgid "Too many communities passed, %(max_number)s max allowed."
-msgstr ""
+msgstr "ส่งชุมชนมากเกินไป อนุญาตสูงสุด %(max_number)s"
 
 #: invenio_rdm_records/services/schemas/record_communities.py:52
 #, python-format
 msgid "Duplicated communities %(com_ids)s."
-msgstr ""
+msgstr "ชุมชนซ้ำ %(com_ids)s"
 
 #: invenio_rdm_records/services/schemas/parent/__init__.py:26
 #, python-format
 msgid "Invalid persistent identifier scheme %(scheme)s."
-msgstr ""
+msgstr "รูปแบบตัวระบุถาวร %(scheme)s ไม่ถูกต้อง"
 
 #: invenio_rdm_records/services/vcs/metadata.py:71
 msgid "Not Defined"
-msgstr ""
+msgstr "ไม่ได้กำหนด"
 
 #: invenio_rdm_records/templates/semantic-ui/imprint.html:6
 msgid "Publisher"
-msgstr ""
+msgstr "ผู้เผยแพร่"
 
 #: invenio_rdm_records/templates/semantic-ui/imprint.html:21
 #: invenio_rdm_records/templates/semantic-ui/journal.html:22
 msgid "Pages"
-msgstr ""
+msgstr "หน้า"
 
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:36
 msgid "Session part"
-msgstr ""
+msgstr "ส่วนของช่วง"
 
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:46
 msgid "Opens in new tab"
-msgstr ""
+msgstr "เปิดในแท็บใหม่"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:27
 #, python-brace-format
 msgid "✅ Community inclusion accepted for '{record_title}'"
-msgstr ""
+msgstr "✅ ยอมรับการรวมระเบียน '{record_title}' เข้าชุมชน"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:33
 #, python-brace-format
@@ -1457,6 +1493,8 @@ msgid ""
 "The community curator '@{curator_name}' accepted the record '{record_title}'"
 " into the community '{community_title}'"
 msgstr ""
+"ผู้ดูแลคอลเลกชันชุมชน '@{curator_name}' ยอมรับระเบียน '{record_title}' "
+"เข้าชุมชน '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:35
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:34
@@ -1467,7 +1505,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:34
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:29
 msgid " with the following message:"
-msgstr ""
+msgstr "พร้อมข้อความดังต่อไปนี้:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:45
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:64
@@ -1479,7 +1517,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:33
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:56
 msgid "Check out the submission request"
-msgstr ""
+msgstr "ตรวจสอบคำขอส่ง"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:51
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:41
@@ -1505,6 +1543,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:39
 msgid "This is an auto-generated message. To manage notifications, visit your"
 msgstr ""
+"นี่คือข้อความที่สร้างขึ้นโดยอัตโนมัติ หากต้องการจัดการการแจ้งเตือน โปรดไปที่"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:51
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:41
@@ -1529,7 +1568,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:45
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:39
 msgid "account settings"
-msgstr ""
+msgstr "การตั้งค่าบัญชี"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:57
 #, python-brace-format
@@ -1537,6 +1576,8 @@ msgid ""
 "The community curator @{curator_name} accepted the record '{record_title}' "
 "into the community '{community_title}'"
 msgstr ""
+"ผู้ดูแลคอลเลกชันชุมชน @{curator_name} ยอมรับระเบียน '{record_title}' "
+"เข้าชุมชน '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:60
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:74
@@ -1555,7 +1596,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:54
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:68
 msgid "with the following message:"
-msgstr ""
+msgstr "พร้อมข้อความดังต่อไปนี้:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:66
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:80
@@ -1596,6 +1637,8 @@ msgid ""
 "This is an auto-generated message. To manage notifications, visit your "
 "account settings"
 msgstr ""
+"นี่คือข้อความที่สร้างขึ้นโดยอัตโนมัติ หากต้องการจัดการการแจ้งเตือน "
+"โปรดไปที่การตั้งค่าบัญชี"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:71
 #, python-brace-format
@@ -1603,11 +1646,13 @@ msgid ""
 "The community curator *@{curator_name}* accepted the record *{record_title}*"
 " into the community *{community_title}*"
 msgstr ""
+"ผู้ดูแลคอลเลกชันชุมชน *@{curator_name}* ยอมรับระเบียน *{record_title}* "
+"เข้าชุมชน *{community_title}*"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:26
 #, python-brace-format
 msgid "❌ Community inclusion cancelled for '{record_title}'"
-msgstr ""
+msgstr "❌ ยกเลิกการรวมระเบียน '{record_title}' เข้าชุมชน"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:32
 #, python-brace-format
@@ -1615,6 +1660,8 @@ msgid ""
 "The record submission for your community '{community_title}' was cancelled "
 "by '@{cancel_name}'."
 msgstr ""
+"การส่งระเบียนเข้าชุมชน '{community_title}' ของคุณถูกยกเลิกโดย "
+"'@{cancel_name}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:47
 #, python-brace-format
@@ -1622,13 +1669,15 @@ msgid ""
 "The record submission for your community '{community_title}' was cancelled "
 "by @'{cancel_name}'."
 msgstr ""
+"การส่งระเบียนเข้าชุมชน '{community_title}' ของคุณถูกยกเลิกโดย "
+"@'{cancel_name}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:49
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:63
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:47
 #, python-brace-format
 msgid "Check out the submission request: {request_link}"
-msgstr ""
+msgstr "ตรวจสอบคำขอส่ง: {request_link}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:54
 #, python-brace-format
@@ -1636,11 +1685,13 @@ msgid ""
 "The record submission for your community *'{community_title}'* was cancelled"
 " by *'{cancel_name}'*."
 msgstr ""
+"การส่งระเบียนเข้าชุมชน *'{community_title}'* ของคุณถูกยกเลิกโดย "
+"*'{cancel_name}'*"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:26
 #, python-brace-format
 msgid "⛔️ Community inclusion declined for '{record_title}'"
-msgstr ""
+msgstr "⛔️ ปฏิเสธการรวมระเบียน '{record_title}' เข้าชุมชน"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:32
 #, python-brace-format
@@ -1648,6 +1699,8 @@ msgid ""
 "The community curator '@{curator_name}' declined the record '{record_title}'"
 " into the community '{community_title}'"
 msgstr ""
+"ผู้ดูแลคอลเลกชันชุมชน '@{curator_name}' ปฏิเสธการรวมระเบียน '{record_title}'"
+" เข้าชุมชน '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:56
 #, python-brace-format
@@ -1655,6 +1708,8 @@ msgid ""
 "The community curator @{curator_name} declined the record '{record_title}' "
 "into the community '{community_title}'"
 msgstr ""
+"ผู้ดูแลคอลเลกชันชุมชน @{curator_name} ปฏิเสธการรวมระเบียน '{record_title}' "
+"เข้าชุมชน '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:70
 #, python-brace-format
@@ -1662,22 +1717,24 @@ msgid ""
 "The community curator *@{curator_name}* declined the record *{record_title}*"
 " into the community *{community_title}*"
 msgstr ""
+"ผู้ดูแลคอลเลกชันชุมชน *@{curator_name}* ปฏิเสธการรวมระเบียน *{record_title}*"
+" เข้าชุมชน *{community_title}*"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:24
 #, python-brace-format
 msgid "⌛️ Community inclusion expired for '{record_title}'"
-msgstr ""
+msgstr "⌛️ หมดอายุการรวมระเบียน '{record_title}' เข้าชุมชน"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:30
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:45
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:54
 msgid "The submission for your record has expired."
-msgstr ""
+msgstr "คำขอส่งระเบียนของคุณหมดอายุแล้ว"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:25
 #, python-brace-format
 msgid "📥 New record submission to your community '{community_title}'"
-msgstr ""
+msgstr "📥 ส่งระเบียนใหม่เข้าชุมชน '{community_title}' ของคุณ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:31
 #, python-brace-format
@@ -1685,12 +1742,14 @@ msgid ""
 "The record '{record_title}' was submitted to your community "
 "'{community_title}' by '@{creator_name}'"
 msgstr ""
+"ระเบียน '{record_title}' ถูกส่งเข้าชุมชน '{community_title}' ของคุณโดย "
+"'@{creator_name}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:43
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:62
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:76
 msgid "Review the submission request"
-msgstr ""
+msgstr "พิจารณาคำขอส่ง"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:55
 #, python-brace-format
@@ -1698,6 +1757,8 @@ msgid ""
 "The record '{record_title}' was submitted to your community "
 "'{community_title}' by @'{creator_name}'."
 msgstr ""
+"ระเบียน '{record_title}' ถูกส่งเข้าชุมชน '{community_title}' ของคุณโดย "
+"@'{creator_name}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:69
 #, python-brace-format
@@ -1705,6 +1766,8 @@ msgid ""
 "The record *'{record_title}'* was submitted to your community "
 "*'{community_title}'* by *@'{creator_name}'*."
 msgstr ""
+"ระเบียน *'{record_title}'* ถูกส่งเข้าชุมชน *'{community_title}'* ของคุณโดย "
+"*@'{creator_name}'*"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:23
 #, python-brace-format
@@ -1712,16 +1775,18 @@ msgid ""
 "👤✔️ You were granted {permission} access to all versions of the record "
 "'{record_title}'"
 msgstr ""
+"👤✔️ คุณได้รับสิทธิ์ {permission} สำหรับทุกเวอร์ชันของระเบียน "
+"'{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:26
 #, python-brace-format
 msgid "👤✔️ You were granted {permission} access to draft '{record_title}'"
-msgstr ""
+msgstr "👤✔️ คุณได้รับสิทธิ์ {permission} สำหรับฉบับร่าง '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:28
 #, python-brace-format
 msgid "👤✔️ You were granted {permission} access to a draft"
-msgstr ""
+msgstr "👤✔️ คุณได้รับสิทธิ์ {permission} สำหรับฉบับร่าง"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:38
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:81
@@ -1729,23 +1794,23 @@ msgstr ""
 msgid ""
 "You have now permission to {permission} all versions of the record "
 "'{record_title}'."
-msgstr ""
+msgstr "ขณะนี้คุณมีสิทธิ์ {permission} ทุกเวอร์ชันของระเบียน '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:41
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:84
 #, python-brace-format
 msgid "You have now permission to {permission} the draft '{record_title}'."
-msgstr ""
+msgstr "ขณะนี้คุณมีสิทธิ์ {permission} ฉบับร่าง '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:43
 #, python-brace-format
 msgid "You have now permission to {permission} a draft."
-msgstr ""
+msgstr "ขณะนี้คุณมีสิทธิ์ {permission} ฉบับร่าง"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:50
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:92
 msgid "Message:"
-msgstr "メッセージ："
+msgstr "ข้อความ:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:62
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:35
@@ -1762,45 +1827,47 @@ msgstr "メッセージ："
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:58
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:72
 msgid "View the record"
-msgstr ""
+msgstr "ดูระเบียน"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:62
 msgid "View the draft"
-msgstr ""
+msgstr "ดูฉบับร่าง"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:86
 #, python-brace-format
 msgid "You have now permission to {permission} the draft."
-msgstr ""
+msgstr "ขณะนี้คุณมีสิทธิ์ {permission} ฉบับร่าง"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:97
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:54
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:55
 msgid "View the record: "
-msgstr ""
+msgstr "ดูระเบียน: "
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:97
 msgid "View the draft: "
-msgstr ""
+msgstr "ดูฉบับร่าง: "
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:99
 msgid ""
 "This is an auto-generated message. To manage notifications, visit your "
 "account settings: "
 msgstr ""
+"นี่คือข้อความที่สร้างขึ้นโดยอัตโนมัติ หากต้องการจัดการการแจ้งเตือน "
+"โปรดไปที่การตั้งค่าบัญชี: "
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:15
 #, python-brace-format
 msgid "❗️ Access request for '{record_title}' requires action"
-msgstr ""
+msgstr "❗️ คำขอสิทธิ์เข้าถึง '{record_title}' ต้องดำเนินการ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:21
 msgid "Please verify the email address in order to submit the access request"
-msgstr ""
+msgstr "กรุณายืนยันที่อยู่อีเมลเพื่อยื่นคำขอสิทธิ์เข้าถึง"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:24
 msgid "Verify e-mail address"
-msgstr ""
+msgstr "ยืนยันที่อยู่อีเมล"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:36
 #, python-format
@@ -1808,12 +1875,14 @@ msgid ""
 "Please verify your e-mail address via the following link in order to submit "
 "the access request for the record '%(record_title)s'."
 msgstr ""
+"กรุณายืนยันที่อยู่อีเมลของคุณผ่านลิงก์ต่อไปนี้เพื่อยื่นคำขอสิทธิ์เข้าถึงสำหรับระเบียน"
+" '%(record_title)s'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:38
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:45
 #, python-format
 msgid "Verify e-mail address: %(url)s"
-msgstr ""
+msgstr "ยืนยันที่อยู่อีเมล: %(url)s"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:43
 #, python-format
@@ -1821,84 +1890,86 @@ msgid ""
 "Please verify your e-mail address via the following link in order to submit "
 "the access request for the record *%(record_title)s*."
 msgstr ""
+"กรุณายืนยันที่อยู่อีเมลของคุณผ่านลิงก์ต่อไปนี้เพื่อยื่นคำขอสิทธิ์เข้าถึงสำหรับระเบียน"
+" *%(record_title)s*"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:15
 #, python-brace-format
 msgid "✅ Access request for '{record_title}' was accepted."
-msgstr ""
+msgstr "✅ คำขอสิทธิ์เข้าถึง '{record_title}' ได้รับการยอมรับ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:20
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:27
 #, python-brace-format
 msgid "Your access request for '{record_title}' was accepted."
-msgstr ""
+msgstr "คำขอสิทธิ์เข้าถึง '{record_title}' ของคุณได้รับการยอมรับ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:23
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:36
 msgid "Access the record"
-msgstr ""
+msgstr "เข้าถึงระเบียน"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:29
 #, python-brace-format
 msgid "Access the record here: {url}"
-msgstr ""
+msgstr "เข้าถึงระเบียนได้ที่นี่: {url}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:34
 #, python-brace-format
 msgid "Your access request for *'{record_title}'* was accepted."
-msgstr ""
+msgstr "คำขอสิทธิ์เข้าถึง *'{record_title}'* ของคุณได้รับการยอมรับ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:17
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:26
 msgid "❌ Access request canceled"
-msgstr ""
+msgstr "❌ ยกเลิกคำขอสิทธิ์เข้าถึง"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:23
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:47
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:61
 msgid "Your access request has been canceled"
-msgstr ""
+msgstr "คำขอสิทธิ์เข้าถึงของคุณถูกยกเลิกแล้ว"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:18
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:21
 msgid "⛔️ Access request declined"
-msgstr ""
+msgstr "⛔️ ปฏิเสธคำขอสิทธิ์เข้าถึง"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:24
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:27
 #, python-brace-format
 msgid "The owner of '{record_title}' has declined your access request"
-msgstr ""
+msgstr "เจ้าของ '{record_title}' ปฏิเสธคำขอสิทธิ์เข้าถึงของคุณ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:48
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:51
 #, python-brace-format
 msgid "The owner of '{record_title}' has rejected your access request"
-msgstr ""
+msgstr "เจ้าของ '{record_title}' ปฏิเสธคำขอสิทธิ์เข้าถึงของคุณ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:62
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:65
 #, python-brace-format
 msgid "The owner of *{record_title}* has rejected your access request"
-msgstr ""
+msgstr "เจ้าของ *{record_title}* ปฏิเสธคำขอสิทธิ์เข้าถึงของคุณ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:17
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:21
 #, python-brace-format
 msgid "📥 New access request for your record '{record_title}'"
-msgstr ""
+msgstr "📥 คำขอสิทธิ์เข้าถึงใหม่สำหรับระเบียน '{record_title}' ของคุณ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:23
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:27
 #, python-brace-format
 msgid "An access request was submitted for your record '{record_title}'."
-msgstr ""
+msgstr "มีคำขอสิทธิ์เข้าถึงถูกยื่นสำหรับระเบียน '{record_title}' ของคุณ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:26
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:30
 #, python-brace-format
 msgid "The requestor's e-mail address: {email}"
-msgstr ""
+msgstr "ที่อยู่อีเมลของผู้ขอ: {email}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:29
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:43
@@ -1907,18 +1978,18 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:47
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:56
 msgid "See request details"
-msgstr ""
+msgstr "ดูรายละเอียดคำขอ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:41
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:50
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:45
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:54
 msgid "An access request was submitted for your record."
-msgstr ""
+msgstr "มีคำขอสิทธิ์เข้าถึงถูกยื่นสำหรับระเบียนของคุณ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:13
 msgid "📥 Your access request was submitted successfully"
-msgstr ""
+msgstr "📥 คำขอสิทธิ์เข้าถึงของคุณถูกยื่นเรียบร้อยแล้ว"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:19
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:34
@@ -1926,49 +1997,49 @@ msgstr ""
 msgid ""
 "Your access request was submitted successfully. The request details are "
 "available at:"
-msgstr ""
+msgstr "คำขอสิทธิ์เข้าถึงของคุณถูกยื่นเรียบร้อยแล้ว รายละเอียดคำขออยู่ที่:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:22
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:45
 msgid "View request details"
-msgstr ""
+msgstr "ดูรายละเอียดคำขอ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:36
 msgid "View request details: "
-msgstr ""
+msgstr "ดูรายละเอียดคำขอ: "
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:14
 msgid "✅ Your record has been deleted"
-msgstr ""
+msgstr "✅ ระเบียนของคุณถูกลบแล้ว"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:20
 #, python-brace-format
 msgid "{request_title} has been accepted."
-msgstr ""
+msgstr "{request_title} ได้รับการยอมรับแล้ว"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:24
 msgid "View deletion request"
-msgstr ""
+msgstr "ดูคำขอลบ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:36
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:45
 #, python-brace-format
 msgid "'{request_title}' has been accepted."
-msgstr ""
+msgstr "'{request_title}' ได้รับการยอมรับแล้ว"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:38
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:47
 msgid "View the request"
-msgstr ""
+msgstr "ดูคำขอ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:14
 msgid "Your record deletion request was declined"
-msgstr ""
+msgstr "คำขอลบระเบียนของคุณถูกปฏิเสธ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:20
 #, python-brace-format
 msgid "{request_title} has been declined."
-msgstr ""
+msgstr "{request_title} ถูกปฏิเสธแล้ว"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:24
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:38
@@ -1977,34 +2048,34 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:70
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:87
 msgid "For more details,"
-msgstr ""
+msgstr "สำหรับรายละเอียดเพิ่มเติม"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:24
 msgid "view deletion request"
-msgstr ""
+msgstr "ดูคำขอลบ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:36
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:45
 #, python-brace-format
 msgid "'{request_title}' has been declined."
-msgstr ""
+msgstr "'{request_title}' ถูกปฏิเสธแล้ว"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:38
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:47
 msgid "view the request"
-msgstr ""
+msgstr "ดูคำขอ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:15
 #, python-format
 msgid "Finish publishing your release from %(repository_name)s"
-msgstr ""
+msgstr "เสร็จสิ้นการเผยแพร่รีลีสจาก %(repository_name)s"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:21
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:40
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:51
 #, python-format
 msgid "Release %(release_tag)s of %(repository_name)s is not yet published."
-msgstr ""
+msgstr "รีลีส %(release_tag)s ของ %(repository_name)s ยังไม่ได้เผยแพร่"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:25
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:42
@@ -2013,12 +2084,14 @@ msgid ""
 "To continue, you need to specify a community to submit the record to. This "
 "only needs to be done for your repository's first release."
 msgstr ""
+"เพื่อดำเนินการต่อ คุณต้องระบุชุมชนที่จะส่งระเบียนไป "
+"ต้องทำครั้งเดียวสำหรับรีลีสแรกของที่เก็บโค้ดของคุณ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:28
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:44
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:55
 msgid "To do so,"
-msgstr ""
+msgstr "เพื่อทำสิ่งนี้"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:28
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:44
@@ -2027,12 +2100,12 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:52
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:67
 msgid "view the unpublished draft record."
-msgstr ""
+msgstr "ดูฉบับร่างระเบียนที่ยังไม่ได้เผยแพร่"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:17
 #, python-format
 msgid "Release from %(repository_name)s submitted to %(community_title)s"
-msgstr ""
+msgstr "ส่งรีลีสจาก %(repository_name)s ไปยัง %(community_title)s"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:23
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:58
@@ -2042,6 +2115,8 @@ msgid ""
 "Release %(release_tag)s of %(repository_name)s has been submitted for review"
 " to %(community_title)s."
 msgstr ""
+"รีลีส %(release_tag)s ของ %(repository_name)s ถูกส่งเพื่อพิจารณาไปยัง "
+"%(community_title)s แล้ว"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:27
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:60
@@ -2050,65 +2125,67 @@ msgid ""
 "No further action is needed right now. This only needs to be done for your "
 "repository's first release."
 msgstr ""
+"ไม่จำเป็นต้องดำเนินการเพิ่มเติมตอนนี้ "
+"ต้องทำครั้งเดียวสำหรับรีลีสแรกของที่เก็บโค้ดของคุณ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:32
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:63
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:82
 msgid "However, some warnings were encountered during processing:"
-msgstr ""
+msgstr "อย่างไรก็ตาม พบคำเตือนบางอย่างระหว่างการประมวลผล:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:46
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:70
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:89
 msgid "View the review request"
-msgstr ""
+msgstr "ดูคำขอพิจารณา"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:46
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:70
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:89
 msgid "for more details."
-msgstr ""
+msgstr "สำหรับรายละเอียดเพิ่มเติม"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:16
 #, python-format
 msgid "There was a problem publishing a release from %(repository_name)s"
-msgstr ""
+msgstr "เกิดปัญหาในการเผยแพร่รีลีสจาก %(repository_name)s"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:22
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:45
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:60
 #, python-format
 msgid "Release %(release_tag)s of %(repository_name)s failed to publish."
-msgstr ""
+msgstr "รีลีส %(release_tag)s ของ %(repository_name)s เผยแพร่ไม่สำเร็จ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:26
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:47
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:62
 msgid "Reason:"
-msgstr ""
+msgstr "เหตุผล:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:30
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:50
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:65
 msgid ""
 "Please fix any errors and then create a new release to retry publishing."
-msgstr ""
+msgstr "กรุณาแก้ไขข้อผิดพลาดแล้วสร้างรีลีสใหม่เพื่อลองเผยแพร่อีกครั้ง"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:32
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:52
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:67
 msgid "For more details and to fix any errors,"
-msgstr ""
+msgstr "สำหรับรายละเอียดเพิ่มเติมและการแก้ไขข้อผิดพลาด"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:18
 #, python-format
 msgid "A release from %(repository_name)s was published with warning(s)"
-msgstr ""
+msgstr "รีลีสจาก %(repository_name)s เผยแพร่สำเร็จพร้อมคำเตือน"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:20
 #, python-format
 msgid "A release from %(repository_name)s was published successfully"
-msgstr ""
+msgstr "รีลีสจาก %(repository_name)s เผยแพร่สำเร็จ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:28
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:60
@@ -2117,49 +2194,49 @@ msgstr ""
 msgid ""
 "Release %(release_tag)s of %(repository_name)s has been received and "
 "published."
-msgstr ""
+msgstr "รีลีส %(release_tag)s ของ %(repository_name)s ได้รับและเผยแพร่แล้ว"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:34
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:63
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:80
 msgid "Some warnings were encountered during processing:"
-msgstr ""
+msgstr "พบคำเตือนบางอย่างระหว่างการประมวลผล:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:48
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:70
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:87
 msgid "view the published record."
-msgstr ""
+msgstr "ดูระเบียนที่เผยแพร่แล้ว"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:16
 msgid "✅ Access request accepted"
-msgstr ""
+msgstr "✅ ยอมรับคำขอสิทธิ์เข้าถึง"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:22
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:46
 #, python-brace-format
 msgid "The owner of '{record_title}' has accepted your access request"
-msgstr ""
+msgstr "เจ้าของ '{record_title}' ยอมรับคำขอสิทธิ์เข้าถึงของคุณ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:60
 #, python-brace-format
 msgid "The owner of *{record_title}* has accepted your access request"
-msgstr ""
+msgstr "เจ้าของ *{record_title}* ยอมรับคำขอสิทธิ์เข้าถึงของคุณ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:32
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:56
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:70
 #, python-brace-format
 msgid "Your access request has been canceled by {cancel_name}"
-msgstr ""
+msgstr "คำขอสิทธิ์เข้าถึงของคุณถูกยกเลิกโดย {cancel_name}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_rdm_records/settings/storage.html:8
 msgid "Storage"
-msgstr ""
+msgstr "พื้นที่จัดเก็บ"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/doi-badge.html:29
 msgid "DOI Badge"
-msgstr ""
+msgstr "DOI Badge"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/doi-badge.html:34
 msgid ""
@@ -2167,65 +2244,73 @@ msgid ""
 "want a DOI badge for a specific release, please follow the DOI link for one "
 "of the specific releases and view the badge from its record."
 msgstr ""
+"แบดจ์นี้ชี้ไปยังเวอร์ชันรีลีสล่าสุดของที่เก็บโค้ดของคุณ หากต้องการแบดจ์ DOI "
+"สำหรับรีลีสเฉพาะ กรุณาติดตามลิงก์ DOI "
+"ของรีลีสนั้นและดูแบดจ์จากระเบียนของรีลีสนั้น"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/doi-badge.html:47
 msgid "Close"
-msgstr ""
+msgstr "ปิด"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/rdm-release-item.html:26
 msgid "Edit record"
-msgstr ""
+msgstr "แก้ไขระเบียน"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/rdm-release-item.html:28
 msgid "View record"
-msgstr ""
+msgstr "ดูระเบียน"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/rdm-release-item.html:34
 msgid ""
 "This release does not have a DOI. To request one, click 'View record', then "
 "click 'Edit'."
 msgstr ""
+"รีลีสนี้ไม่มี DOI หากต้องการขอ DOI กรุณาคลิก 'ดูระเบียน' แล้วคลิก 'แก้ไข'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/rdm-repo-switch.html:16
 msgid "Disable"
-msgstr ""
+msgstr "ปิดใช้งาน"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/rdm-repo-switch.html:17
 msgid "Enable"
-msgstr ""
+msgstr "เปิดใช้งาน"
 
 #: invenio_rdm_records/tokens/errors.py:20
 msgid ""
 "Missing \"kid\" key with personal access token ID in JWT header of resource "
 "access token."
 msgstr ""
+"ขาดคีย์ \"kid\" ที่มีรหัส Personal Access Token ใน JWT header ของ Resource "
+"Access Token"
 
 #: invenio_rdm_records/tokens/errors.py:29
 msgid ""
 "\"kid\" JWT header value of resource access token not a valid personal "
 "access token ID."
 msgstr ""
+"ค่า \"kid\" ใน JWT header ของ Resource Access Token ไม่ใช่รหัส Personal "
+"Access Token ที่ถูกต้อง"
 
 #: invenio_rdm_records/tokens/errors.py:37
 msgid "Failed to decode resource access token."
-msgstr ""
+msgstr "ถอดรหัส Resource Access Token ไม่สำเร็จ"
 
 #: invenio_rdm_records/tokens/errors.py:43
 msgid "The resource access token is invalid."
-msgstr ""
+msgstr "Resource Access Token ไม่ถูกต้อง"
 
 #: invenio_rdm_records/tokens/errors.py:49
 msgid "The resource access token subject is invalid."
-msgstr ""
+msgstr "Subject ของ Resource Access Token ไม่ถูกต้อง"
 
 #: invenio_rdm_records/tokens/errors.py:55
 msgid "The resource access token is expired."
-msgstr ""
+msgstr "Resource Access Token หมดอายุแล้ว"
 
 #: invenio_rdm_records/tokens/errors.py:61
 msgid "Resource Access Tokens feature is currently disabled."
-msgstr ""
+msgstr "คุณสมบัติ Resource Access Tokens ถูกปิดใช้งานในขณะนี้"
 
 #: invenio_rdm_records/tokens/scopes.py:12
 msgid "Allow generation of granular access JWT tokens."
-msgstr ""
+msgstr "อนุญาตให้สร้าง JWT tokens สำหรับการเข้าถึงแบบละเอียด"

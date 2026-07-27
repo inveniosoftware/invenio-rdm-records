@@ -1,736 +1,788 @@
 # Translators:
-# Tibor Simko <tibor.simko@cern.ch>, 2026
+# Matti Lassila <matti.lassila@gmail.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2026-06-22T20:52:49.860Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Tibor Simko <tibor.simko@cern.ch>, 2026\n"
-"Language-Team: Georgian (https://app.transifex.com/inveniosoftware/teams/23537/ka/)\n"
+"Last-Translator: Matti Lassila <matti.lassila@gmail.com>, 2026\n"
+"Language-Team: Finnish (https://app.transifex.com/inveniosoftware/teams/23537/fi/)\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ka\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"Language: fi\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "mime-version: 1.0\n"
 
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Kopioi leikepöydälle"
 
 msgid "Copied!"
-msgstr ""
+msgstr "Kopioitu!"
 
 msgid "This set is not editable as it was created by the system."
-msgstr ""
+msgstr "Tätä joukkoa ei voi muokata, koska järjestelmä loi sen."
 
 msgid "This set is not deletable as it was created by the system."
-msgstr ""
+msgstr "Tätä joukkoa ei voi poistaa, koska järjestelmä loi sen."
 
 msgid "Fetch error"
-msgstr ""
+msgstr "Noutovirhe"
 
 msgid "Error fetching OAI set formats."
-msgstr ""
+msgstr "Virhe haettaessa OAI-joukkojen muotoja."
 
 msgid "Links"
-msgstr ""
+msgstr "Linkit"
 
 msgid "Format"
-msgstr ""
+msgstr "Muoto"
 
 msgid "List records"
-msgstr ""
+msgstr "Listaa tietueet"
 
 msgid "Opens in new tab"
-msgstr ""
+msgstr "Avautuu uuteen välilehteen"
 
 msgid "List identifiers"
-msgstr ""
+msgstr "Listaa tunnisteet"
 
 msgid ""
 "Before deleting, make sure to alert all harvesters that this set will no "
 "longer be available."
 msgstr ""
+"Ennen poistamista varmista, että kaikille haravoijille on ilmoitettu, että "
+"tämä joukko ei ole enää saatavilla."
 
 msgid ""
 "I have alerted all harvesters that this set will no longer be available."
 msgstr ""
+"Olen ilmoittanut kaikille haravoijille, että tämä joukko ei ole enää "
+"saatavilla."
 
 msgid "Cancel"
-msgstr "გაუქმება"
+msgstr "Peruuta"
 
 msgid "Delete"
-msgstr "წაშლა"
+msgstr "Poista"
 
 msgid "Delete {{title}}"
-msgstr ""
+msgstr "Poista {{title}}"
 
 msgid "This will delete the set '{{title}}'."
-msgstr ""
+msgstr "Tämä poistaa joukon '{{title}}'."
 
 msgid "Select the community where you want to submit your record."
-msgstr ""
+msgstr "Valitse yhteisö, johon haluat tallentaa aineistosi."
 
 msgid "Change"
-msgstr ""
+msgstr "Vaihda"
 
 msgid "Select a community"
-msgstr ""
+msgstr "Valitse yhteisö"
 
 msgid "Remove"
-msgstr "წაშლა"
+msgstr "Poista"
 
 msgid "Community inclusion information"
-msgstr ""
+msgstr "Yhteisöön sisällyttämisen tiedot"
 
 msgid ""
 "Submission to this community is only allowed if the record is restricted."
 msgstr ""
+"Tähän yhteisöön voi tallentaa aineistoja vain, jos tietue on rajoitettu."
 
 msgid "Submission to this community is only allowed to community members."
-msgstr ""
+msgstr "Tähän yhteisöön voivat tallentaa aineistoja vain yhteisön jäsenet."
 
 msgid "Community submission conditions information"
-msgstr ""
+msgstr "Tietoa yhteisöön tallentamisen ehdoista"
 
 msgid ""
 "Submission to this community is only allowed by dedicated upload form. Use "
 "the button to jump to the form."
 msgstr ""
+"Tähän yhteisöön voi ladata aineistoja vain erillisellä latauslomakkeella. "
+"Siirry lomakkeelle painikkeesta."
 
 msgid "Go to the community"
-msgstr ""
+msgstr "Siirry yhteisöön"
 
 msgid "Selected"
-msgstr ""
+msgstr "Valittu"
 
 msgid "Select"
-msgstr "არჩევა"
+msgstr "Valitse"
 
 msgid "Select {{title}}"
-msgstr ""
+msgstr "Valitse {{title}}"
 
 msgid "Verified"
-msgstr ""
+msgstr "Tarkistettu"
 
 msgid "Close"
-msgstr ""
+msgstr "Sulje"
 
 msgid "All"
-msgstr "ყველა"
+msgstr "Kaikki"
 
 msgid "My communities"
-msgstr ""
+msgstr "Omat yhteisöt"
 
 msgid "Search"
-msgstr "ძებნა"
+msgstr "Haku"
 
 msgid "In review"
-msgstr ""
+msgstr "Arvioitavana"
 
 msgid ""
 "Community curators will review your upload. Once accepted, it will be "
 "published."
 msgstr ""
+"Yhteisön kuraattorit tarkistavat lähettämäsi aineiston. Kun se hyväksytään, "
+"se julkaistaan."
 
 msgid "Declined"
-msgstr ""
+msgstr "Hylätty"
 
 msgid "The request to submit this upload to the community was declined."
-msgstr ""
+msgstr "Pyyntösi lähettää tämä aineisto yhteisöön hylättiin."
 
 msgid "Expired"
-msgstr ""
+msgstr "Vanhentunut"
 
 msgid "The request to submit this upload to the community has expired."
-msgstr ""
+msgstr "Pyyntösi lähettää tämä aineisto yhteisöön on vanhentunut."
 
 msgid "Published"
-msgstr ""
+msgstr "Julkaistu"
 
 msgid "Your upload is published."
-msgstr ""
+msgstr "Aineistosi on julkaistu."
 
 msgid "Draft"
-msgstr ""
+msgstr "Luonnos"
 
 msgid ""
 "Once your upload is complete, you can submit it for review to the community "
 "curators."
 msgstr ""
+"Kun aineistosi on valmis, voit lähettää sen yhteisön kuraattorien "
+"arvioitavaksi."
 
 msgid ""
 "Once your upload is complete, you can publish or submit it for review to the"
 " community curators."
 msgstr ""
+"Kun aineistosi on valmis, voit julkaista sen tai lähettää sen yhteisön "
+"kuraattorien arvioitavaksi."
 
 msgid "New version draft"
-msgstr ""
+msgstr "Uuden version luonnos"
 
 msgid "Once your upload is complete, you can publish it."
-msgstr ""
+msgstr "Kun lähetyksesi on valmis, voit julkaista sen."
 
 msgid "View request"
-msgstr ""
+msgstr "Näytä pyyntö"
 
 msgid "discard changes"
-msgstr ""
+msgstr "hylkää muutokset"
 
 msgid "discard version"
-msgstr ""
+msgstr "hylkää versio"
 
 msgid "delete"
-msgstr "წაშლა"
+msgstr "poista"
 
 msgid "Are you sure you want to discard the changes to this draft?"
-msgstr ""
+msgstr "Haluatko varmasti hylätä luonnoksen muutokset?"
 
 msgid "Are you sure you want to delete this new version?"
-msgstr ""
+msgstr "Haluatko varmasti poistaa uuden version?"
 
 msgid "Are you sure you want to delete this draft?"
-msgstr ""
+msgstr "Haluatko varmasti poistaa luonnoksen?"
 
 msgid "You don't have permissions to create a new version."
-msgstr ""
+msgstr "Sinulla ei ole oikeuksia luoda uutta versiota."
 
 msgid "New version"
-msgstr ""
+msgstr "Uusi versio"
 
 msgid "Preview"
-msgstr ""
+msgstr "Esikatselu"
 
 msgid "Are you sure you want to publish this record?"
-msgstr ""
+msgstr "Haluatko varmasti julkaista tämän aineiston?"
 
 msgid ""
 "Once the record is published you will no longer be able to change the files "
 "in the upload! However, you will still be able to update the record's "
 "metadata later."
 msgstr ""
+"Kun aineisto on julkaistu, et voi enää muuttaa lähetyksen tiedostoja! Voit "
+"kuitenkin myöhemmin päivittää tietueen metatietoja."
 
 msgid "Publish"
-msgstr "გამოქვეყნება"
+msgstr "Julkaise"
 
 msgid "Submitted for review"
-msgstr ""
+msgstr "Lähetetty arvioitavaksi"
 
 msgid "Submit for review"
-msgstr ""
+msgstr "Lähetä arvioitavaksi"
 
 msgid "Publish to community"
-msgstr ""
+msgstr "Julkaise yhteisöön"
 
 msgid "You must accept this."
-msgstr ""
+msgstr "Sinun on hyväksyttävä tämä."
 
 msgid ""
 "Before publishing to the community, please read and check the following:"
-msgstr ""
+msgstr "Ennen julkaisua yhteisöön, lue ja hyväksy seuraavat:"
 
 msgid "Publish record to community"
-msgstr ""
+msgstr "Julkaise tietue yhteisöön"
 
 msgid "Submit to community"
-msgstr ""
+msgstr "Tallenna yhteisöön"
 
 msgid "Before submitting to community, please read and check the following:"
-msgstr ""
+msgstr "Ennen lähettämistä yhteisöön, lue ja hyväksy seuraavat:"
 
 msgid "Before requesting review, please read and check the following:"
-msgstr ""
+msgstr "Ennen arviointipyynnön tekemistä, lue ja hyväksy seuraavat:"
 
 msgid "Submit record for review"
-msgstr ""
+msgstr "Lähetä tietue arvioitavaksi"
 
 msgid "The '{{communityTitle}}' curators will have access to"
-msgstr ""
+msgstr "Yhteisön '{{communityTitle}}' kuraattoreilla on pääsy"
 
 msgid "view and edit"
-msgstr ""
+msgstr "katsoa ja muokata"
 
 msgid "your upload's metadata and files."
-msgstr ""
+msgstr "lähetyksesi metatietoihin ja tiedostoihin."
 
 msgid "Message to curators (optional)"
-msgstr ""
+msgstr "Viesti kuraattoreille (valinnainen)"
 
 msgid "Change community"
-msgstr ""
+msgstr "Vaihda yhteisö"
 
 msgid "Publish without community"
-msgstr ""
+msgstr "Julkaise ilman yhteisöä"
 
 msgid "Save draft"
-msgstr ""
+msgstr "Tallenna luonnos"
 
 msgid "Record successfully saved."
-msgstr ""
+msgstr "Tietue tallennettiin onnistuneesti."
 
 msgid "Record saved with validation feedback in"
-msgstr ""
+msgstr "Tietue tallennettiin, ja validointipalaute kohteessa"
 
 msgid "Draft has validation feedback in"
-msgstr ""
+msgstr "Luonnoksessa on validointipalaute kohteessa"
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
 "user support."
 msgstr ""
+"Luonnosta ei tallennettu. Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä "
+"käyttäjätukeen."
 
 msgid ""
 "The draft was not published. Please try again. If the problem persists, "
 "contact user support."
 msgstr ""
+"Luonnosta ei julkaistu. Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä "
+"käyttäjätukeen."
 
 msgid "The draft was not published. Record saved with validation feedback in"
 msgstr ""
+"Luonnosta ei julkaistu. Tietue tallennettiin, validointipalaute kohteessa"
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
 "persists, contact user support."
 msgstr ""
+"Luonnosta ei lähetetty arvioitavaksi. Yritä uudelleen. Jos ongelma jatkuu, "
+"ota yhteyttä käyttäjätukeen."
 
 msgid ""
 "The draft was not submitted for review. Record saved with validation "
 "feedback in"
 msgstr ""
+"Luonnosta ei lähetetty arvioitavaksi. Tietue tallennettiin, "
+"validointipalaute kohteessa"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
 "user support."
 msgstr ""
+"Luonnoksen poistaminen epäonnistui. Yritä uudelleen. Jos ongelma jatkuu, ota"
+" yhteyttä käyttäjätukeen."
 
 msgid ""
 "Draft preview failed. Please try again. If the problem persists, contact "
 "user support."
 msgstr ""
+"Luonnoksen esikatselu epäonnistui. Yritä uudelleen. Jos ongelma jatkuu, ota "
+"yhteyttä käyttäjätukeen."
 
 msgid ""
 "Identifier reservation failed. Please try again. If the problem persists, "
 "contact user support."
 msgstr ""
+"Tunnisteen varaaminen epäonnistui. Yritä uudelleen. Jos ongelma jatkuu, ota "
+"yhteyttä käyttäjätukeen."
 
 msgid ""
 "Identifier could not be discarded. Please try again. If the problem "
 "persists, contact user support."
 msgstr ""
+"Tunnistetta ei voitu hylätä. Yritä uudelleen. Jos ongelma jatkuu, ota "
+"yhteyttä käyttäjätukeen."
 
 msgid ""
 "Draft save failed before file upload. Please try again. If the problem "
 "persists, contact user support."
 msgstr ""
+"Luonnoksen tallennus epäonnistui ennen tiedostojen lähetystä. Yritä "
+"uudelleen. Jos ongelma jatkuu, ota yhteyttä käyttäjätukeen."
 
 msgid ""
 "Files import from the previous version failed. Please try again. If the "
 "problem persists, contact user support."
 msgstr ""
+"Tiedostojen tuonti edellisestä versiosta epäonnistui. Yritä uudelleen. Jos "
+"ongelma jatkuu, ota yhteyttä käyttäjätukeen."
 
 msgid "Options"
-msgstr "პარამეტრები"
+msgstr "Vaihtoehdot"
 
 msgid "Public"
-msgstr ""
+msgstr "Julkinen"
 
 msgid "The record is publicly accessible."
-msgstr ""
+msgstr "Tietue on julkisesti saatavilla."
 
 msgid "The record and files are publicly accessible."
-msgstr ""
+msgstr "Tietue ja tiedostot ovat julkisesti saatavilla."
 
 msgid "Embargoed (full record)"
-msgstr ""
+msgstr "Embargo (koko tietue)"
 
 msgid "Restricted"
-msgstr ""
+msgstr "Rajoitettu"
 
 msgid "Public with restricted files"
-msgstr ""
+msgstr "Julkinen, mutta rajoitetut tiedostot"
 
 msgid "Embargoed (files-only)"
-msgstr ""
+msgstr "Embargo (vain tiedostot)"
 
 msgid "Apply an embargo"
-msgstr ""
+msgstr "Aseta embargo"
 
 msgid "Embargo reason"
-msgstr ""
+msgstr "Embargon syy"
 
 msgid "Optionally, describe the reason for the embargo."
-msgstr ""
+msgstr "Voit halutessasi kuvata embargon syyn."
 
 msgid "Embargo was lifted on {{fmtDate}}."
-msgstr ""
+msgstr "Embargo poistettiin {{fmtDate}}."
 
 msgid "Reason"
-msgstr ""
+msgstr "Syy"
 
 msgid "YYYY-MM-DD"
-msgstr ""
+msgstr "VVVV-KK-PP"
 
 msgid "Embargo until"
-msgstr ""
+msgstr "Embargo voimassa asti"
 
 msgid "The record has no files."
-msgstr ""
+msgstr "Tietueella ei ole tiedostoja."
 
 msgid "Files only"
-msgstr ""
+msgstr "Vain tiedostot"
 
 msgid "The full record is restricted."
-msgstr ""
+msgstr "Koko tietue on rajoitettu."
 
 msgid "The files of this record are restricted."
-msgstr ""
+msgstr "Tämän tietueen tiedostot ovat rajoitetut."
 
 msgid "Full record"
-msgstr ""
+msgstr "Koko tietue"
 
 msgid ""
 "Record visibility can not be changed to restricted anymore. Please contact "
 "support if you still need to make these changes."
 msgstr ""
+"Tietueen näkyvyyttä ei voi enää muuttaa rajoitetuksi. Ota yhteyttä tukeen, "
+"jos muutokset ovat edelleen tarpeen."
 
 msgid "Search or create affiliation"
-msgstr ""
+msgstr "Hae tai luo affiliaatio"
 
 msgid "Affiliations"
-msgstr ""
+msgstr "Affiliaatiot"
 
 msgid "Search for affiliations.."
-msgstr ""
+msgstr "Hae affiliaatioita.."
 
 msgid "Coming soon"
-msgstr ""
+msgstr "Tulossa pian"
 
 msgid ""
 "A copyright statement describing the ownership of the uploaded resource."
-msgstr ""
+msgstr "Tekijänoikeuslauseke, joka kuvaa ladatun aineiston omistajuuden."
 
 msgid "Copyright (C) {{currentYear}} The Authors."
-msgstr ""
+msgstr "Tekijänoikeus (C) {{currentYear}} Tekijät."
 
 msgid "Copyright"
-msgstr ""
+msgstr "Tekijänoikeus"
 
 msgid "Edit"
-msgstr "რედაქტირება"
+msgstr "Muokkaa"
 
 msgid "ORCID logo"
-msgstr ""
+msgstr "ORCID-logo"
 
 msgid "ROR logo"
-msgstr ""
+msgstr "ROR-logo"
 
 msgid "GND logo"
-msgstr ""
+msgstr "GND-logo"
 
 msgid "Type the value of an identifier..."
-msgstr ""
+msgstr "Kirjoita tunnisteen arvo..."
 
 msgid "Identifiers"
-msgstr ""
+msgstr "Tunnisteet"
 
 msgid "e.g. ORCID, ISNI or GND."
-msgstr ""
+msgstr "esim. ORCID, ISNI tai GND."
 
 msgid "Save and add another"
-msgstr ""
+msgstr "Tallenna ja lisää toinen"
 
 msgid "Family name is a required field."
-msgstr ""
+msgstr "Sukunimi on pakollinen kenttä."
 
 msgid "Name is a required field."
-msgstr ""
+msgstr "Nimi on pakollinen kenttä."
 
 msgid "Role is a required field."
-msgstr ""
+msgstr "Rooli on pakollinen kenttä."
 
 msgid "Added"
-msgstr ""
+msgstr "Lisätty"
 
 msgid "Person"
-msgstr ""
+msgstr "Henkilö"
 
 msgid "Organization"
-msgstr ""
+msgstr "Organisaatio"
 
 msgid "Search for persons by name, identifier, or affiliation..."
-msgstr ""
+msgstr "Hae henkilöitä nimellä, tunnisteella tai affiliaatiolla..."
 
 msgid "Family name"
-msgstr ""
+msgstr "Sukunimi"
 
 msgid "Given names"
-msgstr ""
+msgstr "Etunimet"
 
 msgid "Search for an organization by name, identifier, or affiliation..."
-msgstr ""
+msgstr "Hae organisaatiota nimellä, tunnisteella tai affiliaatiolla..."
 
 msgid "Search for organization by name, identifier, or affiliation..."
-msgstr ""
+msgstr "Hae organisaatiota nimellä, tunnisteella tai affiliaatiolla..."
 
 msgid "Name"
-msgstr "სახელი"
+msgstr "Nimi"
 
 msgid "Organization name"
-msgstr ""
+msgstr "Organisaation nimi"
 
 msgid "e.g. ROR, ISNI or GND."
-msgstr ""
+msgstr "esim. ROR, ISNI tai GND."
 
 msgid "Role"
-msgstr ""
+msgstr "Rooli"
 
 msgid "Select role"
-msgstr ""
+msgstr "Valitse rooli"
 
 msgid "Save"
-msgstr "დამახსოვრება"
+msgstr "Tallenna"
 
 msgid "Add date"
-msgstr ""
+msgstr "Lisää päivämäärä"
 
 msgid "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
-msgstr ""
+msgstr "Muoto: PVM tai PVM/PVM, missä PVM on VVVV tai VVVV-KK tai VVVV-KK-PP."
 
 msgid "Date"
-msgstr "თარიღი"
+msgstr "Päivämäärä"
 
 msgid "Type"
-msgstr "ტიპი "
+msgstr "Tyyppi"
 
 msgid "Description"
-msgstr "აღწერა"
+msgstr "Kuvaus"
 
 msgid "Remove field"
-msgstr ""
+msgstr "Poista kenttä"
 
 msgid "Dates"
-msgstr ""
+msgstr "Päivämäärät"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
-msgstr ""
+msgstr "VVVV-KK-PP tai VVVV-KK-PP/VVVV-KK-PP"
 
 msgid "Add description"
-msgstr ""
+msgstr "Lisää kuvaus"
 
 msgid "Additional Description"
-msgstr ""
+msgstr "Lisäkuvaus"
 
 msgid "Language"
-msgstr ""
+msgstr "Kieli"
 
 msgid "Select language"
-msgstr ""
+msgstr "Valitse kieli"
 
 msgid "Could not upload files."
-msgstr ""
+msgstr "Tiedostoja ei voitu lähettää."
 
 msgid "The following files already exist"
-msgstr ""
+msgstr "Seuraavat tiedostot ovat jo olemassa"
 
 msgid "Could not upload all files."
-msgstr ""
+msgstr "Kaikkia tiedostoja ei voitu lähettää."
 
 msgid "Empty files were skipped."
-msgstr ""
+msgstr "Tyhjät tiedostot ohitettiin."
 
 msgid "You can import files from the previous version."
-msgstr ""
+msgstr "Voit tuoda tiedostoja edellisestä versiosta."
 
 msgid ""
 "File addition, removal or modification are not allowed after you have "
 "published your upload."
 msgstr ""
+"Tiedostojen lisääminen, poistaminen tai muokkaaminen ei ole sallittua sen "
+"jälkeen, kun olet julkaissut lähetyksesi."
 
 msgid "You must create a new version to add, modify or delete files."
 msgstr ""
+"Sinun on luotava uusi versio lisätäksesi, muokataksesi tai poistaaksesi "
+"tiedostoja."
 
 msgid "Drag and drop files"
-msgstr ""
+msgstr "Vedä ja pudota tiedostoja"
 
 msgid "Upload files"
-msgstr ""
+msgstr "Lähetä tiedostoja"
 
 msgid "Import files"
-msgstr ""
+msgstr "Tuo tiedostoja"
 
 msgid "Choose which file to preview on the published record landing page"
 msgstr ""
+"Valitse, mikä tiedosto esikatsellaan julkaistun tietueen aloitussivulla"
 
 msgid "Filename"
-msgstr ""
+msgstr "Tiedostonimi"
 
 msgid "Size"
-msgstr ""
+msgstr "Koko"
 
 msgid "Progress"
-msgstr ""
+msgstr "Edistyminen"
 
 msgid "Default preview"
-msgstr ""
+msgstr "Oletusesikatselu"
 
 msgid ""
 "This is the file fingerprint (MD5 checksum), which can be used to verify the"
 " file integrity."
 msgstr ""
+"Tämä on tiedoston sormenjälki (MD5-tarkistussumma), jolla voidaan varmistaa "
+"tiedoston eheys."
 
 msgid "N/A"
-msgstr "არ არის ხელმისაწვდომი"
+msgstr "Ei saatavilla"
 
 msgid "Pending"
-msgstr "რიგშია"
+msgstr "Odottaa"
 
 msgid "Delete file"
-msgstr ""
+msgstr "Poista tiedosto"
 
 msgid "or"
-msgstr "ან"
+msgstr "tai"
 
 msgid "This is a Metadata-only record."
-msgstr ""
+msgstr "Tämä on vain metatiedot sisältävä tietue."
 
 msgid "Metadata-only record"
-msgstr ""
+msgstr "Vain metatiedot -tietue"
 
 msgid "Disable files for this record"
-msgstr ""
+msgstr "Poista tiedostot käytöstä tässä tietueessa"
 
 msgid "Storage available"
-msgstr ""
+msgstr "Tallennustilaa saatavilla"
 
 msgid "{{length}} out of {{maxfiles}} files"
-msgstr ""
+msgstr "{{length}} / {{maxfiles}} tiedostoa"
 
 msgid "out of"
-msgstr ""
+msgstr "kokonaismäärästä"
 
 msgid "Add identifier"
-msgstr ""
+msgstr "Lisää tunniste"
 
 msgid "Identifier"
-msgstr ""
+msgstr "Tunniste"
 
 msgid "Scheme"
-msgstr ""
+msgstr "Järjestelmä"
 
 msgid "Do you already have a {{pidLabel}} for this upload?"
-msgstr ""
+msgstr "Onko sinulla jo {{pidLabel}} tälle lähetykselle?"
 
 msgid "Yes, I already have one"
-msgstr ""
+msgstr "Kyllä, minulla on jo"
 
 msgid "No, I need one"
-msgstr ""
+msgstr "Ei, tarvitsen sellaisen"
 
 msgid "No, I don't need one"
-msgstr ""
+msgstr "Ei, en tarvitse"
 
 msgid "Search for languages..."
-msgstr ""
+msgstr "Hae kieliä..."
 
 msgid "Languages"
-msgstr ""
+msgstr "Kielet"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
-msgstr ""
+msgstr "Hae kieltä nimellä (esim. \"eng, \"fr\" tai \"puola\")"
 
 msgid "Add standard"
-msgstr ""
+msgstr "Lisää standardi"
 
 msgid "Add custom"
-msgstr ""
+msgstr "Lisää mukautettu"
 
 msgid "Licenses"
-msgstr ""
+msgstr "Lisenssit"
 
 msgid "Read more"
-msgstr ""
+msgstr "Lue lisää"
 
 msgid "Title is a required field."
-msgstr ""
+msgstr "Nimeke on pakollinen kenttä."
 
 msgid "Link must be a valid URL"
-msgstr ""
+msgstr "Linkin on oltava kelvollinen URL-osoite"
 
 msgid "Add {{mode}} license"
-msgstr ""
+msgstr "Lisää {{mode}}-lisenssi"
 
 msgid "Change {{mode}} license"
-msgstr ""
+msgstr "Vaihda {{mode}}-lisenssi"
 
 msgid "Search for licenses"
-msgstr ""
+msgstr "Hae lisenssejä"
 
 msgid "Recommended"
-msgstr ""
+msgstr "Suositeltu"
 
 msgid "recommended"
-msgstr ""
+msgstr "suositeltu"
 
 msgid "all"
-msgstr ""
+msgstr "kaikki"
 
 msgid "Data"
-msgstr ""
+msgstr "Data"
 
 msgid "data"
-msgstr ""
+msgstr "data"
 
 msgid "Software"
-msgstr ""
+msgstr "Ohjelmisto"
 
 msgid "software"
-msgstr ""
+msgstr "ohjelmisto"
 
 msgid "Title"
-msgstr "სათაური"
+msgstr "Nimeke"
 
 msgid "Link"
-msgstr ""
+msgstr "Linkki"
 
 msgid "Add license"
-msgstr ""
+msgstr "Lisää lisenssi"
 
 msgid "Change license"
-msgstr ""
+msgstr "Vaihda lisenssi"
 
 msgid "Did not find your license? "
-msgstr ""
+msgstr "Etkö löytänyt lisenssiäsi? "
 
 msgid "Add a custom license."
-msgstr ""
+msgstr "Lisää mukautettu lisenssi."
 
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
 "use DATE/DATE, e.g. 1939/1945."
 msgstr ""
+"Jos lähetyksesi on jo julkaistu muualla, käytä ensimmäisen julkaisun "
+"päivämäärää. Muoto: VVVV-KK-PP, VVVV-KK tai VVVV. Aikaväleissä käytä "
+"PVM/PVM, esim. 1939/1945."
 
 msgid "Publication date"
-msgstr "გამოქვეყნების თარიღი"
+msgstr "Julkaisupäivä"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
 msgstr ""
+"VVVV-KK-PP tai VVVV-KK-PP/VVVV-KK-PP aikaväleille. KK ja PP ovat "
+"valinnaisia."
 
 msgid ""
 "The publisher is used to formulate the citation, so consider the prominence "
 "of the role."
 msgstr ""
+"Julkaisijaa käytetään viittauksen muodostamiseen, joten huomioi roolin "
+"merkittävyys."
 
 msgid "Publisher"
-msgstr "გამომქვეყნებელი"
+msgstr "Julkaisija"
 
 msgid "Add reference"
-msgstr ""
+msgstr "Lisää viite"
 
 msgid "Reference string"
-msgstr ""
+msgstr "Viitteen teksti"
 
 msgid "References"
-msgstr "წყაროები"
+msgstr "Viitteet"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -738,98 +790,110 @@ msgid ""
 "Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
 "URNs, and URLs."
 msgstr ""
+"Anna liittyvien teosten tunnisteita. Tuettuja tunnisteita ovat mm. DOI, "
+"Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS "
+"Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
+"URN:t ja URL-osoitteet."
 
 msgid "Add related work"
-msgstr ""
+msgstr "Lisää liittyvä teos"
 
 msgid "Relation"
-msgstr ""
+msgstr "Suhde"
 
 msgid "Related works"
-msgstr ""
+msgstr "Liittyvät teokset"
 
 msgid "Resource type"
-msgstr ""
+msgstr "Aineistotyyppi"
 
 msgid "Suggest from"
-msgstr ""
+msgstr "Ehdota lähteestä"
 
 msgid "Keywords and subjects"
-msgstr ""
+msgstr "Avainsanat ja asiasanat"
 
 msgid "Search for a subject by name"
-msgstr ""
+msgstr "Hae asiasanaa nimellä"
 
 msgid "Add titles"
-msgstr ""
+msgstr "Lisää nimekkeitä"
 
 msgid "Additional title"
-msgstr ""
+msgstr "Lisänimeke"
 
 msgid "Version"
-msgstr ""
+msgstr "Versio"
 
 msgid "On"
-msgstr ""
+msgstr "Päivänä"
 
 msgid ""
 "the record will automatically be made publicly accessible. Until then, the "
 "record can"
 msgstr ""
+"tietue tulee automaattisesti julkisesti saataville. Siihen asti tietueen "
+"voivat"
 
 msgid "only"
-msgstr ""
+msgstr "vain"
 
 msgid "be accessed by"
-msgstr ""
+msgstr "käyttää"
 
 msgid "users specified"
-msgstr ""
+msgstr "määritetyt käyttäjät"
 
 msgid "in the permissions."
-msgstr ""
+msgstr "käyttöoikeuksissa."
 
 msgid "The record can"
-msgstr ""
+msgstr "Tietueen voivat"
 
 msgid "The record is publicly accessible. The files can"
-msgstr ""
+msgstr "Tietue on julkisesti saatavilla. Tiedostojen voivat"
 
 msgid "The record is publicly accessible. On"
-msgstr ""
+msgstr "Tietue on julkisesti saatavilla. Päivänä"
 
 msgid ""
 "the files will automatically be made publicly accessible. Until then, the "
 "files can"
 msgstr ""
+"tiedostot tulevat automaattisesti julkisesti saataville. Siihen asti "
+"tiedostojen voivat"
 
 msgid "Record or files protection must be"
-msgstr ""
+msgstr "Tietueen tai tiedostojen suojauksen on oltava"
 
 msgid "restricted"
-msgstr "აკრძალული"
+msgstr "rajoitettu"
 
 msgid "to apply an embargo."
-msgstr ""
+msgstr "jotta embargo voidaan asettaa."
 
 msgid ""
 "Uploading the selected files would result in {{total}} of storage use, "
 "exceeding the limit of {{limit}}."
 msgstr ""
+"Valittujen tiedostojen lähettäminen käyttäisi {{total}} tallennustilaa, mikä"
+" ylittää rajan {{limit}}."
 
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
 "is preferred see"
 msgstr ""
+"Soveltuu erityisesti ohjelmisto- ja datasettien lähetyksiin. Semanttinen "
+"versionumero on suositeltu, katso"
 
 msgid ", but any version string is accepted."
-msgstr ""
+msgstr ", mutta mikä tahansa versiojono hyväksytään."
 
 msgid "Search in all communities"
-msgstr ""
+msgstr "Hae kaikista yhteisöistä"
 
 msgid "Search in my communities"
-msgstr ""
+msgstr "Hae omista yhteisöistäni"
 
 msgid ""
 "The request to submit this upload to the community was declined. Please "
@@ -865,7 +929,7 @@ msgid "Allocated storage"
 msgstr ""
 
 msgid "Record"
-msgstr "ჩანაწერი"
+msgstr "Tietue"
 
 msgid "Additional quota"
 msgstr ""
@@ -874,7 +938,7 @@ msgid "Usage"
 msgstr ""
 
 msgid "Status"
-msgstr "სტატუსი"
+msgstr "Tila"
 
 msgid "{{total}} GB total"
 msgstr ""
@@ -960,10 +1024,10 @@ msgid "File modification checklist:"
 msgstr ""
 
 msgid "Yes"
-msgstr "დიახ"
+msgstr "Kyllä"
 
 msgid "No"
-msgstr "არა"
+msgstr "Ei"
 
 msgid ""
 "I will not modify files that supplement findings/results of an already "
@@ -983,7 +1047,7 @@ msgid "Manage storage"
 msgstr ""
 
 msgid "Default"
-msgstr ""
+msgstr "Oletus"
 
 msgid "Additional"
 msgstr ""
@@ -1019,10 +1083,10 @@ msgid "Unable to increase quota"
 msgstr ""
 
 msgid "Apply"
-msgstr "გამოყენება"
+msgstr ""
 
 msgid "Search for subjects..."
-msgstr ""
+msgstr "Hae aiheita..."
 
 msgid "{{filename}} is already part of this upload."
 msgstr ""

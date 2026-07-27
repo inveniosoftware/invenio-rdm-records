@@ -1,0 +1,1090 @@
+# Translators:
+# Suthep Yonphimai <tomztt@gmail.com>, 2026
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2026-06-22T20:52:49.860Z\n"
+"PO-Revision-Date: 2024-08-06 08:56+0000\n"
+"Last-Translator: Suthep Yonphimai <tomztt@gmail.com>, 2026\n"
+"Language-Team: Thai (https://app.transifex.com/inveniosoftware/teams/23537/th/)\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: th\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"mime-version: 1.0\n"
+
+msgid "Copy to clipboard"
+msgstr "คัดลอกไปยังคลิปบอร์ด"
+
+msgid "Copied!"
+msgstr "คัดลอกแล้ว!"
+
+msgid "This set is not editable as it was created by the system."
+msgstr "ชุดนี้ไม่สามารถแก้ไขได้เนื่องจากสร้างโดยระบบ"
+
+msgid "This set is not deletable as it was created by the system."
+msgstr "ชุดนี้ไม่สามารถลบได้เนื่องจากสร้างโดยระบบ"
+
+msgid "Fetch error"
+msgstr "ข้อผิดพลาดในการดึงข้อมูล"
+
+msgid "Error fetching OAI set formats."
+msgstr "เกิดข้อผิดพลาดในการดึงรูปแบบ OAI set"
+
+msgid "Links"
+msgstr "ลิงก์"
+
+msgid "Format"
+msgstr "รูปแบบ"
+
+msgid "List records"
+msgstr "รายการระเบียน"
+
+msgid "Opens in new tab"
+msgstr "เปิดในแท็บใหม่"
+
+msgid "List identifiers"
+msgstr "รายการตัวระบุ"
+
+msgid ""
+"Before deleting, make sure to alert all harvesters that this set will no "
+"longer be available."
+msgstr ""
+"ก่อนลบ โปรดแจ้งให้ผู้รวบรวมข้อมูลทราบว่าชุดนี้จะไม่พร้อมใช้งานอีกต่อไป"
+
+msgid ""
+"I have alerted all harvesters that this set will no longer be available."
+msgstr "ฉันได้แจ้งผู้รวบรวมข้อมูลทุกรายแล้วว่าชุดนี้จะไม่พร้อมใช้งานอีกต่อไป"
+
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+msgid "Delete"
+msgstr "ลบ"
+
+msgid "Delete {{title}}"
+msgstr "ลบ {{title}}"
+
+msgid "This will delete the set '{{title}}'."
+msgstr "การดำเนินการนี้จะลบชุด '{{title}}'"
+
+msgid "Select the community where you want to submit your record."
+msgstr "เลือกชุมชนที่คุณต้องการส่งระเบียน"
+
+msgid "Change"
+msgstr "เปลี่ยน"
+
+msgid "Select a community"
+msgstr "เลือกชุมชน"
+
+msgid "Remove"
+msgstr "ลบ"
+
+msgid "Community inclusion information"
+msgstr "ข้อมูลการรวมชุมชน"
+
+msgid ""
+"Submission to this community is only allowed if the record is restricted."
+msgstr "การส่งเข้าชุมชนนี้อนุญาตเฉพาะเมื่อระเบียนถูกจำกัดการเข้าถึง"
+
+msgid "Submission to this community is only allowed to community members."
+msgstr "การส่งเข้าชุมชนนี้อนุญาตเฉพาะสมาชิกชุมชนเท่านั้น"
+
+msgid "Community submission conditions information"
+msgstr "ข้อมูลเงื่อนไขการส่งเข้าชุมชน"
+
+msgid ""
+"Submission to this community is only allowed by dedicated upload form. Use "
+"the button to jump to the form."
+msgstr ""
+"การส่งเข้าชุมชนนี้อนุญาตเฉพาะผ่านแบบฟอร์มอัปโหลดเฉพาะ "
+"ใช้ปุ่มเพื่อไปยังแบบฟอร์ม"
+
+msgid "Go to the community"
+msgstr "ไปยังชุมชน"
+
+msgid "Selected"
+msgstr "เลือกแล้ว"
+
+msgid "Select"
+msgstr "เลือก"
+
+msgid "Select {{title}}"
+msgstr "เลือก {{title}}"
+
+msgid "Verified"
+msgstr "ตรวจสอบแล้ว"
+
+msgid "Close"
+msgstr "ปิด"
+
+msgid "All"
+msgstr "ทั้งหมด"
+
+msgid "My communities"
+msgstr "ชุมชนของฉัน"
+
+msgid "Search"
+msgstr "ค้นหา"
+
+msgid "In review"
+msgstr "อยู่ระหว่างการตรวจสอบ"
+
+msgid ""
+"Community curators will review your upload. Once accepted, it will be "
+"published."
+msgstr ""
+"ผู้ดูแลคอลเลกชันจะตรวจสอบการอัปโหลดของคุณ เมื่อได้รับการยอมรับจะเผยแพร่"
+
+msgid "Declined"
+msgstr "ปฏิเสธแล้ว"
+
+msgid "The request to submit this upload to the community was declined."
+msgstr "คำขอส่งการอัปโหลดนี้เข้าชุมชนถูกปฏิเสธ"
+
+msgid "Expired"
+msgstr "หมดอายุแล้ว"
+
+msgid "The request to submit this upload to the community has expired."
+msgstr "คำขอส่งการอัปโหลดนี้เข้าชุมชนหมดอายุแล้ว"
+
+msgid "Published"
+msgstr "เผยแพร่แล้ว"
+
+msgid "Your upload is published."
+msgstr "การอัปโหลดของคุณได้รับการเผยแพร่แล้ว"
+
+msgid "Draft"
+msgstr "ฉบับร่าง"
+
+msgid ""
+"Once your upload is complete, you can submit it for review to the community "
+"curators."
+msgstr "เมื่ออัปโหลดเสร็จ คุณสามารถส่งให้ผู้ดูแลคอลเลกชันตรวจสอบได้"
+
+msgid ""
+"Once your upload is complete, you can publish or submit it for review to the"
+" community curators."
+msgstr ""
+"เมื่ออัปโหลดเสร็จ คุณสามารถเผยแพร่หรือส่งให้ผู้ดูแลคอลเลกชันตรวจสอบได้"
+
+msgid "New version draft"
+msgstr "ฉบับร่างเวอร์ชันใหม่"
+
+msgid "Once your upload is complete, you can publish it."
+msgstr "เมื่ออัปโหลดเสร็จ คุณสามารถเผยแพร่ได้"
+
+msgid "View request"
+msgstr "ดูคำขอ"
+
+msgid "discard changes"
+msgstr "ยกเลิกการเปลี่ยนแปลง"
+
+msgid "discard version"
+msgstr "ยกเลิกเวอร์ชัน"
+
+msgid "delete"
+msgstr "ลบ"
+
+msgid "Are you sure you want to discard the changes to this draft?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการเปลี่ยนแปลงของฉบับร่างนี้?"
+
+msgid "Are you sure you want to delete this new version?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบเวอร์ชันใหม่นี้?"
+
+msgid "Are you sure you want to delete this draft?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบฉบับร่างนี้?"
+
+msgid "You don't have permissions to create a new version."
+msgstr "คุณไม่มีสิทธิ์สร้างเวอร์ชันใหม่"
+
+msgid "New version"
+msgstr "เวอร์ชันใหม่"
+
+msgid "Preview"
+msgstr "ดูตัวอย่าง"
+
+msgid "Are you sure you want to publish this record?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการเผยแพร่ระเบียนนี้?"
+
+msgid ""
+"Once the record is published you will no longer be able to change the files "
+"in the upload! However, you will still be able to update the record's "
+"metadata later."
+msgstr ""
+"เมื่อระเบียนได้รับการเผยแพร่แล้ว "
+"คุณจะไม่สามารถเปลี่ยนไฟล์ในการอัปโหลดได้อีก! อย่างไรก็ตาม "
+"คุณยังสามารถอัปเดตข้อมูลเมตาของระเบียนได้ในภายหลัง"
+
+msgid "Publish"
+msgstr "เผยแพร่"
+
+msgid "Submitted for review"
+msgstr "ส่งเพื่อตรวจสอบแล้ว"
+
+msgid "Submit for review"
+msgstr "ส่งเพื่อตรวจสอบ"
+
+msgid "Publish to community"
+msgstr "เผยแพร่เข้าชุมชน"
+
+msgid "You must accept this."
+msgstr "คุณต้องยอมรับข้อนี้"
+
+msgid ""
+"Before publishing to the community, please read and check the following:"
+msgstr "ก่อนเผยแพร่เข้าชุมชน โปรดอ่านและตรวจสอบสิ่งต่อไปนี้:"
+
+msgid "Publish record to community"
+msgstr "เผยแพร่ระเบียนเข้าชุมชน"
+
+msgid "Submit to community"
+msgstr "ส่งไปยังชุมชน"
+
+msgid "Before submitting to community, please read and check the following:"
+msgstr "ก่อนส่งเข้าชุมชน โปรดอ่านและตรวจสอบสิ่งต่อไปนี้:"
+
+msgid "Before requesting review, please read and check the following:"
+msgstr "ก่อนขอตรวจสอบ โปรดอ่านและตรวจสอบสิ่งต่อไปนี้:"
+
+msgid "Submit record for review"
+msgstr "ส่งระเบียนเพื่อตรวจสอบ"
+
+msgid "The '{{communityTitle}}' curators will have access to"
+msgstr "ผู้ดูแลคอลเลกชัน '{{communityTitle}}' จะมีสิทธิ์เข้าถึง"
+
+msgid "view and edit"
+msgstr "ดูและแก้ไข"
+
+msgid "your upload's metadata and files."
+msgstr "ข้อมูลเมตาและไฟล์ของการอัปโหลดของคุณ"
+
+msgid "Message to curators (optional)"
+msgstr "ข้อความถึงผู้ดูแลคอลเลกชัน (ไม่บังคับ)"
+
+msgid "Change community"
+msgstr "เปลี่ยนชุมชน"
+
+msgid "Publish without community"
+msgstr "เผยแพร่โดยไม่มีชุมชน"
+
+msgid "Save draft"
+msgstr "บันทึกฉบับร่าง"
+
+msgid "Record successfully saved."
+msgstr "บันทึกระเบียนสำเร็จ"
+
+msgid "Record saved with validation feedback in"
+msgstr "บันทึกระเบียนพร้อมข้อเสนอแนะการตรวจสอบใน"
+
+msgid "Draft has validation feedback in"
+msgstr "ฉบับร่างมีข้อเสนอแนะการตรวจสอบใน"
+
+msgid ""
+"The draft was not saved. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"ไม่สามารถบันทึกฉบับร่างได้ โปรดลองอีกครั้ง หากปัญหายังคงมีอยู่ "
+"ติดต่อฝ่ายสนับสนุน"
+
+msgid ""
+"The draft was not published. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+"ไม่สามารถเผยแพร่ฉบับร่างได้ โปรดลองอีกครั้ง หากปัญหายังคงมีอยู่ "
+"ติดต่อฝ่ายสนับสนุน"
+
+msgid "The draft was not published. Record saved with validation feedback in"
+msgstr "ไม่สามารถเผยแพร่ฉบับร่างได้ บันทึกระเบียนพร้อมข้อเสนอแนะการตรวจสอบใน"
+
+msgid ""
+"The draft was not submitted for review. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"ไม่สามารถส่งฉบับร่างเพื่อตรวจสอบได้ โปรดลองอีกครั้ง หากปัญหายังคงมีอยู่ "
+"ติดต่อฝ่ายสนับสนุน"
+
+msgid ""
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
+msgstr ""
+"ไม่สามารถส่งฉบับร่างเพื่อตรวจสอบได้ บันทึกระเบียนพร้อมข้อเสนอแนะการตรวจสอบใน"
+
+msgid ""
+"Draft deletion failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"การลบฉบับร่างล้มเหลว โปรดลองอีกครั้ง หากปัญหายังคงมีอยู่ ติดต่อฝ่ายสนับสนุน"
+
+msgid ""
+"Draft preview failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"การแสดงตัวอย่างฉบับร่างล้มเหลว โปรดลองอีกครั้ง หากปัญหายังคงมีอยู่ "
+"ติดต่อฝ่ายสนับสนุน"
+
+msgid ""
+"Identifier reservation failed. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+"การจองตัวระบุล้มเหลว โปรดลองอีกครั้ง หากปัญหายังคงมีอยู่ ติดต่อฝ่ายสนับสนุน"
+
+msgid ""
+"Identifier could not be discarded. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"ไม่สามารถยกเลิกตัวระบุได้ โปรดลองอีกครั้ง หากปัญหายังคงมีอยู่ "
+"ติดต่อฝ่ายสนับสนุน"
+
+msgid ""
+"Draft save failed before file upload. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"การบันทึกฉบับร่างล้มเหลวก่อนอัปโหลดไฟล์ โปรดลองอีกครั้ง หากปัญหายังคงมีอยู่ "
+"ติดต่อฝ่ายสนับสนุน"
+
+msgid ""
+"Files import from the previous version failed. Please try again. If the "
+"problem persists, contact user support."
+msgstr ""
+"การนำเข้าไฟล์จากเวอร์ชันก่อนหน้าล้มเหลว โปรดลองอีกครั้ง หากปัญหายังคงมีอยู่ "
+"ติดต่อฝ่ายสนับสนุน"
+
+msgid "Options"
+msgstr "ตัวเลือก"
+
+msgid "Public"
+msgstr "สาธารณะ"
+
+msgid "The record is publicly accessible."
+msgstr "ระเบียนนี้เข้าถึงได้สาธารณะ"
+
+msgid "The record and files are publicly accessible."
+msgstr "ระเบียนและไฟล์เข้าถึงได้สาธารณะ"
+
+msgid "Embargoed (full record)"
+msgstr "ระงับการเข้าถึงชั่วคราว (ระเบียนทั้งหมด)"
+
+msgid "Restricted"
+msgstr "จำกัดการเข้าถึง"
+
+msgid "Public with restricted files"
+msgstr "สาธารณะแต่ไฟล์จำกัดการเข้าถึง"
+
+msgid "Embargoed (files-only)"
+msgstr "ระงับการเข้าถึงชั่วคราว (เฉพาะไฟล์)"
+
+msgid "Apply an embargo"
+msgstr "ใช้การระงับการเข้าถึงชั่วคราว"
+
+msgid "Embargo reason"
+msgstr "เหตุผลการระงับการเข้าถึง"
+
+msgid "Optionally, describe the reason for the embargo."
+msgstr "ระบุเหตุผลสำหรับการระงับการเข้าถึง (ไม่บังคับ)"
+
+msgid "Embargo was lifted on {{fmtDate}}."
+msgstr "ยกเลิกการระงับการเข้าถึงเมื่อ {{fmtDate}} แล้ว"
+
+msgid "Reason"
+msgstr "เหตุผล"
+
+msgid "YYYY-MM-DD"
+msgstr "YYYY-MM-DD"
+
+msgid "Embargo until"
+msgstr "ระงับการเข้าถึงจนถึง"
+
+msgid "The record has no files."
+msgstr "ระเบียนนี้ไม่มีไฟล์"
+
+msgid "Files only"
+msgstr "เฉพาะไฟล์"
+
+msgid "The full record is restricted."
+msgstr "ระเบียนทั้งหมดถูกจำกัดการเข้าถึง"
+
+msgid "The files of this record are restricted."
+msgstr "ไฟล์ของระเบียนนี้ถูกจำกัดการเข้าถึง"
+
+msgid "Full record"
+msgstr "ระเบียนทั้งหมด"
+
+msgid ""
+"Record visibility can not be changed to restricted anymore. Please contact "
+"support if you still need to make these changes."
+msgstr ""
+"ไม่สามารถเปลี่ยนการมองเห็นระเบียนเป็นแบบจำกัดได้อีกต่อไป "
+"โปรดติดต่อฝ่ายสนับสนุนหากยังต้องการเปลี่ยนแปลงไม่สามารถเปลี่ยนการมองเห็นระเบียนเป็นจำกัดได้อีกต่อไป"
+" กรุณาติดต่อฝ่ายสนับสนุนหากคุณยังต้องการเปลี่ยนแปลง"
+
+msgid "Search or create affiliation"
+msgstr "ค้นหาหรือสร้างสังกัด"
+
+msgid "Affiliations"
+msgstr "สังกัด"
+
+msgid "Search for affiliations.."
+msgstr "ค้นหาสังกัด.."
+
+msgid "Coming soon"
+msgstr "เร็วๆ นี้"
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr "คำแถลงลิขสิทธิ์ที่อธิบายความเป็นเจ้าของทรัพยากรที่อัปโหลด"
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr "ลิขสิทธิ์ (C) {{currentYear}} ผู้เขียน"
+
+msgid "Copyright"
+msgstr "ลิขสิทธิ์"
+
+msgid "Edit"
+msgstr "แก้ไข"
+
+msgid "ORCID logo"
+msgstr "โลโก้ ORCID"
+
+msgid "ROR logo"
+msgstr "โลโก้ ROR"
+
+msgid "GND logo"
+msgstr "โลโก้ GND"
+
+msgid "Type the value of an identifier..."
+msgstr "พิมพ์ค่าของตัวระบุ..."
+
+msgid "Identifiers"
+msgstr "ตัวระบุ"
+
+msgid "e.g. ORCID, ISNI or GND."
+msgstr "เช่น ORCID, ISNI หรือ GND"
+
+msgid "Save and add another"
+msgstr "บันทึกและเพิ่มอีก"
+
+msgid "Family name is a required field."
+msgstr "นามสกุลเป็นฟิลด์ที่จำเป็น"
+
+msgid "Name is a required field."
+msgstr "ชื่อเป็นฟิลด์ที่จำเป็น"
+
+msgid "Role is a required field."
+msgstr "บทบาทเป็นฟิลด์ที่จำเป็น"
+
+msgid "Added"
+msgstr "เพิ่มแล้ว"
+
+msgid "Person"
+msgstr "บุคคล"
+
+msgid "Organization"
+msgstr "องค์กร"
+
+msgid "Search for persons by name, identifier, or affiliation..."
+msgstr "ค้นหาบุคคลตามชื่อ ตัวระบุ หรือสังกัด..."
+
+msgid "Family name"
+msgstr "นามสกุล"
+
+msgid "Given names"
+msgstr "ชื่อ"
+
+msgid "Search for an organization by name, identifier, or affiliation..."
+msgstr "ค้นหาองค์กรตามชื่อ ตัวระบุ หรือสังกัด..."
+
+msgid "Search for organization by name, identifier, or affiliation..."
+msgstr "ค้นหาองค์กรตามชื่อ ตัวระบุ หรือสังกัด..."
+
+msgid "Name"
+msgstr "ชื่อ"
+
+msgid "Organization name"
+msgstr "ชื่อองค์กร"
+
+msgid "e.g. ROR, ISNI or GND."
+msgstr "เช่น ROR, ISNI หรือ GND"
+
+msgid "Role"
+msgstr "บทบาท"
+
+msgid "Select role"
+msgstr "เลือกบทบาท"
+
+msgid "Save"
+msgstr "บันทึก"
+
+msgid "Add date"
+msgstr "เพิ่มวันที่"
+
+msgid "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
+msgstr ""
+"รูปแบบ: DATE หรือ DATE/DATE โดย DATE คือ YYYY หรือ YYYY-MM หรือ YYYY-MM-DD"
+
+msgid "Date"
+msgstr "วันที่"
+
+msgid "Type"
+msgstr "ประเภท"
+
+msgid "Description"
+msgstr "คำอธิบาย"
+
+msgid "Remove field"
+msgstr "ลบฟิลด์"
+
+msgid "Dates"
+msgstr "วันที่"
+
+msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
+msgstr "YYYY-MM-DD หรือ YYYY-MM-DD/YYYY-MM-DD"
+
+msgid "Add description"
+msgstr "เพิ่มคำอธิบาย"
+
+msgid "Additional Description"
+msgstr "คำอธิบายเพิ่มเติม"
+
+msgid "Language"
+msgstr "ภาษา"
+
+msgid "Select language"
+msgstr "เลือกภาษา"
+
+msgid "Could not upload files."
+msgstr "ไม่สามารถอัปโหลดไฟล์ได้"
+
+msgid "The following files already exist"
+msgstr "ไฟล์ต่อไปนี้มีอยู่แล้ว"
+
+msgid "Could not upload all files."
+msgstr "ไม่สามารถอัปโหลดไฟล์ทั้งหมดได้"
+
+msgid "Empty files were skipped."
+msgstr "ไฟล์ว่างถูกข้ามไป"
+
+msgid "You can import files from the previous version."
+msgstr "คุณสามารถนำเข้าไฟล์จากเวอร์ชันก่อนหน้าได้"
+
+msgid ""
+"File addition, removal or modification are not allowed after you have "
+"published your upload."
+msgstr "ไม่อนุญาตให้เพิ่ม ลบ หรือแก้ไขไฟล์หลังจากเผยแพร่การอัปโหลดแล้ว"
+
+msgid "You must create a new version to add, modify or delete files."
+msgstr "คุณต้องสร้างเวอร์ชันใหม่เพื่อเพิ่ม แก้ไข หรือลบไฟล์"
+
+msgid "Drag and drop files"
+msgstr "ลากและวางไฟล์"
+
+msgid "Upload files"
+msgstr "อัปโหลดไฟล์"
+
+msgid "Import files"
+msgstr "นำเข้าไฟล์"
+
+msgid "Choose which file to preview on the published record landing page"
+msgstr "เลือกไฟล์สำหรับแสดงตัวอย่างในหน้าระเบียนที่เผยแพร่"
+
+msgid "Filename"
+msgstr "ชื่อไฟล์"
+
+msgid "Size"
+msgstr "ขนาด"
+
+msgid "Progress"
+msgstr "ความคืบหน้า"
+
+msgid "Default preview"
+msgstr "ตัวอย่างเริ่มต้น"
+
+msgid ""
+"This is the file fingerprint (MD5 checksum), which can be used to verify the"
+" file integrity."
+msgstr ""
+"นี่คือลายนิ้วมือของไฟล์ (MD5 checksum) ซึ่งใช้ตรวจสอบความสมบูรณ์ของไฟล์ได้"
+
+msgid "N/A"
+msgstr "ไม่มีข้อมูล"
+
+msgid "Pending"
+msgstr "รอดำเนินการ"
+
+msgid "Delete file"
+msgstr "ลบไฟล์"
+
+msgid "or"
+msgstr "หรือ"
+
+msgid "This is a Metadata-only record."
+msgstr "นี่คือระเบียนข้อมูลเมตาเท่านั้น"
+
+msgid "Metadata-only record"
+msgstr "ระเบียนข้อมูลเมตาเท่านั้น"
+
+msgid "Disable files for this record"
+msgstr "ปิดใช้งานไฟล์สำหรับระเบียนนี้"
+
+msgid "Storage available"
+msgstr "พื้นที่จัดเก็บที่พร้อมใช้งาน"
+
+msgid "{{length}} out of {{maxfiles}} files"
+msgstr "{{length}} จาก {{maxfiles}} ไฟล์"
+
+msgid "out of"
+msgstr "จาก"
+
+msgid "Add identifier"
+msgstr "เพิ่มตัวระบุ"
+
+msgid "Identifier"
+msgstr "ตัวระบุ"
+
+msgid "Scheme"
+msgstr "รูปแบบ"
+
+msgid "Do you already have a {{pidLabel}} for this upload?"
+msgstr "คุณมี {{pidLabel}} สำหรับการอัปโหลดนี้แล้วหรือไม่?"
+
+msgid "Yes, I already have one"
+msgstr "ใช่ ฉันมีอยู่แล้ว"
+
+msgid "No, I need one"
+msgstr "ไม่ ฉันต้องการหนึ่ง"
+
+msgid "No, I don't need one"
+msgstr "ไม่ ฉันไม่ต้องการ"
+
+msgid "Search for languages..."
+msgstr "ค้นหาภาษา..."
+
+msgid "Languages"
+msgstr "ภาษา"
+
+msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
+msgstr "ค้นหาภาษาตามชื่อ (เช่น \"eng\", \"fr\" หรือ \"Polish\")"
+
+msgid "Add standard"
+msgstr "เพิ่มมาตรฐาน"
+
+msgid "Add custom"
+msgstr "เพิ่มแบบกำหนดเอง"
+
+msgid "Licenses"
+msgstr "ใบอนุญาต"
+
+msgid "Read more"
+msgstr "อ่านเพิ่มเติม"
+
+msgid "Title is a required field."
+msgstr "ชื่อเรื่องเป็นฟิลด์ที่จำเป็น"
+
+msgid "Link must be a valid URL"
+msgstr "ลิงก์ต้องเป็น URL ที่ถูกต้อง"
+
+msgid "Add {{mode}} license"
+msgstr "เพิ่มใบอนุญาต {{mode}}"
+
+msgid "Change {{mode}} license"
+msgstr "เปลี่ยนใบอนุญาต {{mode}}"
+
+msgid "Search for licenses"
+msgstr "ค้นหาใบอนุญาต"
+
+msgid "Recommended"
+msgstr "แนะนำ"
+
+msgid "recommended"
+msgstr "แนะนำ"
+
+msgid "all"
+msgstr "ทั้งหมด"
+
+msgid "Data"
+msgstr "ข้อมูล"
+
+msgid "data"
+msgstr "ข้อมูล"
+
+msgid "Software"
+msgstr "ซอฟต์แวร์"
+
+msgid "software"
+msgstr "ซอฟต์แวร์"
+
+msgid "Title"
+msgstr "ชื่อเรื่อง"
+
+msgid "Link"
+msgstr "ลิงก์"
+
+msgid "Add license"
+msgstr "เพิ่มใบอนุญาต"
+
+msgid "Change license"
+msgstr "เปลี่ยนใบอนุญาต"
+
+msgid "Did not find your license? "
+msgstr "ไม่พบใบอนุญาตของคุณ? "
+
+msgid "Add a custom license."
+msgstr "เพิ่มใบอนุญาตแบบกำหนดเอง"
+
+msgid ""
+"In case your upload was already published elsewhere, please use the date of "
+"the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
+"use DATE/DATE, e.g. 1939/1945."
+msgstr ""
+"หากการอัปโหลดของคุณเคยเผยแพร่ที่อื่นแล้ว โปรดใช้วันที่เผยแพร่ครั้งแรก "
+"รูปแบบ: YYYY-MM-DD, YYYY-MM หรือ YYYY สำหรับช่วงเวลาใช้ DATE/DATE เช่น "
+"1939/1945"
+
+msgid "Publication date"
+msgstr "วันที่เผยแพร่"
+
+msgid ""
+"YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
+msgstr ""
+"YYYY-MM-DD หรือ YYYY-MM-DD/YYYY-MM-DD สำหรับช่วงเวลา MM และ DD เป็นตัวเลือก"
+
+msgid ""
+"The publisher is used to formulate the citation, so consider the prominence "
+"of the role."
+msgstr "ผู้เผยแพร่ใช้ในการกำหนดรูปแบบการอ้างอิง โปรดพิจารณาความสำคัญของบทบาท"
+
+msgid "Publisher"
+msgstr "ผู้เผยแพร่"
+
+msgid "Add reference"
+msgstr "เพิ่มการอ้างอิง"
+
+msgid "Reference string"
+msgstr "สตริงการอ้างอิง"
+
+msgid "References"
+msgstr "เอกสารอ้างอิง"
+
+msgid ""
+"Specify identifiers of related works. Supported identifiers include DOI, "
+"Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS "
+"Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
+"URNs, and URLs."
+msgstr ""
+"ระบุตัวระบุของงานที่เกี่ยวข้อง ตัวระบุที่รองรับ ได้แก่ DOI, Handle, ARK, "
+"PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS Bibliographic Code, "
+"arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, URN และ URL"
+
+msgid "Add related work"
+msgstr "เพิ่มงานที่เกี่ยวข้อง"
+
+msgid "Relation"
+msgstr "ความสัมพันธ์"
+
+msgid "Related works"
+msgstr "ผลงานที่เกี่ยวข้อง"
+
+msgid "Resource type"
+msgstr "ประเภททรัพยากร"
+
+msgid "Suggest from"
+msgstr "แนะนำจาก"
+
+msgid "Keywords and subjects"
+msgstr "คำสำคัญและหัวเรื่อง"
+
+msgid "Search for a subject by name"
+msgstr "ค้นหาหัวเรื่องตามชื่อ"
+
+msgid "Add titles"
+msgstr "เพิ่มชื่อเรื่อง"
+
+msgid "Additional title"
+msgstr "ชื่อเรื่องเพิ่มเติม"
+
+msgid "Version"
+msgstr "เวอร์ชัน"
+
+msgid "On"
+msgstr "เมื่อ"
+
+msgid ""
+"the record will automatically be made publicly accessible. Until then, the "
+"record can"
+msgstr ""
+"ระเบียนจะถูกทำให้เข้าถึงได้สาธารณะโดยอัตโนมัติ จนกว่าจะถึงเวลานั้น "
+"ระเบียนสามารถ"
+
+msgid "only"
+msgstr "เท่านั้น"
+
+msgid "be accessed by"
+msgstr "เข้าถึงได้โดย"
+
+msgid "users specified"
+msgstr "ผู้ใช้ที่ระบุ"
+
+msgid "in the permissions."
+msgstr "ในสิทธิ์การเข้าถึง"
+
+msgid "The record can"
+msgstr "ระเบียนสามารถ"
+
+msgid "The record is publicly accessible. The files can"
+msgstr "ระเบียนเข้าถึงได้สาธารณะ ไฟล์สามารถ"
+
+msgid "The record is publicly accessible. On"
+msgstr "ระเบียนเข้าถึงได้สาธารณะ เมื่อ"
+
+msgid ""
+"the files will automatically be made publicly accessible. Until then, the "
+"files can"
+msgstr ""
+"ไฟล์จะถูกทำให้เข้าถึงได้สาธารณะโดยอัตโนมัติ จนกว่าจะถึงเวลานั้น ไฟล์สามารถ"
+
+msgid "Record or files protection must be"
+msgstr "การป้องกันระเบียนหรือไฟล์ต้องเป็น"
+
+msgid "restricted"
+msgstr "จำกัดการเข้าถึง"
+
+msgid "to apply an embargo."
+msgstr "เพื่อใช้การระงับการเข้าถึงชั่วคราว"
+
+msgid ""
+"Uploading the selected files would result in {{total}} of storage use, "
+"exceeding the limit of {{limit}}."
+msgstr ""
+"การอัปโหลดไฟล์ที่เลือกจะใช้พื้นที่จัดเก็บ {{total}} เกินขีดจำกัด {{limit}}"
+
+msgid ""
+"Mostly relevant for software and dataset uploads. A semantic version string "
+"is preferred see"
+msgstr ""
+"เกี่ยวข้องส่วนใหญ่กับการอัปโหลดซอฟต์แวร์และชุดข้อมูล ควรใช้สตริงเวอร์ชันแบบ "
+"semantic ดู"
+
+msgid ", but any version string is accepted."
+msgstr " แต่ยอมรับสตริงเวอร์ชันใดก็ได้"
+
+msgid "Search in all communities"
+msgstr "ค้นหาในทุกชุมชน"
+
+msgid "Search in my communities"
+msgstr "ค้นหาในชุมชนของฉัน"
+
+msgid ""
+"The request to submit this upload to the community was declined. Please "
+"discard this version and create a new one with the feedback from the review."
+msgstr ""
+"คำขอส่งการอัปโหลดนี้เข้าชุมชนถูกปฏิเสธ "
+"โปรดยกเลิกเวอร์ชันนี้และสร้างใหม่พร้อมข้อเสนอแนะจากการตรวจสอบ"
+
+msgid "Storage"
+msgstr "พื้นที่จัดเก็บ"
+
+msgid "Quota overview"
+msgstr "ภาพรวมโควตา"
+
+msgid ""
+"You can now manage your record storage by assigning additional quota as "
+"needed."
+msgstr ""
+"ตอนนี้คุณสามารถจัดการพื้นที่จัดเก็บระเบียนโดยกำหนดโควตาเพิ่มเติมตามต้องการ"
+
+msgid "Find out more."
+msgstr "เรียนรู้เพิ่มเติม"
+
+msgid "Default quota per record"
+msgstr "โควตาเริ่มต้นต่อระเบียน"
+
+msgid "Available of {{total}} GB allowance"
+msgstr "ใช้ได้จาก {{total}} GB"
+
+msgid "Quota granted across {{count}} records"
+msgid_plural "Quota granted across {{count}} records"
+msgstr[0] "โควต้าที่ได้รับอนุมัติสำหรับ {{count}} รายการ"
+
+msgid "Allocated storage"
+msgstr "พื้นที่จัดเก็บที่จัดสรร"
+
+msgid "Record"
+msgstr "ระเบียน"
+
+msgid "Additional quota"
+msgstr "โควตาเพิ่มเติม"
+
+msgid "Usage"
+msgstr "การใช้งาน"
+
+msgid "Status"
+msgstr "สถานะ"
+
+msgid "{{total}} GB total"
+msgstr "รวม {{total}} GB"
+
+msgid "used"
+msgstr "ใช้แล้ว"
+
+msgid "No allocated storage"
+msgstr "ไม่มีพื้นที่จัดเก็บที่จัดสรร"
+
+msgid "No records have been granted any additional quotas yet."
+msgstr "ยังไม่มีระเบียนใดที่ได้รับโควตาเพิ่มเติม"
+
+msgid "If your upload is accepted by the community curators, it will be"
+msgstr "หากการอัปโหลดของคุณได้รับการยอมรับจากผู้ดูแลคอลเลกชัน จะถูก"
+
+msgid "immediately published"
+msgstr "เผยแพร่ทันที"
+
+msgid ""
+"Before that, you will still be able to modify metadata and files of this "
+"upload."
+msgstr "ก่อนหน้านั้น คุณยังสามารถแก้ไขข้อมูลเมตาและไฟล์ของการอัปโหลดนี้ได้"
+
+msgid "Your upload will be"
+msgstr "การอัปโหลดของคุณจะถูก"
+
+msgid ""
+"in '{{communityTitle}}'. You will no longer be able to change the files in "
+"the upload!"
+msgstr "ใน '{{communityTitle}}' คุณจะไม่สามารถเปลี่ยนไฟล์ในการอัปโหลดได้อีก!"
+
+msgid "However, you will still be able to update the record's metadata later."
+msgstr "อย่างไรก็ตาม คุณยังสามารถอัปเดตข้อมูลเมตาของระเบียนได้ในภายหลัง"
+
+msgid "Unable to submit request."
+msgstr "ไม่สามารถส่งคำขอได้"
+
+msgid "Unable to display preview. Please correct validation issues in"
+msgstr "ไม่สามารถแสดงตัวอย่างได้ โปรดแก้ไขปัญหาการตรวจสอบใน"
+
+msgid "Unknown section"
+msgstr "ส่วนที่ไม่รู้จัก"
+
+msgid "Authors"
+msgstr "ผู้เขียน"
+
+msgid "Add author"
+msgstr "เพิ่มผู้เขียน"
+
+msgid "Edit author"
+msgstr "แก้ไขผู้เขียน"
+
+msgid ""
+"To <1>add, modify or remove files</1>, it is recommended that you create a "
+"new version. A new record is created which tracks the evolution of your "
+"work."
+msgstr ""
+"หากต้องการ <1>เพิ่ม แก้ไข หรือลบไฟล์</1> แนะนำให้สร้างเวอร์ชันใหม่ "
+"ระบบจะสร้างระเบียนใหม่ที่ติดตามพัฒนาการของงาน"
+
+msgid "To <1>correct</1> minor errors, you can unlock the files."
+msgstr "หากต้องการ <1>แก้ไข</1>ข้อผิดพลาดเล็กน้อย คุณสามารถปลดล็อกไฟล์ได้"
+
+msgid "It is not possible to modify the files of this record."
+msgstr "ไม่สามารถแก้ไขไฟล์ของระเบียนนี้ได้"
+
+msgid "Edit published files"
+msgstr "แก้ไขไฟล์ที่เผยแพร่"
+
+msgid "I want to update the files with a new version"
+msgstr "ฉันต้องการอัปเดตไฟล์ด้วยเวอร์ชันใหม่"
+
+msgid "Instead, you can make a new version"
+msgstr "แต่คุณสามารถสร้างเวอร์ชันใหม่ได้"
+
+msgid "Edit files"
+msgstr "แก้ไขไฟล์"
+
+msgid ""
+"Once unlocked you will have {{ daysUntil }} days to publish your changes."
+msgstr ""
+"เมื่อปลดล็อกแล้ว คุณจะมี {{ daysUntil }} วันในการเผยแพร่การเปลี่ยนแปลง"
+
+msgid "File modification checklist:"
+msgstr "รายการตรวจสอบการแก้ไขไฟล์:"
+
+msgid "Yes"
+msgstr "ใช่"
+
+msgid "No"
+msgstr "ไม่"
+
+msgid ""
+"I will not modify files that supplement findings/results of an already "
+"published work."
+msgstr "ฉันจะไม่แก้ไขไฟล์ที่เสริมผลการค้นพบ/ผลลัพธ์ของงานที่เผยแพร่แล้ว"
+
+msgid "Unable to unlock files"
+msgstr "ไม่สามารถปลดล็อกไฟล์ได้"
+
+msgid "Enable file editing"
+msgstr "เปิดใช้งานการแก้ไขไฟล์"
+
+msgid "Checksum not yet calculated."
+msgstr "ยังไม่ได้คำนวณ checksum"
+
+msgid "Manage storage"
+msgstr "จัดการพื้นที่จัดเก็บ"
+
+msgid "Default"
+msgstr "ค่าเริ่มต้น"
+
+msgid "Additional"
+msgstr "เพิ่มเติม"
+
+msgid "Available"
+msgstr "พร้อมใช้งาน"
+
+msgid "See your <1>storage settings</1> for usage across all records"
+msgstr "ดู <1>การตั้งค่าพื้นที่จัดเก็บ</1> สำหรับการใช้งานในระเบียนทั้งหมด"
+
+msgid "Could not submit the quota increase request"
+msgstr "ไม่สามารถส่งคำขอเพิ่มโควตาได้"
+
+msgid ""
+"Each record has a default quota of {{defaultStorage}} GB. You have an "
+"additional allowance of up to {{maxAdditionalStorage}} GB that can be "
+"distributed across your uploads as needed."
+msgstr ""
+"แต่ละระเบียนมีโควตาเริ่มต้น {{defaultStorage}} GB คุณมีโควตาเพิ่มเติมสูงสุด "
+"{{maxAdditionalStorage}} GB ที่สามารถกระจายในการอัปโหลดของคุณตามต้องการ"
+
+msgid ""
+"Each record has a default quota of {{defaultStorage}} GB. You have already "
+"used your additional allowance of {{maxAdditionalStorage}} GB across your "
+"uploads."
+msgstr ""
+"แต่ละระเบียนมีโควตาเริ่มต้น {{defaultStorage}} GB คุณใช้โควตาเพิ่มเติม "
+"{{maxAdditionalStorage}} GB ในการอัปโหลดของคุณหมดแล้ว"
+
+msgid "Additional storage"
+msgstr "พื้นที่จัดเก็บเพิ่มเติม"
+
+msgid "New total:"
+msgstr "รวมใหม่:"
+
+msgid "Unable to increase quota"
+msgstr "ไม่สามารถเพิ่มโควตาได้"
+
+msgid "Apply"
+msgstr "ใช้งาน"
+
+msgid "Search for subjects..."
+msgstr "ค้นหาหัวเรื่อง..."
+
+msgid "{{filename}} is already part of this upload."
+msgstr "{{filename}} เป็นส่วนหนึ่งของการอัปโหลดนี้แล้ว"
+
+msgid ""
+"Maximum 191 characters. For longer descriptions, use 'Additional "
+"descriptions' with type 'Note'."
+msgstr ""
+"สูงสุด 191 ตัวอักษร สำหรับคำอธิบายที่ยาวกว่า ใช้ 'คำอธิบายเพิ่มเติม' ประเภท "
+"'หมายเหตุ'"
+
+msgid "Select a community for this repository's records"
+msgstr "เลือกชุมชนสำหรับระเบียนของพื้นที่เก็บข้อมูลนี้"
