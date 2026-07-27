@@ -25,3 +25,16 @@ class NewRecordVersionReviewPolicy:
         a community review.
         """
         return False
+
+
+class AllRecordVersionsReviewPolicy:
+    """Policy where all new versions of a record require community review.
+
+    Ready to be used as a configuration variable to quickly change the behavior
+    of the review system for new versions of records.
+    """
+
+    @classmethod
+    def requires_review(cls, identity, draft) -> bool:
+        """All new versions of existing records will require a community review."""
+        return True
