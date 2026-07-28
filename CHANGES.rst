@@ -9,6 +9,12 @@
 Changes
 =======
 
+Version v32.1.0 (released 2026-07-28)
+
+- fix(build): include mo files
+- i18n: pulled translations
+- feat(review): review each rec. version class
+
 Version v32.0.7 (released 2026-07-27)
 
 - fix: add IsVersionOf relations to concept doi in crossref serializer
