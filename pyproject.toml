@@ -152,6 +152,9 @@ approve = "invenio_rdm_records.requests.user_moderation.actions:on_approve"
 block = "invenio_rdm_records.requests.user_moderation.actions:on_block"
 restore = "invenio_rdm_records.requests.user_moderation.actions:on_restore"
 
+[project.entry-points."invenio_checks.check_targets"]
+record = "invenio_rdm_records.checks.base:RecordCheckTarget"
+
 [project.optional-dependencies]
 elasticsearch7 = ["invenio-search[elasticsearch7]>=3.0.0,<4.0.0"]
 opensearch1 = ["invenio-search[opensearch1]>=3.0.0,<4.0.0"]
