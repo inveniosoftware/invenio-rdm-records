@@ -86,6 +86,11 @@ export class CreatibutorsModal extends Component {
           return schema.required(i18next.t("Family name is a required field."));
         }
       }),
+      given_name: Yup.string().when("type", (type, schema) => {
+        if (type === CREATIBUTOR_TYPE.PERSON && this.isCreator()) {
+          return schema.required(i18next.t("First name is a required field."));
+        }
+      }),
       name: Yup.string().when("type", (type, schema) => {
         if (type === CREATIBUTOR_TYPE.ORGANIZATION && this.isCreator()) {
           return schema.required(i18next.t("Name is a required field."));
@@ -541,6 +546,7 @@ export class CreatibutorsModal extends Component {
                                 label={i18next.t("Given names")}
                                 placeholder={i18next.t("Given names")}
                                 fieldPath={givenNameFieldPath}
+                                required={this.isCreator()}
                               />
                             </Form.Group>
                           </Overridable>

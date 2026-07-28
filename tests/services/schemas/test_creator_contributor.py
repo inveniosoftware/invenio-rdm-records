@@ -24,13 +24,18 @@ from .test_utils import assert_raises_messages
 
 
 def test_creator_person_valid_minimal(app):
-    valid_family_name = {"family_name": "Cesar", "type": "personal"}
-    expected = {
+    valid_minimal = {
         "family_name": "Cesar",
-        "name": "Cesar",
+        "given_name": "Julio",
         "type": "personal",
     }
-    assert expected == PersonOrOrganizationSchema().load(valid_family_name)
+    expected = {
+        "family_name": "Cesar",
+        "given_name": "Julio",
+        "name": "Cesar, Julio",
+        "type": "personal",
+    }
+    assert expected == PersonOrOrganizationSchema().load(valid_minimal)
 
 
 def test_creator_organization_valid_minimal(app):
@@ -59,8 +64,8 @@ def test_creator_person_valid_full(app):
     assert valid_full_person == loaded
 
 
-def test_creator_person_valid_no_given_name(app):
-    valid_full_person = {
+def test_creator_person_invalid_no_given_name(app):
+    invalid_no_given_name = {
         "person_or_org": {
             "type": "personal",
             "family_name": "Cesar",
@@ -74,9 +79,10 @@ def test_creator_person_valid_no_given_name(app):
         "affiliations": [{"id": "test"}],
     }
 
-    loaded = CreatorSchema().load(valid_full_person)
-    valid_full_person["person_or_org"]["name"] = "Cesar"
-    assert valid_full_person == loaded
+    assert_raises_messages(
+        lambda: CreatorSchema().load(invalid_no_given_name),
+        {"person_or_org": {"given_name": ["First name cannot be blank."]}},
+    )
 
 
 def test_creator_organization_valid_full(app):
@@ -98,12 +104,14 @@ def test_creatibutor_name_edge_cases(app):
     valid_person_name_and_given_name = {
         "name": "Cesar, Julio",
         "family_name": "Cesar",
+        "given_name": "Julio",
         "type": "personal",
     }
     expected = {
-        "name": "Cesar",
+        "name": "Cesar, Julio",
         "type": "personal",
         "family_name": "Cesar",
+        "given_name": "Julio",
     }
     assert expected == PersonOrOrganizationSchema().load(
         valid_person_name_and_given_name
@@ -271,9 +279,10 @@ def test_contributor_person_valid_full(app):
 
 
 def test_contributor_person_valid_minimal(app):
-    valid_minimal_family_name = {
+    valid_minimal = {
         "person_or_org": {
             "family_name": "Cesar",
+            "given_name": "Julio",
             "type": "personal",
         },
         "role": {"id": "rightsholder"},
@@ -281,12 +290,13 @@ def test_contributor_person_valid_minimal(app):
     expected = {
         "person_or_org": {
             "family_name": "Cesar",
-            "name": "Cesar",
+            "given_name": "Julio",
+            "name": "Cesar, Julio",
             "type": "personal",
         },
         "role": {"id": "rightsholder"},
     }
-    assert expected == ContributorSchema().load(valid_minimal_family_name)
+    assert expected == ContributorSchema().load(valid_minimal)
 
 
 def test_contributor_person_invalid_no_family_name_nor_given_name(app):
@@ -305,7 +315,12 @@ def test_contributor_person_invalid_no_family_name_nor_given_name(app):
 
     assert_raises_messages(
         lambda: ContributorSchema().load(invalid_no_family_name_nor_given_name),
-        {"person_or_org": {"family_name": ["Family name cannot be blank."]}},
+        {
+            "person_or_org": {
+                "family_name": ["Family name cannot be blank."],
+                "given_name": ["First name cannot be blank."],
+            }
+        },
     )
 
 
