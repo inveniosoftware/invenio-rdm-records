@@ -163,9 +163,13 @@ def _format_storage(data):
 @login_required
 def storage_settings():
     """User storage page."""
-    if not current_app.config.get(
-        "RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED", False
-    ) or not getattr(current_user, "verified_at", None):
+    is_allowed = False
+
+    policy_evaluator = current_app.config.get("RDM_QUOTA_INCREASE_POLICY")
+    if policy_evaluator:
+        is_allowed = policy_evaluator.evaluate_identity(current_user).valid_user
+
+    if not is_allowed:
         abort(404)
 
     result = current_rdm_records_storage_service.get_user_storage_usage(current_user)

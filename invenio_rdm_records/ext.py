@@ -320,8 +320,8 @@ def init_menu(app):
         ),
         order=3,
         visible_when=lambda: (
-            current_app.config.get("RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED", False)
-            and getattr(current_user, "verified_at", False)
+            (policy_evaluator := current_app.config.get("RDM_QUOTA_INCREASE_POLICY"))
+            and policy_evaluator.evaluate_identity(current_user).valid_user
         ),
     )
 
