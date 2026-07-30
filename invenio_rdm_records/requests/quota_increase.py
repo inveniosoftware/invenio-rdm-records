@@ -38,7 +38,11 @@ class AcceptAction(actions.AcceptAction):
 
     def execute(self, identity, uow, **kwargs):
         """Apply the quota increase."""
-        DRAFT = int(self.request.get("topic", {}).get("record"))
+        # ``topic.record`` is the record's PID value, and ``pid_value`` is a
+        # ``String`` column, so ``set_quota`` must receive it as-is. Casting it to
+        # ``int`` assumes numeric-only recids and raises ``ValueError`` for the
+        # alphanumeric recids InvenioRDM mints by default (e.g. "07cy4-9tg98").
+        DRAFT = self.request.get("topic", {}).get("record")
         QUOTA_SIZE = int(self.request.get("payload", {}).get("quota_size"))
         data = {
             "notes": f"request_id:{str(self.request.id)}",
