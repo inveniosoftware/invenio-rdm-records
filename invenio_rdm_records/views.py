@@ -6,9 +6,7 @@
 
 """Views."""
 
-from types import SimpleNamespace
-
-from flask import Blueprint, abort, current_app, render_template
+from flask import Blueprint, abort, current_app, g, render_template
 from flask_login import current_user, login_required
 from invenio_records_resources.services.files.transfer import constants
 
@@ -163,9 +161,8 @@ def _format_storage(data):
 @login_required
 def storage_settings():
     """User storage page."""
-    if not current_app.config.get(
-        "RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED", False
-    ) or not getattr(current_user, "verified_at", None):
+    policy = current_app.config.get("RDM_QUOTA_INCREASE_POLICY")
+    if not policy or not policy.evaluate_identity(g.identity).valid_user:
         abort(404)
 
     result = current_rdm_records_storage_service.get_user_storage_usage(current_user)

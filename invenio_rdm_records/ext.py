@@ -10,11 +10,10 @@
 
 from warnings import warn
 
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app, g
 from flask_iiif import IIIF
 from flask_menu import current_menu
 from flask_principal import identity_loaded
-from flask_security import current_user
 from invenio_collections.resources.resource import CollectionsResource
 from invenio_collections.services.config import CollectionServiceConfig
 from invenio_collections.services.service import CollectionsService
@@ -320,8 +319,8 @@ def init_menu(app):
         ),
         order=3,
         visible_when=lambda: (
-            current_app.config.get("RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED", False)
-            and getattr(current_user, "verified_at", False)
+            (policy_evaluator := current_app.config.get("RDM_QUOTA_INCREASE_POLICY"))
+            and policy_evaluator.evaluate_identity(g.identity).valid_user
         ),
     )
 

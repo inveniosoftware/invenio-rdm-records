@@ -22,12 +22,12 @@ class BasePolicy:
     description: str
     tombstone_description: str
 
-    def is_allowed(self, identity, record):
-        """Whether the identity is allowed to delete the record."""
+    def is_allowed(self, identity, record=None):
+        """Whether the identity can perform an action, optionally on a given record."""
         raise NotImplementedError
 
     def evaluate(self, identity, record):
-        """Whether the record meets the conditions to be deleted."""
+        """Whether the record meets the conditions to perform the action."""
         raise NotImplementedError
 
     @property
@@ -51,8 +51,10 @@ class GracePeriodPolicy(BasePolicy):
             "Record owners can delete their records within {grace_period} days of publishing."
         ).format(grace_period=grace_period.days)
 
-    def is_allowed(self, identity, record):
-        """Whether the identity is allowed to delete the record."""
+    def is_allowed(self, identity, record=None):
+        """Whether the identity is allowed to perform the action."""
+        if record is None:
+            return False
         is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
         return is_record_owner
 
@@ -79,8 +81,10 @@ class RequestDeletionPolicy(BasePolicy):
             "published for more than {grace_period} days."
         ).format(grace_period=grace_period.days)
 
-    def is_allowed(self, identity, record):
+    def is_allowed(self, identity, record=None):
         """Whether the identity is allowed to delete the record."""
+        if record is None:
+            return False
         is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
         return is_record_owner
 
@@ -101,8 +105,10 @@ class FileModificationGracePeriodPolicy(BasePolicy):
             "You can edit the files of your records within {grace_period} days of publishing."
         ).format(grace_period=grace_period.days)
 
-    def is_allowed(self, identity, record):
+    def is_allowed(self, identity, record=None):
         """Whether the identity is allowed to modify files."""
+        if record is None:
+            return False
         is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
         return is_record_owner
 
@@ -121,7 +127,7 @@ class FileModificationAdminPolicy(BasePolicy):
     id = "file-modification-admin-v1"
     description = _("You can edit the files of the record as you are an admin.")
 
-    def is_allowed(self, identity, record):
+    def is_allowed(self, identity, record=None):
         """Admins are allowed."""
         is_admin = administration_permission.allows(identity)
         is_system = system_permission.allows(identity)
@@ -138,15 +144,16 @@ class QuotaIncreasePolicy(BasePolicy):
     id = "quota-increase-policy-v1"
     description = _("You can increase the quota of your drafts.")
 
-    def is_allowed(self, identity, record):
-        """Only owners can increase the quota."""
-        if record:
-            is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
-            return is_record_owner
-        else:
-            # unsaved drafts are always valid as you are the owner
-            # i.e. you can't share an unsaved draft to someone else
+    def is_allowed(self, identity, record=None):
+        """Evaluate who can increase the quota."""
+        if not record:
+            # when no record in the context, any user can see the quota increase
+            # feature in the UI when enabled
             return True
+
+        # when record in context, only the record owner can increase the quota
+        is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
+        return is_record_owner
 
     def evaluate(self, identity, record):
         """Check if record can be increased by specific additional quota for this user.
@@ -180,7 +187,7 @@ class QuotaIncreaseAdminPolicy(BasePolicy):
     id = "quota-increase-admin-v1"
     description = _("You can increase the quota of a draft as you are an admin.")
 
-    def is_allowed(self, identity, record):
+    def is_allowed(self, identity, record=None):
         """Admins are allowed."""
         is_admin = administration_permission.allows(identity)
         return is_admin
@@ -195,16 +202,31 @@ class PolicyEvaluator:
 
     @dataclass
     class Result:
-        """Result object for both front and backend."""
+        """Result object."""
 
         enabled: bool
-        valid_user: bool = False  # so we can show the button as disabled
+        valid_user: bool = False
         allowed: bool = False
         policy: Optional[BasePolicy] = None
 
     @classmethod
+    def evaluate_allowed(cls, enabled, policy_config, identity):
+        """Evaluate the identity is allowed to perform the action."""
+        result = cls.Result(current_app.config[enabled])
+        if not result.enabled:
+            return result
+
+        policies = current_app.config[policy_config]
+
+        for policy in policies:
+            if policy.is_allowed(identity):
+                result.valid_user = True
+
+        return result
+
+    @classmethod
     def evaluate_policies(cls, enabled, policy_config, identity, record):
-        """Evaluate whether deletion is allowed for a given policy, identity and record."""
+        """Evaluate policies for given identity and record."""
         result = cls.Result(current_app.config[enabled])
         if not result.enabled:
             return result
@@ -222,8 +244,13 @@ class PolicyEvaluator:
         return result
 
     @classmethod
+    def evaluate_identity(cls, identity):
+        """Evaluate policies for identity."""
+        raise NotImplementedError
+
+    @classmethod
     def evaluate(cls, identity, record):
-        """Evaluate both immediate and request deletion for an identity and record."""
+        """Evaluate policies for identity and record."""
         raise NotImplementedError
 
 
@@ -292,6 +319,15 @@ class FileModificationPolicyEvaluator(PolicyEvaluator):
 
 class QuotaIncreasePolicyEvaluator(PolicyEvaluator):
     """Quota increase policy."""
+
+    @classmethod
+    def evaluate_identity(cls, identity):
+        """Evaluate policies for identity."""
+        return cls.evaluate_allowed(
+            "RDM_IMMEDIATE_QUOTA_INCREASE_ENABLED",
+            "RDM_IMMEDIATE_QUOTA_INCREASE_POLICIES",
+            identity,
+        )
 
     @classmethod
     def evaluate(cls, identity, record):
