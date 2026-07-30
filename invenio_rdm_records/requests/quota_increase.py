@@ -38,8 +38,8 @@ class AcceptAction(actions.AcceptAction):
 
     def execute(self, identity, uow, **kwargs):
         """Apply the quota increase."""
-        DRAFT = int(self.request.get("topic", {}).get("record"))
-        QUOTA_SIZE = int(self.request.get("payload", {}).get("quota_size"))
+        DRAFT = self.request["topic"]["record"]
+        QUOTA_SIZE = int(self.request["payload"]["quota_size"])
         data = {
             "notes": f"request_id:{str(self.request.id)}",
             "quota_size": QUOTA_SIZE * 1000000000,
