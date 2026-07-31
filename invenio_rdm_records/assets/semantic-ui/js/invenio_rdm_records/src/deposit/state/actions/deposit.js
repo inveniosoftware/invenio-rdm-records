@@ -63,7 +63,7 @@ export const saveDraftWithUrlUpdate = async (draft, draftsService) => {
   return response;
 };
 
-function _hasValidationErrorsWithSeverityError(errors) {
+export function hasValidationErrorsWithSeverityError(errors) {
   if (typeof errors === "object") {
     if (
       Object.hasOwn(errors, "message") &&
@@ -76,7 +76,7 @@ function _hasValidationErrorsWithSeverityError(errors) {
     }
     for (const key of Object.keys(errors)) {
       if (key !== "message" && key !== "severity" && key !== "description") {
-        return _hasValidationErrorsWithSeverityError(errors[key]);
+        return hasValidationErrorsWithSeverityError(errors[key]);
       }
     }
   } else {
@@ -110,7 +110,7 @@ async function _saveDraft(
   }
 
   const draftHasValidationErrors = showOnlyValidationErrorsWithSeverityError
-    ? _hasValidationErrorsWithSeverityError(response.errors)
+    ? hasValidationErrorsWithSeverityError(response.errors)
     : !_isEmpty(response.errors);
   const draftValidationErrorResponse = draftHasValidationErrors ? response : {};
 

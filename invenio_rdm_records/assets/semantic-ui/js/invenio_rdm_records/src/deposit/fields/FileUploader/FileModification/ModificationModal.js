@@ -8,7 +8,7 @@ import { Formik } from "formik";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import Overridable from "react-overridable";
-import { save } from "../../../state/actions";
+import { save, hasValidationErrorsWithSeverityError } from "../../../state/actions";
 import { connect } from "react-redux";
 
 import { ErrorMessage, http, withCancel } from "react-invenio-forms";
@@ -100,12 +100,25 @@ class ModificationModalComponent extends Component {
     }
 
     // save draft before reloading the page
-    await saveAction(draft, {});
-
-    this.cancellableAction = withCancel(
-      http.post(record.links.file_modification, payload)
-    );
     try {
+      await saveAction(draft, {});
+    } catch (saveError) {
+      // warnings don't block reload, but errors do
+      if (hasValidationErrorsWithSeverityError(saveError?.errors)) {
+        this.setState({
+          loading: false,
+          error: i18next.t(
+            "Your record has validation errors that must be fixed before enabling file editing."
+          ),
+        });
+        return;
+      }
+    }
+
+    try {
+      this.cancellableAction = withCancel(
+        http.post(record.links.file_modification, payload)
+      );
       const response = await this.cancellableAction.promise;
       const data = response.data;
 
