@@ -9,6 +9,11 @@
 Changes
 =======
 
+Version v32.2.0 (released 2026-07-31)
+
+- feat(quota): implement policy evaluation for allowing users
+- fix(quota): don't cast record id to int
+
 Version v32.1.0 (released 2026-07-28)
 
 - fix(build): include mo files
