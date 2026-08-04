@@ -8,6 +8,20 @@
 Changes
 =======
 
+Version v34.0.1 (released 2026-08-04)
+
+- feat(quota): implement policy evaluation for allowing users
+- fix(quota): don't cast record id to int
+- fix(deposit-ui): enforce file count and storage quotas in Uppy uploader
+- fix(uppy): keep failed uploads in dashboard on complete
+- fix(build): include mo files
+- bump commonmeta version
+- add test
+- fix: add IsVersionOf relations to concept doi in crossref serializer
+- mappings: disable draft geometry doc values
+- fix(awards): drop organizations from funding award relation
+- fix(creatibutors): only accept txt files
+
 Version v34.0.0 (released 2026-07-21)
 
 - feat!(Creatibutors): Add optimized inline scrolling and file import for large author/contributor lists in the deposit form.
