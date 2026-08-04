@@ -14,7 +14,7 @@ import _get from "lodash/get";
 import PropTypes from "prop-types";
 import { Button, Dimmer, Grid, Icon, Message } from "semantic-ui-react";
 import Overridable from "react-overridable";
-import RDMUppyUploaderPlugin from "./RDMUppyUploaderPlugin";
+import RDMUppyUploaderPlugin, { FileRemovalReason } from "./RDMUppyUploaderPlugin";
 import { NewVersionButton } from "../../controls/NewVersionButton";
 import { UploadState } from "../../state/reducers/files";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
@@ -71,6 +71,15 @@ const createDuplicateFileChecker = (uppy, filesList) => {
     return false;
   };
 };
+
+const findUppyFile = (uppy, filename) =>
+  uppy
+    .getFiles()
+    .find(
+      (uppyFile) =>
+        normalizeFileName(uppyFile.meta?.name ?? uppyFile.name) ===
+        normalizeFileName(filename)
+    );
 
 export const createFileValidator = (
   uppy,
@@ -145,6 +154,7 @@ export const UppyUploaderComponent = ({
   initializeFileUpload,
   finalizeUpload,
   deleteFile,
+  checkFileExists,
   uploadPart,
   saveAndFetchDraft,
   setUploadProgress,
@@ -225,6 +235,7 @@ export const UppyUploaderComponent = ({
         setUploadProgress,
         uploadPart,
         abortUpload: (file) => deleteFile(file),
+        checkFileExists,
         checkPartIntegrity: true,
       })
       .use(ImageEditor)
@@ -266,6 +277,19 @@ export const UppyUploaderComponent = ({
     });
   }, [uppy, filesList, filesSize, quota, decimalSizeDisplay]);
 
+  const deleteFilesListEntry = React.useCallback(
+    async (file) => {
+      const uppyFile = findUppyFile(uppy, file.name);
+      if (uppyFile) {
+        // Aborts any ongoing requests of the file and keeps the Dashboard in sync,
+        // deletion of the file itself is done below.
+        uppy.removeFile(uppyFile.id, FileRemovalReason.filesListEntryDeleted);
+      }
+      return await deleteFile(file);
+    },
+    [uppy, deleteFile]
+  );
+
   const [uppyHasFiles, setUppyHasFiles] = useState(false);
   React.useEffect(() => {
     const update = () =>
@@ -297,7 +321,7 @@ export const UppyUploaderComponent = ({
       uploadPart={uploadPart}
       saveAndFetchDraft={saveAndFetchDraft}
       setUploadProgress={setUploadProgress}
-      deleteFile={deleteFile}
+      deleteFile={deleteFilesListEntry}
       importParentFiles={importParentFiles}
       importButtonIcon={importButtonIcon}
       importButtonText={importButtonText}
@@ -379,7 +403,7 @@ export const UppyUploaderComponent = ({
           filesList={filesList}
           filesLocked={lockFileUploader}
           filesEnabled={filesEnabled}
-          deleteFile={deleteFile}
+          deleteFile={deleteFilesListEntry}
           decimalSizeDisplay={decimalSizeDisplay}
           uppy={uppy}
           {...uiProps}
@@ -393,7 +417,7 @@ export const UppyUploaderComponent = ({
                       filesList={filesList}
                       filesEnabled={filesEnabled}
                       filesLocked={lockFileUploader}
-                      deleteFile={deleteFile}
+                      deleteFile={deleteFilesListEntry}
                       decimalSizeDislay={decimalSizeDisplay}
                     />
                   </Grid.Column>
@@ -504,6 +528,7 @@ UppyUploaderComponent.propTypes = {
   setUploadProgress: PropTypes.func.isRequired,
   saveAndFetchDraft: PropTypes.func.isRequired,
   deleteFile: PropTypes.func.isRequired,
+  checkFileExists: PropTypes.func.isRequired,
   decimalSizeDisplay: PropTypes.bool,
   filesLocked: PropTypes.bool,
   permissions: PropTypes.object,

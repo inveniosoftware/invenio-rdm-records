@@ -6,6 +6,7 @@
 
 import { connect } from "react-redux";
 import {
+  checkFileExists,
   deleteFile,
   importParentFiles,
   initializeFileUpload,
@@ -37,6 +38,7 @@ const mapDispatchToProps = (dispatch) => ({
   importParentFiles: () => dispatch(importParentFiles()),
   setUploadProgress: (file, percent) => dispatch(setUploadProgress(file, percent)),
   deleteFile: (file) => dispatch(deleteFile(file)),
+  checkFileExists: (file) => dispatch(checkFileExists(file)),
   uploadPart: (uploadParams) => dispatch(uploadPart(uploadParams)),
   saveAndFetchDraft: (draft) => dispatch(saveAndFetchDraft(draft)),
 });
