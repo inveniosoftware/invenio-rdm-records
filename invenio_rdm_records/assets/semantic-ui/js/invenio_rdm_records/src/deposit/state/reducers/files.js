@@ -35,6 +35,9 @@ const fileReducer = (state = initialState, action) => {
   let newState;
   // Filename needs to be normalised due to encoding differences between client and server.
   const remoteFileName = action.payload?.filename?.normalize() ?? "";
+  // Late progress/failure updates of an already deleted upload must not
+  // resurrect its files list entry.
+  const isDeletedUpload = !state.entries?.[remoteFileName];
   switch (action.type) {
     case FILE_UPLOAD_ADDED:
       return {
@@ -66,6 +69,9 @@ const fileReducer = (state = initialState, action) => {
         actionState: action.type,
       };
     case FILE_UPLOAD_IN_PROGRESS:
+      if (isDeletedUpload) {
+        return state;
+      }
       return {
         ...state,
         entries: {
@@ -110,6 +116,9 @@ const fileReducer = (state = initialState, action) => {
         actionState: action.type,
       };
     case FILE_UPLOAD_FAILED:
+      if (isDeletedUpload) {
+        return state;
+      }
       newState = {
         ...state,
         entries: {
