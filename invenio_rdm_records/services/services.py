@@ -14,6 +14,7 @@ from flask import current_app
 from invenio_access.permissions import system_identity, system_user_id
 from invenio_accounts.models import User
 from invenio_db import db
+from invenio_drafts_resources.resources.records.errors import DraftNotCreatedError
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
@@ -690,7 +691,10 @@ class RDMRecordService(RecordService):
 
         If the draft has a "deleted" published record then we return 410.
         """
-        result = super().read_draft(identity, id_, expand=expand)
+        try:
+            result = super().read_draft(identity, id_, expand=expand)
+        except PermissionDeniedError:
+            raise DraftNotCreatedError(self.draft_cls.pid.field._pid_type, id_)
         # check that if there is a published deleted record then return 410
         draft = result._record
         if draft.is_published:
