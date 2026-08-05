@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2023-2024 CERN.
 # SPDX-FileCopyrightText: 2022 Universität Hamburg.
+# SPDX-FileCopyrightText: 2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
 """High-level API for wokring with RDM records, files, pids and search."""
@@ -10,6 +11,7 @@ from .config import (
     RDMCommunityRecordsConfig,
     RDMFileDraftServiceConfig,
     RDMFileRecordServiceConfig,
+    RDMRecordChecksServiceConfig,
     RDMRecordCommunitiesConfig,
     RDMRecordMediaFilesServiceConfig,
     RDMRecordRequestsConfig,
@@ -34,4 +36,5 @@ __all__ = (
     "RDMRecordRequestsConfig",
     "RecordRequestsService",
     "RDMRecordMediaFilesServiceConfig",
+    "RDMRecordChecksServiceConfig",
 )

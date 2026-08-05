@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2020-2026 CERN.
 # SPDX-FileCopyrightText: 2021 TU Wien.
 # SPDX-FileCopyrightText: 2022 Universität Hamburg.
-# SPDX-FileCopyrightText: 2024 Graz University of Technology.
+# SPDX-FileCopyrightText: 2024-2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
 """Views."""
@@ -108,6 +108,12 @@ def create_community_collections_bp(app):
     """Create community collections blueprint."""
     ext = app.extensions["invenio-rdm-records"]
     return ext.community_collections_resource.as_blueprint()
+
+
+def create_checks_bp(app):
+    """Create community collections blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.checks_resource.as_blueprint()
 
 
 @blueprint.app_context_processor
