@@ -8,7 +8,7 @@
 
 from datetime import datetime, timedelta, timezone
 
-import arrow
+import pendulum
 from flask import current_app
 from flask_login import current_user
 from invenio_access.permissions import authenticated_user, system_identity
@@ -146,7 +146,7 @@ class RecordAccessService(RecordService):
 
         if expires_at and is_specified:
             # if the expiration date was specified, check if it's in the future
-            expires_at = arrow.get(expires_at, tzinfo=timezone.utc).datetime
+            expires_at = pendulum.parse(expires_at, tzinfo=timezone.utc)
             if expires_at < datetime.now(timezone.utc):
                 raise ValidationError(
                     message=_("Expiration date must be set to the future"),
