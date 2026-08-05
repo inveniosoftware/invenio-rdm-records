@@ -15,6 +15,7 @@ authors = [{ name = "CERN", email = "info@inveniosoftware.org" }]
 keywords = ["data", "invenio", "model", "rdm"]
 classifiers = ["Development Status :: 5 - Production/Stable"]
 dependencies = [
+  "alembic<1.19",  # v1.19 causes test failures
   "arrow>=0.17.0",
   "babel-edtf>=1.2.0",
   "citeproc-py>=0.6.0",
