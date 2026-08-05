@@ -642,3 +642,26 @@ class RDMCollectionsResourceConfig(CollectionsResourceConfig):
             UIJSONSerializer(), headers=etag_headers
         ),
     }
+
+
+class RDMRecordChecksResourceConfig(ResourceConfig, ConfiguratorMixin):
+    """Record checks resource config."""
+
+    blueprint_name = "record_checks"
+    url_prefix = "/records"
+    routes = {
+        "list": "/<pid_value>/checks",
+    }
+
+    request_search_args = RequestSearchRequestArgsSchema
+
+    request_view_args = {
+        "pid_value": ma.fields.Str(),
+    }
+
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": ResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **ResourceConfig.response_handlers,
+    }
