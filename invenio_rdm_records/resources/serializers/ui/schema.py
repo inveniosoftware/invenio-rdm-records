@@ -1,12 +1,11 @@
 # SPDX-FileCopyrightText: 2020-2025 CERN.
 # SPDX-FileCopyrightText: 2020 Northwestern University.
 # SPDX-FileCopyrightText: 2021-2025 Graz University of Technology.
-# SPDX-FileCopyrightText: 2022-2023 TU Wien.
+# SPDX-FileCopyrightText: 2022-2026 TU Wien.
 # SPDX-License-Identifier: MIT
 
 """Record response serializers."""
 
-from copy import deepcopy
 from functools import partial
 
 from babel_edtf import parse_edtf
@@ -31,6 +30,7 @@ from pyparsing import ParseException
 
 from ....services.request_policies import RDMRecordDeletionPolicy
 from ....services.schemas.fields import SanitizedHTML
+from ....utils import simple_deepcopy
 from .fields import AccessStatusField
 
 
@@ -55,7 +55,7 @@ def make_affiliation_index(attr, obj, *args):
     changes to fix RemovedInMarshmallow4Warning
     """
     # Copy so we don't modify in place the existing dict.
-    creators = deepcopy(obj.get("metadata", {}).get(attr))
+    creators = simple_deepcopy(obj.get("metadata", {}).get(attr))
     if not creators:
         return missing
 
