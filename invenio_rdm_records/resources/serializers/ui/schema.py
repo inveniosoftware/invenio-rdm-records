@@ -23,9 +23,13 @@ from invenio_vocabularies.contrib.awards.serializer import AwardL10NItemSchema
 from invenio_vocabularies.contrib.funders.serializer import FunderL10NItemSchema
 from invenio_vocabularies.resources import L10NString, VocabularyL10Schema
 from marshmallow import Schema, fields, missing, post_dump, pre_dump
-from marshmallow_utils.fields import FormatDate as FormatDate_
-from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
-from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode, StrippedHTML
+from marshmallow_utils.fields import (
+    FormatDate,
+    FormatEDTF,
+    SanitizedHTML,
+    SanitizedUnicode,
+    StrippedHTML,
+)
 from marshmallow_utils.fields.babel import gettext_from_dict
 from pyparsing import ParseException
 
@@ -40,11 +44,6 @@ def current_default_locale():
         return current_app.config.get("BABEL_DEFAULT_LOCALE", "en")
     # Use english by default if not specified
     return "en"
-
-
-# Partial to make short definitions in below schema.
-FormatEDTF = partial(FormatEDTF_, locale=get_locale)
-FormatDate = partial(FormatDate_, locale=get_locale)
 
 
 def make_affiliation_index(attr, obj, *args):
@@ -337,9 +336,13 @@ class TombstoneSchema(Schema):
     # This information is masked into a string in UIRecordSchema
     removed_by = fields.Raw(attribute="removed_by")
 
-    removal_date_l10n_medium = FormatEDTF(attribute="removal_date", format="medium")
+    removal_date_l10n_medium = FormatEDTF(
+        attribute="removal_date", format="medium", locale=get_locale
+    )
 
-    removal_date_l10n_long = FormatEDTF(attribute="removal_date", format="long")
+    removal_date_l10n_long = FormatEDTF(
+        attribute="removal_date", format="long", locale=get_locale
+    )
 
     citation_text = fields.String(attribute="citation_text")
 
@@ -373,16 +376,20 @@ class UIRecordSchema(BaseObjectSchema):
     object_key = "ui"
 
     publication_date_l10n_medium = FormatEDTF(
-        attribute="metadata.publication_date", format="medium"
+        attribute="metadata.publication_date", format="medium", locale=get_locale
     )
 
     publication_date_l10n_long = FormatEDTF(
-        attribute="metadata.publication_date", format="long"
+        attribute="metadata.publication_date", format="long", locale=get_locale
     )
 
-    created_date_l10n_long = FormatDate(attribute="created", format="long")
+    created_date_l10n_long = FormatDate(
+        attribute="created", format="long", locale=get_locale
+    )
 
-    updated_date_l10n_long = FormatDate(attribute="updated", format="long")
+    updated_date_l10n_long = FormatDate(
+        attribute="updated", format="long", locale=get_locale
+    )
 
     resource_type = fields.Nested(
         VocabularyL10Schema, attribute="metadata.resource_type"
@@ -393,9 +400,7 @@ class UIRecordSchema(BaseObjectSchema):
     )
 
     # Custom fields
-    custom_fields = fields.Nested(
-        partial(CustomFieldsSchemaUI, fields_var="RDM_CUSTOM_FIELDS")
-    )
+    custom_fields = fields.Nested(lambda: CustomFieldsSchemaUI("RDM_CUSTOM_FIELDS"))
 
     publishing_information = fields.Function(compute_publishing_information)
 
@@ -403,9 +408,13 @@ class UIRecordSchema(BaseObjectSchema):
 
     access_status = AccessStatusField(attribute="access")
 
-    creators = fields.Function(partial(make_affiliation_index, "creators"))
+    creators = fields.Function(
+        lambda obj: make_affiliation_index(attr="creators", obj=obj)
+    )
 
-    contributors = fields.Function(partial(make_affiliation_index, "contributors"))
+    contributors = fields.Function(
+        lambda obj: make_affiliation_index(attr="contributors", obj=obj)
+    )
 
     languages = fields.List(
         fields.Nested(VocabularyL10Schema),

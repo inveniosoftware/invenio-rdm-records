@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2020-2026 CERN.
 # SPDX-FileCopyrightText: 2020-2021 Northwestern University.
-# SPDX-FileCopyrightText: 2021 TU Wien.
+# SPDX-FileCopyrightText: 2021-2026 TU Wien.
 # SPDX-FileCopyrightText: 2023-2025 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
@@ -52,6 +52,23 @@ class RecordAccessService(RecordService):
 
     group_subject_type = "role"
 
+    def __init__(self, config):
+        """Constructor."""
+        super().__init__(config)
+        self._schema_secret_link = ServiceSchemaWrapper(
+            self, schema=self.config.schema_secret_link
+        )
+        self._schema_grant = ServiceSchemaWrapper(self, schema=self.config.schema_grant)
+        self._schema_grants = ServiceSchemaWrapper(
+            self, schema=self.config.schema_grants
+        )
+        self._schema_request_access = ServiceSchemaWrapper(
+            self, schema=self.config.schema_request_access
+        )
+        self._schema_access_settings = ServiceSchemaWrapper(
+            self, schema=self.config.schema_access_settings
+        )
+
     def link_result_item(self, *args, **kwargs):
         """Create a new instance of the resource unit."""
         return self.config.link_result_item_cls(*args, **kwargs)
@@ -81,27 +98,27 @@ class RecordAccessService(RecordService):
     @property
     def schema_secret_link(self):
         """Schema for secret links."""
-        return ServiceSchemaWrapper(self, schema=self.config.schema_secret_link)
+        return self._schema_secret_link
 
     @property
     def schema_grant(self):
         """Schema for secret links."""
-        return ServiceSchemaWrapper(self, schema=self.config.schema_grant)
+        return self._schema_grant
 
     @property
     def schema_grants(self):
         """Schema for grants."""
-        return ServiceSchemaWrapper(self, schema=self.config.schema_grants)
+        return self._schema_grants
 
     @property
     def schema_request_access(self):
         """Schema for secret links."""
-        return ServiceSchemaWrapper(self, schema=self.config.schema_request_access)
+        return self._schema_request_access
 
     @property
     def schema_access_settings(self):
         """Schema for record parent."""
-        return ServiceSchemaWrapper(self, schema=self.config.schema_access_settings)
+        return self._schema_access_settings
 
     @property
     def expandable_fields(self):
