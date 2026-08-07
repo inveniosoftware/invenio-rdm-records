@@ -12,13 +12,16 @@ from invenio_accounts.models import User
 from invenio_db import db
 from invenio_files_rest.models import Bucket
 from invenio_search.engine import dsl
-from sqlalchemy import func
+from sqlalchemy import exists, func
 
 from invenio_rdm_records.records.models import (
     RDMDraftMetadata,
     RDMRecordMetadata,
     RDMRecordQuota,
     RDMUserQuota,
+)
+from invenio_rdm_records.records.systemfields.deletion_status import (
+    RecordDeletionStatusEnum,
 )
 
 logger = logging.getLogger(__name__)
@@ -107,6 +110,11 @@ class StorageService:
 
     def remaining_storage(self, user_id, record):
         """Remaining storage for this draft and user."""
+        has_active_version = exists().where(
+            RDMRecordMetadata.parent_id == RDMRecordQuota.parent_id,
+            RDMRecordMetadata.deletion_status
+            == RecordDeletionStatusEnum.PUBLISHED.value,
+        )
         additional_storage_user = (
             RDMRecordQuota.query.with_entities(
                 func.coalesce(
@@ -114,6 +122,7 @@ class StorageService:
                 )
             )
             .filter(RDMRecordQuota.user_id == user_id)
+            .filter(has_active_version)
             .scalar()
         )
 
