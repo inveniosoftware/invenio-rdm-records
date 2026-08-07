@@ -28,7 +28,6 @@ from invenio_rdm_records.proxies import current_rdm_records_service as service
 from invenio_rdm_records.requests.access import AccessRequestTokenNeed
 
 
-
 def _identity(user):
     """Build a fully-provisioned identity for a user."""
     identity = Identity(user.id)
@@ -68,6 +67,7 @@ def _grant_permission(record_id, user_id, permission):
             ]
         },
     )
+
 
 @pytest.mark.parametrize(
     ("show_emojis", "owner_subject", "guest_subject"),
