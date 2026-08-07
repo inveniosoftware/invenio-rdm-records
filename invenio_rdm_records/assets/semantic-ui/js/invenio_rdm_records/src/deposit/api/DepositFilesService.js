@@ -104,6 +104,10 @@ export class DepositFilesService {
     throw new Error("Not implemented.");
   }
 
+  async get(fileLinks) {
+    throw new Error("Not implemented.");
+  }
+
   async delete(fileLinks) {
     throw new Error("Not implemented.");
   }
@@ -217,6 +221,10 @@ export class RDMDepositFilesService extends DepositFilesService {
     this.progressNotifier.onUploadAdded(file.name);
 
     await this._startNextUpload();
+  };
+
+  get = async (fileLinks) => {
+    return (await this.fileApiClient.getFile(fileLinks)).data;
   };
 
   delete = async (fileLinks) => {

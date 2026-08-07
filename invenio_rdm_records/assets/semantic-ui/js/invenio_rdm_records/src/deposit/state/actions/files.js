@@ -20,6 +20,12 @@ import {
 } from "../types";
 import { saveDraftWithUrlUpdate } from "./deposit";
 
+// Uppy files carry their links in `meta`, files list entries directly on the file
+const getFileLinks = (file) => file.meta?.links || file.links;
+
+// The backend reports files of aborted or expired uploads as no longer available
+const isFileGone = (error) => [404, 410].includes(error.response?.status);
+
 export const saveAndFetchDraft = (draft) => {
   return async (dispatch, _, config) => {
     try {
@@ -137,30 +143,65 @@ export const finalizeUpload = (commitFileUrl, file) => {
   };
 };
 
+/**
+ * Checks whether the file still exists on the backend.
+ *
+ * Used to tell apart upload failures that can be retried from uploads that
+ * were aborted elsewhere (e.g. deleted from another browser tab).
+ */
+export const checkFileExists = (file) => {
+  return async (dispatch, _, config) => {
+    const fileLinks = getFileLinks(file);
+
+    if (!fileLinks?.self) {
+      // Upload was never initialized, so nothing exists on the backend
+      return false;
+    }
+
+    try {
+      await config.service.files.get(fileLinks);
+      return true;
+    } catch (error) {
+      if (isFileGone(error)) {
+        return false;
+      }
+      // Any other failure (e.g. a network issue) is inconclusive,
+      // thus the file is assumed to still exist.
+      console.error("Error fetching file", error, file);
+      return true;
+    }
+  };
+};
+
 export const deleteFile = (file) => {
   return async (dispatch, _, config) => {
+    const fileLinks = getFileLinks(file);
+    const deletedSuccess = {
+      type: FILE_DELETED_SUCCESS,
+      payload: {
+        filename: file.name,
+      },
+    };
+
+    if (!fileLinks?.self) {
+      // Upload initialization failed, so there is nothing to delete on the
+      // backend and the file entry can be removed from the state right away.
+      dispatch(deletedSuccess);
+      return;
+    }
+
     try {
-      const fileLinks = file.meta?.links || file.links;
       await config.service.files.delete(fileLinks);
 
-      dispatch({
-        type: FILE_DELETED_SUCCESS,
-        payload: {
-          filename: file.name,
-        },
-      });
+      dispatch(deletedSuccess);
     } catch (error) {
-      if (
-        error.response?.status === 404 &&
-        (file.uploadState?.isPending || !file.progress?.uploadComplete)
-      ) {
-        // pending file was removed from the backend thus we can remove it from the state
-        dispatch({
-          type: FILE_DELETED_SUCCESS,
-          payload: {
-            filename: file.name,
-          },
-        });
+      const isFinishedUpload =
+        file.uploadState?.isFinished || (file.progress?.uploadComplete && !file.error);
+
+      if (isFileGone(error) && !isFinishedUpload) {
+        // upload that never finished was already removed from the backend
+        // (e.g. aborted from another tab), thus it can be removed from the state
+        dispatch(deletedSuccess);
       } else {
         console.error("Error deleting file", error, file);
         dispatch({ type: FILE_DELETE_FAILED });
