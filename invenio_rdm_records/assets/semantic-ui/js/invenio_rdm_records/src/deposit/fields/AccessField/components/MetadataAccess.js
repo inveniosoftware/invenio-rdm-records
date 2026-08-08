@@ -15,6 +15,7 @@ export const MetadataAccess = (props) => {
   const {
     recordAccess,
     communityAccess,
+    permissions,
     record,
     recordRestrictionGracePeriod,
     allowRecordRestriction,
@@ -36,7 +37,7 @@ export const MetadataAccess = (props) => {
       record?.access?.record !== "restricted" &&
       record.is_published
     ) {
-      return !isGracePeriodOver();
+      return permissions?.can_moderate || !isGracePeriodOver();
     }
     return true;
   };
@@ -60,6 +61,7 @@ export const MetadataAccess = (props) => {
 MetadataAccess.propTypes = {
   recordAccess: PropTypes.string.isRequired,
   communityAccess: PropTypes.string.isRequired,
+  permissions: PropTypes.object,
   record: PropTypes.object.isRequired,
   recordRestrictionGracePeriod: PropTypes.number.isRequired,
   allowRecordRestriction: PropTypes.bool.isRequired,
