@@ -26,6 +26,7 @@ const mapStateToProps = (state) => {
     config: state.deposit.config,
     permissions: state.deposit.permissions,
     isFileImportInProgress: state.files.isFileImportInProgress,
+    isFileDeletionInProgress: state.files.pendingDeletions > 0,
     hasParentRecord: Boolean(
       state.deposit.record?.versions?.index && state.deposit.record?.versions?.index > 1
     ),

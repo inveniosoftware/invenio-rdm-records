@@ -9,6 +9,7 @@ import {
   DRAFT_FETCHED,
   FILE_DELETED_SUCCESS,
   FILE_DELETE_FAILED,
+  FILE_DELETE_STARTED,
   FILE_IMPORT_FAILED,
   FILE_IMPORT_STARTED,
   FILE_IMPORT_SUCCESS,
@@ -148,6 +149,9 @@ export const finalizeUpload = (commitFileUrl, file) => {
  *
  * Used to tell apart upload failures that can be retried from uploads that
  * were aborted elsewhere (e.g. deleted from another browser tab).
+ *
+ * Throws when the check itself fails, leaving it to the caller to decide
+ * what an inconclusive result means for it.
  */
 export const checkFileExists = (file) => {
   return async (dispatch, _, config) => {
@@ -159,16 +163,14 @@ export const checkFileExists = (file) => {
     }
 
     try {
-      await config.service.files.get(fileLinks);
-      return true;
+      const fileMetadata = await config.service.files.getFileMetadata(fileLinks);
+      return Boolean(fileMetadata?.key);
     } catch (error) {
       if (isFileGone(error)) {
         return false;
       }
-      // Any other failure (e.g. a network issue) is inconclusive,
-      // thus the file is assumed to still exist.
       console.error("Error fetching file", error, file);
-      return true;
+      throw error;
     }
   };
 };
@@ -182,6 +184,8 @@ export const deleteFile = (file) => {
         filename: file.name,
       },
     };
+
+    dispatch({ type: FILE_DELETE_STARTED });
 
     if (!fileLinks?.self) {
       // Upload initialization failed, so there is nothing to delete on the
