@@ -9,6 +9,7 @@ import { md5 } from "hash-wasm";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import { fetcher } from "@uppy/utils/lib/fetcher";
 import { humanReadableBytes } from "react-invenio-forms";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 import { FileSizeError, InvalidPartNumberError, SignedUrlExpiredError } from "./error";
 
@@ -16,9 +17,9 @@ import { FileSizeError, InvalidPartNumberError, SignedUrlExpiredError } from "./
  * Reasons passed to `uppy.removeFile()` to distinguish who initiated the removal.
  */
 export const FileRemovalReason = {
-  // File was removed through the files list table, which deletes
-  // the file on the backend on its own.
-  filesListEntryDeleted: "files-list-entry-deleted",
+  // File is already being deleted on the backend by the caller
+  // (e.g. through the files list table), so the plugin must not delete it again.
+  deletedOnBackend: "deleted-on-backend",
 };
 
 const defaultOptions = {
@@ -38,8 +39,6 @@ const defaultOptions = {
 
 export class RDMUppyUploaderPlugin extends AwsS3Multipart {
   #maxMultipartParts = 10_000;
-  // Uploads that no longer exist on the backend, so their failures are not reported
-  #remotelyAbortedFiles = new Set();
 
   constructor(uppy, opts) {
     super(uppy, {
@@ -70,7 +69,6 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
     this.uppy.on("upload-success", this.#removeFileOnSuccess);
     this.uppy.on("upload-progress", this.#onUploadProgress);
     this.uppy.on("upload-error", this.#onUploadError);
-    this.uppy.on("file-added", this.#onFileAdded);
     this.uppy.on("file-removed", this.#onFileRemoved);
     this.uppy.addPreProcessor(this.#saveDraftBeforeUpload);
     // Disable resumable uploads Uppy capability.
@@ -85,7 +83,6 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
     this.uppy.off("upload-success", this.#removeFileOnSuccess);
     this.uppy.off("upload-progress", this.#onUploadProgress);
     this.uppy.off("upload-error", this.#onUploadError);
-    this.uppy.off("file-added", this.#onFileAdded);
     this.uppy.off("file-removed", this.#onFileRemoved);
     this.uppy.removePreProcessor(this.#saveDraftBeforeUpload);
     this.uppy.removePreProcessor(this.#disableResumableUploadsCapability);
@@ -124,32 +121,33 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
     this.opts.setUploadProgress(file, percentage);
   };
 
-  #onFileAdded = (file) => {
-    // Failures of a re-added file are to be reported again
-    this.#remotelyAbortedFiles.delete(file.id);
-  };
-
-  #onFileRemoved = (file, reason) => {
-    const isDeletedByFilesList = reason === FileRemovalReason.filesListEntryDeleted;
+  #onFileRemoved = async (file, reason) => {
     // Uploads that failed to be committed have all their bytes uploaded,
     // but are still to be cleaned up (both in Invenio and in the storage).
     const isUnfinishedUpload = !file.progress.uploadComplete || Boolean(file.error);
+    const isDeletedElsewhere = reason === FileRemovalReason.deletedOnBackend;
 
-    if (!isDeletedByFilesList && isUnfinishedUpload) {
-      file.links = file.meta.links;
-      Promise.resolve(this.opts.abortUpload(file)).catch((error) =>
-        this.uppy.log(error, "error")
-      );
-    }
     this.#clearStaleErrorState();
+
+    if (isDeletedElsewhere || !isUnfinishedUpload) {
+      return;
+    }
+
+    try {
+      file.links = file.meta.links;
+      await this.opts.abortUpload(file);
+    } catch (error) {
+      this.uppy.log(error, "error");
+    }
   };
 
+  /**
+   * Handles all upload failures, whether reported by Uppy's upload flow or
+   * emitted by this plugin (see `#completeSinglePartUpload`).
+   */
   #onUploadError = async (file) => {
-    if (
-      this.#remotelyAbortedFiles.has(file.id) ||
-      (await this.#isUploadAbortedRemotely(file))
-    ) {
-      this.#discardRemotelyAbortedUpload(file);
+    if (await this.#isUploadAbortedRemotely(file)) {
+      this.#discardAbortedUpload(file);
     }
   };
 
@@ -165,22 +163,46 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
   };
 
   /**
-   * Silently discards an upload that no longer exists on the backend, e.g. when
-   * its file was deleted from another browser tab.
+   * Discards an upload that no longer exists on the backend, e.g. when its file
+   * was deleted from another browser tab.
    *
-   * Such an upload can neither be resumed nor retried and the user has already
-   * asked for it to be gone, so no error is reported. Removing the file aborts
-   * all of its ongoing requests and drops its files list entry
-   * (see `#onFileRemoved`).
+   * Such an upload can neither be resumed nor retried, so it is removed, which
+   * aborts all of its ongoing requests and drops its files list entry
+   * (see `#onFileRemoved`). The generic failure message already reported by Uppy
+   * is replaced with the actual reason of the failure.
    */
-  #discardRemotelyAbortedUpload = (file) => {
-    this.#remotelyAbortedFiles.add(file.id);
-
+  #discardAbortedUpload = (file) => {
     if (this.uppy.getFile(file.id)) {
       this.uppy.removeFile(file.id);
     }
-    this.uppy.hideInfo();
+    this.#hideUploadFailedMessage(file);
+    this.uppy.info(
+      i18next.t("Upload of {{file}} was aborted.", { file: file.name }),
+      "error",
+      this.uppy.opts.infoTimeout
+    );
     this.#clearStaleErrorState();
+  };
+
+  /**
+   * Dismisses the generic "Failed to upload" message that Uppy reports for every
+   * upload error, so that it can be replaced with a more specific one.
+   *
+   * The message is matched by its content, as Uppy can only dismiss the message
+   * that is currently displayed, which is not necessarily the one of this file.
+   */
+  #hideUploadFailedMessage = (file) => {
+    const uploadFailedMessage = this.uppy.i18n("failedToUpload", {
+      file: file.name ?? "",
+    });
+    const { info } = this.uppy.getState();
+    const remainingMessages = info.filter(
+      (message) => message.message !== uploadFailedMessage
+    );
+
+    if (remainingMessages.length !== info.length) {
+      this.uppy.setState({ info: remainingMessages });
+    }
   };
 
   /**
@@ -211,18 +233,15 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
       // thus it couldn't have been aborted remotely
       return false;
     }
-    return !(await this.opts.checkFileExists(currentFile));
-  };
 
-  /**
-   * Discards uploads that were aborted on the backend, letting all the other
-   * failures be reported to the user. Returns the error to be re-thrown by the caller.
-   */
-  #handleUploadFailure = async (file, error) => {
-    if (await this.#isUploadAbortedRemotely(file)) {
-      this.#discardRemotelyAbortedUpload(file);
+    try {
+      return !(await this.opts.checkFileExists(currentFile));
+    } catch (error) {
+      // The check is inconclusive (e.g. due to a network issue), so the failure
+      // is left to be reported as any other.
+      this.uppy.log(error, "warning");
+      return false;
     }
-    return error;
   };
 
   #saveDraftBeforeUpload = async (fileIDs) => {
@@ -243,8 +262,8 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
       this.uppy.removeFile(file.id);
     } catch (error) {
       // Unlike for multi-part uploads, finalization of single-part uploads
-      // happens outside of Uppy's upload flow, so failures have to be
-      // reported to it explicitly.
+      // happens outside of Uppy's upload flow, so failures have to be reported
+      // to it explicitly to be handled the same way (see `#onUploadError`).
       this.uppy.emit("upload-error", this.uppy.getFile(file.id) ?? file, error);
     }
   };
@@ -511,12 +530,8 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
    *  - The default implementation calls out to Companion’s S3 signing endpoints.
    */
   async completeMultipartUpload(file) {
-    try {
-      const response = await this.opts.finalizeUpload(file);
-      return response.links.content;
-    } catch (error) {
-      throw await this.#handleUploadFailure(file, error);
-    }
+    const response = await this.opts.finalizeUpload(file);
+    return response.links.content;
   }
 
   /**

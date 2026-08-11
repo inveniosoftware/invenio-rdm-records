@@ -6,8 +6,13 @@
 import fileReducer, { UploadState } from "./files";
 import {
   FILE_DELETED_SUCCESS,
+  FILE_DELETE_FAILED,
+  FILE_DELETE_STARTED,
   FILE_UPLOAD_FAILED,
+  FILE_UPLOAD_FINISHED,
+  FILE_UPLOAD_INITIALIZED,
   FILE_UPLOAD_IN_PROGRESS,
+  FILE_UPLOAD_SET_CANCEL_FUNCTION,
 } from "../types";
 
 const uploadingState = {
@@ -42,17 +47,40 @@ describe("files reducer", () => {
     expect(state.entries).toEqual({});
   });
 
-  it.each([FILE_UPLOAD_IN_PROGRESS, FILE_UPLOAD_FAILED])(
-    "ignores a %s update of an already deleted upload",
-    (type) => {
-      const deletedState = { entries: {}, isFileUploadInProgress: false };
+  it.each([
+    FILE_UPLOAD_INITIALIZED,
+    FILE_UPLOAD_IN_PROGRESS,
+    FILE_UPLOAD_FINISHED,
+    FILE_UPLOAD_FAILED,
+    FILE_UPLOAD_SET_CANCEL_FUNCTION,
+  ])("ignores a %s update of an already deleted upload", (type) => {
+    const deletedState = { entries: {}, isFileUploadInProgress: false };
 
-      const state = fileReducer(deletedState, {
-        type,
-        payload: { filename: "test.txt", percent: 50 },
-      });
+    const state = fileReducer(deletedState, {
+      type,
+      payload: { filename: "test.txt", percent: 50, size: 1024, links: {} },
+    });
 
-      expect(state).toBe(deletedState);
-    }
-  );
+    expect(state).toBe(deletedState);
+  });
+
+  describe("pending deletions", () => {
+    it("counts a started deletion", () => {
+      const state = fileReducer(uploadingState, { type: FILE_DELETE_STARTED });
+
+      expect(state.pendingDeletions).toBe(1);
+    });
+
+    it.each([FILE_DELETED_SUCCESS, FILE_DELETE_FAILED])(
+      "stops counting a deletion settled with %s",
+      (type) => {
+        const state = fileReducer(
+          { ...uploadingState, pendingDeletions: 2 },
+          { type, payload: { filename: "test.txt" } }
+        );
+
+        expect(state.pendingDeletions).toBe(1);
+      }
+    );
+  });
 });

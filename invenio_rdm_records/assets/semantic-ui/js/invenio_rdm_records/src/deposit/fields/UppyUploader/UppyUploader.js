@@ -70,7 +70,7 @@ const createDuplicateFileChecker = (uppy, filesList) => {
   };
 };
 
-const findUppyFile = (uppy, filename) =>
+const findUppyFileByName = (uppy, filename) =>
   uppy
     .getFiles()
     .find(
@@ -160,6 +160,7 @@ export const UppyUploaderComponent = ({
   importButtonIcon,
   importButtonText,
   isFileImportInProgress,
+  isFileDeletionInProgress,
   fileUploadConcurrency,
   decimalSizeDisplay,
   filesLocked,
@@ -270,11 +271,11 @@ export const UppyUploaderComponent = ({
 
   const deleteFilesListEntry = React.useCallback(
     async (file) => {
-      const uppyFile = findUppyFile(uppy, file.name);
+      const uppyFile = findUppyFileByName(uppy, file.name);
       if (uppyFile) {
         // Aborts any ongoing requests of the file and keeps the Dashboard in sync,
         // deletion of the file itself is done below.
-        uppy.removeFile(uppyFile.id, FileRemovalReason.filesListEntryDeleted);
+        uppy.removeFile(uppyFile.id, FileRemovalReason.deletedOnBackend);
       }
       return await deleteFile(file);
     },
@@ -294,8 +295,13 @@ export const UppyUploaderComponent = ({
     };
   }, [uppy]);
 
+  // Files being deleted still count towards the quota, but their entries are
+  // about to be gone, so the overlay would only flash for the time of the request.
   const showQuotaOverlay =
-    (!filesLeft || !storageLeft) && !lockFileUploader && !uppyHasFiles;
+    (!filesLeft || !storageLeft) &&
+    !lockFileUploader &&
+    !uppyHasFiles &&
+    !isFileDeletionInProgress;
 
   return (
     <Overridable
@@ -498,6 +504,7 @@ UppyUploaderComponent.propTypes = {
   importButtonIcon: PropTypes.string,
   importButtonText: PropTypes.string,
   isFileImportInProgress: PropTypes.bool,
+  isFileDeletionInProgress: PropTypes.bool,
   importParentFiles: PropTypes.func.isRequired,
   initializeFileUpload: PropTypes.func.isRequired,
   finalizeUpload: PropTypes.func.isRequired,
@@ -519,6 +526,7 @@ UppyUploaderComponent.defaultProps = {
   fileUploadConcurrency: 3,
   record: undefined,
   isFileImportInProgress: false,
+  isFileDeletionInProgress: false,
   isDraftRecord: true,
   hasParentRecord: false,
   quota: {

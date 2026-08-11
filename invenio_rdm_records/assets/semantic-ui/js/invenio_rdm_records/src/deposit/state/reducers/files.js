@@ -7,6 +7,7 @@
 import {
   FILE_DELETED_SUCCESS,
   FILE_DELETE_FAILED,
+  FILE_DELETE_STARTED,
   FILE_IMPORT_FAILED,
   FILE_IMPORT_STARTED,
   FILE_IMPORT_SUCCESS,
@@ -31,13 +32,30 @@ export const UploadState = {
 
 const initialState = {};
 
+// Actions updating an already existing files list entry
+const ENTRY_UPDATE_ACTIONS = [
+  FILE_UPLOAD_INITIALIZED,
+  FILE_UPLOAD_IN_PROGRESS,
+  FILE_UPLOAD_FINISHED,
+  FILE_UPLOAD_FAILED,
+  FILE_UPLOAD_SET_CANCEL_FUNCTION,
+];
+
 const fileReducer = (state = initialState, action) => {
   let newState;
   // Filename needs to be normalised due to encoding differences between client and server.
   const remoteFileName = action.payload?.filename?.normalize() ?? "";
-  // Late progress/failure updates of an already deleted upload must not
-  // resurrect its files list entry.
-  const isDeletedUpload = !state.entries?.[remoteFileName];
+  // Deletions in flight, tracked to tell an emptied uploader apart from one
+  // whose files are still being deleted.
+  const pendingDeletions = state.pendingDeletions ?? 0;
+
+  // Late updates of an already deleted upload (e.g. a commit response racing
+  // its deletion) must not resurrect its files list entry, as such an entry
+  // could never be deleted again.
+  if (ENTRY_UPDATE_ACTIONS.includes(action.type) && !state.entries?.[remoteFileName]) {
+    return state;
+  }
+
   switch (action.type) {
     case FILE_UPLOAD_ADDED:
       return {
@@ -69,9 +87,6 @@ const fileReducer = (state = initialState, action) => {
         actionState: action.type,
       };
     case FILE_UPLOAD_IN_PROGRESS:
-      if (isDeletedUpload) {
-        return state;
-      }
       return {
         ...state,
         entries: {
@@ -116,9 +131,6 @@ const fileReducer = (state = initialState, action) => {
         actionState: action.type,
       };
     case FILE_UPLOAD_FAILED:
-      if (isDeletedUpload) {
-        return state;
-      }
       newState = {
         ...state,
         entries: {
@@ -164,6 +176,12 @@ const fileReducer = (state = initialState, action) => {
         actionState: action.type,
       };
     }
+    case FILE_DELETE_STARTED:
+      return {
+        ...state,
+        pendingDeletions: pendingDeletions + 1,
+        actionState: action.type,
+      };
     case FILE_DELETED_SUCCESS: {
       // eslint-disable-next-line no-unused-vars
       const { [remoteFileName]: deletedFile, ...afterDeletionEntriesState } =
@@ -174,12 +192,14 @@ const fileReducer = (state = initialState, action) => {
         isFileUploadInProgress: Object.values(afterDeletionEntriesState).some(
           (value) => value.status === UploadState.uploading
         ),
+        pendingDeletions: Math.max(0, pendingDeletions - 1),
         actionState: action.type,
       };
     }
     case FILE_DELETE_FAILED:
       return {
         ...state,
+        pendingDeletions: Math.max(0, pendingDeletions - 1),
         actionState: action.type,
       };
     case FILE_IMPORT_STARTED:

@@ -104,7 +104,7 @@ export class DepositFilesService {
     throw new Error("Not implemented.");
   }
 
-  async get(fileLinks) {
+  async getFileMetadata(fileLinks) {
     throw new Error("Not implemented.");
   }
 
@@ -223,8 +223,8 @@ export class RDMDepositFilesService extends DepositFilesService {
     await this._startNextUpload();
   };
 
-  get = async (fileLinks) => {
-    return (await this.fileApiClient.getFile(fileLinks)).data;
+  getFileMetadata = async (fileLinks) => {
+    return (await this.fileApiClient.getFileMetadata(fileLinks)).data;
   };
 
   delete = async (fileLinks) => {
