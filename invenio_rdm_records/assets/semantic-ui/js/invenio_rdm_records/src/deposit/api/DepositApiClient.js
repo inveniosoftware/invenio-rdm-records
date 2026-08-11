@@ -334,7 +334,7 @@ export class DepositFileApiClient {
     throw new Error("Not implemented.");
   }
 
-  getFile(fileLinks) {
+  getFileMetadata(fileLinks) {
     throw new Error("Not implemented.");
   }
 
@@ -393,7 +393,7 @@ export class RDMDepositFileApiClient extends DepositFileApiClient {
     return this.axiosWithConfig.post(link, {});
   }
 
-  getFile(fileLinks) {
+  getFileMetadata(fileLinks) {
     return this.axiosWithConfig.get(fileLinks.self);
   }
 

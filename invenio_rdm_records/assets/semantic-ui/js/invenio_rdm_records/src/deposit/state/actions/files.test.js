@@ -4,7 +4,11 @@
  */
 
 import { checkFileExists, deleteFile } from "./files";
-import { FILE_DELETED_SUCCESS, FILE_DELETE_FAILED } from "../types";
+import {
+  FILE_DELETED_SUCCESS,
+  FILE_DELETE_FAILED,
+  FILE_DELETE_STARTED,
+} from "../types";
 
 const httpError = (status) =>
   Object.assign(new Error(`Request failed with status code ${status}`), {
@@ -19,7 +23,7 @@ let config;
 
 beforeEach(() => {
   dispatch = jest.fn();
-  filesService = { get: jest.fn(), delete: jest.fn() };
+  filesService = { getFileMetadata: jest.fn(), delete: jest.fn() };
   config = { service: { files: filesService } };
   jest.spyOn(console, "error").mockImplementation(() => {});
 });
@@ -40,6 +44,7 @@ describe("deleteFile", () => {
     await dispatchAction(deleteFile({ name: "test.txt", links: fileLinks }));
 
     expect(filesService.delete).toHaveBeenCalledWith(fileLinks);
+    expect(dispatch).toHaveBeenCalledWith({ type: FILE_DELETE_STARTED });
     expect(dispatch).toHaveBeenCalledWith(deletedSuccess);
   });
 
@@ -124,16 +129,24 @@ describe("deleteFile", () => {
 
 describe("checkFileExists", () => {
   it("confirms an existing file", async () => {
-    filesService.get.mockResolvedValue({ key: "test.txt" });
+    filesService.getFileMetadata.mockResolvedValue({ key: "test.txt" });
 
     await expect(
       dispatchAction(checkFileExists({ name: "test.txt", meta: { links: fileLinks } }))
     ).resolves.toBe(true);
-    expect(filesService.get).toHaveBeenCalledWith(fileLinks);
+    expect(filesService.getFileMetadata).toHaveBeenCalledWith(fileLinks);
   });
 
   it.each([404, 410])("detects a file that is gone (HTTP %s)", async (status) => {
-    filesService.get.mockRejectedValue(httpError(status));
+    filesService.getFileMetadata.mockRejectedValue(httpError(status));
+
+    await expect(
+      dispatchAction(checkFileExists({ name: "test.txt", meta: { links: fileLinks } }))
+    ).resolves.toBe(false);
+  });
+
+  it("detects a file that is not reported by the backend", async () => {
+    filesService.getFileMetadata.mockResolvedValue(undefined);
 
     await expect(
       dispatchAction(checkFileExists({ name: "test.txt", meta: { links: fileLinks } }))
@@ -144,14 +157,14 @@ describe("checkFileExists", () => {
     await expect(
       dispatchAction(checkFileExists({ name: "test.txt", meta: {} }))
     ).resolves.toBe(false);
-    expect(filesService.get).not.toHaveBeenCalled();
+    expect(filesService.getFileMetadata).not.toHaveBeenCalled();
   });
 
-  it("assumes the file exists when the check is inconclusive", async () => {
-    filesService.get.mockRejectedValue(httpError(500));
+  it("reports a failed check instead of assuming the result", async () => {
+    filesService.getFileMetadata.mockRejectedValue(httpError(500));
 
     await expect(
       dispatchAction(checkFileExists({ name: "test.txt", meta: { links: fileLinks } }))
-    ).resolves.toBe(true);
+    ).rejects.toThrow();
   });
 });
