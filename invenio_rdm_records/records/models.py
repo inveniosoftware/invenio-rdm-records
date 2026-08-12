@@ -93,6 +93,8 @@ class RDMRecordMetadata(db.Model, RecordMetadataBase, ParentRecordMixin):
     __tablename__ = "rdm_records_metadata"
     __parent_record_model__ = RDMParentMetadata
 
+    __table_args__ = (db.Index("ix_rdm_records_metadata_parent_id", "parent_id"),)
+
     # Enable versioning
     __versioned__ = {}
 
@@ -140,6 +142,8 @@ class RDMDraftMetadata(db.Model, DraftMetadataBase, ParentRecordMixin):
 
     __tablename__ = "rdm_drafts_metadata"
     __parent_record_model__ = RDMParentMetadata
+
+    __table_args__ = (db.Index("ix_rdm_drafts_metadata_parent_id", "parent_id"),)
 
     bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id), index=True)
     bucket = db.relationship(Bucket, foreign_keys=[bucket_id])
