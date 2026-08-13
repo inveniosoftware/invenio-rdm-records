@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version v34.1.0 (released 2026-08-13)
+
+- fix(files): extract metadata after draft publication
+- fix(file-modification): handle validation errors
+
 Version v34.0.1 (released 2026-08-04)
 
 - feat(quota): implement policy evaluation for allowing users
