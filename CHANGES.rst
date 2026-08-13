@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version v35.0.0 (released 2026-08-13)
+
+- fix(checks): Define CheckTarget for record
+- fix(checks): explicitly add target_type
+
 Version v34.1.0 (released 2026-08-13)
 
 - fix(files): extract metadata after draft publication
