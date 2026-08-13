@@ -343,23 +343,28 @@
      datacite: IsTranslationOf
   title:
      en: Is translation of
+     sv: Är översättning av
 - id: hastranslation
   props:
      datacite: HasTranslation
   title:
      en: Has translation
+     sv: Har översättning
 - id: iscollectedby
   props:
      datacite: IsCollectedBy
   title:
      en: Is collected by
+     sv: Samlas in av
 - id: collects
   props:
      datacite: Collects
   title:
      en: Collects
+     sv: Samlar in
 - id: other
   props:
      datacite: Other
   title:
      en: Other
+     sv: Annat

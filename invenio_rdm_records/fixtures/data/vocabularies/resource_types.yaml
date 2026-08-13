@@ -326,7 +326,7 @@
     marc21_subtype: milestone
   title:
     en: Project milestone
-    sv: Milstolpe för projektet
+    sv: Projektmilstolpe
     de: Projektmeilenstein
     es: Hito de proyecto
     cs: Mezník projektu
@@ -565,6 +565,7 @@
     marc21_subtype: studyregistration
   title:
     en: Study Registration
+    sv: Studieregistrering
   tags:
     - depositable
     - linkable
@@ -1081,6 +1082,7 @@
     type: project
   title:
     en: Project
+    sv: Projekt
   tags:
     - linkable
 - id: instrument
@@ -1092,5 +1094,6 @@
     type: instrument
   title:
     en: Instrument
+    sv: Instrument
   tags:
     - linkable
