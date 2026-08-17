@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v32.2.1 (released 2026-08-17)
+
+- tests: update citation for bug fixes in citeproc-py 0.10.7
+
 Version v32.2.0 (released 2026-07-31)
 
 - feat(quota): implement policy evaluation for allowing users
