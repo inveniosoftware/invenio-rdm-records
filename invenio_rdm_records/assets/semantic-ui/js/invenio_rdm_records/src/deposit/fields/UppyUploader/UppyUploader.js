@@ -1,7 +1,7 @@
 /*
  * SPDX-FileCopyrightText: 2020-2025 CERN.
  * SPDX-FileCopyrightText: 2025 CESNET.
- * SPDX-FileCopyrightText: 2025 KTH Royal Institute of Technology.
+ * SPDX-FileCopyrightText: 2025-2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -19,6 +19,8 @@ import { NewVersionButton } from "../../controls/NewVersionButton";
 import { UploadState } from "../../state/reducers/files";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { getFilesList, FilesListTable, FileUploaderToolbar } from "../FileUploader";
+import { QuotaManager } from "../FileUploader/QuotaManager/QuotaManager";
+import { useQuotaManager } from "../FileUploader/QuotaManager/useQuotaManager";
 import { useUppyLocale } from "./locale";
 import { humanReadableBytes } from "react-invenio-forms";
 
@@ -163,6 +165,13 @@ export const UppyUploaderComponent = ({
   const locale = useUppyLocale();
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const filesSize = filesList.reduce((totalSize, file) => (totalSize += file.size), 0);
+  const {
+    additionalQuota,
+    quotaInGB,
+    setAdditionalQuota,
+    showQuotaSection,
+    toggleQuotaSection,
+  } = useQuotaManager(quota, filesSize);
   const lockFileUploader = !isDraftRecord && filesLocked;
   const filesLeft = filesList.length < quota.maxFiles;
   const storageLeft = filesSize < quota.maxStorage;
@@ -314,9 +323,23 @@ export const UppyUploaderComponent = ({
               filesSize={filesSize}
               quota={quota}
               decimalSizeDisplay={decimalSizeDisplay}
+              additionalQuota={additionalQuota}
+              toggleQuotaSection={toggleQuotaSection}
             />
           )}
         </Grid.Row>
+        {showQuotaSection && (
+          <Grid.Row className="pt-0">
+            <QuotaManager
+              draft={formikDraft}
+              quota={quotaInGB}
+              decimalSizeDisplay={decimalSizeDisplay}
+              toggleQuotaSection={toggleQuotaSection}
+              additionalQuota={additionalQuota}
+              setAdditionalQuota={setAdditionalQuota}
+            />
+          </Grid.Row>
+        )}
         <Overridable
           id="ReactInvenioDeposit.FileUploader.ImportButton.container"
           importButtonIcon={importButtonIcon}
