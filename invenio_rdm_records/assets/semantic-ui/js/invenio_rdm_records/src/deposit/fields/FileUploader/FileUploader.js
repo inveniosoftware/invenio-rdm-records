@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
  * SPDX-FileCopyrightText: 2022 Graz University of Technology.
  * SPDX-FileCopyrightText: 2022 TU Wien.
- * SPDX-FileCopyrightText: 2024-2025 KTH Royal Institute of Technology.
+ * SPDX-FileCopyrightText: 2024-2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -21,6 +21,7 @@ import { FileUploaderToolbar } from "./FileUploaderToolbar";
 import { NewVersionButton } from "../../controls/NewVersionButton";
 import { EditFilesAccordion } from "./EditFilesAccordion";
 import { QuotaManager } from "./QuotaManager/QuotaManager";
+import { useQuotaManager } from "./QuotaManager/useQuotaManager";
 import { humanReadableBytes } from "react-invenio-forms";
 import Overridable from "react-overridable";
 import { getFilesList } from "./utils";
@@ -56,10 +57,13 @@ export const FileUploaderComponent = ({
 
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const [warningMsg, setWarningMsg] = useState();
-  const [showQuotaSection, setShowQuotaSection] = useState(false);
-  const [additionalQuota, _setAdditionalQuota] = useState(
-    quota.quotaIncrease?.additionalStorage / Math.pow(10, 9) || 0
-  );
+  const {
+    additionalQuota,
+    quotaInGB,
+    setAdditionalQuota,
+    showQuotaSection,
+    toggleQuotaSection,
+  } = useQuotaManager(quota, filesSize);
   const lockFileUploader = !isDraftRecord && filesLocked;
   const dropzoneParams = {
     preventDropOnDocument: true,
@@ -178,42 +182,6 @@ export const FileUploaderComponent = ({
 
   const displayImportBtn =
     filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
-
-  const toggleQuotaSection = () => {
-    setShowQuotaSection(!showQuotaSection);
-  };
-
-  // rescale quota from bytes to GB, as user input requires GB
-  const quotaInGB = Object.keys(quota.quotaIncrease).reduce((obj, key) => {
-    if (typeof quota["quotaIncrease"][key] === "number") {
-      obj[key] = quota["quotaIncrease"][key] / Math.pow(10, 9);
-    } else {
-      obj[key] = quota["quotaIncrease"][key];
-    }
-    return obj;
-  }, {});
-
-  const setAdditionalQuota = (value) => {
-    // if a user uploads a file without publishing, we can't get the minAdditional
-    // from the backend, so we use the filesSize directly in this case
-    const additionalFilesSize =
-      Math.ceil(filesSize / Math.pow(10, 9)) - quotaInGB["defaultStorage"];
-    const minAdditional = Math.max(
-      quotaInGB["minAdditionalQuotaValue"],
-      additionalFilesSize
-    );
-    const maxAdditional = quotaInGB["maxAdditionalQuotaValue"];
-
-    if (value < minAdditional) {
-      _setAdditionalQuota(minAdditional);
-    } else if (minAdditional <= value && value <= maxAdditional) {
-      _setAdditionalQuota(value);
-    } else if (value > maxAdditional) {
-      _setAdditionalQuota(maxAdditional);
-    } else if (isNaN(value)) {
-      _setAdditionalQuota(minAdditional);
-    }
-  };
 
   return (
     <Overridable
