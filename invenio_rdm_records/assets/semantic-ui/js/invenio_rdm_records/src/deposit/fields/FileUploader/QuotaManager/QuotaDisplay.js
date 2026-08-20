@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2025 CERN.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -100,11 +101,11 @@ export const QuotaDisplay = (props) => {
                   xOffset += bar[keys[i]];
                 }
                 const barWidth = bar[key];
-                const xPos =
-                  valueScale(xOffset) +
-                  (barWidth > 15 ? valueScale(barWidth) / 2 : valueScale(barWidth) + 5);
+                const pixelWidth = valueScale(barWidth);
+                const xPos = valueScale(xOffset) + pixelWidth / 2;
 
-                if (barWidth <= 0) return null;
+                // 20px seems to be the minimum width for the text to be readable
+                if (barWidth <= 0 || pixelWidth < 20) return null;
 
                 return (
                   <Text
@@ -112,7 +113,7 @@ export const QuotaDisplay = (props) => {
                     x={xPos}
                     y={categoryScale("Storage") + categoryScale.bandwidth() / 2}
                     verticalAnchor="middle"
-                    textAnchor={barWidth > 15 ? "middle" : "start"}
+                    textAnchor="middle"
                     fontSize={11}
                     fill="white"
                     fontWeight={500}
