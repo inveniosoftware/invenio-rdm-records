@@ -115,7 +115,7 @@ msgstr "معرف كروسراف للممول"
 
 #: invenio_rdm_records/config.py:99
 msgid "CSTR"
-msgstr ""
+msgstr "CSTR"
 
 #: invenio_rdm_records/config.py:101
 msgid "EAN13"
@@ -171,7 +171,7 @@ msgstr "PURL"
 
 #: invenio_rdm_records/config.py:118
 msgid "RRID"
-msgstr ""
+msgstr "RRID"
 
 #: invenio_rdm_records/config.py:119
 msgid "UPC"
@@ -274,7 +274,7 @@ msgstr "محينة"
 #: invenio_rdm_records/ext.py:318
 #, python-format
 msgid "%(icon)s Storage"
-msgstr ""
+msgstr "%(icon)s تخزين"
 
 #: invenio_rdm_records/utils.py:113
 msgid "Your shared link has expired."
@@ -336,12 +336,16 @@ msgstr "تفاصيل OAI-PMH"
 msgid ""
 "User {user_id} updated access of {resource_type} {resource_id} via record."
 msgstr ""
+" قام المستخدم {user_id} بتحديث صلاحيات الوصول إلى {resource_type} ذي المعرّف"
+" {resource_id} عبر التسجيلة."
 
 #: invenio_rdm_records/auditlog/actions.py:64
 #, python-brace-format
 msgid ""
 "User {user_id} updated access of {resource_type} {resource_id} via draft."
 msgstr ""
+" قام المستخدم {user_id} بتحديث صلاحيات الوصول إلى {resource_type} ذي المعرّف"
+" {resource_id} عبر  المسودة."
 
 #: invenio_rdm_records/auditlog/actions.py:85
 #, python-brace-format
@@ -349,6 +353,8 @@ msgid ""
 "User {user_id} updated secret link of {resource_type} {resource_id} via "
 "record."
 msgstr ""
+" قام المستخدم {user_id} بتحديث الرابط السري الخاص بـ {resource_type} ذي "
+"المعرّف {resource_id} عبر التسجيلة."
 
 #: invenio_rdm_records/auditlog/actions.py:100
 #, python-brace-format
@@ -356,6 +362,8 @@ msgid ""
 "User {user_id} updated secret link of {resource_type} {resource_id} via "
 "draft."
 msgstr ""
+" قام المستخدم {user_id} بتحديث الرابط السري الخاص بـ {resource_type} ذي "
+"المعرّف {resource_id} عبر المسودة."
 
 #: invenio_rdm_records/auditlog/actions.py:109
 #, python-brace-format
@@ -363,6 +371,8 @@ msgid ""
 "User {user_id} updated access settings of {resource_type} {resource_id} via "
 "record."
 msgstr ""
+" قام المستخدم {user_id} بتحديث إعدادات الوصول الخاصة بـ {resource_type} ذي "
+"المعرّف {resource_id} عبر التسجيلة."
 
 #: invenio_rdm_records/auditlog/actions.py:124
 #, python-brace-format
@@ -370,6 +380,8 @@ msgid ""
 "User {user_id} updated access settings of {resource_type} {resource_id} via "
 "draft."
 msgstr ""
+" قام المستخدم {user_id} بتحديث إعدادات الوصول الخاصة بـ {resource_type} ذي "
+"المعرّف {resource_id} عبر المسودة."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:33
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:44
@@ -423,11 +435,11 @@ msgstr "يرجى تقديم رقم ISBN صالح."
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:69
 msgid "Book / Report / Conference proceedings"
-msgstr ""
+msgstr " كتاب / تقرير / وقائع مؤتمر"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:76
 msgid "Imprint (Book, Report, or Conference proceedings)"
-msgstr ""
+msgstr " بيانات النشر (كتاب أو تقرير أو وقائع مؤتمر)"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:78
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:117
@@ -454,11 +466,12 @@ msgstr "الترقيم الدولي المعياري للكتاب"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:88
 msgid "Book, report, or proceedings title"
-msgstr ""
+msgstr " عنوان الكتاب أو التقرير أو وقائع المؤتمر"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:91
 msgid "Title of the book, report, or proceedings which this upload is part of"
 msgstr ""
+" عنوان الكتاب أو التقرير أو وقائع المؤتمر الذي يُعدّ هذا الإيداع جزءًا منه"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:95
 msgid "Pagination"
@@ -470,15 +483,15 @@ msgstr "على سبيل المثال 15-23 أو 158"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:100
 msgid "Edition"
-msgstr ""
+msgstr " الطبعة"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:101
 msgid "e.g. 3"
-msgstr ""
+msgstr " على سبيل المثال: 3"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:102
 msgid "The edition of the book"
-msgstr ""
+msgstr " طبعة الكتاب"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:36
 msgid "Please provide a valid ISSN."
@@ -608,46 +621,46 @@ msgstr "الجامعة المانحة"
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:75
 #: invenio_rdm_records/templates/semantic-ui/thesis.html:11
 msgid "Awarding department"
-msgstr ""
+msgstr " الجهة الأكاديمية المانحة للشهادة"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:80
 #: invenio_rdm_records/templates/semantic-ui/thesis.html:16
 msgid "Thesis type"
-msgstr ""
+msgstr " نوع الأطروحة"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:81
 msgid "PhD"
-msgstr ""
+msgstr " درجة الدكتوراه"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:83
 msgid "The type of thesis (e.g. Masters, PhD, Engineers, Bachelors)"
-msgstr ""
+msgstr " نوع الأطروحة (مثل: ماجستير، دكتوراه، هندسة، بكالوريوس)"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:87
 #: invenio_rdm_records/templates/semantic-ui/thesis.html:21
 msgid "Submission date"
-msgstr ""
+msgstr " تاريخ الإيداع"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:89
 msgid "Submission date in YYYY-MM-DD format."
-msgstr ""
+msgstr " تاريخ الإيداع بالتنسيق YYYY-MM-DD."
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:92
 #: invenio_rdm_records/templates/semantic-ui/thesis.html:26
 msgid "Defense date"
-msgstr ""
+msgstr " تاريخ مناقشة الأطروحة"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:94
 msgid "Defense date in YYYY-MM-DD format."
-msgstr ""
+msgstr " تاريخ المناقشة بالتنسيق YYYY-MM-DD."
 
 #: invenio_rdm_records/jobs/jobs.py:17
 msgid "Updates expired embargoes"
-msgstr ""
+msgstr " تحديث فترات الحظر المنتهية"
 
 #: invenio_rdm_records/jobs/jobs.py:18
 msgid "Update expired embargoes"
-msgstr ""
+msgstr "قم بتحديث فترات الحظر المنتهية"
 
 #: invenio_rdm_records/oaiserver/services/config.py:31
 msgid "Ascending"
@@ -683,7 +696,7 @@ msgstr "توجد مجموعة بـنفس الخاصيات '%(spec)s' ."
 #: invenio_rdm_records/oaiserver/services/errors.py:56
 #, python-format
 msgid "The set with id %(id)s is not editable."
-msgstr "المجموعة ذات المعرف %(id)s غير قابلة للتغيير."
+msgstr "المجموعة ذات المعرف %(id)s غير قابلة للتعديل."
 
 #: invenio_rdm_records/oaiserver/services/schema.py:26
 msgid "Search pattern"
@@ -714,12 +727,12 @@ msgstr "إيداعات المجتمع"
 
 #: invenio_rdm_records/requests/file_modification.py:27
 msgid "A file modification request for this record already exists."
-msgstr ""
+msgstr " تم تقديم طلب لتعديل ملفات هذا السجل مسبقًا."
 
 #: invenio_rdm_records/requests/file_modification.py:31
 #, python-brace-format
 msgid "File modification request for \"{record_title}\""
-msgstr ""
+msgstr " طلب تعديل ملف التسجيلة \"{record_title}\""
 
 #: invenio_rdm_records/requests/file_modification.py:69
 msgid "File modification"
@@ -728,11 +741,11 @@ msgstr " تعديل الملف"
 #: invenio_rdm_records/requests/quota_increase.py:27
 #, python-format
 msgid "Quota increase request for \"%(record_title)s\""
-msgstr ""
+msgstr " طلب زيادة الحصة لـ\"%(record_title)s\""
 
 #: invenio_rdm_records/requests/quota_increase.py:31
 msgid "Quota increase request"
-msgstr ""
+msgstr " طلب زيادة الحصة"
 
 #: invenio_rdm_records/requests/quota_increase.py:57
 msgid "Quota increase"
@@ -740,16 +753,16 @@ msgstr " زيادة الحصة"
 
 #: invenio_rdm_records/requests/record_deletion.py:36
 msgid "A deletion request for this record already exists."
-msgstr ""
+msgstr " تم تقديم طلب حذف لهذه التسجيلة مسبقًا."
 
 #: invenio_rdm_records/requests/record_deletion.py:41
 #, python-format
 msgid "Deletion request for \"%(record_title)s\""
-msgstr ""
+msgstr " طلب حذف لـ\"%(record_title)s\""
 
 #: invenio_rdm_records/requests/record_deletion.py:62
 msgid "Invalid removal reason"
-msgstr ""
+msgstr " سبب الإزالة غير صالح"
 
 #: invenio_rdm_records/requests/record_deletion.py:132
 msgid "Record deletion"
@@ -793,7 +806,7 @@ msgstr "التّسجيلة محذوفة"
 
 #: invenio_rdm_records/resources/config.py:214
 msgid "Record in unexpected deletion status."
-msgstr ""
+msgstr " التسجيلة في حالة حذف غير متوقعة."
 
 #: invenio_rdm_records/resources/config.py:227
 msgid "Cannot publish without selecting a community."
@@ -817,7 +830,7 @@ msgstr "لم يتم العثور على منحة بواسطة معرف الفر�
 
 #: invenio_rdm_records/resources/errors.py:18
 msgid "A validation error occurred."
-msgstr " حدث خطأ أثناء التحقق من صحة البيانات."
+msgstr "  تم اكتشاف خطأ في التحقق."
 
 #: invenio_rdm_records/resources/iiif.py:97
 msgid "Image size limit exceeded"
@@ -830,12 +843,14 @@ msgstr "تم حذف التسجيلة المرتبطة بهذا الملف. را�
 
 #: invenio_rdm_records/resources/iiif.py:110
 msgid "The requested image cannot be found."
-msgstr ""
+msgstr " تعذّر العثور على الصورة المطلوبة."
 
 #: invenio_rdm_records/resources/resources.py:231
 msgid ""
 "Your record was deleted and from now on will resolve to this tombstone page."
 msgstr ""
+" تم حذف تسجيلتك، ومن الآن فصاعدًا سيقع التوجيه إلى صفحة التسجيلة المسحوبة "
+"هذه Tombstone Page."
 
 #: invenio_rdm_records/resources/deserializers/rocrate/__init__.py:27
 msgid "Invalid RO-Crate metadata format, missing '@graph' key."
@@ -890,6 +905,9 @@ msgid ""
 "Funding serialization failed on award: one of 'id', 'number', or 'title' are"
 " required."
 msgstr ""
+" تعذّرت معالجة بيانات الجهة الممولة لأن معلومات الجائزة التمويلية غير "
+"مكتملة. يجب إدخال أحد الحقول التالية على الأقل: 'المعرّف' أو 'الرقم' أو "
+"'العنوان'."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:35
 #: invenio_rdm_records/services/facets.py:29
@@ -943,6 +961,9 @@ msgid ""
 "The record is publicly accessible, but files are restricted. <a "
 "href=\"%(login_url)s\">Log in</a> to check if you have access."
 msgstr ""
+" التسجيلة متاحة للعامة، لكن الملفات مقيّدة الوصول. <a "
+"href=\"%(login_url)s\">سجّل الدخول</a> للتحقق مما إذا كانت لديك صلاحية "
+"الوصول للملفات."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:107
 msgid ""
@@ -958,15 +979,15 @@ msgstr "سيتم إتاحة الملفات للعموم ابتداءا من %(da
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:288
 msgid "Submitted: "
-msgstr ""
+msgstr "تم الإيداع:"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:290
 msgid "Defended: "
-msgstr ""
+msgstr " نوقشت:"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:446
 msgid "NA"
-msgstr ""
+msgstr " لا ينطبق NA"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:451
 msgid "System (automatic)"
@@ -983,7 +1004,7 @@ msgstr "مدير"
 #: invenio_rdm_records/secret_links/errors.py:22
 #, python-format
 msgid "Invalid permission level: %(permission_level)s"
-msgstr ""
+msgstr " مستوى الصلاحية غير صالح: %(permission_level)s"
 
 #: invenio_rdm_records/services/errors.py:18
 msgid "Grant for this user/role already exists within this record."
@@ -1031,7 +1052,7 @@ msgstr "طلب الوصول مكرر"
 
 #: invenio_rdm_records/services/errors.py:205
 msgid "Submission to this community is only allowed to community members."
-msgstr "يُسمح بالمساهمة في هذا المجتمع لأعضاء المجتمع فقط."
+msgstr "يُسمح بالإيداع في هذا المجتمع للأعضاء فقط."
 
 #: invenio_rdm_records/services/errors.py:212
 msgid "Cannot publish without a community."
@@ -1082,7 +1103,7 @@ msgstr "تاريخ النّشر"
 #: invenio_rdm_records/services/request_policies.py:48
 #, python-brace-format
 msgid "You can delete your records within {grace_period} days of publishing."
-msgstr ""
+msgstr " يُسمح لك بحذف تسجيلاتك خلال مدة {grace_period} يومًا بعد النشر."
 
 #: invenio_rdm_records/services/request_policies.py:51
 #, python-brace-format
@@ -1090,6 +1111,8 @@ msgid ""
 "Record owners can delete their records within {grace_period} days of "
 "publishing."
 msgstr ""
+" يُسمح لمالكي التسجيلات بحذف تسجيلاتهم خلال فترة قدرها {grace_period} يومًا "
+"بعد النشر."
 
 #: invenio_rdm_records/services/request_policies.py:77
 #, python-brace-format
@@ -1097,6 +1120,8 @@ msgid ""
 "You must submit a deletion request with a detailed justification because the"
 " record has been published for more than {grace_period} days."
 msgstr ""
+" نظرًا لأن هذه التسجيلة منشورة منذ أكثر من {grace_period} يومًا، يجب تقديم "
+"طلب حذف مرفق بتبرير مفصّل."
 
 #: invenio_rdm_records/services/request_policies.py:101
 #, python-brace-format
@@ -1104,18 +1129,20 @@ msgid ""
 "You can edit the files of your records within {grace_period} days of "
 "publishing."
 msgstr ""
+" يُسمح لك بتعديل ملفات تسجيلاتك خلال فترة قدرها {grace_period} يومًا بعد "
+"نشرها."
 
 #: invenio_rdm_records/services/request_policies.py:122
 msgid "You can edit the files of the record as you are an admin."
-msgstr ""
+msgstr " يمكنك تعديل ملفات التسجيلة لأن لديك صلاحيات المسؤول."
 
 #: invenio_rdm_records/services/request_policies.py:139
 msgid "You can increase the quota of your drafts."
-msgstr ""
+msgstr " يمكنك زيادة الحصة المخصصة لمسوداتك."
 
 #: invenio_rdm_records/services/request_policies.py:181
 msgid "You can increase the quota of a draft as you are an admin."
-msgstr ""
+msgstr " يمكنك زيادة الحصة المخصصة لهذه المسودة لأن لديك صلاحيات المسؤول."
 
 #: invenio_rdm_records/services/services.py:734
 msgid ""
@@ -1127,7 +1154,7 @@ msgstr ""
 
 #: invenio_rdm_records/services/access/service.py:143
 msgid "Expiration date is required"
-msgstr ""
+msgstr " يجب تحديد تاريخ انتهاء الصلاحية"
 
 #: invenio_rdm_records/services/access/service.py:152
 #: invenio_rdm_records/services/access/service.py:187
@@ -1178,6 +1205,8 @@ msgid ""
 "This request has been automatically accepted, as the uploader can submit to "
 "community directly without review."
 msgstr ""
+" تمت الموافقة على هذا الطلب آليّا، إذ يمكن لصاحب الإيداع تقديمه إلى المجتمع "
+"مباشرةً دون الحاجة إلى مراجعة."
 
 #: invenio_rdm_records/services/community_records/service.py:134
 msgid "The record does not exist."
@@ -1196,6 +1225,8 @@ msgid ""
 "File modification grace period has passed. Please discard this draft to make"
 " any changes."
 msgstr ""
+" انقضت مهلة تعديل الملفات. لإجراء أي تعديلات، يُرجى تجاهل هذه المسودة وإنشاء"
+" مسودة جديدة."
 
 #: invenio_rdm_records/services/components/pids.py:24
 #, python-brace-format
@@ -1203,6 +1234,8 @@ msgid ""
 "A previous version used a DOI registered from {sitename}. This version must "
 "also use a DOI from {sitename}."
 msgstr ""
+" نظرًا لأن أحد الإصدارات السابقة استخدم معرّف DOI مسجّلًا لدى {sitename}، "
+"فيجب أن يستخدم هذا الإصدار أيضًا معرّف DOI من {sitename}."
 
 #: invenio_rdm_records/services/components/pids.py:33
 #: invenio_rdm_records/services/components/pids.py:42
@@ -1212,6 +1245,8 @@ msgid ""
 "without one. You cannot use a DOI registered from {sitename} for this "
 "version."
 msgstr ""
+" نُشر أحد الإصدارات السابقة باستخدام معرّف DOI من جهة خارجية أو دون معرّف "
+"DOI. لذلك لا يمكنك استخدام معرّف DOI مسجّل من {sitename} لهذا الإصدار."
 
 #: invenio_rdm_records/services/components/review.py:37
 msgid ""
@@ -1224,6 +1259,8 @@ msgid ""
 "You cannot publish a draft with an open review request. Please cancel the "
 "review request first."
 msgstr ""
+" لا يمكنك نشر مسودة تحتوي على طلب مراجعة مفتوح. يُرجى إلغاء طلب المراجعة "
+"أولًا."
 
 #: invenio_rdm_records/services/github/metadata.py:56
 #: invenio_rdm_records/services/vcs/metadata.py:63
@@ -1254,12 +1291,12 @@ msgstr "مزود PID غير معروف %(provider)s لـ %(scheme)s"
 #: invenio_rdm_records/services/pids/manager.py:82
 #, python-format
 msgid "Invalid %(scheme)s"
-msgstr "خاطئ %(scheme)s"
+msgstr " %(scheme)s غير صالح "
 
 #: invenio_rdm_records/services/pids/manager.py:166
 #, python-format
 msgid "A PID already exists for type %(scheme)s"
-msgstr "تم اسناد معرف PID لهذا النوع %(scheme)s"
+msgstr "سبق اسناد معرف PID لهذا النوع %(scheme)s"
 
 #: invenio_rdm_records/services/pids/manager.py:172
 msgid "External identifier value is required."
@@ -1282,11 +1319,11 @@ msgstr "يجب عليك توفير قيمة الـ pid."
 #: invenio_rdm_records/services/pids/providers/base.py:177
 #, python-format
 msgid "%(pid_type)s:%(identifier)s already exists."
-msgstr "%(pid_type)s:%(identifier)s متواجد سابقا."
+msgstr "%(pid_type)s:%(identifier)s موجود بالفعل."
 
 #: invenio_rdm_records/services/pids/providers/crossref.py:322
 msgid "Missing or invalid DOI for registration."
-msgstr ""
+msgstr " معرّف DOI مفقود أو غير صالح للتسجيل."
 
 #: invenio_rdm_records/services/pids/providers/crossref.py:332
 #: invenio_rdm_records/services/pids/providers/datacite.py:301
@@ -1300,7 +1337,7 @@ msgid ""
 "external DOI or select 'No' to have a DOI generated for you."
 msgstr ""
 "تتم إدارة البادئة '%(prefix)s' بواسطة %(sitename)s. يُرجى توفير مُعرِّف DOI "
-"خارجي أو اختيار \"لا\" لإنشاء مُعرِّف DOI خاص لك."
+"خارجي أو اختيار 'لا' لإنشاء مُعرِّف DOI خاص لك."
 
 #: invenio_rdm_records/services/pids/providers/external.py:92
 #, python-format
@@ -1321,7 +1358,7 @@ msgstr "لا يمكنك تقييم سجل منشور سابقا."
 
 #: invenio_rdm_records/services/review/service.py:86
 msgid "You cannot create a review for a new version of a published record."
-msgstr ""
+msgstr " لا يمكنك إنشاء مراجعة لإصدار جديد لتسجيلة منشورة."
 
 #: invenio_rdm_records/services/review/service.py:184
 msgid ""
@@ -1441,7 +1478,7 @@ msgstr "مخطط المعرف الدائم غير صالح %(scheme)s."
 
 #: invenio_rdm_records/services/vcs/metadata.py:71
 msgid "Not Defined"
-msgstr ""
+msgstr " غير معرّف"
 
 #: invenio_rdm_records/templates/semantic-ui/imprint.html:6
 msgid "Publisher"
@@ -1830,7 +1867,7 @@ msgstr "هذه رسالة حررت آليا. لإدارة الإشعارات، �
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:15
 #, python-brace-format
 msgid "❗️ Access request for '{record_title}' requires action"
-msgstr ""
+msgstr "❗️ يتطلب طلب الوصول إلى \"{record_title}\" اتخاذ إجراء"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:21
 msgid "Please verify the email address in order to submit the access request"
@@ -1981,12 +2018,12 @@ msgstr "الإطّلع على تفاصيل الطلب:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:14
 msgid "✅ Your record has been deleted"
-msgstr ""
+msgstr "✅ لقد تم حذف تسجيلتك."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:20
 #, python-brace-format
 msgid "{request_title} has been accepted."
-msgstr ""
+msgstr " تم قبول {request_title}."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:24
 msgid "View deletion request"
@@ -1996,21 +2033,21 @@ msgstr " عرض طلب الحذف"
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:45
 #, python-brace-format
 msgid "'{request_title}' has been accepted."
-msgstr ""
+msgstr " تم قبول '{request_title}'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:38
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.accept.jinja:47
 msgid "View the request"
-msgstr ""
+msgstr "الاطّلاع على الطلب"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:14
 msgid "Your record deletion request was declined"
-msgstr ""
+msgstr " تم رفض طلبك لحذف التسجيلة"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:20
 #, python-brace-format
 msgid "{request_title} has been declined."
-msgstr ""
+msgstr " تم رفض {request_title}."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:24
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:38
@@ -2019,34 +2056,34 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:70
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:87
 msgid "For more details,"
-msgstr ""
+msgstr " لمزيد من التفاصيل،"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:24
 msgid "view deletion request"
-msgstr ""
+msgstr " عرض طلب الحذف"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:36
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:45
 #, python-brace-format
 msgid "'{request_title}' has been declined."
-msgstr ""
+msgstr " تم رفض '{request_title}'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:38
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/record-deletion.decline.jinja:47
 msgid "view the request"
-msgstr ""
+msgstr "الاطّلاع على الطلب"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:15
 #, python-format
 msgid "Finish publishing your release from %(repository_name)s"
-msgstr ""
+msgstr " أكمل نشر إصدارك من %(repository_name)s"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:21
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:40
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:51
 #, python-format
 msgid "Release %(release_tag)s of %(repository_name)s is not yet published."
-msgstr ""
+msgstr "  الإصدار %(release_tag)s بالمستودع %(repository_name)s لم يُنشر بعد."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:25
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:42
@@ -2055,12 +2092,14 @@ msgid ""
 "To continue, you need to specify a community to submit the record to. This "
 "only needs to be done for your repository's first release."
 msgstr ""
+" للمتابعة، يجب عليك تحديد المجتمع الذي تريد إرسال التسجيلة إليه. يكفي إجراء "
+"هذا التحديد مرة واحدة فقط عند نشر أول إصدار من المستودع."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:28
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:44
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:55
 msgid "To do so,"
-msgstr ""
+msgstr " لإتمام ذلك،"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:28
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-required.jinja:44
@@ -2069,12 +2108,12 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:52
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:67
 msgid "view the unpublished draft record."
-msgstr ""
+msgstr " اعرض مسودة التسجيلة غير المنشورة."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:17
 #, python-format
 msgid "Release from %(repository_name)s submitted to %(community_title)s"
-msgstr ""
+msgstr " إصدار من %(repository_name)s  مُرسل إلى %(community_title)s"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:23
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:58
@@ -2084,6 +2123,8 @@ msgid ""
 "Release %(release_tag)s of %(repository_name)s has been submitted for review"
 " to %(community_title)s."
 msgstr ""
+" تم تقديم الإصدار%(release_tag)s من طرف %(repository_name)sللمراجعة لدى "
+"%(community_title)s."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:27
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:60
@@ -2092,29 +2133,31 @@ msgid ""
 "No further action is needed right now. This only needs to be done for your "
 "repository's first release."
 msgstr ""
+" لا حاجة إلى أي خطوات إضافية حاليًا. يكفي تنفيذ هذا الإجراء مرة واحدة فقط "
+"عند إصدار أول نسخة من المستودع."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:32
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:63
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:82
 msgid "However, some warnings were encountered during processing:"
-msgstr ""
+msgstr " ومع ذلك، تم اكتشاف بعض التحذيرات أثناء المعالجة:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:46
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:70
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:89
 msgid "View the review request"
-msgstr ""
+msgstr " الاطلاع على طلب المراجعة"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:46
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:70
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.community-submitted.jinja:89
 msgid "for more details."
-msgstr ""
+msgstr " لمزيد من التفاصيل."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:16
 #, python-format
 msgid "There was a problem publishing a release from %(repository_name)s"
-msgstr ""
+msgstr " حدثت مشكلة أثناء نشر إصدار من %(repository_name)s"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:22
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:45
@@ -2122,6 +2165,7 @@ msgstr ""
 #, python-format
 msgid "Release %(release_tag)s of %(repository_name)s failed to publish."
 msgstr ""
+"   فشل النشر للإصدار %(release_tag)s لدى المستودع %(repository_name)s."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:26
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:47
@@ -2134,23 +2178,23 @@ msgstr "السّبب:"
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:65
 msgid ""
 "Please fix any errors and then create a new release to retry publishing."
-msgstr ""
+msgstr " يرجى معالجة جميع الأخطاء المكتشفة، ثم إنشاء إصدار جديد لإعادة النشر."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:32
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:52
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.failure.jinja:67
 msgid "For more details and to fix any errors,"
-msgstr ""
+msgstr " لمزيد من التفاصيل ولتصحيح أي أخطاء،"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:18
 #, python-format
 msgid "A release from %(repository_name)s was published with warning(s)"
-msgstr ""
+msgstr " إصدار من %(repository_name)s   نُشر مع وجود تحذير (أو أكثر)."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:20
 #, python-format
 msgid "A release from %(repository_name)s was published successfully"
-msgstr ""
+msgstr " إصدار من %(repository_name)s   نُشر بنجاح."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:28
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:60
@@ -2159,19 +2203,19 @@ msgstr ""
 msgid ""
 "Release %(release_tag)s of %(repository_name)s has been received and "
 "published."
-msgstr ""
+msgstr " تم استلام إصدار%(release_tag)s من %(repository_name)s ونشره بنجاح."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:34
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:63
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:80
 msgid "Some warnings were encountered during processing:"
-msgstr ""
+msgstr " تمت مصادفة بعض التحذيرات أثناء المعالجة:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:48
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:70
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/repository-release.success.jinja:87
 msgid "view the published record."
-msgstr ""
+msgstr " اطّلع على التسجيلة المنشورة."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:16
 msgid "✅ Access request accepted"
@@ -2197,7 +2241,7 @@ msgstr "لقد تم إلغاء طلب الدخول الخاص بك من طرف {
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_rdm_records/settings/storage.html:8
 msgid "Storage"
-msgstr ""
+msgstr "التّخزين"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/doi-badge.html:29
 msgid "DOI Badge"
@@ -2209,6 +2253,9 @@ msgid ""
 "want a DOI badge for a specific release, please follow the DOI link for one "
 "of the specific releases and view the badge from its record."
 msgstr ""
+" ترتبط هذه الشارة إلى أحدث إصدار منشور من مستودعك. إذا كنت ترغب في الحصول "
+"على شارة DOI لإصدار محدد، فانتقل إلى رابط DOI الخاص بأحد الإصدارات المحددة "
+"ثم اعرض الشارة من صفحة التسجيلة الخاصة بها."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/doi-badge.html:47
 msgid "Close"
@@ -2216,17 +2263,19 @@ msgstr "غلق"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/rdm-release-item.html:26
 msgid "Edit record"
-msgstr ""
+msgstr "تعديل التسجيلة"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/rdm-release-item.html:28
 msgid "View record"
-msgstr "مشاهدة التّسجيلة"
+msgstr "عرض التّسجيلة"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/rdm-release-item.html:34
 msgid ""
 "This release does not have a DOI. To request one, click 'View record', then "
 "click 'Edit'."
 msgstr ""
+" لا يحتوي هذا الإصدار على معرّف DOI. لطلب الحصول على واحد، انقر على 'عرض "
+"التسجيلة'، ثم انقر على 'تعديل'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/rdm-repo-switch.html:16
 msgid "Disable"

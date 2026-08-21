@@ -11,6 +11,7 @@
 # Tibor Simko <tibor.simko@cern.ch>, 2026
 # Sam Arbid, 2026
 # Mattias Vesterlund, 2026
+# Taha Ahmed, 2026
 # 
 #, fuzzy
 msgid ""
@@ -19,7 +20,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
 "POT-Creation-Date: 2026-06-22 20:52+0000\n"
 "PO-Revision-Date: 2021-07-12 14:31+0000\n"
-"Last-Translator: Mattias Vesterlund, 2026\n"
+"Last-Translator: Taha Ahmed, 2026\n"
 "Language-Team: Swedish (https://app.transifex.com/inveniosoftware/teams/23537/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -640,9 +641,7 @@ msgstr "PhD"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:83
 msgid "The type of thesis (e.g. Masters, PhD, Engineers, Bachelors)"
-msgstr ""
-"Typ av avhandling (t.ex. Magister, Doktorsavhandling, Ingenjör, "
-"Kandidatexamen)"
+msgstr "Typ av avhandling (t.ex. master, doktor, ingenjör, kandidat)"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:87
 #: invenio_rdm_records/templates/semantic-ui/thesis.html:21
@@ -704,7 +703,7 @@ msgstr "En uppsättning med specifikationen '%(spec)s' finns redan."
 #: invenio_rdm_records/oaiserver/services/errors.py:56
 #, python-format
 msgid "The set with id %(id)s is not editable."
-msgstr "Uppsättningen med id %(id)s kan inte redigeras."
+msgstr "Uppsättningen med id %(id)s tillåter inte redigering."
 
 #: invenio_rdm_records/oaiserver/services/schema.py:26
 msgid "Search pattern"
@@ -861,7 +860,7 @@ msgid ""
 "Your record was deleted and from now on will resolve to this tombstone page."
 msgstr ""
 "Din post har raderats och kommer från och med nu att leda till denna "
-"gravstenssida."
+"tombstone-sida."
 
 #: invenio_rdm_records/resources/deserializers/rocrate/__init__.py:27
 msgid "Invalid RO-Crate metadata format, missing '@graph' key."
@@ -1277,8 +1276,8 @@ msgid ""
 "You cannot publish a draft with an open review request. Please cancel the "
 "review request first."
 msgstr ""
-"Du kan inte publicera ett utkast med en öppen granskningsbegäran. Avbryt "
-"granskningsbegäran först."
+"Du kan inte publicera ett utkast med en öppen granskningsbegäran. Vänligen "
+"avbryt granskningsbegäran först."
 
 #: invenio_rdm_records/services/github/metadata.py:56
 #: invenio_rdm_records/services/vcs/metadata.py:63
@@ -2291,9 +2290,9 @@ msgid ""
 "want a DOI badge for a specific release, please follow the DOI link for one "
 "of the specific releases and view the badge from its record."
 msgstr ""
-"Detta märke pekar på den senaste släppta versionen av ditt repository. Om du"
-" vill ha ett DOI-märke för en specifik release, följ DOI-länken för en av de"
-" specifika releaserna och visa märket från dess post."
+"Detta emblem pekar på den senaste släppta versionen av ditt repository. Om "
+"du vill ha ett DOI-emblem för en specifik release, följ DOI-länken för en av"
+" de specifika releaserna och visa emblemet från dess post."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_vcs/doi-badge.html:47
 msgid "Close"
