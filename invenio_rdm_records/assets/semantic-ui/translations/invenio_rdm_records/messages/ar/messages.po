@@ -884,133 +884,140 @@ msgid ""
 "The request to submit this upload to the community was declined. Please "
 "discard this version and create a new one with the feedback from the review."
 msgstr ""
+" تم رفض طلب إرسال هذا الإيداع إلى المجتمع. يُرجى تجاهل هذا الإصدار وإنشاء "
+"إصدار جديد مع مراعاة الملاحظات الواردة في المراجعة."
 
 msgid "Storage"
-msgstr ""
+msgstr "التّخزين"
 
 msgid "Quota overview"
-msgstr ""
+msgstr " نظرة عامة على الحصص"
 
 msgid ""
 "You can now manage your record storage by assigning additional quota as "
 "needed."
 msgstr ""
+" يمكنك الآن إدارة مساحة تخزين تسجلاتك من خلال تخصيص حصة إضافية حسب الحاجة."
 
 msgid "Find out more."
-msgstr ""
+msgstr " اعرف المزيد"
 
 msgid "Default quota per record"
-msgstr ""
+msgstr " الحصة الافتراضية لكل تسجيلة"
 
 msgid "Available of {{total}} GB allowance"
-msgstr ""
+msgstr " متاح {{total}} غيغابايت من الحصة المخصصة"
 
 msgid "Quota granted across {{count}} records"
 msgid_plural "Quota granted across {{count}} records"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "الحصة الممنوحة موزعة على {{count}} تسجيلًا"
+msgstr[1] "الحصة الممنوحة موزعة على {{count}} تسجيلًا"
+msgstr[2] "الحصة الممنوحة موزعة على {{count}} تسجيلًا"
+msgstr[3] "الحصة الممنوحة موزعة على {{count}} تسجيلًا"
+msgstr[4] "الحصة الممنوحة موزعة على {{count}} تسجيلًا"
+msgstr[5] " الحصة الممنوحة موزعة على {{count}} تسجيلًا"
 
 msgid "Allocated storage"
-msgstr ""
+msgstr " مساحة التخزين المخصصة"
 
 msgid "Record"
 msgstr "تسجيلة"
 
 msgid "Additional quota"
-msgstr ""
+msgstr " حصة تخزين إضافية"
 
 msgid "Usage"
-msgstr ""
+msgstr "  الاستخدام"
 
 msgid "Status"
 msgstr "الحالة"
 
 msgid "{{total}} GB total"
-msgstr ""
+msgstr " {{total}} إجمالي غيغابايت"
 
 msgid "used"
-msgstr ""
+msgstr " المستخدم"
 
 msgid "No allocated storage"
-msgstr ""
+msgstr " لم يتم تخصيص أي مساحة تخزين"
 
 msgid "No records have been granted any additional quotas yet."
-msgstr ""
+msgstr " لم تُمنح أي تسجيلات حصصًا إضافية حتى الآن."
 
 msgid "If your upload is accepted by the community curators, it will be"
-msgstr ""
+msgstr " إذا قُبل إيداعك من قِبل القائمين على المجتمع، فسيتم"
 
 msgid "immediately published"
-msgstr ""
+msgstr "النشر فورا"
 
 msgid ""
 "Before that, you will still be able to modify metadata and files of this "
 "upload."
 msgstr ""
+" وقبل ذلك، سيظل بإمكانك تعديل البيانات الوصفية والملفات الخاصة بهذا الإيداع."
 
 msgid "Your upload will be"
-msgstr ""
+msgstr " سيتم التعامل مع إيداعك"
 
 msgid ""
 "in '{{communityTitle}}'. You will no longer be able to change the files in "
 "the upload!"
 msgstr ""
+" ضمن {{communityTitle}}. ولن تتمكن بعد ذلك من تعديل ملفات هذا الإيداع!"
 
 msgid "However, you will still be able to update the record's metadata later."
-msgstr ""
+msgstr " ومع ذلك، سيظل بإمكانك تحديث البيانات الوصفية للتسجيلة لاحقًا."
 
 msgid "Unable to submit request."
-msgstr ""
+msgstr " تعذّر إرسال الطلب."
 
 msgid "Unable to display preview. Please correct validation issues in"
-msgstr ""
+msgstr " تعذّر عرض المراجعة. يُرجى تصحيح مشكلات التحقق الموجودة في"
 
 msgid "Unknown section"
-msgstr ""
+msgstr " قسم غير معروف"
 
 msgid "Authors"
-msgstr ""
+msgstr "مؤلفون"
 
 msgid "Add author"
-msgstr ""
+msgstr "أضف مؤلف"
 
 msgid "Edit author"
-msgstr ""
+msgstr "تعديل مؤلف"
 
 msgid ""
 "To <1>add, modify or remove files</1>, it is recommended that you create a "
 "new version. A new record is created which tracks the evolution of your "
 "work."
 msgstr ""
+" <1>لإضافة الملفات أو تعديلها أو حذفها</1>، يُنصح بإنشاء إصدار جديد. ستنشأ "
+"تسجيلة جديدة تتتبع تطوّر عملك عبر الإصدارات المختلفة."
 
 msgid "To <1>correct</1> minor errors, you can unlock the files."
-msgstr ""
+msgstr " <1>لتصحيح</1> الأخطاء البسيطة، يمكنك إلغاء قفل الملفات."
 
 msgid "It is not possible to modify the files of this record."
-msgstr ""
+msgstr " لا يمكن تعديل ملفات هذه التسجيلة."
 
 msgid "Edit published files"
-msgstr ""
+msgstr " تعديل الملفات المنشورة"
 
 msgid "I want to update the files with a new version"
-msgstr ""
+msgstr " أرغب في تحديث الملفات من خلال إنشاء إصدار جديد"
 
 msgid "Instead, you can make a new version"
-msgstr ""
+msgstr " بدلًا من ذلك، يمكنك إنشاء إصدار جديد"
 
 msgid "Edit files"
-msgstr ""
+msgstr "تعديل الملفّات"
 
 msgid ""
 "Once unlocked you will have {{ daysUntil }} days to publish your changes."
-msgstr ""
+msgstr " بمجرد إلغاء القفل، سيكون لديك {{daysUntil}} يومًا لنشر تغييراتك."
 
 msgid "File modification checklist:"
-msgstr ""
+msgstr " قائمة التحقق من تعديل الملفات:"
 
 msgid "Yes"
 msgstr "نعم"
@@ -1021,69 +1028,78 @@ msgstr "لا"
 msgid ""
 "I will not modify files that supplement findings/results of an already "
 "published work."
-msgstr ""
+msgstr " لن أُعدّل الملفات التي تُكمّل نتائج/استنتاجات عمل منشور مسبقًا."
 
 msgid "Unable to unlock files"
-msgstr ""
+msgstr " تعذّر إلغاء قفل الملفات"
 
 msgid "Enable file editing"
-msgstr ""
+msgstr " السماح بتعديل الملفات"
 
 msgid "Checksum not yet calculated."
 msgstr " لم يتم حساب قيمة التحقق Checksum بعد."
 
 msgid "Manage storage"
-msgstr ""
+msgstr " إدارة التخزين"
 
 msgid "Default"
-msgstr "خطء أو تلقائي أ إفتراضي"
+msgstr "افتراضي"
 
 msgid "Additional"
-msgstr ""
+msgstr " إضافي"
 
 msgid "Available"
-msgstr ""
+msgstr " متاح"
 
 msgid "See your <1>storage settings</1> for usage across all records"
 msgstr ""
+" اعرض <1>إعدادات التخزين</1> لمتابعة استخدام التخزين عبر كافة التسجيلات"
 
 msgid "Could not submit the quota increase request"
-msgstr ""
+msgstr " تعذّر إرسال طلب زيادة الحصة"
 
 msgid ""
 "Each record has a default quota of {{defaultStorage}} GB. You have an "
 "additional allowance of up to {{maxAdditionalStorage}} GB that can be "
 "distributed across your uploads as needed."
 msgstr ""
+" تحصل كل تسجيلة على حصة تخزين افتراضية تبلغ {{defaultStorage}} غيغابايت. "
+"بالإضافة إلى ذلك، لديك سعة إضافية تصل إلى {{maxAdditionalStorage}} غيغابايت "
+"يمكنك تخصيصها لإيداعاتك وفقًا لاحتياجاتك."
 
 msgid ""
 "Each record has a default quota of {{defaultStorage}} GB. You have already "
 "used your additional allowance of {{maxAdditionalStorage}} GB across your "
 "uploads."
 msgstr ""
+" تحصل كل تسجيلة على حصة تخزين افتراضية تبلغ {{defaultStorage}} غيغابايت.  "
+"وقد تم استخدام كامل الحصة الإضافية المتاحة لك، والبالغة "
+"{{maxAdditionalStorage}} غيغابايت، ضمن إيداعاتك الحالية."
 
 msgid "Additional storage"
-msgstr ""
+msgstr " مساحة تخزين إضافية"
 
 msgid "New total:"
-msgstr ""
+msgstr " الإجمالي الجديد:"
 
 msgid "Unable to increase quota"
-msgstr ""
+msgstr " تعذّر زيادة الحصة"
 
 msgid "Apply"
-msgstr ""
+msgstr " تطبيق"
 
 msgid "Search for subjects..."
 msgstr "البحث عن المواضيع..."
 
 msgid "{{filename}} is already part of this upload."
-msgstr ""
+msgstr " الملف {{filename}} موجود بالفعل ضمن هذا الإيداع."
 
 msgid ""
 "Maximum 191 characters. For longer descriptions, use 'Additional "
 "descriptions' with type 'Note'."
 msgstr ""
+" الحد الأقصى 191 حرفًا. للوصف الأطول، استخدم 'الأوصاف الإضافية' واختر النوع "
+"'ملاحظة'."
 
 msgid "Select a community for this repository's records"
-msgstr ""
+msgstr " اختر مجتمعًا لتسجيلات هذا المستودع"

@@ -97,7 +97,7 @@ msgstr ""
 "restringido."
 
 msgid "Submission to this community is only allowed to community members."
-msgstr ""
+msgstr "Solo los miembros de esta comunidad pueden enviar publicaciones."
 
 msgid "Community submission conditions information"
 msgstr "Información sobre las condiciones de envío a la comunidad"
@@ -110,7 +110,7 @@ msgstr ""
 "carga específico. Utilice el botón para ir al formulario."
 
 msgid "Go to the community"
-msgstr ""
+msgstr "Ir a la comunidad"
 
 msgid "Selected"
 msgstr "Seleccionado"
@@ -264,13 +264,13 @@ msgid "Submit record for review"
 msgstr "Enviar registro para revisión"
 
 msgid "The '{{communityTitle}}' curators will have access to"
-msgstr ""
+msgstr "Los curadores de '{{communityTitle}}' tendrán acceso a"
 
 msgid "view and edit"
-msgstr ""
+msgstr "ver y editar"
 
 msgid "your upload's metadata and files."
-msgstr ""
+msgstr "Los metadatos y archivos de su envío."
 
 msgid "Message to curators (optional)"
 msgstr "Mensaje a los curadores (opcional)"
@@ -288,10 +288,10 @@ msgid "Record successfully saved."
 msgstr "Registro guardado con éxito."
 
 msgid "Record saved with validation feedback in"
-msgstr ""
+msgstr "Registro guardado con comentarios de validación en"
 
 msgid "Draft has validation feedback in"
-msgstr ""
+msgstr "El borrador tiene comentarios de validación en"
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -309,6 +309,8 @@ msgstr ""
 
 msgid "The draft was not published. Record saved with validation feedback in"
 msgstr ""
+"El borrador no fue publicado. Registro guardado con comentarios de "
+"validación en"
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -321,6 +323,8 @@ msgid ""
 "The draft was not submitted for review. Record saved with validation "
 "feedback in"
 msgstr ""
+"El borrador no se envió para su revisión. Registro guardado con comentarios "
+"de validación en"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -370,7 +374,7 @@ msgid "Options"
 msgstr "Opciones"
 
 msgid "Public"
-msgstr "Publico"
+msgstr "Público"
 
 msgid "The record is publicly accessible."
 msgstr "El registro es de acceso público."
@@ -444,29 +448,31 @@ msgid "Search for affiliations.."
 msgstr "Buscar afiliaciones"
 
 msgid "Coming soon"
-msgstr ""
+msgstr "Muy pronto"
 
 msgid ""
 "A copyright statement describing the ownership of the uploaded resource."
 msgstr ""
+"Una declaración de derechos de autor que describe la propiedad del recurso "
+"subido."
 
 msgid "Copyright (C) {{currentYear}} The Authors."
-msgstr ""
+msgstr "Copyright (C) {{currentYear}} Los autores."
 
 msgid "Copyright"
-msgstr ""
+msgstr "Copyright"
 
 msgid "Edit"
 msgstr "Editar"
 
 msgid "ORCID logo"
-msgstr ""
+msgstr "Logotipo ORCID"
 
 msgid "ROR logo"
-msgstr ""
+msgstr "Logotipo ROR"
 
 msgid "GND logo"
-msgstr ""
+msgstr "Logotipo GND"
 
 msgid "Type the value of an identifier..."
 msgstr "Escriba el valor de un identificador..."
@@ -569,16 +575,16 @@ msgid "Select language"
 msgstr "Seleccionar idioma"
 
 msgid "Could not upload files."
-msgstr ""
+msgstr "No fue posible subir los archivos."
 
 msgid "The following files already exist"
 msgstr "Los siguientes archivos ya existen"
 
 msgid "Could not upload all files."
-msgstr ""
+msgstr "No se pudieron subir todos los archivos."
 
 msgid "Empty files were skipped."
-msgstr ""
+msgstr "Se omitieron los archivos vacíos."
 
 msgid "You can import files from the previous version."
 msgstr "No es posible importar archivos de una versión anterior."
@@ -592,19 +598,21 @@ msgstr ""
 
 msgid "You must create a new version to add, modify or delete files."
 msgstr ""
-"Debe crear una nueva versión para agregar, modificar o eliminar archivos."
+"Debe crear una nueva versión para añadir, modificar o eliminar archivos."
 
 msgid "Drag and drop files"
 msgstr "Arrastrar y soltar archivos"
 
 msgid "Upload files"
-msgstr "Subir archivos"
+msgstr "Enviar archivos"
 
 msgid "Import files"
 msgstr "Importar archivos"
 
 msgid "Choose which file to preview on the published record landing page"
 msgstr ""
+"Seleccione qué archivo desea previsualizar en la página de inicio del "
+"registro publicado."
 
 msgid "Filename"
 msgstr "Nombre de archivo"
@@ -641,10 +649,10 @@ msgid "This is a Metadata-only record."
 msgstr "Este es un registro solo de metadatos."
 
 msgid "Metadata-only record"
-msgstr "Registro solo de metadatos"
+msgstr "Registro exclusivo de metadatos"
 
 msgid "Disable files for this record"
-msgstr "Deshabilitar archivos para este registro"
+msgstr "Desactivar archivos para este registro"
 
 msgid "Storage available"
 msgstr "Almacenamiento disponible"
@@ -668,13 +676,13 @@ msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "¿Tiene ya una {{pidLabel}} para este envío?"
 
 msgid "Yes, I already have one"
-msgstr ""
+msgstr "Sí, ya tengo uno."
 
 msgid "No, I need one"
-msgstr ""
+msgstr "No, necesito uno"
 
 msgid "No, I don't need one"
-msgstr ""
+msgstr "No, no necesito uno."
 
 msgid "Search for languages..."
 msgstr "Buscar idiomas..."
@@ -689,7 +697,7 @@ msgid "Add standard"
 msgstr "Añadir estándar"
 
 msgid "Add custom"
-msgstr "Añadir a medida"
+msgstr "Añadir personalizada"
 
 msgid "Licenses"
 msgstr "Licencias"
@@ -710,28 +718,28 @@ msgid "Change {{mode}} license"
 msgstr "Cambiar licencia {{mode}} "
 
 msgid "Search for licenses"
-msgstr ""
+msgstr "Buscar licencias"
 
 msgid "Recommended"
 msgstr "Recomendado"
 
 msgid "recommended"
-msgstr ""
+msgstr "recomendado"
 
 msgid "all"
-msgstr ""
+msgstr "todo"
 
 msgid "Data"
 msgstr "Datos"
 
 msgid "data"
-msgstr ""
+msgstr "datos"
 
 msgid "Software"
 msgstr "Software"
 
 msgid "software"
-msgstr ""
+msgstr "software"
 
 msgid "Title"
 msgstr "Título"
@@ -746,10 +754,10 @@ msgid "Change license"
 msgstr "Cambiar licencia"
 
 msgid "Did not find your license? "
-msgstr ""
+msgstr "¿No encuentró su licencia?"
 
 msgid "Add a custom license."
-msgstr ""
+msgstr "Añada una licencia personalizada."
 
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
@@ -824,66 +832,74 @@ msgid "Add titles"
 msgstr "Añadir títulos"
 
 msgid "Additional title"
-msgstr ""
+msgstr "Título adicional"
 
 msgid "Version"
-msgstr "Version"
+msgstr "Versión"
 
 msgid "On"
-msgstr ""
+msgstr "En"
 
 msgid ""
 "the record will automatically be made publicly accessible. Until then, the "
 "record can"
 msgstr ""
+"el registro se hará automáticamente accesible al público. Hasta entonces, el"
+" registro puede"
 
 msgid "only"
-msgstr ""
+msgstr "solo"
 
 msgid "be accessed by"
-msgstr ""
+msgstr "ser accesible para"
 
 msgid "users specified"
-msgstr ""
+msgstr "Usuarios especificados"
 
 msgid "in the permissions."
-msgstr ""
+msgstr "en los permisos."
 
 msgid "The record can"
-msgstr ""
+msgstr "El registro puede"
 
 msgid "The record is publicly accessible. The files can"
-msgstr ""
+msgstr "El registro es de acceso público. Los archivos pueden"
 
 msgid "The record is publicly accessible. On"
-msgstr ""
+msgstr "El registro es de acceso público."
 
 msgid ""
 "the files will automatically be made publicly accessible. Until then, the "
 "files can"
 msgstr ""
+"los archivos se harán accesibles al público automáticamente. Hasta entonces,"
+" los archivos pueden"
 
 msgid "Record or files protection must be"
-msgstr ""
+msgstr "La protección de registros o archivos debe ser"
 
 msgid "restricted"
 msgstr "restringido"
 
 msgid "to apply an embargo."
-msgstr ""
+msgstr "para aplicar un embargo."
 
 msgid ""
 "Uploading the selected files would result in {{total}} of storage use, "
 "exceeding the limit of {{limit}}."
 msgstr ""
+"La subida de los archivos seleccionados supondría un uso del almacenamiento "
+"de {{total}}, superando el límite de {{limit}}."
 
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
 "is preferred see"
 msgstr ""
+"Principalmente relevante para cargas de software y conjuntos de datos. Se "
+"prefiere una cadena de versión semántica. Ver"
 
 msgid ", but any version string is accepted."
-msgstr ""
+msgstr ", pero se acepta cualquier cadena de versión."
 
 msgid "Search in all communities"
 msgstr "Buscar en todas las comunidades"
@@ -895,130 +911,143 @@ msgid ""
 "The request to submit this upload to the community was declined. Please "
 "discard this version and create a new one with the feedback from the review."
 msgstr ""
+"Se rechazó la solicitud para enviar este archivo a la comunidad. Por favor, "
+"deseche esta versión y cree una nueva con los comentarios recibidos durante "
+"la revisión."
 
 msgid "Storage"
-msgstr ""
+msgstr "Almacenamiento"
 
 msgid "Quota overview"
-msgstr ""
+msgstr "Resumen de cuotas"
 
 msgid ""
 "You can now manage your record storage by assigning additional quota as "
 "needed."
 msgstr ""
+"Ahora puede gestionar el almacenamiento de sus registros asignando cuotas "
+"adicionales según sea necesario."
 
 msgid "Find out more."
-msgstr ""
+msgstr "Obtenga más información."
 
 msgid "Default quota per record"
-msgstr ""
+msgstr "Cuota predeterminada por registro"
 
 msgid "Available of {{total}} GB allowance"
-msgstr ""
+msgstr "Disponible de {{total}} GB"
 
 msgid "Quota granted across {{count}} records"
 msgid_plural "Quota granted across {{count}} records"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Cuota otorgada en {{count}} registro"
+msgstr[1] "Cuota otorgada en {{count}} registros"
+msgstr[2] "Cuota otorgada en {{count}} registros"
 
 msgid "Allocated storage"
-msgstr ""
+msgstr "Almacenamiento asignado"
 
 msgid "Record"
 msgstr "Registro"
 
 msgid "Additional quota"
-msgstr ""
+msgstr "Cuota adicional"
 
 msgid "Usage"
-msgstr ""
+msgstr "Uso"
 
 msgid "Status"
 msgstr "Estado"
 
 msgid "{{total}} GB total"
-msgstr ""
+msgstr "{{total}} GB total"
 
 msgid "used"
-msgstr ""
+msgstr "usado"
 
 msgid "No allocated storage"
-msgstr ""
+msgstr "No hay espacio de almacenamiento asignado"
 
 msgid "No records have been granted any additional quotas yet."
-msgstr ""
+msgstr "Aún no se han asignado cuotas adicionales a ningún registro."
 
 msgid "If your upload is accepted by the community curators, it will be"
-msgstr ""
+msgstr "Si su envío es aceptado por los curadores de la comunidad, será"
 
 msgid "immediately published"
-msgstr ""
+msgstr "publicado inmediatamente"
 
 msgid ""
 "Before that, you will still be able to modify metadata and files of this "
 "upload."
 msgstr ""
+"Antes de eso, aún podrá modificar los metadatos y los archivos de este envío"
 
 msgid "Your upload will be"
-msgstr ""
+msgstr "Su envío será"
 
 msgid ""
 "in '{{communityTitle}}'. You will no longer be able to change the files in "
 "the upload!"
 msgstr ""
+"en '{{communityTitle}}'. ¡Ya no podrá modificar los archivos en el envío!"
 
 msgid "However, you will still be able to update the record's metadata later."
 msgstr ""
+"Sin embargo, podrá actualizar los metadatos del registro más adelante."
 
 msgid "Unable to submit request."
-msgstr ""
+msgstr "No se pudo enviar la solicitud."
 
 msgid "Unable to display preview. Please correct validation issues in"
 msgstr ""
+"No se puede mostrar la vista previa. Corrija los problemas de validación en"
 
 msgid "Unknown section"
-msgstr ""
+msgstr "Sección desconocida"
 
 msgid "Authors"
-msgstr ""
+msgstr "Autores"
 
 msgid "Add author"
-msgstr ""
+msgstr "Añadir autor"
 
 msgid "Edit author"
-msgstr ""
+msgstr "Editar autor"
 
 msgid ""
 "To <1>add, modify or remove files</1>, it is recommended that you create a "
 "new version. A new record is created which tracks the evolution of your "
 "work."
 msgstr ""
+"Para <1>añadir, modificar o eliminar archivos</1>, se recomienda crear una "
+"nueva versión. Se creará un nuevo registro que hará un seguimiento de la "
+"evolución de su trabajo."
 
 msgid "To <1>correct</1> minor errors, you can unlock the files."
-msgstr ""
+msgstr "Para <1>corregir</1> errores menores, puede desbloquear los archivos."
 
 msgid "It is not possible to modify the files of this record."
-msgstr ""
+msgstr "No es posible modificar los archivos de este registro."
 
 msgid "Edit published files"
-msgstr ""
+msgstr "Editar archivos publicados"
 
 msgid "I want to update the files with a new version"
-msgstr ""
+msgstr "Quiero actualizar los archivos con una nueva versión."
 
 msgid "Instead, you can make a new version"
-msgstr ""
+msgstr "En su lugar, puede crear una nueva versión."
 
 msgid "Edit files"
-msgstr ""
+msgstr "Editar archivos"
 
 msgid ""
 "Once unlocked you will have {{ daysUntil }} days to publish your changes."
 msgstr ""
+"Una vez desbloqueado, tendrá {{ daysUntil }} días para publicar sus cambios."
 
 msgid "File modification checklist:"
-msgstr ""
+msgstr "Lista de verificación para la modificación de archivos:"
 
 msgid "Yes"
 msgstr "Sí"
@@ -1030,68 +1059,80 @@ msgid ""
 "I will not modify files that supplement findings/results of an already "
 "published work."
 msgstr ""
+"No modificaré archivos que complementen los hallazgos/resultados de un "
+"trabajo ya publicado."
 
 msgid "Unable to unlock files"
-msgstr ""
+msgstr "No se pueden desbloquear los archivos"
 
 msgid "Enable file editing"
-msgstr ""
+msgstr "Habilitar la edición de archivos"
 
 msgid "Checksum not yet calculated."
-msgstr ""
+msgstr "Suma de verificación aún no calculada."
 
 msgid "Manage storage"
-msgstr ""
+msgstr "Gestionar almacenamiento"
 
 msgid "Default"
-msgstr ""
+msgstr "Por defecto"
 
 msgid "Additional"
-msgstr ""
+msgstr "Adicional"
 
 msgid "Available"
-msgstr ""
+msgstr "Disponible"
 
 msgid "See your <1>storage settings</1> for usage across all records"
 msgstr ""
+"Consulte la <1>configuración de almacenamiento</1> para ver el uso en todos "
+"los registros."
 
 msgid "Could not submit the quota increase request"
-msgstr ""
+msgstr "No se pudo enviar la solicitud de aumento de cuota"
 
 msgid ""
 "Each record has a default quota of {{defaultStorage}} GB. You have an "
 "additional allowance of up to {{maxAdditionalStorage}} GB that can be "
 "distributed across your uploads as needed."
 msgstr ""
+"Cada registro tiene una cuota predeterminada de {{defaultStorage}} GB. "
+"Dispone de un espacio adicional de hasta {{maxAdditionalStorage}} GB que "
+"puede distribuir entre sus envíos según sea necesario."
 
 msgid ""
 "Each record has a default quota of {{defaultStorage}} GB. You have already "
 "used your additional allowance of {{maxAdditionalStorage}} GB across your "
 "uploads."
 msgstr ""
+"Cada registro tiene una cuota predeterminada de {{defaultStorage}} GB. Ya ha"
+" utilizado tu asignación adicional de {{maxAdditionalStorage}} GB en sus "
+"envíos."
 
 msgid "Additional storage"
-msgstr ""
+msgstr "Almacenamiento adicional"
 
 msgid "New total:"
-msgstr ""
+msgstr "Nuevo total:"
 
 msgid "Unable to increase quota"
-msgstr ""
+msgstr "No se puede aumentar la cuota"
 
 msgid "Apply"
 msgstr "Aplicar"
 
 msgid "Search for subjects..."
-msgstr ""
+msgstr "Buscar temas..."
 
 msgid "{{filename}} is already part of this upload."
-msgstr ""
+msgstr "{{filename}} ya forma parte de este envío."
 
 msgid ""
 "Maximum 191 characters. For longer descriptions, use 'Additional "
 "descriptions' with type 'Note'."
 msgstr ""
+"Máximo 191 caracteres. Para descripciones más largas, utilice la opción "
+"\"Descripciones adicionales\" con el tipo \"Nota\"."
 
 msgid "Select a community for this repository's records"
-msgstr ""
+msgstr "Seleccione una comunidad para los registros de este repositorio."
