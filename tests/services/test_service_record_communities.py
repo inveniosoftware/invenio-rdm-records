@@ -5,14 +5,33 @@
 
 import pytest
 from flask import current_app
+from flask_principal import AnonymousIdentity
 from invenio_access.permissions import system_identity
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.records.components import ServiceComponent
+from invenio_requests import current_requests_service
+from invenio_requests.records.api import Request
 
 from invenio_rdm_records.proxies import (
     current_rdm_records_service,
     current_record_communities_service,
 )
+from invenio_rdm_records.requests.community_submission import CommunitySubmission
+
+
+@pytest.fixture()
+def submitted_draft(running_app, uploader, community, minimal_record):
+    """A draft submitted for community review (request in 'submitted' state)."""
+    minimal_record["parent"] = {
+        "review": {
+            "type": CommunitySubmission.type_id,
+            "receiver": {"community": community.data["id"]},
+        }
+    }
+    draft = current_rdm_records_service.create(uploader.identity, minimal_record)
+    req = current_rdm_records_service.review.submit(uploader.identity, draft.id)
+    Request.index.refresh()
+    return draft, req.to_dict()
 
 
 def test_bulk_add_non_authorized_permission(community, uploader, record_factory):
@@ -204,3 +223,34 @@ def test_bulk_add_component_called(
     result3 = current_rdm_records_service.record_cls.pid.resolve(record3.pid.pid_value)
     assert community.id not in result3.parent.communities.ids
     assert result3.parent.communities.default is None
+
+
+def test_get_record_requests_visibility(
+    submitted_draft, uploader, curator, reviewer_user, non_community_user
+):
+    """Users with read access to the request can see it; others cannot."""
+    draft, req = submitted_draft
+    request_id = req["id"]
+
+    current_requests_service.update(
+        system_identity,
+        request_id,
+        {"reviewers": [{"user": str(reviewer_user.id)}]},
+    )
+    Request.index.refresh()
+
+    draft_item = current_rdm_records_service.read_draft(uploader.identity, draft.id)
+
+    # Users who can read the request see it.
+    for identity in [uploader.identity, curator.identity, reviewer_user.identity]:
+        result = current_record_communities_service.get_record_requests(
+            identity, draft_item
+        )
+        assert request_id in result.values(), f"Expected {identity} to see the request"
+
+    # Users with no relation to the request do not see it.
+    for identity in [AnonymousIdentity(), non_community_user.identity]:
+        result = current_record_communities_service.get_record_requests(
+            identity, draft_item
+        )
+        assert result == {}, f"Expected {identity} to get empty result"
