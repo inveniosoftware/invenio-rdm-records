@@ -58,6 +58,14 @@ def test_crossref_serializer(running_app, full_record_to_dict):
         <person_name contributor_role="author" sequence="first">
           <given_name>Lars Holm</given_name>
           <surname>Nielsen</surname>
+          <affiliations>
+            <institution>
+              <institution_name>CERN</institution_name>
+            </institution>
+            <institution>
+              <institution_name>free-text</institution_name>
+            </institution>
+          </affiliations>
           <ORCID>https://orcid.org/0000-0001-8135-3489</ORCID>
         </person_name>
         <person_name contributor_role="author" sequence="additional">
@@ -67,6 +75,14 @@ def test_crossref_serializer(running_app, full_record_to_dict):
         <person_name contributor_role="other" sequence="additional">
           <given_name>Lars Holm</given_name>
           <surname>Nielsen</surname>
+          <affiliations>
+            <institution>
+              <institution_name>CERN</institution_name>
+            </institution>
+            <institution>
+              <institution_name>TU Wien</institution_name>
+            </institution>
+          </affiliations>
           <ORCID>https://orcid.org/0000-0001-8135-3489</ORCID>
         </person_name>
         <person_name contributor_role="other" sequence="additional">
@@ -111,6 +127,9 @@ def test_crossref_serializer(running_app, full_record_to_dict):
         <collection property="text-mining">
           <item>
             <resource mime_type="text/html">https://127.0.0.1:5000/records/12345-abcde</resource>
+          </item>
+          <item>
+            <resource mime_type="text/plain">https://127.0.0.1:5000/api/records/12345-abcde/files/test.txt/content</resource>
           </item>
         </collection>
       </doi_data>
