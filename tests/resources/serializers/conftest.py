@@ -74,6 +74,9 @@ def full_record_to_dict():
                     "ext": "txt",
                     "id": "d22bde05-5a36-48a3-86a7-acf2c4bb6f64",
                     "key": "test.txt",
+                    "links": {
+                        "content": "https://127.0.0.1:5000/api/records/12345-abcde/files/test.txt/content",
+                    },
                     "metadata": None,
                     "mimetype": "text/plain",
                     "size": 9,
