@@ -2158,6 +2158,34 @@ def curator(UserFixture, community, inviter, app, db):
 
 
 @pytest.fixture()
+def reviewer_user(UserFixture, app, db, index_users):
+    """An authenticated user with no community membership, usable as a request reviewer."""
+    u = UserFixture(
+        email="reviewer@inveniosoftware.org",
+        password="reviewer",
+        active=True,
+        confirmed=True,
+    )
+    u.create(app, db)
+    index_users()
+    return u
+
+
+@pytest.fixture()
+def non_community_user(UserFixture, app, db, index_users):
+    """An authenticated user with no community membership and no relation to any request."""
+    u = UserFixture(
+        email="non_community@inveniosoftware.org",
+        password="non_community",
+        active=True,
+        confirmed=True,
+    )
+    u.create(app, db)
+    index_users()
+    return u
+
+
+@pytest.fixture()
 def community_type_type(superuser_identity):
     """Creates and retrieves a language vocabulary type."""
     v = vocabulary_service.create_type(superuser_identity, "communitytypes", "comtyp")

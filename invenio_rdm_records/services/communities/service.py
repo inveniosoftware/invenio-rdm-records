@@ -492,32 +492,43 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         return errors
 
     def get_record_requests(self, identity, record):
-        """
-        Get all accepted community requests of the given record.
+        """Get community requests of the given record readable by the identity.
+
+        Returns only requests the identity has permission to read, so that
+        request reviewers (who have can_read but not can_review on the record)
+        also see the relevant requests.
 
         :param identity: The identity performing the action.
         :param record: The record (RecordItem) to get the community requests for.
 
         Output: {<Community-UUID>: <Request-UUID>}
         """
-        can_review = self.check_permission(identity, "review", record=record._record)
-        if not can_review:
-            # Instead of raising PermissionDeniedError, return an empty dictionary because anonymous users do not have permissions to search requests
-            return {}
         if type(identity) is AnonymousIdentity:
-            return {}  # secret link users do not have permissions to search requests
+            return {}
 
-        # Get all accepted requests that led to the record being added to the community
+        # Accepted requests are read from the parent record directly — reliable
+        # and not subject to search pagination limits. A secondary search filters
+        # them down to only those the identity can read.
         parent = record._record.parent
-        community_requests = parent.communities.get_requests()
         community_requests = {
-            str(request.community_id): str(request.request_id)
-            for request in community_requests
+            str(req.community_id): str(req.request_id)
+            for req in parent.communities.get_requests()
         }
+        if community_requests:
+            readable_requests = current_requests_service.search(
+                identity,
+                extra_filter=dsl.Q("ids", values=list(community_requests.values())),
+            )
+            readable_requests_ids = {r["id"] for r in readable_requests}
+            community_requests = {
+                c_id: r_id
+                for c_id, r_id in community_requests.items()
+                if r_id in readable_requests_ids
+            }
 
-        # Get the requests that concern only the current record, i.e. submission or inclusion regardless of their status
-        # This takes precedence over only considering accepted requests because there may be an unaccepted request in this
-        # version of the record that should be shown instead of the accepted request.
+        # Active inclusion/submission requests override accepted ones for the
+        # same community. search() applies can_read query filters, so reviewers
+        # are included automatically when REQUESTS_REVIEWERS_ENABLED=True.
         record_requests = current_requests_service.search(
             identity,
             extra_filter=dsl.Q(
@@ -537,11 +548,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             ),
             params={"sort": "oldest"},
         )
-        record_requests = {
-            request["receiver"]["community"]: request["id"]
-            for request in record_requests
-        }
-
-        community_requests.update(record_requests)
-        # Return a dictionary with the community id mapped to the request id
+        community_requests.update(
+            {r["receiver"]["community"]: r["id"] for r in record_requests}
+        )
         return community_requests
