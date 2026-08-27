@@ -73,6 +73,21 @@ def test_notes_component(minimal_record, parent, identity_simple, location):
     assert updated_notes[0]["id"] == updated_notes[0]["id"]
     assert updated_notes[0]["note"] == "def"
 
+    # field absent from data must not touch existing notes (e.g. caller
+    # without permission to manage internal notes -> field stripped by schema)
+    new_data.pop("internal_notes", None)
+    component.update_draft(identity_simple, data=new_data, record=draft)
+    assert draft["internal_notes"] == updated_notes
+
+    # data=None must be handled gracefully and leave notes untouched
+    component.update_draft(identity_simple, data=None, record=draft)
+    assert draft["internal_notes"] == updated_notes
+
+    # explicit empty list still clears the notes
+    new_data["internal_notes"] = []
+    component.update_draft(identity_simple, data=new_data, record=draft)
+    assert draft["internal_notes"] == []
+
     # test create
     record = RDMRecord.create(minimal_record, parent=parent)
     data = deepcopy(record)
