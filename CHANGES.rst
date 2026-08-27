@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version v35.0.1 (released 2026-08-27)
+
+- fix(record_community_service): rely on request permission to return community requests
+
 Version v35.0.0 (released 2026-08-13)
 
 - fix(checks): Define CheckTarget for record
