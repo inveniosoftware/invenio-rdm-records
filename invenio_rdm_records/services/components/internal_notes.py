@@ -39,7 +39,17 @@ class InternalNotesComponent(ServiceComponent):
          data: [{"id": "uuuid1", "note": "new note"}]  <--- does not modify existing note
         We don't allow updates to existing notes since each one
         has a user and timestamp - therefore should be "locked" in time
+
+        If the field is entirely absent from ``data`` the existing notes are
+        left untouched. This is the case e.g. when the caller lacks permission
+        to manage internal notes and the field is stripped from the payload by
+        the schema: absence must not be interpreted as "remove all notes".
+        Passing an explicit empty list still clears the notes.
         """
+        data = data or {}
+        if self.field not in data:
+            return
+
         notes_to_update = deepcopy(data.get(self.field, []))
         existing_notes = deepcopy(record.get(self.field, []))
         ids_to_check = [note["id"] for note in existing_notes]
@@ -65,8 +75,13 @@ class InternalNotesComponent(ServiceComponent):
         record.update({"internal_notes": existing_notes + notes_to_update})
 
     def publish(self, identity, draft=None, record=None, **kwargs):
-        """Update draft metadata."""
-        record.update({"internal_notes": draft.get(self.field, [])})
+        """Propagate the draft's internal notes onto the published record.
+
+        Only acts when the draft carries the field, so a draft that never had
+        internal notes populated does not wipe notes on the record.
+        """
+        if self.field in draft:
+            record.update({"internal_notes": draft.get(self.field, [])})
 
     def edit(self, identity, draft=None, record=None, **kwargs):
         """Update draft metadata."""
