@@ -1,13 +1,17 @@
 ..
     SPDX-FileCopyrightText: 2019-2025 CERN.
     SPDX-FileCopyrightText: 2019-2024 Northwestern University.
-    SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
+    SPDX-FileCopyrightText: 2024-2026 KTH Royal Institute of Technology.
     SPDX-FileCopyrightText: 2024-2026 Graz University of Technology.
     SPDX-FileCopyrightText: 2026 TU Wien.
     SPDX-License-Identifier: MIT
 
 Changes
 =======
+
+Version v32.2.2 (released 2026-08-27)
+
+- i18n: pulled translations
 
 Version v32.2.1 (released 2026-08-17)
 
