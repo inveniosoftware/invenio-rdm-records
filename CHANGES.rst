@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version v35.0.2 (released 2026-08-27)
+
+- fix(internal_note): fix update wiping out the field value if sufficient permissions
+                      are not available
+
 Version v35.0.1 (released 2026-08-27)
 
 - fix(record_community_service): rely on request permission to return community requests
