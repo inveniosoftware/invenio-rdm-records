@@ -379,6 +379,7 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
           message: e.messages.join(" "),
           severity: e.severity, // severity level of the error
           description: e.description, // additional information about the rule that generated the error
+          ...(e.origin && { origin: e.origin }), // the source that generated the error, if any
         });
       } else {
         // Backward compatibility with old error format, including just the error string
