@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2021-2024 CERN
-# SPDX-FileCopyrightText: 2024 Graz University of Technology.
+# SPDX-FileCopyrightText: 2024-2026 Graz University of Technology.
 # SPDX-FileCopyrightText: 2025-2026 Front Matter.
 # SPDX-License-Identifier: MIT
 
@@ -83,9 +83,7 @@ def crossref_config(running_app, mock_crossref_client):
                 providers.CrossrefPIDProvider(
                     "crossref",
                     client=mock_crossref_client,
-                    serializer=CrossrefXMLSerializer(
-                        schema_context={"is_parent": True}
-                    ),
+                    serializer=CrossrefXMLSerializer(is_parent=True),
                     label=_("Concept DOI"),
                 ),
             ],
