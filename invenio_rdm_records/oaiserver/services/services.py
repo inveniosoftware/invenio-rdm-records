@@ -102,8 +102,11 @@ class OAIPMHServerService(Service):
             )
 
         # See https://www.openarchives.org/OAI/openarchivesprotocol.html#Set
-        blop = re.compile(r"[-_.!~*'()\w]+")
-        if not bool(blop.match(spec)):
+        # A setSpec is a colon-separated hierarchy; each element must consist of
+        # the characters below and must not contain a colon. Anchor the match so
+        # the whole spec is validated, not just its leading characters.
+        blop = re.compile(r"[-_.!~*'()\w]+(:[-_.!~*'()\w]+)*")
+        if not bool(blop.fullmatch(spec)):
             raise ValidationError(
                 _(
                     "The spec must only consist of letters, numbers or {marks}.".format(
