@@ -178,6 +178,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
     dateModified = fields.Method("get_modification_date")
     datePublished = fields.Method("get_publication_date")
     temporal = fields.Method("get_dates")
+    temporalCoverage = fields.Method("get_temporal_coverage")
     inLanguage = fields.Method("get_language")
     contentSize = fields.Method("get_size")
     size = fields.Method("get_size")
@@ -443,6 +444,24 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             except ParseException:
                 continue
         return dates or missing
+
+    def get_temporal_coverage(self, obj):
+        """Get the period the record's content is about.
+
+        Only dates of type ``coverage`` are returned, since schema.org's
+        ``temporalCoverage`` describes the period the content covers, unlike
+        ``temporal``, which carries every date on the record.
+        """
+        dates = []
+        for date in obj["metadata"].get("dates", []):
+            if py_.get(date, "type.id") != "coverage":
+                continue
+            try:
+                parsed_date = parse_edtf(date["date"])
+            except ParseException:
+                continue
+            dates.append(str(parsed_date))
+        return unwrap(dates) or missing
 
     def get_citation(self, obj):
         """Get citations of the record."""
