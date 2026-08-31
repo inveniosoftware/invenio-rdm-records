@@ -1,0 +1,26 @@
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "metadata": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "text"
+          }
+        }
+      },
+      "created": {
+        "type": "date"
+      },
+      "updated": {
+        "type": "date"
+      },
+      "uuid": {
+        "type": "keyword"
+      }
+    }
+  }
+}
