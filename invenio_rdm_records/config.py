@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2019-2026 CERN.
 # SPDX-FileCopyrightText: 2019 Northwestern University.
-# SPDX-FileCopyrightText: 2021-2025 Graz University of Technology.
+# SPDX-FileCopyrightText: 2021-2026 Graz University of Technology.
 # SPDX-FileCopyrightText: 2023 TU Wien.
 # SPDX-FileCopyrightText: 2025-2026 University of Münster.
 # SPDX-License-Identifier: MIT
@@ -373,20 +373,6 @@ RDM_FACETS = {
         "facet": facets.subject,
         "ui": {
             "field": "subjects.subject",
-        },
-    },
-    # subject_nested is deprecated and should be removed.
-    # subject_combined does require a pre-existing change to indexed documents,
-    # so it's unclear if a direct replacement is right.
-    # Keeping it around until v13 might be better. On the flipside it is an incorrect
-    # facet...
-    "subject_nested": {
-        "facet": facets.subject_nested,
-        "ui": {
-            "field": "subjects.scheme",
-            "childAgg": {
-                "field": "subjects.subject",
-            },
         },
     },
     "subject_combined": {
