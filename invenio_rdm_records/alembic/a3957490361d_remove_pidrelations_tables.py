@@ -1,10 +1,11 @@
 # SPDX-FileCopyrightText: 2021 TU Wien.
+# SPDX-FileCopyrightText: 2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
 """Remove PIDRelations tables."""
 
 from alembic import op
-from sqlalchemy.engine.reflection import Inspector
+from sqlalchemy import inspect
 
 # revision identifiers, used by Alembic.
 revision = "a3957490361d"
@@ -16,7 +17,7 @@ depends_on = None
 def upgrade():
     """Upgrade database."""
     ctx = op.get_context()
-    inspector = Inspector.from_engine(ctx.connection.engine)
+    inspector = inspect(ctx.connection.engine)
     tables = inspector.get_table_names()
     if "pidrelations_pidrelation" in tables:
         op.drop_table("pidrelations_pidrelation")
