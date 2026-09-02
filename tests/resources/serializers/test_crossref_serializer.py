@@ -209,3 +209,87 @@ def strip_dynamic(xml_str):
     xml_str = re.sub(r"<doi_batch_id>.*?</doi_batch_id>", "", xml_str, flags=re.DOTALL)
     xml_str = re.sub(r"<timestamp>.*?</timestamp>", "", xml_str, flags=re.DOTALL)
     return xml_str.strip()
+
+
+def _record_without_entries():
+    """A record as the PID provider passes it: files enabled, entries absent."""
+    record = _version_record("10.53731/kdqkf-nf052")
+    record["id"] = "12345-abcde"
+    record["files"] = {"enabled": True}
+    return record
+
+
+def _projection_with_entries():
+    """The same record as the service serializes it, links and all."""
+    return {
+        "files": {
+            "enabled": True,
+            "entries": {
+                "test.pdf": {
+                    "key": "test.pdf",
+                    "mimetype": "application/pdf",
+                    "links": {
+                        "content": (
+                            "https://127.0.0.1:5000/api/records/"
+                            "12345-abcde/files/test.pdf/content"
+                        )
+                    },
+                }
+            },
+        }
+    }
+
+
+def test_with_file_entries_reads_them_from_the_service():
+    """A record object has no files.entries; the service projection does.
+
+    Without this the deposit carried only the landing page and Crossref showed
+    no pdf against the doi.
+    """
+    serializer = CrossrefXMLSerializer.__new__(CrossrefXMLSerializer)
+    svc = MagicMock()
+    svc.read.return_value.to_dict.return_value = _projection_with_entries()
+
+    with patch(f"{CROSSREF_MOD}.current_rdm_records_service", new=svc):
+        result = serializer._with_file_entries(_record_without_entries())
+
+    entry = result["files"]["entries"]["test.pdf"]
+    assert entry["mimetype"] == "application/pdf"
+    assert entry["links"]["content"].endswith("/files/test.pdf/content")
+    # Only the files are taken from the projection.
+    assert result["pids"] == _record_without_entries()["pids"]
+
+
+def test_with_file_entries_leaves_a_projection_alone():
+    """A record that already carries entries needs no lookup."""
+    serializer = CrossrefXMLSerializer.__new__(CrossrefXMLSerializer)
+    record = {**_record_without_entries(), **_projection_with_entries()}
+    svc = MagicMock()
+
+    with patch(f"{CROSSREF_MOD}.current_rdm_records_service", new=svc):
+        assert serializer._with_file_entries(record) is record
+
+    svc.read.assert_not_called()
+
+
+def test_with_file_entries_leaves_a_concept_doi_alone():
+    """The concept deposit is a ChainObject and has no files of its own."""
+    serializer = CrossrefXMLSerializer.__new__(CrossrefXMLSerializer)
+    chain = SimpleNamespace(_child={"id": "kid"}, _parent={})
+    svc = MagicMock()
+
+    with patch(f"{CROSSREF_MOD}.current_rdm_records_service", new=svc):
+        assert serializer._with_file_entries(chain) is chain
+
+    svc.read.assert_not_called()
+
+
+def test_with_file_entries_survives_a_failed_read(running_app):
+    """A doi that registers without its pdf beats one that does not register."""
+    serializer = CrossrefXMLSerializer.__new__(CrossrefXMLSerializer)
+    record = _record_without_entries()
+    svc = MagicMock()
+    svc.read.side_effect = RuntimeError("no such record")
+
+    with patch(f"{CROSSREF_MOD}.current_rdm_records_service", new=svc):
+        assert serializer._with_file_entries(record) is record
