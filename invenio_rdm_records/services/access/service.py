@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2020-2021 Northwestern University.
 # SPDX-FileCopyrightText: 2021 TU Wien.
 # SPDX-FileCopyrightText: 2023-2025 Graz University of Technology.
+# SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
 # SPDX-License-Identifier: MIT
 
 """RDM record access settings service."""
@@ -135,14 +136,18 @@ class RecordAccessService(RecordService):
         was set in the given data, or if it was omitted (which makes a
         difference in patch operations).
         """
-        if (
-            current_app.config["RDM_RECORDS_REQUIRE_SECRET_LINKS_EXPIRATION"]
-            and not expires_at
-        ):
-            raise ValidationError(
-                message=_("Expiration date is required"),
-                field_name="expires_at",
+        if current_app.config["RDM_RECORDS_REQUIRE_SECRET_LINKS_EXPIRATION"]:
+            # Partial updates retain the existing expiration when omitted.
+            effective_expires_at = (
+                expires_at
+                if is_specified or secret_link is None
+                else secret_link.expires_at
             )
+            if not effective_expires_at:
+                raise ValidationError(
+                    message=_("Expiration date is required"),
+                    field_name="expires_at",
+                )
 
         if expires_at and is_specified:
             # if the expiration date was specified, check if it's in the future
