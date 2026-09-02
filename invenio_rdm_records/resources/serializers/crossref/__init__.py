@@ -96,7 +96,7 @@ class CrossrefXMLSerializer(MarshmallowSerializer):
         # XML Schema validation errors raise CrossrefError.
         try:
             metadata = Metadata(
-                record,
+                self._with_file_entries(record),
                 via="inveniordm",
                 url=registered_url,
             )
@@ -113,6 +113,50 @@ class CrossrefXMLSerializer(MarshmallowSerializer):
                 f"CrossrefError while converting {metadata.id} to Crossref XML: {str(e)}"
             )
             return ""
+
+    def _with_file_entries(self, record):
+        """The record with its file entries filled in, where there are any.
+
+        commonmeta reads a record's files from ``files.entries``, and each
+        entry's download url from ``links.content``, and turns them into the
+        ``<collection property="text-mining">`` items that become a work's
+        ``link`` array in the Crossref API. A record object has neither. Only
+        the files are taken from the service's projection; every other
+        field is left exactly as the caller passed it, so this adds what was
+        missing rather than changing what already worked.
+        """
+        if hasattr(record, "_child") or hasattr(record, "_parent"):
+            return record
+        if isinstance(record, dict) and (record.get("files") or {}).get("entries"):
+            # Already a projection: a caller serializing the REST output, or a
+            # test fixture. Nothing to fetch. A record object is a dict too, but
+            # its files json holds `enabled` and no entries, so it falls through.
+            return record
+
+        record_id = (
+            record.get("id")
+            if isinstance(record, dict)
+            else getattr(record, "id", None)
+        )
+        if not record_id:
+            return record
+
+        try:
+            dumped = current_rdm_records_service.read(
+                system_identity, record_id
+            ).to_dict()
+        except Exception as e:
+            current_app.logger.warning(
+                f"Could not read {record_id} to attach its files to the "
+                f"Crossref deposit: {e}"
+            )
+            return record
+
+        entries = (dumped.get("files") or {}).get("entries")
+        if not entries:
+            return record
+
+        return {**record, "files": dumped["files"]}
 
     def _add_version_relations(self, record, metadata):
         """Inject parent/child version relations into the commonmeta metadata.
