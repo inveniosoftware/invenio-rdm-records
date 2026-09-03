@@ -9,6 +9,13 @@
 Changes
 =======
 
+Version v32.3.0 (released 2026-09-03)
+
+- fix(ui): hide quota labels in narrow bars slider
+- feat(quota): refactor quota management logic to support Uppy uploader
+- fix(access): retain expiry on link updates when the config is set to True
+- feat(translations): add Swedish translations for date, relation, and resource types
+
 Version v32.2.2 (released 2026-08-27)
 
 - i18n: pulled translations
