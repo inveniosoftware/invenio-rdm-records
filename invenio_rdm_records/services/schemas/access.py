@@ -9,7 +9,7 @@
 
 from datetime import datetime, timezone
 
-import arrow
+import pendulum
 from invenio_i18n import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, validates, validates_schema
 from marshmallow_utils.fields import ISODateString, SanitizedUnicode
@@ -27,7 +27,7 @@ class EmbargoSchema(Schema):
     def validate_embargo(self, data, **kwargs):
         """Validate that the properties are consistent with each other."""
         if data.get("until") is not None:
-            until_date = arrow.get(data.get("until"))
+            until_date = pendulum.parse(data.get("until"))
         else:
             until_date = None
 
