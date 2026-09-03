@@ -14,7 +14,7 @@ import _get from "lodash/get";
 import PropTypes from "prop-types";
 import { Button, Dimmer, Grid, Icon, Message } from "semantic-ui-react";
 import Overridable from "react-overridable";
-import RDMUppyUploaderPlugin from "./RDMUppyUploaderPlugin";
+import RDMUppyUploaderPlugin, { FileRemovalReason } from "./RDMUppyUploaderPlugin";
 import { NewVersionButton } from "../../controls/NewVersionButton";
 import { UploadState } from "../../state/reducers/files";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
@@ -69,6 +69,15 @@ const createDuplicateFileChecker = (uppy, filesList) => {
     return false;
   };
 };
+
+const findUppyFileByName = (uppy, filename) =>
+  uppy
+    .getFiles()
+    .find(
+      (uppyFile) =>
+        normalizeFileName(uppyFile.meta?.name ?? uppyFile.name) ===
+        normalizeFileName(filename)
+    );
 
 export const createFileValidator = (
   uppy,
@@ -143,6 +152,7 @@ export const UppyUploaderComponent = ({
   initializeFileUpload,
   finalizeUpload,
   deleteFile,
+  checkFileExists,
   uploadPart,
   saveAndFetchDraft,
   setUploadProgress,
@@ -150,6 +160,7 @@ export const UppyUploaderComponent = ({
   importButtonIcon,
   importButtonText,
   isFileImportInProgress,
+  isFileDeletionInProgress,
   fileUploadConcurrency,
   decimalSizeDisplay,
   filesLocked,
@@ -216,6 +227,7 @@ export const UppyUploaderComponent = ({
         setUploadProgress,
         uploadPart,
         abortUpload: (file) => deleteFile(file),
+        checkFileExists,
         checkPartIntegrity: true,
       })
       .use(ImageEditor)
@@ -257,6 +269,19 @@ export const UppyUploaderComponent = ({
     });
   }, [uppy, filesList, filesSize, quota, decimalSizeDisplay]);
 
+  const deleteFilesListEntry = React.useCallback(
+    async (file) => {
+      const uppyFile = findUppyFileByName(uppy, file.name);
+      if (uppyFile) {
+        // Aborts any ongoing requests of the file and keeps the Dashboard in sync,
+        // deletion of the file itself is done below.
+        uppy.removeFile(uppyFile.id, FileRemovalReason.deletedOnBackend);
+      }
+      return await deleteFile(file);
+    },
+    [uppy, deleteFile]
+  );
+
   const [uppyHasFiles, setUppyHasFiles] = useState(false);
   React.useEffect(() => {
     const update = () =>
@@ -270,8 +295,13 @@ export const UppyUploaderComponent = ({
     };
   }, [uppy]);
 
+  // Files being deleted still count towards the quota, but their entries are
+  // about to be gone, so the overlay would only flash for the time of the request.
   const showQuotaOverlay =
-    (!filesLeft || !storageLeft) && !lockFileUploader && !uppyHasFiles;
+    (!filesLeft || !storageLeft) &&
+    !lockFileUploader &&
+    !uppyHasFiles &&
+    !isFileDeletionInProgress;
 
   return (
     <Overridable
@@ -288,7 +318,7 @@ export const UppyUploaderComponent = ({
       uploadPart={uploadPart}
       saveAndFetchDraft={saveAndFetchDraft}
       setUploadProgress={setUploadProgress}
-      deleteFile={deleteFile}
+      deleteFile={deleteFilesListEntry}
       importParentFiles={importParentFiles}
       importButtonIcon={importButtonIcon}
       importButtonText={importButtonText}
@@ -356,7 +386,7 @@ export const UppyUploaderComponent = ({
           filesList={filesList}
           filesLocked={lockFileUploader}
           filesEnabled={filesEnabled}
-          deleteFile={deleteFile}
+          deleteFile={deleteFilesListEntry}
           decimalSizeDisplay={decimalSizeDisplay}
           uppy={uppy}
           {...uiProps}
@@ -370,7 +400,7 @@ export const UppyUploaderComponent = ({
                       filesList={filesList}
                       filesEnabled={filesEnabled}
                       filesLocked={lockFileUploader}
-                      deleteFile={deleteFile}
+                      deleteFile={deleteFilesListEntry}
                       decimalSizeDislay={decimalSizeDisplay}
                     />
                   </Grid.Column>
@@ -474,6 +504,7 @@ UppyUploaderComponent.propTypes = {
   importButtonIcon: PropTypes.string,
   importButtonText: PropTypes.string,
   isFileImportInProgress: PropTypes.bool,
+  isFileDeletionInProgress: PropTypes.bool,
   importParentFiles: PropTypes.func.isRequired,
   initializeFileUpload: PropTypes.func.isRequired,
   finalizeUpload: PropTypes.func.isRequired,
@@ -481,6 +512,7 @@ UppyUploaderComponent.propTypes = {
   setUploadProgress: PropTypes.func.isRequired,
   saveAndFetchDraft: PropTypes.func.isRequired,
   deleteFile: PropTypes.func.isRequired,
+  checkFileExists: PropTypes.func.isRequired,
   decimalSizeDisplay: PropTypes.bool,
   filesLocked: PropTypes.bool,
   permissions: PropTypes.object,
@@ -494,6 +526,7 @@ UppyUploaderComponent.defaultProps = {
   fileUploadConcurrency: 3,
   record: undefined,
   isFileImportInProgress: false,
+  isFileDeletionInProgress: false,
   isDraftRecord: true,
   hasParentRecord: false,
   quota: {
