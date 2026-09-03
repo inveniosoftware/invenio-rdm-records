@@ -6,6 +6,7 @@
 """Signposting schemas."""
 
 import re
+import urllib
 
 import idutils
 from invenio_base import invenio_url_for
@@ -139,8 +140,16 @@ class LandingPageSchema(Schema):
             elif right.get("props"):
                 return right["props"].get("url")
 
+        def percent_encode(url):
+            url_parts = urllib.parse.urlsplit(url)
+            url_parts = url_parts._replace(path=urllib.parse.quote(url_parts.path))
+            url_parts = url_parts._replace(
+                query=urllib.parse.urlencode(urllib.parse.parse_qsl(url_parts.query))
+            )
+            return url_parts.geturl()
+
         result = [extract_link(right) for right in rights]
-        result = [{"href": link} for link in result if link]
+        result = [{"href": percent_encode(link)} for link in result if link]
         return result or missing
 
     def serialize_type(self, obj, **kwargs):
