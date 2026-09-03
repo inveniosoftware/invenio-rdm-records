@@ -6,10 +6,11 @@
  * SPDX-License-Identifier: MIT
  */
 
+import React from "react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { cloneElement } from "react";
 import { TextAreaField, TextField } from "react-invenio-forms";
 import { OverridableContext } from "react-overridable";
 import {
@@ -49,222 +50,204 @@ const LicenseSchema = Yup.object().shape({
   }),
 });
 
-export class LicenseModal extends Component {
-  state = {
-    open: false,
-    mode: ModalTypes.STANDARD,
+export function LicenseModal({
+  onLicenseChange,
+  mode: initialMode,
+  trigger,
+  action,
+  searchConfig,
+  serializeLicenses = undefined,
+  initialLicense = undefined,
+}) {
+  const [open, setOpen] = React.useState(false);
+  const [modeState, setModeState] = React.useState(initialMode);
+
+  const openModal = () => {
+    setOpen(true);
   };
 
-  openModal = () => {
-    this.setState({ open: true });
+  const closeModal = () => {
+    setOpen(false);
   };
 
-  closeModal = () => {
-    this.setState({ open: false });
-  };
-
-  setMode = (mode) => {
-    this.setState({ mode: mode });
-  };
-
-  onSubmit = (values, formikBag) => {
+  const onSubmit = (values, formikBag) => {
     // We have to close the modal first because onLicenseChange and passing
     // license as an object makes React get rid of this component. Otherwise
     // we get a memory leak warning.
-    const { onLicenseChange } = this.props;
-    this.closeModal();
-    this.setMode(this.mode);
+    closeModal();
+    setModeState(initialMode);
     onLicenseChange(values.selectedLicense);
     formikBag.resetForm();
   };
 
-  render() {
-    const {
-      mode,
-      trigger,
-      action,
-      searchConfig,
-      serializeLicenses,
-      initialLicense: initialLicenseProp,
-    } = this.props;
-    const { open, mode: modeState } = this.state;
+  const resolvedInitialLicense = initialLicense || {
+    title: "",
+    description: "",
+    id: null,
+    link: "",
+  };
 
-    const initialLicense = initialLicenseProp || {
-      title: "",
-      description: "",
-      id: null,
-      link: "",
-    };
-
-    const searchApi = new InvenioSearchApi(searchConfig.searchApi);
-    return (
-      <Formik
-        initialValues={{
-          selectedLicense: initialLicense,
-        }}
-        onSubmit={this.onSubmit}
-        validationSchema={LicenseSchema}
-        validateOnChange={false}
-        validateOnBlur={false}
-      >
-        {({ handleSubmit, resetForm }) => (
-          <Modal
-            role="dialog"
-            centered={false}
-            onOpen={() => {
-              this.openModal();
-              this.setMode(mode);
-            }}
-            open={open}
-            trigger={React.cloneElement(trigger, {
-              "aria-expanded": open,
-              "aria-haspopup": "dialog",
-            })}
-            onClose={() => {
-              resetForm();
-              this.setMode(ModalTypes.STANDARD);
-              this.closeModal();
-            }}
-            closeIcon
-            closeOnDimmerClick={false}
-          >
-            <Modal.Header as="h2" className="pt-10 pb-10">
-              {action === ModalActions.ADD
-                ? i18next.t(`Add {{mode}} license`, {
-                    mode: modeState,
-                  })
-                : i18next.t(`Change {{mode}} license`, {
-                    mode: modeState,
-                  })}
-            </Modal.Header>
-            <Modal.Content>
-              {modeState === ModalTypes.STANDARD && (
-                <OverridableContext.Provider value={overriddenComponents}>
-                  <ReactSearchKit
-                    searchApi={searchApi}
-                    appName="licenses"
-                    urlHandlerApi={{ enabled: false }}
-                    initialQueryState={searchConfig.initialQueryState}
-                  >
-                    <Grid>
-                      <Grid.Row>
-                        <Grid.Column width={8} floated="left" verticalAlign="middle">
-                          <LicenseSearchBar
-                            placeholder={i18next.t("Search for licenses")}
-                            autofocus
-                            actionProps={{
-                              icon: "search",
-                              content: null,
-                              className: "search",
-                            }}
+  const searchApi = new InvenioSearchApi(searchConfig.searchApi);
+  return (
+    <Formik
+      initialValues={{
+        selectedLicense: resolvedInitialLicense,
+      }}
+      onSubmit={onSubmit}
+      validationSchema={LicenseSchema}
+      validateOnChange={false}
+      validateOnBlur={false}
+    >
+      {({ handleSubmit, resetForm }) => (
+        <Modal
+          role="dialog"
+          centered={false}
+          onOpen={() => {
+            openModal();
+            setModeState(initialMode);
+          }}
+          open={open}
+          trigger={cloneElement(trigger, {
+            "aria-expanded": open,
+            "aria-haspopup": "dialog",
+          })}
+          onClose={() => {
+            resetForm();
+            setModeState(ModalTypes.STANDARD);
+            closeModal();
+          }}
+          closeIcon
+          closeOnDimmerClick={false}
+        >
+          <Modal.Header as="h2" className="pt-10 pb-10">
+            {action === ModalActions.ADD
+              ? i18next.t(`Add {{mode}} license`, {
+                  mode: modeState,
+                })
+              : i18next.t(`Change {{mode}} license`, {
+                  mode: modeState,
+                })}
+          </Modal.Header>
+          <Modal.Content>
+            {modeState === ModalTypes.STANDARD && (
+              <OverridableContext.Provider value={overriddenComponents}>
+                <ReactSearchKit
+                  searchApi={searchApi}
+                  appName="licenses"
+                  urlHandlerApi={{ enabled: false }}
+                  initialQueryState={searchConfig.initialQueryState}
+                >
+                  <Grid>
+                    <Grid.Row>
+                      <Grid.Column width={8} floated="left" verticalAlign="middle">
+                        <LicenseSearchBar
+                          placeholder={i18next.t("Search for licenses")}
+                          autofocus
+                          actionProps={{
+                            icon: "search",
+                            content: null,
+                            className: "search",
+                          }}
+                        />
+                      </Grid.Column>
+                      <Grid.Column width={8} textAlign="right" floated="right">
+                        <Menu compact>
+                          <Toggle
+                            title={i18next.t("Recommended")}
+                            label={i18next.t("recommended")}
+                            filterValue={["tags", "recommended"]}
                           />
-                        </Grid.Column>
-                        <Grid.Column width={8} textAlign="right" floated="right">
-                          <Menu compact>
-                            <Toggle
-                              title={i18next.t("Recommended")}
-                              label={i18next.t("recommended")}
-                              filterValue={["tags", "recommended"]}
-                            />
-                            <Toggle
-                              title={i18next.t("All")}
-                              label={i18next.t("all")}
-                              filterValue={["tags", "all"]}
-                            />
-                            <Toggle
-                              title={i18next.t("Data")}
-                              label={i18next.t("data")}
-                              filterValue={["tags", "data"]}
-                            />
-                            <Toggle
-                              title={i18next.t("Software")}
-                              label={i18next.t("software")}
-                              filterValue={["tags", "software"]}
-                            />
-                          </Menu>
-                        </Grid.Column>
-                      </Grid.Row>
-                      <Grid.Row verticalAlign="middle">
-                        <Grid.Column width={16} className="pb-0">
-                          <ResultsLoader>
-                            <EmptyResults />
-                            <Error />
-                            <LicenseResults
-                              {...(serializeLicenses && {
-                                serializeLicenses,
-                              })}
-                            />
-                          </ResultsLoader>
-                          <Container textAlign="center" className="rel-mb-1">
-                            <Pagination />
-                          </Container>
-                        </Grid.Column>
-                        <Grid.Column
-                          width={16}
-                          textAlign="center"
-                          className="pt-0 pb-0"
-                        >
-                          <NoLicenseResults
-                            switchToCustom={() => {
-                              resetForm();
-                              this.setMode(ModalTypes.CUSTOM);
-                            }}
+                          <Toggle
+                            title={i18next.t("All")}
+                            label={i18next.t("all")}
+                            filterValue={["tags", "all"]}
                           />
-                        </Grid.Column>
-                      </Grid.Row>
-                    </Grid>
-                  </ReactSearchKit>
-                </OverridableContext.Provider>
-              )}
-              {modeState === ModalTypes.CUSTOM && (
-                <Form>
-                  <TextField
-                    label={i18next.t("Title")}
-                    fieldPath="selectedLicense.title"
-                    required
-                    // eslint-disable-next-line
+                          <Toggle
+                            title={i18next.t("Data")}
+                            label={i18next.t("data")}
+                            filterValue={["tags", "data"]}
+                          />
+                          <Toggle
+                            title={i18next.t("Software")}
+                            label={i18next.t("software")}
+                            filterValue={["tags", "software"]}
+                          />
+                        </Menu>
+                      </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row verticalAlign="middle">
+                      <Grid.Column width={16} className="pb-0">
+                        <ResultsLoader>
+                          <EmptyResults />
+                          <Error />
+                          <LicenseResults
+                            {...(serializeLicenses && {
+                              serializeLicenses,
+                            })}
+                          />
+                        </ResultsLoader>
+                        <Container textAlign="center" className="rel-mb-1">
+                          <Pagination />
+                        </Container>
+                      </Grid.Column>
+                      <Grid.Column width={16} textAlign="center" className="pt-0 pb-0">
+                        <NoLicenseResults
+                          switchToCustom={() => {
+                            resetForm();
+                            setModeState(ModalTypes.CUSTOM);
+                          }}
+                        />
+                      </Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+                </ReactSearchKit>
+              </OverridableContext.Provider>
+            )}
+            {modeState === ModalTypes.CUSTOM && (
+              <Form>
+                <TextField
+                  label={i18next.t("Title")}
+                  fieldPath="selectedLicense.title"
+                  required
+                  // eslint-disable-next-line
                     autoFocus
-                  />
-                  <TextAreaField
-                    fieldPath="selectedLicense.description"
-                    label={i18next.t("Description")}
-                  />
-                  <TextField
-                    label={i18next.t("Link")}
-                    fieldPath="selectedLicense.link"
-                  />
-                </Form>
-              )}
-            </Modal.Content>
-            <Modal.Actions>
-              <Button
-                name="cancel"
-                onClick={() => {
-                  resetForm();
-                  this.setMode(mode);
-                  this.closeModal();
-                }}
-                icon="remove"
-                content={i18next.t("Cancel")}
-                floated="left"
-              />
-              <Button
-                name="submit"
-                onClick={(event) => handleSubmit(event)}
-                primary
-                icon="checkmark"
-                content={
-                  action === ModalActions.ADD
-                    ? i18next.t("Add license")
-                    : i18next.t("Change license")
-                }
-              />
-            </Modal.Actions>
-          </Modal>
-        )}
-      </Formik>
-    );
-  }
+                />
+                <TextAreaField
+                  fieldPath="selectedLicense.description"
+                  label={i18next.t("Description")}
+                />
+                <TextField label={i18next.t("Link")} fieldPath="selectedLicense.link" />
+              </Form>
+            )}
+          </Modal.Content>
+          <Modal.Actions>
+            <Button
+              name="cancel"
+              onClick={() => {
+                resetForm();
+                setModeState(initialMode);
+                closeModal();
+              }}
+              icon="remove"
+              content={i18next.t("Cancel")}
+              floated="left"
+            />
+            <Button
+              name="submit"
+              onClick={(event) => handleSubmit(event)}
+              primary
+              icon="checkmark"
+              content={
+                action === ModalActions.ADD
+                  ? i18next.t("Add license")
+                  : i18next.t("Change license")
+              }
+            />
+          </Modal.Actions>
+        </Modal>
+      )}
+    </Formik>
+  );
 }
 
 LicenseModal.propTypes = {
@@ -288,9 +271,4 @@ LicenseModal.propTypes = {
     }).isRequired,
   }).isRequired,
   serializeLicenses: PropTypes.func,
-};
-
-LicenseModal.defaultProps = {
-  initialLicense: undefined,
-  serializeLicenses: undefined,
 };

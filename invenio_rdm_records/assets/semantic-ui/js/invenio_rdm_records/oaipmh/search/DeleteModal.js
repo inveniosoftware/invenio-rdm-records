@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { Button, Icon, Message, Checkbox } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
@@ -11,80 +11,75 @@ import { Modal } from "semantic-ui-react";
 import isEmpty from "lodash/isEmpty";
 import { ErrorMessage } from "@js/invenio_administration";
 
-export class DeleteModal extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { loading: false, error: undefined, checked: false };
-  }
+export function DeleteModal({
+  resetErrorState,
+  cleanError,
+  handleOnButtonClick,
+  modalOpen,
+  toggleModal,
+  title,
+}) {
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(undefined);
+  const [checked, setChecked] = React.useState(false);
 
-  render() {
-    const { loading, error, checked } = this.state;
-    const {
-      resetErrorState,
-      cleanError,
-      handleOnButtonClick,
-      modalOpen,
-      toggleModal,
-      title,
-    } = this.props;
-    return (
-      <Modal role="dialog" open={modalOpen}>
-        <Modal.Header as="h2">
-          {i18next.t("Delete {{title}}", { title: title })}
-        </Modal.Header>
-        <Modal.Content>
-          <Modal.Description>
-            <Message
-              warning
-              icon="warning sign"
-              header={i18next.t("This will delete the set '{{title}}'.", {
-                title: title,
-              })}
-              content={i18next.t(
-                "Before deleting, make sure to alert all harvesters that this set will no longer be available."
-              )}
-            />
-            <Checkbox
-              className="ml-5"
-              value
-              checked={checked}
-              onChange={(event, data) => {
-                this.setState({ checked: data.checked });
-              }}
-              label={i18next.t(
-                "I have alerted all harvesters that this set will no longer be available."
-              )}
-            />
-            {!isEmpty(error) && (
-              <ErrorMessage {...error} removeNotification={resetErrorState} />
+  return (
+    <Modal role="dialog" open={modalOpen}>
+      <Modal.Header as="h2">
+        {i18next.t("Delete {{title}}", { title: title })}
+      </Modal.Header>
+      <Modal.Content>
+        <Modal.Description>
+          <Message
+            warning
+            icon="warning sign"
+            header={i18next.t("This will delete the set '{{title}}'.", {
+              title: title,
+            })}
+            content={i18next.t(
+              "Before deleting, make sure to alert all harvesters that this set will no longer be available."
             )}
-          </Modal.Description>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button
-            icon="cancel"
-            onClick={() => {
-              cleanError();
-              toggleModal(false);
-            }}
-            loading={loading}
-            content={i18next.t("Cancel")}
-            floated="left"
-            size="medium"
           />
-          <Button
-            disabled={!checked}
-            negative
-            onClick={handleOnButtonClick}
-            loading={loading}
-          >
-            <Icon name="trash alternate" />
-            {i18next.t("Delete")}
-          </Button>
-        </Modal.Actions>
-      </Modal>
-    );
-  }
+          <Checkbox
+            className="ml-5"
+            value
+            checked={checked}
+            onChange={(event, data) => {
+              setChecked(data.checked);
+            }}
+            label={i18next.t(
+              "I have alerted all harvesters that this set will no longer be available."
+            )}
+          />
+          {!isEmpty(error) && (
+            <ErrorMessage {...error} removeNotification={resetErrorState} />
+          )}
+        </Modal.Description>
+      </Modal.Content>
+      <Modal.Actions>
+        <Button
+          icon="cancel"
+          onClick={() => {
+            cleanError();
+            toggleModal(false);
+          }}
+          loading={loading}
+          content={i18next.t("Cancel")}
+          floated="left"
+          size="medium"
+        />
+        <Button
+          disabled={!checked}
+          negative
+          onClick={handleOnButtonClick}
+          loading={loading}
+        >
+          <Icon name="trash alternate" />
+          {i18next.t("Delete")}
+        </Button>
+      </Modal.Actions>
+    </Modal>
+  );
 }
 
 DeleteModal.propTypes = {
@@ -99,8 +94,4 @@ DeleteModal.propTypes = {
   handleOnButtonClick: PropTypes.func.isRequired,
   cleanError: PropTypes.func.isRequired,
   resetErrorState: PropTypes.func.isRequired,
-};
-
-DeleteModal.defaultProps = {
-  children: null,
 };

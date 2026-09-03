@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+import React from "react";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import CopyButton from "./CopyButton";
 import { Table, Header, Dropdown, Grid } from "semantic-ui-react";
@@ -23,26 +23,18 @@ const knownFormats = {
   oai_dcat: "OAI DCAT-AP",
 };
 
-class LinksTable extends Component {
-  constructor(props) {
-    super(props);
-    const { links: passedLinks } = props.data;
+function LinksTable({ data }) {
+  const passedLinks = data?.links;
+  const passedPrefix = data?.currentPrefix;
+  const [links, setLinks] = React.useState(passedLinks || []);
+  const [formats, setFormats] = React.useState([]);
+  const [currentFormat, setCurrentFormat] = React.useState(passedPrefix ?? "oai_dc");
+  const [error, setError] = React.useState(undefined);
+  React.useEffect(() => {
+    fetchFormats();
+  }, [fetchFormats]);
 
-    const currentPrefix = this.getPrefixFromLink(passedLinks["oai-listrecords"]);
-
-    this.state = {
-      links: passedLinks || [],
-      formats: [],
-      currentFormat: currentPrefix ?? "oai_dc",
-      error: undefined,
-    };
-  }
-
-  componentDidMount() {
-    this.fetchFormats();
-  }
-
-  fetchFormats = async () => {
+  const fetchFormats = async () => {
     const cancellableFetchFormats = withCancel(http.get("/api/oaipmh/formats"));
 
     try {
@@ -54,31 +46,23 @@ class LinksTable extends Component {
         const serialized = formats.map((formt) => ({
           key: formt.id,
           value: formt.id,
-          text: knownFormats[formt.id] ?? this.formatKeyToName(formt.id),
+          text: knownFormats[formt.id] ?? formatKeyToName(formt.id),
         }));
 
-        this.setState({
-          formats: serialized,
-        });
+        setFormats(serialized);
       }
     } catch (error) {
       console.error(error);
 
-      this.setState({
-        error: {
-          header: i18next.t("Fetch error"),
-          content: i18next.t("Error fetching OAI set formats."),
-          id: error.code,
-        },
+      setError({
+        header: i18next.t("Fetch error"),
+        content: i18next.t("Error fetching OAI set formats."),
+        id: error.code,
       });
     }
   };
 
-  /**
-   * Replaces the metadata prefix in the link.
-   * Used to update links when the metadata prefix is changed.
-   */
-  replaceLinkPrefix = (link, newPrefix) => {
+  const replaceLinkPrefix = (link, newPrefix) => {
     if (_isEmpty(link)) return null;
 
     const prefixParam = "metadataPrefix";
@@ -92,12 +76,7 @@ class LinksTable extends Component {
     return url.toString();
   };
 
-  /**
-   * Retrieves metadata prefix from a link.
-   *
-   * Returns null if parameter not found.
-   */
-  getPrefixFromLink = (link) => {
+  const getPrefixFromLink = (link) => {
     if (_isEmpty(link)) return null;
     const prefixParam = "metadataPrefix";
     const url = new URL(link);
@@ -106,112 +85,98 @@ class LinksTable extends Component {
     return prefix || null;
   };
 
-  /**
-   * Transforms a key into a readable name.
-   * @example
-   *  // returns Oai Datacite
-   *  formateKeytoName('oai_datacite')
-   */
-  formatKeyToName = (formatKey) => {
+  const formatKeyToName = (formatKey) => {
     const whiteSpaced = formatKey.replace("_", " ");
     return capitalize(whiteSpaced);
   };
 
-  /**
-   * Dropdown's on change handler.
-   * This method will update the following states if the new prefix is known:
-   * - 'links', each link with its prefix replaced by the new prefix.
-   */
-  prefixOnChange = (event, data) => {
+  const prefixOnChange = (event, data) => {
     const newFormat = data.value;
-    const { formats, links } = this.state;
 
     if (formats.some((obj) => obj.key === newFormat)) {
       const newLinks = {};
       Object.keys(links).forEach((key) => {
         const link = links[key];
-        newLinks[key] = this.replaceLinkPrefix(link, newFormat);
+        newLinks[key] = replaceLinkPrefix(link, newFormat);
       });
-      this.setState({ links: newLinks, currentFormat: newFormat });
+      setLinks(newLinks);
+      setCurrentFormat(newFormat);
     }
   };
 
-  resetErrorState = () => {
-    this.setState({ error: undefined });
+  const resetErrorState = () => {
+    setError(undefined);
   };
 
-  render() {
-    const { links, formats, error, currentFormat } = this.state;
-    const listRecords = links["oai-listrecords"];
-    const listIdentifiers = links["oai-listidentifiers"];
+  const listRecords = links["oai-listrecords"];
+  const listIdentifiers = links["oai-listidentifiers"];
 
-    return (
-      <>
-        <Grid>
-          <Grid.Row />
-          <Grid.Row>
-            <Grid.Column width={3}>
-              <Header as="h2">{i18next.t("Links")}</Header>
-            </Grid.Column>
-            <Grid.Column width={13} textAlign="right">
-              <span className="mr-10">{i18next.t("Format")}</span>
-              <Dropdown
-                options={formats}
-                floating
-                selection
-                defaultValue={currentFormat}
-                selectOnNavigation={false}
-                onChange={this.prefixOnChange}
-              />
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-        <Table unstackable>
-          <Table.Body>
-            <Table.Row key="list-records">
-              <Table.Cell width={3}>
-                <b>{i18next.t("List records")}</b>
-              </Table.Cell>
-              <Table.Cell width={10} textAlign="left">
-                <a
-                  href={listRecords}
-                  target="_blank"
-                  title={i18next.t("Opens in new tab")}
-                  rel="noreferrer"
-                >
-                  {listRecords}
-                </a>
-              </Table.Cell>
-              <Table.Cell width={3} textAlign="right">
-                <CopyButton text={listRecords} />
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row key="list-identifiers">
-              <Table.Cell width={3}>
-                <b>{i18next.t("List identifiers")}</b>
-              </Table.Cell>
-              <Table.Cell width={10} textAlign="left">
-                <a
-                  href={listIdentifiers}
-                  target="_blank"
-                  title={i18next.t("Opens in new tab")}
-                  rel="noreferrer"
-                >
-                  {listIdentifiers}
-                </a>
-              </Table.Cell>
-              <Table.Cell width={3} textAlign="right">
-                <CopyButton text={listIdentifiers} />
-              </Table.Cell>
-            </Table.Row>
-          </Table.Body>
-        </Table>
-        {!_isEmpty(error) && (
-          <ErrorMessage {...error} removeNotification={this.resetErrorState} />
-        )}
-      </>
-    );
-  }
+  return (
+    <>
+      <Grid>
+        <Grid.Row />
+        <Grid.Row>
+          <Grid.Column width={3}>
+            <Header as="h2">{i18next.t("Links")}</Header>
+          </Grid.Column>
+          <Grid.Column width={13} textAlign="right">
+            <span className="mr-10">{i18next.t("Format")}</span>
+            <Dropdown
+              options={formats}
+              floating
+              selection
+              defaultValue={currentFormat}
+              selectOnNavigation={false}
+              onChange={prefixOnChange}
+            />
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+      <Table unstackable>
+        <Table.Body>
+          <Table.Row key="list-records">
+            <Table.Cell width={3}>
+              <b>{i18next.t("List records")}</b>
+            </Table.Cell>
+            <Table.Cell width={10} textAlign="left">
+              <a
+                href={listRecords}
+                target="_blank"
+                title={i18next.t("Opens in new tab")}
+                rel="noreferrer"
+              >
+                {listRecords}
+              </a>
+            </Table.Cell>
+            <Table.Cell width={3} textAlign="right">
+              <CopyButton text={listRecords} />
+            </Table.Cell>
+          </Table.Row>
+          <Table.Row key="list-identifiers">
+            <Table.Cell width={3}>
+              <b>{i18next.t("List identifiers")}</b>
+            </Table.Cell>
+            <Table.Cell width={10} textAlign="left">
+              <a
+                href={listIdentifiers}
+                target="_blank"
+                title={i18next.t("Opens in new tab")}
+                rel="noreferrer"
+              >
+                {listIdentifiers}
+              </a>
+            </Table.Cell>
+            <Table.Cell width={3} textAlign="right">
+              <CopyButton text={listIdentifiers} />
+            </Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+      {!_isEmpty(error) && (
+        <ErrorMessage {...error} removeNotification={resetErrorState} />
+      )}
+    </>
+  );
 }
 
 LinksTable.propTypes = {

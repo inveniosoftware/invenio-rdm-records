@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { useState } from "react";
+import { useMemo, useCallback, useEffect, useState } from "react";
 import Uppy from "@uppy/core";
 import { Dashboard } from "@uppy/react";
 import ImageEditor from "@uppy/image-editor";
@@ -135,13 +135,17 @@ export const createFileValidator = (
 };
 
 export const UppyUploaderComponent = ({
-  config,
-  files,
-  isDraftRecord,
-  hasParentRecord,
-  quota,
-  permissions,
-  record,
+  config = undefined,
+  files = undefined,
+  isDraftRecord = true,
+  hasParentRecord = false,
+  quota = {
+    maxFiles: 5,
+    maxStorage: 10 ** 10,
+    maxFileSize: undefined,
+  },
+  permissions = undefined,
+  record = undefined,
   initializeFileUpload,
   finalizeUpload,
   deleteFile,
@@ -149,15 +153,17 @@ export const UppyUploaderComponent = ({
   saveAndFetchDraft,
   setUploadProgress,
   importParentFiles,
-  importButtonIcon,
-  importButtonText,
-  isFileImportInProgress,
-  fileUploadConcurrency,
-  decimalSizeDisplay,
-  filesLocked,
-  allowEmptyFiles,
-  ...uiProps
+  importButtonIcon = "sync",
+  importButtonText = i18next.t("Import files"),
+  isFileImportInProgress = false,
+  fileUploadConcurrency = 3,
+  decimalSizeDisplay = true,
+  filesLocked = false,
+  allowEmptyFiles = true,
+  fileActions = undefined,
+  ...restProps
 }) => {
+  const uiProps = { ...restProps, fileActions };
   // We extract the working copy of the draft stored as `values` in formik
   const { values: formikDraft, errors, initialErrors } = useFormikContext();
   const { filesList } = getFilesList(files ?? {});
@@ -178,7 +184,7 @@ export const UppyUploaderComponent = ({
   const displayImportBtn =
     filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
 
-  const transfersConfig = React.useMemo(() => {
+  const transfersConfig = useMemo(() => {
     const {
       transfer_types: transferType,
       enabled_transfer_types: enabledTypes,
@@ -191,7 +197,7 @@ export const UppyUploaderComponent = ({
     };
   }, [config]);
 
-  const restrictions = React.useMemo(
+  const restrictions = useMemo(
     () => ({
       minFileSize: allowEmptyFiles ? 0 : 1,
       maxNumberOfFiles: Math.max(0, quota.maxFiles - filesList.length),
@@ -201,7 +207,7 @@ export const UppyUploaderComponent = ({
     [allowEmptyFiles, quota, filesList, filesSize]
   );
 
-  const isTransferSupported = React.useCallback(
+  const isTransferSupported = useCallback(
     (transferType) => transfersConfig.enabledTypes.includes(transferType),
     [transfersConfig]
   );
@@ -230,18 +236,18 @@ export const UppyUploaderComponent = ({
       .use(ImageEditor)
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       // https://uppy.io/blog/2017/05/0.16/#dom-element-in-target-option-uppyclose-for-tearing-down-an-uppy-instance
       uppy.close();
     };
   }, [uppy]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     uppy.setOptions({ restrictions });
   }, [uppy, restrictions]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const uploaderPlugin = uppy.getPlugin("RDMUppyUploaderPlugin");
     if (uploaderPlugin) {
       // Synchronize uploader state with current formik state
@@ -249,12 +255,12 @@ export const UppyUploaderComponent = ({
     }
   }, [uppy, formikDraft]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Synchronize uppy locale with i18next
     uppy.setOptions({ locale });
   }, [uppy, locale]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     uppy.setOptions({
       onBeforeFileAdded: createFileValidator(
         uppy,
@@ -267,7 +273,7 @@ export const UppyUploaderComponent = ({
   }, [uppy, filesList, filesSize, quota, decimalSizeDisplay]);
 
   const [uppyHasFiles, setUppyHasFiles] = useState(false);
-  React.useEffect(() => {
+  useEffect(() => {
     const update = () =>
       setUppyHasFiles(Object.keys(uppy.getState().files || {}).length > 0);
     uppy.on("file-added", update);
@@ -394,7 +400,8 @@ export const UppyUploaderComponent = ({
                       filesEnabled={filesEnabled}
                       filesLocked={lockFileUploader}
                       deleteFile={deleteFile}
-                      decimalSizeDislay={decimalSizeDisplay}
+                      decimalSizeDisplay={decimalSizeDisplay}
+                      fileActions={uiProps.fileActions}
                     />
                   </Grid.Column>
                 )}
@@ -476,6 +483,7 @@ const fileDetailsShape = PropTypes.objectOf(
     progressPercentage: PropTypes.number,
     checksum: PropTypes.string,
     links: PropTypes.object,
+    mimetype: PropTypes.string,
     cancelUploadFn: PropTypes.func,
     state: PropTypes.oneOf(Object.values(UploadState)),
     enabled: PropTypes.bool,
@@ -508,25 +516,5 @@ UppyUploaderComponent.propTypes = {
   filesLocked: PropTypes.bool,
   permissions: PropTypes.object,
   allowEmptyFiles: PropTypes.bool,
-};
-
-UppyUploaderComponent.defaultProps = {
-  permissions: undefined,
-  config: undefined,
-  files: undefined,
-  fileUploadConcurrency: 3,
-  record: undefined,
-  isFileImportInProgress: false,
-  isDraftRecord: true,
-  hasParentRecord: false,
-  quota: {
-    maxFiles: 5,
-    maxStorage: 10 ** 10,
-    maxFileSize: undefined,
-  },
-  importButtonIcon: "sync",
-  importButtonText: i18next.t("Import files"),
-  decimalSizeDisplay: true,
-  filesLocked: false,
-  allowEmptyFiles: true,
+  fileActions: PropTypes.func,
 };

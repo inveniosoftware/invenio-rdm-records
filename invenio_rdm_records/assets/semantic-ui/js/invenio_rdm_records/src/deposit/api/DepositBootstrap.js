@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
+import React from "react";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { useRef } from "react";
 import { BaseForm } from "react-invenio-forms";
 import { connect } from "react-redux";
 import {
@@ -23,42 +24,53 @@ import {
 } from "../state/actions";
 import { scrollTop } from "../utils";
 
-class DepositBootstrapComponent extends Component {
-  componentDidMount() {
-    window.addEventListener("beforeunload", (e) => {
-      const { fileUploadOngoing } = this.props;
+function DepositBootstrapComponent({
+  fileUploadOngoing = false,
+  saveAction,
+  publishAction,
+  submitReviewAction,
+  previewAction,
+  deleteAction,
+  reservePIDAction,
+  discardPIDAction,
+  errors = undefined,
+  record,
+  children = undefined,
+}) {
+  const submitContextRef = useRef(undefined);
+
+  React.useEffect(() => {
+    const onBeforeUnload = (e) => {
       if (fileUploadOngoing) {
         e.returnValue = "";
         return "";
       }
-    });
-    window.addEventListener("unload", async () => {
+      return undefined;
+    };
+    const onUnload = async () => {
       // TODO: cancel all uploads
       // Investigate if it's possible to wait for the deletion request to complete
       // before unloading the page
-    });
-  }
+    };
 
-  submitContext = undefined;
+    window.addEventListener("beforeunload", onBeforeUnload);
+    window.addEventListener("unload", onUnload);
 
-  setSubmitContext = (actionName, extra = {}) => {
-    this.submitContext = {
+    return () => {
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      window.removeEventListener("unload", onUnload);
+    };
+  }, [fileUploadOngoing]);
+
+  const setSubmitContext = (actionName, extra = {}) => {
+    submitContextRef.current = {
       actionName: actionName,
       extra: extra,
     };
   };
 
-  onFormSubmit = async (values, formikBag) => {
-    const {
-      saveAction,
-      publishAction,
-      submitReviewAction,
-      previewAction,
-      deleteAction,
-      reservePIDAction,
-      discardPIDAction,
-    } = this.props;
-    const { actionName, extra } = this.submitContext;
+  const onFormSubmit = async (values, formikBag) => {
+    const { actionName, extra } = submitContextRef.current ?? {};
 
     let actionFunc = undefined;
     const params = {};
@@ -109,36 +121,31 @@ class DepositBootstrapComponent extends Component {
       }
     } finally {
       // reset the action name after having handled it
-      this.submitContext = {};
+      submitContextRef.current = {};
     }
   };
 
-  render() {
-    const { errors, record, children } = this.props;
-    return (
-      <DepositFormSubmitContext.Provider
-        value={{ setSubmitContext: this.setSubmitContext }}
+  return (
+    <DepositFormSubmitContext.Provider value={{ setSubmitContext: setSubmitContext }}>
+      <BaseForm
+        onSubmit={onFormSubmit}
+        formik={{
+          // enableReinitialise needed due to
+          // updated draft PID (and the endpoint URL as a consequence).
+          // After saving draft for the first time, a new PID is obtained,
+          // initial values need to be updated with draft record containing
+          // the new PID in its payload, otherwise a new PID
+          // is requested on each action, generating countless drafts
+          enableReinitialize: true,
+          initialValues: record,
+          // errors need to be repopulated after form is reinitialised
+          ...(errors && { initialErrors: errors }),
+        }}
       >
-        <BaseForm
-          onSubmit={this.onFormSubmit}
-          formik={{
-            // enableReinitialise needed due to
-            // updated draft PID (and the endpoint URL as a consequence).
-            // After saving draft for the first time, a new PID is obtained,
-            // initial values need to be updated with draft record containing
-            // the new PID in its payload, otherwise a new PID
-            // is requested on each action, generating countless drafts
-            enableReinitialize: true,
-            initialValues: record,
-            // errors need to be repopulated after form is reinitialised
-            ...(errors && { initialErrors: errors }),
-          }}
-        >
-          {children}
-        </BaseForm>
-      </DepositFormSubmitContext.Provider>
-    );
-  }
+        {children}
+      </BaseForm>
+    </DepositFormSubmitContext.Provider>
+  );
 }
 
 DepositBootstrapComponent.propTypes = {
@@ -153,12 +160,6 @@ DepositBootstrapComponent.propTypes = {
   reservePIDAction: PropTypes.func.isRequired,
   discardPIDAction: PropTypes.func.isRequired,
   fileUploadOngoing: PropTypes.bool,
-};
-
-DepositBootstrapComponent.defaultProps = {
-  errors: undefined,
-  children: undefined,
-  fileUploadOngoing: false,
 };
 
 const mapStateToProps = (state) => {

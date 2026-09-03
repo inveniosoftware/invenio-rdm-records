@@ -39,8 +39,8 @@ export const CreatibutorsList = React.memo(function CreatibutorsList({
   keyPrefix,
   batchSize,
   totalCount,
-  wrapWithDndProvider,
-  creatibutorErrors,
+  wrapWithDndProvider = true,
+  creatibutorErrors = undefined,
   removeCreatibutor,
   replaceCreatibutor,
   moveCreatibutor,
@@ -142,9 +142,4 @@ CreatibutorsList.propTypes = {
   removeCreatibutor: PropTypes.func.isRequired,
   replaceCreatibutor: PropTypes.func.isRequired,
   moveCreatibutor: PropTypes.func.isRequired,
-};
-
-CreatibutorsList.defaultProps = {
-  wrapWithDndProvider: true,
-  creatibutorErrors: undefined,
 };

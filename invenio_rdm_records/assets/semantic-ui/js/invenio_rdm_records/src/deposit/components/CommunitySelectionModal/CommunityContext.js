@@ -4,6 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "react";
+import { createContext } from "react";
 
-export const CommunityContext = React.createContext({});
+export const CommunityContext = createContext({});

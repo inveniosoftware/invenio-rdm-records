@@ -13,7 +13,7 @@ import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
 import _map from "lodash/map";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Grid, Icon, Message, Modal } from "semantic-ui-react";
 import { UploadState } from "../../state/reducers/files";
 import { FileUploaderArea } from "./FileUploaderArea";
@@ -29,25 +29,39 @@ import { getFilesList } from "./utils";
 // NOTE: This component has to be a function component to allow
 //       the `useFormikContext` hook.
 export const FileUploaderComponent = ({
-  config,
-  files,
-  isDraftRecord,
-  hasParentRecord,
-  quota,
-  permissions,
-  record,
+  config = undefined,
+  files = undefined,
+  isDraftRecord = true,
+  hasParentRecord = false,
+  quota = {
+    maxFiles: 5,
+    maxStorage: 10 ** 10,
+  },
+  permissions = undefined,
+  record = undefined,
   uploadFiles,
   deleteFile,
   importParentFiles,
-  importButtonIcon,
-  importButtonText,
-  isFileImportInProgress,
-  decimalSizeDisplay,
-  filesLocked,
-  allowEmptyFiles,
-  fileModification,
-  ...uiProps
+  importButtonIcon = "sync",
+  importButtonText = i18next.t("Import files"),
+  isFileImportInProgress = false,
+  decimalSizeDisplay = true,
+  filesLocked = false,
+  allowEmptyFiles = true,
+  fileModification = {},
+  dragText = i18next.t("Drag and drop files"),
+  uploadButtonIcon = "upload",
+  uploadButtonText = i18next.t("Upload files"),
+  fileActions = undefined,
+  ...restProps
 }) => {
+  const uiProps = {
+    ...restProps,
+    dragText,
+    uploadButtonIcon,
+    uploadButtonText,
+    fileActions,
+  };
   // We extract the working copy of the draft stored as `values` in formik
   const { values: formikDraft, errors, initialErrors } = useFormikContext();
   const { filesList, filesNamesSet, filesSize } = getFilesList(files);
@@ -387,6 +401,7 @@ const fileDetailsShape = PropTypes.objectOf(
     progressPercentage: PropTypes.number,
     checksum: PropTypes.string,
     links: PropTypes.object,
+    mimetype: PropTypes.string,
     cancelUploadFn: PropTypes.func,
     state: PropTypes.oneOf(Object.values(UploadState)),
     enabled: PropTypes.bool,
@@ -418,27 +433,5 @@ FileUploaderComponent.propTypes = {
   permissions: PropTypes.object,
   allowEmptyFiles: PropTypes.bool,
   fileModification: PropTypes.object,
-};
-
-FileUploaderComponent.defaultProps = {
-  permissions: undefined,
-  config: undefined,
-  files: undefined,
-  record: undefined,
-  isFileImportInProgress: false,
-  dragText: i18next.t("Drag and drop files"),
-  isDraftRecord: true,
-  hasParentRecord: false,
-  quota: {
-    maxFiles: 5,
-    maxStorage: 10 ** 10,
-  },
-  uploadButtonIcon: "upload",
-  uploadButtonText: i18next.t("Upload files"),
-  importButtonIcon: "sync",
-  importButtonText: i18next.t("Import files"),
-  decimalSizeDisplay: true,
-  filesLocked: false,
-  allowEmptyFiles: true,
-  fileModification: {},
+  fileActions: PropTypes.func,
 };

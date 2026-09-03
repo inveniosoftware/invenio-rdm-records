@@ -6,7 +6,6 @@
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 import PropTypes from "prop-types";
-import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Form, Radio, Popup } from "semantic-ui-react";
 import { DepositStatus } from "../../../../state/reducers/deposit";
@@ -15,115 +14,103 @@ const PROVIDER_EXTERNAL = "external";
 /**
  * Manage radio buttons choices between managed (i.e. datacite), unmanaged (i.e. external) and no need for a PID.
  */
-class OptionalDOIoptionsCmp extends Component {
-  handleChange = (e, { value }) => {
-    const { onManagedUnmanagedChange } = this.props;
+function OptionalDOIoptionsCmp({
+  onManagedUnmanagedChange,
+  isManagedSelected,
+  isNoNeedSelected,
+  pidLabel = undefined,
+  optionalDOItransitions,
+  record,
+}) {
+  const handleChange = (e, { value }) => {
     const isManagedSelected = value === "managed";
     const isNoNeedSelected = value === "notneeded";
     onManagedUnmanagedChange(isManagedSelected, isNoNeedSelected);
   };
 
-  _render = (cmp, shouldWrapPopup, message) =>
+  const _render = (cmp, shouldWrapPopup, message) =>
     shouldWrapPopup && message ? <Popup content={message} trigger={cmp} /> : cmp;
 
-  render() {
-    const {
-      isManagedSelected,
-      isNoNeedSelected,
-      pidLabel,
-      optionalDOItransitions,
-      record,
-    } = this.props;
+  const isDisabled = (provider) => {
+    return !optionalDOItransitions?.allowed_providers?.includes(provider);
+  };
 
-    const doi = record?.pids?.doi?.identifier || "";
-    const alreadyPublished = [
-      DepositStatus.PUBLISHED,
-      DepositStatus.NEW_VERSION_DRAFT,
-    ].includes(record.status);
+  const doi = record?.pids?.doi?.identifier || "";
+  const alreadyPublished = [
+    DepositStatus.PUBLISHED,
+    DepositStatus.NEW_VERSION_DRAFT,
+  ].includes(record.status);
 
-    const hasDoi = doi !== "";
-    const hasInternalProvider =
-      hasDoi && record?.pids?.doi?.provider !== PROVIDER_EXTERNAL;
-    const hasManagedDOI = hasInternalProvider && isManagedSelected;
+  const hasDoi = doi !== "";
+  const hasInternalProvider =
+    hasDoi && record?.pids?.doi?.provider !== PROVIDER_EXTERNAL;
+  const hasManagedDOI = hasInternalProvider && isManagedSelected;
 
-    function isDisabled(provider) {
-      return (
-        hasManagedDOI ||
-        (alreadyPublished &&
-          !optionalDOItransitions?.allowed_providers?.includes(provider))
-      );
-    }
+  const isUnManagedDisabled = isDisabled("external");
+  const isNoNeedDisabled = isDisabled("not_needed");
 
-    const isUnManagedDisabled = isDisabled("external");
-    const isNoNeedDisabled = isDisabled("not_needed");
+  const managedProviderAllowed = optionalDOItransitions?.allowed_providers?.some(
+    (val) => !["external", "not_needed"].includes(val)
+  );
+  // The locally managed DOI is disabled either if the external provider is allowed or if the no need option is allowed
+  const isManagedDisabled = alreadyPublished
+    ? !managedProviderAllowed
+    : hasDoi && isManagedSelected;
 
-    const managedProviderAllowed = optionalDOItransitions?.allowed_providers?.some(
-      (val) => !["external", "not_needed"].includes(val)
-    );
-    // The locally managed DOI is disabled either if the external provider is allowed or if the no need option is allowed
-    const isManagedDisabled = alreadyPublished
-      ? !managedProviderAllowed
-      : hasDoi && isManagedSelected;
+  const yesIHaveOne = (
+    <Form.Field width={4}>
+      <Radio
+        label={i18next.t("Yes, I already have one")}
+        aria-label={i18next.t("Yes, I already have one")}
+        name="radioGroup"
+        value="unmanaged"
+        disabled={isUnManagedDisabled}
+        checked={!isManagedSelected && !isNoNeedSelected}
+        onChange={handleChange}
+      />
+    </Form.Field>
+  );
 
-    const yesIHaveOne = (
-      <Form.Field width={4}>
-        <Radio
-          label={i18next.t("Yes, I already have one")}
-          aria-label={i18next.t("Yes, I already have one")}
-          name="radioGroup"
-          value="unmanaged"
-          disabled={isUnManagedDisabled}
-          checked={!isManagedSelected && !isNoNeedSelected}
-          onChange={this.handleChange}
-        />
+  const noINeedOne = (
+    <Form.Field width={3}>
+      <Radio
+        label={i18next.t("No, I need one")}
+        aria-label={i18next.t("No, I need one")}
+        name="radioGroup"
+        value="managed"
+        disabled={isManagedDisabled}
+        checked={isManagedSelected && !isNoNeedSelected}
+        onChange={handleChange}
+      />
+    </Form.Field>
+  );
+
+  const noNeed = (
+    <Form.Field width={4}>
+      <Radio
+        label={i18next.t("No, I don't need one")}
+        aria-label={i18next.t("No, I don't need one")}
+        name="radioGroup"
+        value="notneeded"
+        disabled={isNoNeedDisabled}
+        checked={isNoNeedSelected}
+        onChange={handleChange}
+      />
+    </Form.Field>
+  );
+
+  return (
+    <Form.Group inline>
+      <Form.Field>
+        {i18next.t("Do you already have a {{pidLabel}} for this upload?", {
+          pidLabel: pidLabel,
+        })}
       </Form.Field>
-    );
-
-    const noINeedOne = (
-      <Form.Field width={3}>
-        <Radio
-          label={i18next.t("No, I need one")}
-          aria-label={i18next.t("No, I need one")}
-          name="radioGroup"
-          value="managed"
-          disabled={isManagedDisabled}
-          checked={isManagedSelected && !isNoNeedSelected}
-          onChange={this.handleChange}
-        />
-      </Form.Field>
-    );
-
-    const noNeed = (
-      <Form.Field width={4}>
-        <Radio
-          label={i18next.t("No, I don't need one")}
-          aria-label={i18next.t("No, I don't need one")}
-          name="radioGroup"
-          value="notneeded"
-          disabled={isNoNeedDisabled}
-          checked={isNoNeedSelected}
-          onChange={this.handleChange}
-        />
-      </Form.Field>
-    );
-
-    return (
-      <Form.Group inline>
-        <Form.Field>
-          {i18next.t("Do you already have a {{pidLabel}} for this upload?", {
-            pidLabel: pidLabel,
-          })}
-        </Form.Field>
-        {this._render(
-          yesIHaveOne,
-          isUnManagedDisabled,
-          optionalDOItransitions?.message
-        )}
-        {this._render(noINeedOne, isManagedDisabled, optionalDOItransitions?.message)}
-        {this._render(noNeed, isNoNeedDisabled, optionalDOItransitions?.message)}
-      </Form.Group>
-    );
-  }
+      {_render(yesIHaveOne, isUnManagedDisabled, optionalDOItransitions?.message)}
+      {_render(noINeedOne, isManagedDisabled, optionalDOItransitions?.message)}
+      {_render(noNeed, isNoNeedDisabled, optionalDOItransitions?.message)}
+    </Form.Group>
+  );
 }
 
 OptionalDOIoptionsCmp.propTypes = {
@@ -131,12 +118,9 @@ OptionalDOIoptionsCmp.propTypes = {
   isNoNeedSelected: PropTypes.bool.isRequired,
   onManagedUnmanagedChange: PropTypes.func.isRequired,
   pidLabel: PropTypes.string,
-  optionalDOItransitions: PropTypes.object.isRequired,
+  optionalDOItransitions: PropTypes.oneOfType([PropTypes.object, PropTypes.array])
+    .isRequired,
   record: PropTypes.object.isRequired,
-};
-
-OptionalDOIoptionsCmp.defaultProps = {
-  pidLabel: undefined,
 };
 
 const mapStateToProps = (state) => ({
