@@ -11,7 +11,13 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 
-const NewVersionButtonComponent = ({ onError, record, disabled, ...uiProps }) => {
+const NewVersionButtonComponent = ({
+  onError,
+  record,
+  disabled,
+  allowExternalDoiVersions,
+  ...uiProps
+}) => {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
@@ -33,11 +39,16 @@ const NewVersionButtonComponent = ({ onError, record, disabled, ...uiProps }) =>
       onError={onError}
       record={record}
       disabled={disabled}
+      allowExternalDoiVersions={allowExternalDoiVersions}
     >
       <Popup
-        content={i18next.t(
-          "You can't create a new version of this record due to external DOI restrictions or insufficient permissions."
-        )}
+        content={
+          allowExternalDoiVersions
+            ? i18next.t("You don't have permissions to create a new version.")
+            : i18next.t(
+                "You can't create a new version of this record due to external DOI restrictions."
+              )
+        }
         position="top center"
         disabled={!disabled}
         trigger={
@@ -68,10 +79,12 @@ NewVersionButtonComponent.propTypes = {
   onError: PropTypes.func.isRequired,
   record: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
+  allowExternalDoiVersions: PropTypes.bool,
 };
 
 NewVersionButtonComponent.defaultProps = {
   disabled: false,
+  allowExternalDoiVersions: true,
 };
 
 export const NewVersionButton = showHideOverridable(

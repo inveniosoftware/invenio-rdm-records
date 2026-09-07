@@ -335,6 +335,7 @@ export const FileUploaderComponent = ({
                       permissions={permissions}
                       fileModification={fileModification}
                       draft={formikDraft}
+                      allowExternalDoiVersions={config.allow_external_doi_versions}
                     />
                   </Grid.Column>
                 </Grid.Row>
@@ -347,6 +348,7 @@ export const FileUploaderComponent = ({
                         onError={() => {}}
                         className="right-floated"
                         disabled={!permissions.can_new_version}
+                        allowExternalDoiVersions={config.allow_external_doi_versions}
                       />
                       <p className="display-inline-block mt-5">
                         <Icon name="info circle" size="large" />

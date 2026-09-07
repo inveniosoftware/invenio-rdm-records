@@ -452,6 +452,7 @@ export const UppyUploaderComponent = ({
                     onError={() => {}}
                     className="right-floated"
                     disabled={!permissions.can_new_version}
+                    allowExternalDoiVersions={config.allow_external_doi_versions}
                   />
                   <p className="mt-5 display-inline-block">
                     <Icon name="info circle" size="large" />

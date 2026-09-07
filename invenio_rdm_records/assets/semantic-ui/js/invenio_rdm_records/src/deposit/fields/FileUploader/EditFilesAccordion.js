@@ -22,7 +22,8 @@ export class EditFilesAccordion extends Component {
   };
 
   render() {
-    const { draft, record, permissions, fileModification } = this.props;
+    const { draft, record, permissions, fileModification, allowExternalDoiVersions } =
+      this.props;
     const { activeIndex } = this.state;
     return (
       <Message info>
@@ -59,6 +60,7 @@ export class EditFilesAccordion extends Component {
                     record={record}
                     onError={() => {}}
                     disabled={!permissions.can_new_version}
+                    allowExternalDoiVersions={allowExternalDoiVersions}
                   />
                 </Grid.Column>
               </Grid.Row>
@@ -95,8 +97,10 @@ EditFilesAccordion.propTypes = {
   record: PropTypes.object.isRequired,
   permissions: PropTypes.object.isRequired,
   fileModification: PropTypes.object,
+  allowExternalDoiVersions: PropTypes.bool,
 };
 
 EditFilesAccordion.defaultProps = {
   fileModification: {},
+  allowExternalDoiVersions: true,
 };
