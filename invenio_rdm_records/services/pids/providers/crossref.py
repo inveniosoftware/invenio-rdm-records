@@ -41,17 +41,10 @@ class CrossrefClient:
     def test_mode(self):
         """Whether deposits go to Crossref's test system.
 
-        Read where it is used rather than in the constructor: an instance
-        builds its clients while the configuration is still being loaded, so
-        there is no application to read a config value from yet. That is why
-        this was a hardcoded False -- which left <prefix>_TEST_MODE with no
-        effect at all, and every deposit going to the production system.
-
-        Defaults to False, as the hardcoded value did, so an instance that
-        configures nothing keeps depositing where it deposits today. Note that
-        DataCiteClient defaults the same setting to True.
+        Defaults to True, as DataCiteClient does for the same setting.
+        Say <prefix>_TEST_MODE = False to deposit for real.
         """
-        return self.cfg("test_mode", False)
+        return self.cfg("test_mode", True)
 
     @property
     def api_url(self):
