@@ -24,6 +24,10 @@ from .base import PIDProvider
 class CrossrefClient:
     """Crossref Client."""
 
+    #: Where deposits go when test mode is on, and when it is off.
+    TEST_API_URL = "https://test.crossref.org/servlet/deposit"
+    API_URL = "https://doi.crossref.org/servlet/deposit"
+
     def __init__(self, name, config_prefix=None, config_overrides=None, **kwargs):
         """Constructor."""
         self.name = name
@@ -32,13 +36,27 @@ class CrossrefClient:
 
         # Set reasonable defaults
         self.timeout = 30
-        self.test_mode = False
 
-        # Set API URL based on test mode
-        if self.test_mode:
-            self.api_url = "https://test.crossref.org/servlet/deposit"
-        else:
-            self.api_url = "https://doi.crossref.org/servlet/deposit"
+    @property
+    def test_mode(self):
+        """Whether deposits go to Crossref's test system.
+
+        Read where it is used rather than in the constructor: an instance
+        builds its clients while the configuration is still being loaded, so
+        there is no application to read a config value from yet. That is why
+        this was a hardcoded False -- which left <prefix>_TEST_MODE with no
+        effect at all, and every deposit going to the production system.
+
+        Defaults to False, as the hardcoded value did, so an instance that
+        configures nothing keeps depositing where it deposits today. Note that
+        DataCiteClient defaults the same setting to True.
+        """
+        return self.cfg("test_mode", False)
+
+    @property
+    def api_url(self):
+        """The deposit endpoint, test or production, per test mode."""
+        return self.TEST_API_URL if self.test_mode else self.API_URL
 
     def cfgkey(self, key):
         """Generate a configuration key."""
