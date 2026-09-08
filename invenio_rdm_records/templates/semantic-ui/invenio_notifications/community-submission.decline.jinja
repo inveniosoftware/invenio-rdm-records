@@ -13,7 +13,7 @@
 {% set message = notification.context.message | safe if notification.context.message else '' %}
 {% set community_title = community.metadata.title %}
 {% set record_title = record.metadata.title %}
-{% set curator_name = executing_user.username or executing_user.profile.full_name %}
+{% set curator_name = executing_user.profile.full_name or executing_user.username %}
 
 {# TODO: use request.links.self_html when issue issue is resolved: https://github.com/inveniosoftware/invenio-rdm-records/issues/1327 #}
 {% set request_link = "{ui}/me/requests/{id}".format(
