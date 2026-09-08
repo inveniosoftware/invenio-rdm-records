@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v32.3.1 (released 2026-09-08)
+
+- fix(custom-fields): add correct landing page search attribute
+
 Version v32.3.0 (released 2026-09-03)
 
 - fix(ui): hide quota labels in narrow bars slider
