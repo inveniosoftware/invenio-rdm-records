@@ -9,7 +9,7 @@
 {% set creator = submission_request.created_by %}
 {% set record = submission_request.topic %}
 {% set request_id = submission_request.id %}
-{% set creator_name = creator.username or creator.profile.full_name %}
+{% set creator_name = creator.profile.full_name or creator.username %}
 {% set community_title = community.metadata.title %}
 {% set record_title = record.metadata.title %}
 {% set message = notification.context.message | safe if notification.context.message else '' %}
