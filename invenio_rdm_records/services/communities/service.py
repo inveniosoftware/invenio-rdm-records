@@ -246,6 +246,10 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         # removed from the record
         record.parent.communities.remove(community_id)
 
+        # If only one community remains, make it the default.
+        if len(record.parent.communities.ids) == 1:
+            record.parent.communities.default = record.parent.communities.ids[0]
+
     @unit_of_work()
     def remove(self, identity, id_, data, uow):
         """Remove communities from the record."""
