@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2023 CERN.
-# SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
+# SPDX-FileCopyrightText: 2024-2026 KTH Royal Institute of Technology.
 # SPDX-License-Identifier: MIT
 
 """CodeMeta specific custom fields.
@@ -63,6 +63,7 @@ CODEMETA_CUSTOM_FIELDS_UI = {
         dict(
             field="code:programmingLanguage",
             ui_widget="AutocompleteDropdown",
+            landing_page_search_attr="id",
             props=dict(
                 label=_("Programming language"),
                 icon="code",
@@ -78,6 +79,7 @@ CODEMETA_CUSTOM_FIELDS_UI = {
         dict(
             field="code:developmentStatus",
             ui_widget="Dropdown",
+            landing_page_search_attr="id",
             props=dict(
                 label=_("Development Status"),
                 placeholder=_("Repository status"),
