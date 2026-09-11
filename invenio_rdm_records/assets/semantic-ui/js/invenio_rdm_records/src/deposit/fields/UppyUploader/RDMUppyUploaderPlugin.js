@@ -78,7 +78,14 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
   async uploadPartBytes({ signature, body, onProgress, onComplete, signal }) {
     const { headers = {} } = signature;
 
-    if (this.opts.checkPartIntegrity) {
+    // Only external storages (e.g. pre-signed AWS S3 URLs) verify Content-MD5.
+    // Invenio's own content endpoint ignores it, so sending it there adds no
+    // integrity guarantee while giving request inspection in front of the
+    // origin one more header to object to.
+    const requestUrl = URL.parse(signature.url);
+    const isSameOrigin = requestUrl?.origin === window.location.origin;
+
+    if (this.opts.checkPartIntegrity && !isSameOrigin) {
       headers["Content-MD5"] = await this.#getPartDigest(body);
     }
 
