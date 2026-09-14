@@ -188,8 +188,9 @@ export const deleteFile = (file) => {
     dispatch({ type: FILE_DELETE_STARTED });
 
     if (!fileLinks?.self) {
-      // Upload initialization failed, so there is nothing to delete on the
-      // backend and the file entry can be removed from the state right away.
+      // Nothing to delete on the backend, but the upload may still be queued or
+      // initializing and must not go ahead without a files list entry.
+      config.service.files.cancelQueuedUpload(file.name);
       dispatch(deletedSuccess);
       return;
     }
