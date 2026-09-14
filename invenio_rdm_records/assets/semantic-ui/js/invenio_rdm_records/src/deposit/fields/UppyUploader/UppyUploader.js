@@ -286,7 +286,18 @@ export const UppyUploaderComponent = ({
         // deletion of the file itself is done below.
         uppy.removeFile(uppyFile.id, FileRemovalReason.deletedOnBackend);
       }
-      return await deleteFile(file);
+
+      try {
+        return await deleteFile(file);
+      } catch (error) {
+        // The entry is kept, so that the deletion can be retried.
+        uppy.info(
+          i18next.t("{{file}} could not be deleted.", { file: file.name }),
+          "error",
+          uppy.opts.infoTimeout
+        );
+        throw error;
+      }
     },
     [uppy, deleteFile]
   );
