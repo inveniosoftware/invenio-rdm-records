@@ -146,8 +146,12 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
    * emitted by this plugin (see `#completeSinglePartUpload`).
    */
   #onUploadError = async (file) => {
-    if (await this.#isUploadAbortedRemotely(file)) {
-      this.#discardAbortedUpload(file);
+    const isAbortedRemotely = await this.#isUploadAbortedRemotely(file);
+    // Skip files removed or retried (which clears the error) during the check.
+    const failedFile = this.uppy.getFile(file.id);
+
+    if (isAbortedRemotely && failedFile?.error) {
+      this.#discardAbortedUpload(failedFile);
     }
   };
 
@@ -172,9 +176,7 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
    * is replaced with the actual reason of the failure.
    */
   #discardAbortedUpload = (file) => {
-    if (this.uppy.getFile(file.id)) {
-      this.uppy.removeFile(file.id);
-    }
+    this.uppy.removeFile(file.id);
     this.#hideUploadFailedMessage(file);
     this.uppy.info(
       i18next.t("Upload of {{file}} was aborted.", { file: file.name }),
