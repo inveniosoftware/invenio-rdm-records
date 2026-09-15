@@ -67,7 +67,7 @@ target/
 .vscode/
 *.DS_Store
 
-# pipenv
+# pipenv/uv
 # This project is a library and not an application.
 Pipfile
 Pipfile.lock

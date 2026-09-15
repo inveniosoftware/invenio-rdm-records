@@ -34,9 +34,9 @@ Choose a version of search and database, then run:
 
 .. code-block:: console
 
-    pipenv run pip install -e .[all]
-    pipenv run pip install invenio-search[<opensearch[1]>]
-    pipenv run pip install invenio-db[<[mysql|postgresql|]>]
+    uv run pip install -e .[all]
+    uv run pip install invenio-search[<opensearch[1]>]
+    uv run pip install invenio-db[<[mysql|postgresql|]>]
 
 
 Tests
@@ -44,4 +44,4 @@ Tests
 
 .. code-block:: console
 
-    pipenv run ./run-tests.sh
+    uv run ./run-tests.sh
