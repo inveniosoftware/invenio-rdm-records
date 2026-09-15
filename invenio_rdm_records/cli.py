@@ -292,7 +292,7 @@ def add_to_fixture(fixture):
     name (e.g. contributorsroles).
 
     Example:
-    pipenv run invenio rdm-records add-to-fixture contributorsroles
+    uv run invenio rdm-records add-to-fixture contributorsroles
     """
     click.secho("Adding or updating entries to fixtures...", fg="green")
 
