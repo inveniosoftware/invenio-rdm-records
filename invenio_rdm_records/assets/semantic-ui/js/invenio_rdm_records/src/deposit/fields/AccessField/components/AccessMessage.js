@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: 2020-2025 CERN.
  * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
  * SPDX-FileCopyrightText: 2025 KTH Royal Institute of Technology.
+ * SPDX-FileCopyrightText: 2026 University of Münster.
  * SPDX-License-Identifier: MIT
  */
 
