@@ -23,7 +23,11 @@ let config;
 
 beforeEach(() => {
   dispatch = jest.fn();
-  filesService = { getFileMetadata: jest.fn(), delete: jest.fn() };
+  filesService = {
+    getFileMetadata: jest.fn(),
+    delete: jest.fn(),
+    cancelQueuedUpload: jest.fn(),
+  };
   config = { service: { files: filesService } };
   jest.spyOn(console, "error").mockImplementation(() => {});
 });
