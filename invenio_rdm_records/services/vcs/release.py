@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 CERN.
+# SPDX-FileCopyrightText: 2023-2026 CERN.
 # SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
 # SPDX-License-Identifier: MIT
 
@@ -184,6 +184,17 @@ class RDMVCSRelease(VCSRelease):
             self.release_published()
             db.session.commit()
             return published_record
+
+    def _resolve_record_obj(self):
+        """Resolves the record object in one database query."""
+        if not self.db_release.record_id:
+            return None
+        try:
+            return current_rdm_records_service.record_cls.get_record(
+                self.db_release.record_id
+            )
+        except NoResultFound:
+            return None
 
     def _upload_files_to_draft(self, identity, draft, uow):
         """Upload files to draft."""
@@ -451,8 +462,12 @@ class RDMVCSRelease(VCSRelease):
     @property
     def badge_value(self):
         """Returns the badge value."""
-        if current_app.config.get("DATACITE_ENABLED"):
-            return self.record.data.get("pids", {}).get("doi", {}).get("identifier")
+        if not current_app.config.get("DATACITE_ENABLED"):
+            return None
+        record = self._resolve_record_obj()
+        if record is None:
+            return None
+        return record.get("pids", {}).get("doi", {}).get("identifier")
 
     def release_published(self):
         """Mark a release as published."""
