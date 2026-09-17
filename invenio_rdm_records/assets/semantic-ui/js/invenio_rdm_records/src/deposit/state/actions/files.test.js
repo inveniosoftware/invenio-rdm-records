@@ -65,6 +65,12 @@ describe("deleteFile", () => {
     expect(dispatch).toHaveBeenCalledWith(deletedSuccess);
   });
 
+  it("cancels an upload that is still waiting in the queue", async () => {
+    await dispatchAction(deleteFile({ name: "test.txt", links: null }));
+
+    expect(filesService.cancelQueuedUpload).toHaveBeenCalledWith("test.txt");
+  });
+
   it.each([404, 410])(
     "removes an entry of an unfinished upload that is gone (HTTP %s)",
     async (status) => {
