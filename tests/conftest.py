@@ -273,6 +273,10 @@ def app_config(app_config, mock_datacite_client):
     app_config["DATACITE_DATACENTER_SYMBOL"] = "TEST"
     # ...but fake it
     app_config["REQUESTS_REVIEWERS_ENABLED"] = True
+    # GitHub
+    app_config["GITHUB_RELEASE_CLASS"] = (
+        "invenio_rdm_records.services.github.release:RDMGithubRelease"
+    )
 
     app_config["RDM_PERSISTENT_IDENTIFIER_PROVIDERS"] = [
         # DataCite DOI provider with fake client

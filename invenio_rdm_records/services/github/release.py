@@ -12,6 +12,7 @@ from invenio_github.api import GitHubRelease
 from invenio_github.models import ReleaseStatus
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.uow import UnitOfWork
+from sqlalchemy.exc import NoResultFound
 
 from ...proxies import current_rdm_records_service
 from ...resources.serializers.ui import UIJSONSerializer
@@ -96,6 +97,17 @@ class RDMGithubRelease(GitHubRelease):
         try:
             return current_rdm_records_service.read(system_identity, recid.pid_value)
         except RecordDeletedException:
+            return None
+
+    def _resolve_record_obj(self):
+        """Resolves the record object in one database query."""
+        if not self.release_object.record_id:
+            return None
+        try:
+            return current_rdm_records_service.record_cls.get_record(
+                self.release_object.record_id
+            )
+        except NoResultFound:
             return None
 
     def _upload_files_to_draft(self, identity, draft, uow):
@@ -243,5 +255,9 @@ class RDMGithubRelease(GitHubRelease):
     @property
     def badge_value(self):
         """Returns the badge value."""
-        if current_app.config.get("DATACITE_ENABLED"):
-            return self.record.data.get("pids", {}).get("doi", {}).get("identifier")
+        if not current_app.config.get("DATACITE_ENABLED"):
+            return None
+        record = self._resolve_record_obj()
+        if record is None:
+            return None
+        return record.get("pids", {}).get("doi", {}).get("identifier")
