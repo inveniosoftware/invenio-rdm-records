@@ -8,6 +8,7 @@ import {
   FILE_DELETED_SUCCESS,
   FILE_DELETE_FAILED,
   FILE_DELETE_STARTED,
+  FILE_UPLOAD_ADDED,
   FILE_UPLOAD_FAILED,
   FILE_UPLOAD_FINISHED,
   FILE_UPLOAD_INITIALIZED,
@@ -45,6 +46,25 @@ describe("files reducer", () => {
     });
 
     expect(state.entries).toEqual({});
+  });
+
+  it("initializes an added upload", () => {
+    const links = { self: "/api/records/abcd-1234/draft/files/test.txt" };
+
+    const addedState = fileReducer(
+      {},
+      { type: FILE_UPLOAD_ADDED, payload: { filename: "test.txt" } }
+    );
+    const state = fileReducer(addedState, {
+      type: FILE_UPLOAD_INITIALIZED,
+      payload: { filename: "test.txt", links },
+    });
+
+    expect(state.entries["test.txt"]).toMatchObject({
+      name: "test.txt",
+      status: UploadState.pending,
+      links,
+    });
   });
 
   it.each([
