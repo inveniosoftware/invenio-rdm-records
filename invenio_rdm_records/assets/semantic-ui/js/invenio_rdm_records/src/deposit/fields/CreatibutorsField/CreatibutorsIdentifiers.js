@@ -5,74 +5,59 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { useFormikContext } from "formik";
 import { SelectField } from "react-invenio-forms";
-import _unickBy from "lodash/unionBy";
+import _get from "lodash/get";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-export class CreatibutorsIdentifiers extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedOptions: props.initialOptions,
-    };
-  }
+export function CreatibutorsIdentifiers({
+  initialOptions,
+  fieldPath,
+  label = i18next.t("Identifiers"),
+  placeholder = i18next.t("e.g. ORCID, ISNI or GND."),
+}) {
+  const { values } = useFormikContext();
+  const identifiers = _get(values, fieldPath);
 
-  handleIdentifierAddition = (e, { value }) => {
-    this.setState((prevState) => ({
-      selectedOptions: _unickBy(
-        [
-          {
-            text: value,
-            value: value,
-            key: value,
-          },
-          ...prevState.selectedOptions,
-        ],
-        "value"
-      ),
-    }));
-  };
-
-  valuesToOptions = (options) =>
+  const valuesToOptions = (options) =>
     options.map((option) => ({
       text: option,
       value: option,
       key: option,
     }));
 
-  handleChange = ({ data, formikProps }) => {
-    const { fieldPath } = this.props;
-    this.setState({
-      selectedOptions: this.valuesToOptions(data.value),
-    });
+  const handleChange = ({ data, formikProps }) => {
     formikProps.form.setFieldValue(fieldPath, data.value);
   };
 
-  render() {
-    const { fieldPath, label, placeholder } = this.props;
-    const { selectedOptions } = this.state;
-
-    return (
-      <SelectField
-        fieldPath={fieldPath}
-        label={label}
-        options={selectedOptions}
-        placeholder={placeholder}
-        noResultsMessage={i18next.t("Type the value of an identifier...")}
-        search
-        multiple
-        selection
-        allowAdditions
-        onChange={this.handleChange}
-        // `icon` is set to `null` in order to hide the dropdown default icon
-        icon={null}
-        onAddItem={this.handleIdentifierAddition}
-        optimized
-      />
+  const handleIdentifierAddition = ({ formikProps }, { value }) => {
+    formikProps.form.setFieldValue(
+      fieldPath,
+      Array.from(new Set([value, ..._get(formikProps.form.values, fieldPath, [])]))
     );
-  }
+  };
+
+  return (
+    <SelectField
+      fieldPath={fieldPath}
+      label={label}
+      options={
+        identifiers === undefined ? initialOptions : valuesToOptions(identifiers)
+      }
+      placeholder={placeholder}
+      noResultsMessage={i18next.t("Type the value of an identifier...")}
+      search
+      multiple
+      selection
+      allowAdditions
+      onChange={handleChange}
+      // `icon` is set to `null` in order to hide the dropdown default icon
+      icon={null}
+      onAddItem={handleIdentifierAddition}
+      optimized
+    />
+  );
 }
 
 CreatibutorsIdentifiers.propTypes = {
@@ -86,9 +71,4 @@ CreatibutorsIdentifiers.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   label: PropTypes.string,
   placeholder: PropTypes.string,
-};
-
-CreatibutorsIdentifiers.defaultProps = {
-  label: i18next.t("Identifiers"),
-  placeholder: i18next.t("e.g. ORCID, ISNI or GND."),
 };

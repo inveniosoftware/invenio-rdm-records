@@ -6,7 +6,7 @@
  */
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import React, { Component } from "react";
+import { useContext } from "react";
 import { connect } from "react-redux";
 import { connect as connectFormik } from "formik";
 import {
@@ -18,12 +18,16 @@ import { Button } from "semantic-ui-react";
 import _omit from "lodash/omit";
 import PropTypes from "prop-types";
 
-export class PreviewButtonComponent extends Component {
-  static contextType = DepositFormSubmitContext;
+export function PreviewButtonComponent({
+  depositFormHandleSubmit = undefined,
+  actionState = undefined,
+  formik,
+  ...ui
+}) {
+  const { setSubmitContext } = useContext(DepositFormSubmitContext);
 
-  handlePreview = (event, handleSubmit) => {
-    const { setSubmitContext } = this.context;
-    const { depositFormHandleSubmit } = this.props;
+  const handlePreview = (event, handleSubmit) => {
+    setSubmitContext(DepositFormSubmitActions.PREVIEW);
 
     setSubmitContext(DepositFormSubmitActions.PREVIEW);
 
@@ -34,37 +38,29 @@ export class PreviewButtonComponent extends Component {
     }
   };
 
-  render() {
-    const { actionState, formik, depositFormHandleSubmit, ...ui } = this.props;
-    const { handleSubmit, isSubmitting } = formik;
+  const { handleSubmit, isSubmitting } = formik;
 
-    const uiProps = _omit(ui, ["dispatch"]);
+  const uiProps = _omit(ui, ["dispatch"]);
 
-    return (
-      <Button
-        name="preview"
-        type="button"
-        disabled={isSubmitting}
-        onClick={(e) => this.handlePreview(e, handleSubmit)}
-        loading={isSubmitting && actionState === DRAFT_PREVIEW_STARTED}
-        icon="eye"
-        labelPosition="left"
-        content={i18next.t("Preview")}
-        {...uiProps}
-      />
-    );
-  }
+  return (
+    <Button
+      name="preview"
+      type="button"
+      disabled={isSubmitting}
+      onClick={(e) => handlePreview(e, handleSubmit)}
+      loading={isSubmitting && actionState === DRAFT_PREVIEW_STARTED}
+      icon="eye"
+      labelPosition="left"
+      content={i18next.t("Preview")}
+      {...uiProps}
+    />
+  );
 }
 
 PreviewButtonComponent.propTypes = {
   actionState: PropTypes.string,
   formik: PropTypes.object.isRequired,
   depositFormHandleSubmit: PropTypes.func,
-};
-
-PreviewButtonComponent.defaultProps = {
-  actionState: undefined,
-  depositFormHandleSubmit: undefined,
 };
 
 const mapStateToProps = (state) => ({

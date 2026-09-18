@@ -11,7 +11,7 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { useFormikContext, getIn } from "formik";
 import _get from "lodash/get";
 import PropTypes from "prop-types";
-import React, { Component, useState } from "react";
+import { useState } from "react";
 import Dropzone from "react-dropzone";
 import {
   Button,
@@ -26,7 +26,7 @@ import {
 } from "semantic-ui-react";
 import { humanReadableBytes, FeedbackLabel } from "react-invenio-forms";
 
-const FileTableHeader = ({ filesLocked }) => (
+const FileTableHeader = ({ filesLocked = false }) => (
   <Table.Header>
     <Table.Row>
       <Table.HeaderCell>
@@ -52,22 +52,20 @@ FileTableHeader.propTypes = {
   filesLocked: PropTypes.bool,
 };
 
-FileTableHeader.defaultProps = {
-  filesLocked: false,
-};
-
 const FileTableRow = ({
-  filesLocked,
-  file,
+  filesLocked = false,
+  file = undefined,
   deleteFile,
-  defaultPreview,
+  defaultPreview = undefined,
   setDefaultPreview,
-  decimalSizeDisplay,
-  fileError,
+  decimalSizeDisplay = false,
+  fileError = undefined,
+  fileActions = undefined,
 }) => {
   const [isCancelling, setIsCancelling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const isDefaultPreview = defaultPreview === file.name;
+  const fileAction = fileActions ? fileActions(file) : null;
 
   const handleDelete = async (file) => {
     setIsDeleting(true);
@@ -106,37 +104,53 @@ const FileTableRow = ({
               <br />
             </>
           )}
-          {file.uploadState.isPending ? (
-            <div className="mr-5 text-break">{file.name}</div>
-          ) : (
-            <a
-              href={_get(file, "links.content", "")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mr-5 text-break"
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+              }}
             >
-              {file.name}
-            </a>
-          )}
-          <br />
-          {(file.checksum && (
-            <div className="ui text-muted">
-              <span style={{ fontSize: "10px" }}>{file.checksum}</span>{" "}
-              <Popup
-                content={i18next.t(
-                  "This is the file fingerprint (MD5 checksum), which can be used to verify the file integrity."
-                )}
-                trigger={<Icon fitted name="help circle" size="small" />}
-                position="top center"
-              />
+              {file.uploadState.isPending ? (
+                <div className="text-break">{file.name}</div>
+              ) : (
+                <a
+                  href={_get(file, "links.content", "")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-break"
+                >
+                  {file.name}
+                </a>
+              )}
+              {(file.checksum && (
+                <div className="ui text-muted">
+                  <span style={{ fontSize: "10px" }}>{file.checksum}</span>{" "}
+                  <Popup
+                    content={i18next.t(
+                      "This is the file fingerprint (MD5 checksum), which can be used to verify the file integrity."
+                    )}
+                    trigger={<Icon fitted name="help circle" size="small" />}
+                    position="top center"
+                  />
+                </div>
+              )) || (
+                <div className="ui text-muted">
+                  <span style={{ fontSize: "10px" }}>
+                    {i18next.t("Checksum not yet calculated.")}
+                  </span>
+                </div>
+              )}
             </div>
-          )) || (
-            <div className="ui text-muted">
-              <span style={{ fontSize: "10px" }}>
-                {i18next.t("Checksum not yet calculated.")}
-              </span>{" "}
-            </div>
-          )}
+          </div>
+          {fileAction && fileAction}
         </div>
       </Table.Cell>
       <Table.Cell data-label={i18next.t("Size")} width={2}>
@@ -208,24 +222,17 @@ FileTableRow.propTypes = {
   setDefaultPreview: PropTypes.func.isRequired,
   decimalSizeDisplay: PropTypes.bool,
   fileError: PropTypes.object,
-};
-
-FileTableRow.defaultProps = {
-  filesLocked: false,
-  file: undefined,
-  defaultPreview: undefined,
-  decimalSizeDisplay: false,
-  fileError: undefined,
+  fileActions: PropTypes.func,
 };
 
 const FileUploadBox = ({
-  filesLocked,
-  filesList,
-  dragText,
-  hasError,
-  uploadButtonIcon,
-  uploadButtonText,
-  openFileDialog,
+  filesLocked = false,
+  filesList = [],
+  dragText = undefined,
+  hasError = false,
+  uploadButtonIcon = undefined,
+  uploadButtonText = undefined,
+  openFileDialog = null,
 }) =>
   !filesLocked && (
     <Segment
@@ -260,7 +267,7 @@ const FileUploadBox = ({
   );
 
 FileUploadBox.propTypes = {
-  filesLocked: PropTypes.bool.isRequired,
+  filesLocked: PropTypes.bool,
   filesList: PropTypes.array,
   hasError: PropTypes.bool,
   dragText: PropTypes.string,
@@ -269,20 +276,12 @@ FileUploadBox.propTypes = {
   openFileDialog: PropTypes.func,
 };
 
-FileUploadBox.defaultProps = {
-  filesList: undefined,
-  dragText: undefined,
-  uploadButtonIcon: undefined,
-  uploadButtonText: undefined,
-  openFileDialog: null,
-  hasError: false,
-};
-
 export const FilesListTable = ({
-  filesLocked,
-  filesList,
-  deleteFile,
-  decimalSizeDisplay,
+  filesLocked = false,
+  filesList = [],
+  deleteFile = undefined,
+  decimalSizeDisplay = undefined,
+  fileActions = undefined,
 }) => {
   const { errors, setFieldValue, values: formikDraft } = useFormikContext();
   const defaultPreview = _get(formikDraft, "files.default_preview", "");
@@ -303,6 +302,7 @@ export const FilesListTable = ({
               }
               decimalSizeDisplay={decimalSizeDisplay}
               fileError={getIn(errors, "files.entries." + file.name, undefined)}
+              fileActions={fileActions}
             />
           );
         })}
@@ -316,50 +316,56 @@ FilesListTable.propTypes = {
   filesList: PropTypes.array,
   deleteFile: PropTypes.func,
   decimalSizeDisplay: PropTypes.bool,
+  fileActions: PropTypes.func,
 };
 
-FilesListTable.defaultProps = {
-  filesLocked: undefined,
-  filesList: undefined,
-  deleteFile: undefined,
-  decimalSizeDisplay: undefined,
-};
-
-export class FileUploaderArea extends Component {
-  render() {
-    const { filesEnabled, dropzoneParams, filesList, filesLocked } = this.props;
-    return filesEnabled ? (
-      <Dropzone {...dropzoneParams} disabled={filesLocked}>
-        {({ getRootProps, getInputProps, open: openFileDialog }) => (
-          <Grid.Column width={16}>
-            <span {...getRootProps()}>
-              <input {...getInputProps()} />
-              {filesList.length !== 0 && (
-                <Grid.Column verticalAlign="middle">
-                  <FilesListTable {...this.props} />
-                </Grid.Column>
-              )}
-              <FileUploadBox {...this.props} openFileDialog={openFileDialog} />
-            </span>
-          </Grid.Column>
-        )}
-      </Dropzone>
-    ) : (
-      <Grid.Column width={16}>
-        <Segment basic padded="very" className="file-upload-area no-files">
-          <Grid textAlign="center">
-            <Grid.Row verticalAlign="middle">
-              <Grid.Column>
-                <Header size="medium">
-                  {i18next.t("This is a Metadata-only record.")}
-                </Header>
+export function FileUploaderArea({
+  filesEnabled,
+  dropzoneParams = undefined,
+  filesList = [],
+  filesLocked = false,
+  ...props
+}) {
+  return filesEnabled ? (
+    <Dropzone {...dropzoneParams} disabled={filesLocked}>
+      {({ getRootProps, getInputProps, open: openFileDialog }) => (
+        <Grid.Column width={16}>
+          <span {...getRootProps()}>
+            <input {...getInputProps()} />
+            {filesList.length !== 0 && (
+              <Grid.Column verticalAlign="middle">
+                <FilesListTable
+                  {...props}
+                  filesList={filesList}
+                  filesLocked={filesLocked}
+                />
               </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </Segment>
-      </Grid.Column>
-    );
-  }
+            )}
+            <FileUploadBox
+              {...props}
+              filesList={filesList}
+              filesLocked={filesLocked}
+              openFileDialog={openFileDialog}
+            />
+          </span>
+        </Grid.Column>
+      )}
+    </Dropzone>
+  ) : (
+    <Grid.Column width={16}>
+      <Segment basic padded="very" className="file-upload-area no-files">
+        <Grid textAlign="center">
+          <Grid.Row verticalAlign="middle">
+            <Grid.Column>
+              <Header size="medium">
+                {i18next.t("This is a Metadata-only record.")}
+              </Header>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </Segment>
+    </Grid.Column>
+  );
 }
 
 FileUploaderArea.propTypes = {
@@ -374,17 +380,5 @@ FileUploaderArea.propTypes = {
   uploadButtonIcon: PropTypes.string,
   uploadButtonText: PropTypes.string,
   decimalSizeDisplay: PropTypes.bool,
-};
-
-FileUploaderArea.defaultProps = {
-  deleteFile: undefined,
-  dragText: undefined,
-  dropzoneParams: undefined,
-  filesList: undefined,
-  filesLocked: false,
-  links: undefined,
-  setDefaultPreviewFile: undefined,
-  uploadButtonIcon: undefined,
-  uploadButtonText: undefined,
-  decimalSizeDisplay: undefined,
+  fileActions: PropTypes.func,
 };

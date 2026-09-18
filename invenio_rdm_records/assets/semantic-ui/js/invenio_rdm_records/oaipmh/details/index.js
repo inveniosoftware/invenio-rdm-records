@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "react";
 import ReactDOM from "react-dom";
 import _get from "lodash/get";
 import { OverridableContext, parametrize } from "react-overridable";

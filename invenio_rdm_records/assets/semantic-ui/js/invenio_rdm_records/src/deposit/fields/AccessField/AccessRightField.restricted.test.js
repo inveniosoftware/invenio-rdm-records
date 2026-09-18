@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "react";
 import { Formik } from "formik";
 import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";

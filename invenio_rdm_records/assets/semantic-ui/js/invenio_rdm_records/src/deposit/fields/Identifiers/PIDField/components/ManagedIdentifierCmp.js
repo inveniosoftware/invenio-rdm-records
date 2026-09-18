@@ -5,7 +5,7 @@
  */
 
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { useContext } from "react";
 import { Form } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { UnreservePIDBtn } from "./UnreservePIDBtn";
@@ -21,86 +21,79 @@ import { getFieldErrors } from "./helpers";
  * Render identifier field and reserve/unreserve
  * button components for managed PID.
  */
-class ManagedIdentifierComponent extends Component {
-  static contextType = DepositFormSubmitContext;
+function ManagedIdentifierComponent({
+  pidType,
+  actionState = "",
+  actionStateExtra = {},
+  btnLabelDiscardPID,
+  btnLabelGetPID,
+  disabled = false,
+  helpText = null,
+  identifier,
+  pidPlaceholder,
+  form,
+  fieldPath,
+}) {
+  const { setSubmitContext } = useContext(DepositFormSubmitContext);
 
-  handleReservePID = (event, formik) => {
-    const { pidType } = this.props;
-    const { setSubmitContext } = this.context;
+  const handleReservePID = (event, formik) => {
     setSubmitContext(DepositFormSubmitActions.RESERVE_PID, {
       pidType: pidType,
     });
     formik.handleSubmit(event);
   };
 
-  handleDiscardPID = (event, formik) => {
-    const { pidType } = this.props;
-    const { setSubmitContext } = this.context;
+  const handleDiscardPID = (event, formik) => {
     setSubmitContext(DepositFormSubmitActions.DISCARD_PID, {
       pidType: pidType,
     });
     formik.handleSubmit(event);
   };
 
-  render() {
-    const {
-      actionState,
-      actionStateExtra,
-      btnLabelDiscardPID,
-      btnLabelGetPID,
-      disabled,
-      helpText,
-      identifier,
-      pidPlaceholder,
-      pidType,
-      form,
-      fieldPath,
-    } = this.props;
-    const hasIdentifier = identifier !== "";
+  const hasIdentifier = identifier !== "";
 
-    const ReserveBtn = (
-      <ReservePIDBtn
-        disabled={disabled || hasIdentifier}
-        label={btnLabelGetPID}
-        loading={
-          actionState === RESERVE_PID_STARTED && actionStateExtra.pidType === pidType
-        }
-        handleReservePID={this.handleReservePID}
-        fieldError={getFieldErrors(form, fieldPath)}
-      />
-    );
+  const ReserveBtn = (
+    <ReservePIDBtn
+      disabled={disabled || hasIdentifier}
+      label={btnLabelGetPID}
+      loading={
+        actionState === RESERVE_PID_STARTED && actionStateExtra.pidType === pidType
+      }
+      handleReservePID={handleReservePID}
+      fieldError={getFieldErrors(form, fieldPath)}
+    />
+  );
 
-    const UnreserveBtn = (
-      <UnreservePIDBtn
-        disabled={disabled}
-        label={btnLabelDiscardPID}
-        handleDiscardPID={this.handleDiscardPID}
-        loading={
-          actionState === DISCARD_PID_STARTED && actionStateExtra.pidType === pidType
-        }
-        pidType={pidType}
-      />
-    );
+  const UnreserveBtn = (
+    <UnreservePIDBtn
+      disabled={disabled}
+      label={btnLabelDiscardPID}
+      handleDiscardPID={handleDiscardPID}
+      loading={
+        actionState === DISCARD_PID_STARTED && actionStateExtra.pidType === pidType
+      }
+      pidType={pidType}
+    />
+  );
 
-    return (
-      <>
-        <Form.Group inline>
-          {hasIdentifier ? (
-            <Form.Field>
-              <label>{identifier}</label>
-            </Form.Field>
-          ) : (
-            <Form.Field width={4}>
-              <Form.Input disabled value="" placeholder={pidPlaceholder} width={16} />
-            </Form.Field>
-          )}
+  return (
+    <>
+      <Form.Group inline>
+        {hasIdentifier ? (
+          <Form.Field>
+            <label>{identifier}</label>
+          </Form.Field>
+        ) : (
+          <Form.Field width={4}>
+            <Form.Input disabled value="" placeholder={pidPlaceholder} width={16} />
+          </Form.Field>
+        )}
 
-          <Form.Field>{identifier ? UnreserveBtn : ReserveBtn}</Form.Field>
-        </Form.Group>
-        {helpText && <label className="helptext">{helpText}</label>}
-      </>
-    );
-  }
+        <Form.Field>{identifier ? UnreserveBtn : ReserveBtn}</Form.Field>
+      </Form.Group>
+      {helpText && <label className="helptext">{helpText}</label>}
+    </>
+  );
 }
 
 ManagedIdentifierComponent.propTypes = {
@@ -116,14 +109,6 @@ ManagedIdentifierComponent.propTypes = {
   /* from Redux */
   actionState: PropTypes.string,
   actionStateExtra: PropTypes.object,
-};
-
-ManagedIdentifierComponent.defaultProps = {
-  disabled: false,
-  helpText: null,
-  /* from Redux */
-  actionState: "",
-  actionStateExtra: {},
 };
 
 const mapStateToProps = (state) => ({

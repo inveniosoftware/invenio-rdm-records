@@ -6,7 +6,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Button, Form } from "semantic-ui-react";
 import {
@@ -21,76 +20,78 @@ import { emptyAdditionalTitle } from "./initialValues";
 import { LanguagesField } from "../LanguagesField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-class AdditionalTitlesFieldComponent extends Component {
-  render() {
-    const { fieldPath, options, recordUI, helpText, addButtonLabel, optimized } =
-      this.props;
+function AdditionalTitlesFieldComponent({
+  fieldPath,
+  options = undefined,
+  recordUI = undefined,
+  helpText,
+  addButtonLabel = i18next.t("Add titles"),
+  optimized = true,
+}) {
+  return (
+    <ArrayField
+      addButtonLabel={addButtonLabel}
+      helpText={helpText}
+      defaultNewValue={emptyAdditionalTitle}
+      fieldPath={fieldPath}
+      className="additional-titles"
+    >
+      {({ arrayHelpers, indexPath }) => {
+        const fieldPathPrefix = `${fieldPath}.${indexPath}`;
+        const languagesInitialOptions =
+          recordUI?.additional_titles && recordUI.additional_titles[indexPath]?.lang
+            ? [recordUI.additional_titles[indexPath].lang]
+            : [];
 
-    return (
-      <ArrayField
-        addButtonLabel={addButtonLabel}
-        helpText={helpText}
-        defaultNewValue={emptyAdditionalTitle}
-        fieldPath={fieldPath}
-        className="additional-titles"
-      >
-        {({ arrayHelpers, indexPath }) => {
-          const fieldPathPrefix = `${fieldPath}.${indexPath}`;
-          const languagesInitialOptions =
-            recordUI?.additional_titles && recordUI.additional_titles[indexPath]?.lang
-              ? [recordUI.additional_titles[indexPath].lang]
-              : [];
+        return (
+          <GroupField fieldPath={fieldPath} optimized={optimized}>
+            <TextField
+              fieldPath={`${fieldPathPrefix}.title`}
+              label={i18next.t("Additional title")}
+              required
+              width={5}
+            />
+            <SelectField
+              fieldPath={`${fieldPathPrefix}.type`}
+              label={i18next.t("Type")}
+              optimized={optimized}
+              options={options.type}
+              required
+              width={5}
+            />
+            <LanguagesField
+              serializeSuggestions={(suggestions) =>
+                suggestions.map((item) => ({
+                  text: item.title_l10n,
+                  value: item.id,
+                  key: item.id,
+                }))
+              }
+              initialOptions={languagesInitialOptions}
+              fieldPath={`${fieldPathPrefix}.lang`}
+              label={i18next.t("Language")}
+              multiple={false}
+              placeholder={i18next.t("Select language")}
+              labelIcon={null}
+              clearable
+              selectOnBlur={false}
+              width={5}
+            />
 
-          return (
-            <GroupField fieldPath={fieldPath} optimized={optimized}>
-              <TextField
-                fieldPath={`${fieldPathPrefix}.title`}
-                label={i18next.t("Additional title")}
-                required
-                width={5}
+            <Form.Field>
+              <Button
+                aria-label={i18next.t("Remove field")}
+                className="close-btn"
+                icon="close"
+                type="button"
+                onClick={() => arrayHelpers.remove(indexPath)}
               />
-              <SelectField
-                fieldPath={`${fieldPathPrefix}.type`}
-                label={i18next.t("Type")}
-                optimized={optimized}
-                options={options.type}
-                required
-                width={5}
-              />
-              <LanguagesField
-                serializeSuggestions={(suggestions) =>
-                  suggestions.map((item) => ({
-                    text: item.title_l10n,
-                    value: item.id,
-                    key: item.id,
-                  }))
-                }
-                initialOptions={languagesInitialOptions}
-                fieldPath={`${fieldPathPrefix}.lang`}
-                label={i18next.t("Language")}
-                multiple={false}
-                placeholder={i18next.t("Select language")}
-                labelIcon={null}
-                clearable
-                selectOnBlur={false}
-                width={5}
-              />
-
-              <Form.Field>
-                <Button
-                  aria-label={i18next.t("Remove field")}
-                  className="close-btn"
-                  icon="close"
-                  type="button"
-                  onClick={() => arrayHelpers.remove(indexPath)}
-                />
-              </Form.Field>
-            </GroupField>
-          );
-        }}
-      </ArrayField>
-    );
-  }
+            </Form.Field>
+          </GroupField>
+        );
+      }}
+    </ArrayField>
+  );
 }
 
 AdditionalTitlesFieldComponent.propTypes = {
@@ -113,13 +114,6 @@ AdditionalTitlesFieldComponent.propTypes = {
   addButtonLabel: PropTypes.string,
   optimized: PropTypes.bool,
   ...fieldCommonProps,
-};
-
-AdditionalTitlesFieldComponent.defaultProps = {
-  options: undefined,
-  recordUI: undefined,
-  addButtonLabel: i18next.t("Add titles"),
-  optimized: true,
 };
 
 export const AdditionalTitlesField = showHideOverridable(
