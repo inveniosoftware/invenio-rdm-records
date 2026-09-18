@@ -57,7 +57,7 @@ def full_record_to_dict_signposting(full_record_to_dict, collections_size):
             "description": {
                 "en": "A description",
             },
-            "link": f"https://customlicense.org/licenses/by/{n + 1}.0/",
+            "link": f"https://customlicense.org/licenses/testé/{n + 1}.0/?testé=testé",
             "title": {
                 "en": "A custom license",
             },
@@ -202,9 +202,15 @@ def test_signposting_lvl2_serializer_full(
                     },
                 ],
                 "license": [
-                    {"href": "https://customlicense.org/licenses/by/1.0/"},
-                    {"href": "https://customlicense.org/licenses/by/2.0/"},
-                    {"href": "https://customlicense.org/licenses/by/3.0/"},
+                    {
+                        "href": "https://customlicense.org/licenses/test%C3%A9/1.0/?test%C3%A9=test%C3%A9"
+                    },
+                    {
+                        "href": "https://customlicense.org/licenses/test%C3%A9/2.0/?test%C3%A9=test%C3%A9"
+                    },
+                    {
+                        "href": "https://customlicense.org/licenses/test%C3%A9/3.0/?test%C3%A9=test%C3%A9"
+                    },
                     {"href": "https://creativecommons.org/licenses/by/4.0/legalcode"},
                     {"href": "https://creativecommons.org/licenses/by/5.0/legalcode"},
                     {"href": "https://creativecommons.org/licenses/by/6.0/legalcode"},
@@ -340,8 +346,8 @@ def test_signposting_lvl1_serializer_full_collections_size_ok(
         f'<{ui_url}/files/test%C3%A9_3.txt> ; rel="item" ; type="text/plain"',
         f'<{ui_url}/files/test%C3%A9_4.txt> ; rel="item" ; type="text/plain"',
         f'<{ui_url}/files/test%C3%A9_5.txt> ; rel="item" ; type="text/plain"',
-        '<https://customlicense.org/licenses/by/1.0/> ; rel="license"',
-        '<https://customlicense.org/licenses/by/2.0/> ; rel="license"',
+        '<https://customlicense.org/licenses/test%C3%A9/1.0/?test%C3%A9=test%C3%A9> ; rel="license"',
+        '<https://customlicense.org/licenses/test%C3%A9/2.0/?test%C3%A9=test%C3%A9> ; rel="license"',
         '<https://creativecommons.org/licenses/by/3.0/legalcode> ; rel="license"',
         '<https://creativecommons.org/licenses/by/4.0/legalcode> ; rel="license"',
         '<https://creativecommons.org/licenses/by/5.0/legalcode> ; rel="license"',
