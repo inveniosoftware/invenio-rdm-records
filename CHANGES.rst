@@ -9,6 +9,11 @@
 Changes
 =======
 
+Version v32.3.2 (released 2026-09-22)
+
+- fix(iiif): handle DelegateError for unsupported file types
+- fix(errors): fix incorrect constructor call
+
 Version v32.3.1 (released 2026-09-08)
 
 - fix(custom-fields): add correct landing page search attribute
