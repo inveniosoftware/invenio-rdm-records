@@ -12,7 +12,7 @@ Version v35.1.0 (released 2026-09-21)
 
 - fix(github): resolve badge DOI in 1 query
     * `RDMGithubRelease.badge_value` was doing 110 SQL
-    statements per badge before, now 1.
+      statements per badge before, now 1.
 
 - refactor(schemas): initialize schemas in the service constructors
     * instead of freshly initializing marshmallow schemas inside fresh
