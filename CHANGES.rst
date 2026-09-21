@@ -8,6 +8,108 @@
 Changes
 =======
 
+Version v35.1.0 (released 2026-09-21)
+
+- fix(github): resolve badge DOI in 1 query
+    * `RDMGithubRelease.badge_value` was doing 110 SQL
+    statements per badge before, now 1.
+
+- refactor(schemas): initialize schemas in the service constructors
+    * instead of freshly initializing marshmallow schemas inside fresh
+      service schema wrappers each time the `schema` property is called, we
+      initialize the schema and its wrapper in the services' constructors
+      and simply reuse the objects over the lifetime of the service
+
+- refactor(schema): optimize RDM record schemas for reusability
+    * remove `partial()` calls from schemas because they are not needed and
+      can't be used with DeepFriedMarshmallow
+    * some of them were just for mild convenience improvements
+    * others could be replaced with lambda functions
+
+- fix(performance): replace `deepcopy()` in UI serialization
+    * `deepcopy()` was very expensive with large lists of creators, so we
+      use the simplified copy mechanism here
+
+- fix(performance): replace deepcopy in search dumper with a simpler copy
+    * `deepcopy()` is quite expensive, and we generally don't need its
+      entire power for our purposes
+    * instead, we provide our own simpler variant that doesn't consider
+      complex objects
+
+- fix(tombstone): avoid side effects from shallow copies in removal reason
+    * with the recent move away from costly deep copies of the record
+      metadata JSON on read operations, it can now happen that some
+      dictionary data copy operations now operate on shallow copies that
+      need some extra care to avoid side effects
+    * one of these places was a deleted record's removal reason on the
+      tombstone page that was undesirably subject to relation expansion
+    * this unwanted side effect could be avoided by simply creating a new
+      dictionary with only the desired values in it
+
+- fix(performance): use a less deep copy for record metadata {de,en}coding
+    * experiments with the profiler have shown that deep copying of data on
+      read/write operations can have a significant impact on performance in
+      some cases
+    * since we don't generally fetch data from records and immediately
+      manipulate it without further consideration, we can be a bit more
+      aggressive here
+
+- feat(utils): add simplified deepcopy implementations to utils
+    * we're using `deepcopy()` quite a lot in InvenioRDM where it's not
+      really necessary; we often only want to make sure that dictionary
+      operations don't apply side effects elsewhere
+    * `deepcopy()` is thus often overly costly since it also copies complex
+      data structures recursively
+    * for such cases we provide `simple_deepcopy()` and
+      `very_simple_deepcopy()` that do the job for our use cases but are
+      less expensive
+
+- fix(version): text for disabled version depends on flag
+    Pass the config flag RDM_ALLOW_EXTERNAL_DOI_VERSIONING value to the
+    frontend so the message for disabled new versions gives more details.
+
+- deposit: update the text of disabled new version btn
+
+- fix(signposting): fix custom licenses links percent-encoding (#2435)
+    * fix(signposting): fix custom licenses links percent-encoding
+
+- feat(notifications): add NOTIFICATIONS_SHOW_EMOJIS config option
+    Introduce a new config variable `NOTIFICATIONS_SHOW_EMOJIS` (default: `True`)
+    that allows operators to disable emoji prefixes in notification email subject
+    lines. Set to `False` in `invenio.cfg` to send emoji-free subjects.
+
+    All 17 affected templates are updated: the emoji is extracted from the
+    translatable string and rendered conditionally, which also improves i18n
+    hygiene by keeping non-linguistic characters out of translation catalogs.
+
+    Closes #2240
+
+- fix: don't leak if restricted record drafts exists
+    fix: update tests
+
+- chore: replace pipenv by uv
+
+- fix(custom-fields): add correct landing page search attribute
+    * closes https://github.com/inveniosoftware/invenio-app-rdm/issues/3575
+    * closes https://github.com/inveniosoftware/invenio-app-rdm/issues/2833
+
+- fix(quota): hide labels in narrow bars
+    * Hide quota bar labels that cannot fit inside
+      their segment to prevent overlapping values.
+    * Keep all quota values available in the legend.
+
+- feat(quota): refactor quota management logic
+    * Extract quota state and validation into a reusable hook.
+    * Add quota management to the Uppy uploader.
+    * closes https://github.com/inveniosoftware/invenio-app-rdm/issues/3553
+
+- fix(access): retain expiry on link updates
+    * Preserve an existing link expiry when a
+      partial update omits the expiration date.
+    * closes: https://github.com/inveniosoftware/invenio-app-rdm/issues/3557
+
+- feat(translations): add Swedish translations for date, relation, and resource types
+
 Version v35.0.2 (released 2026-08-27)
 
 - fix(internal_note): fix update wiping out the field value if sufficient permissions
