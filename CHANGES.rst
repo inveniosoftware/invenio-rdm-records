@@ -14,6 +14,13 @@
 Changes
 =======
 
+Version v20.3.2 (released 2026-09-22)
+
+- fix(iiif): handle DelegateError for unsupported file types 
+- fix(errors): fix incorrect constructor call
+- tests: update citation for bug fixes in citeproc-py 0.10.7
+- fix(cache): pin flask-caching to avoid redis cache name change
+
 Version v20.3.1 (released 2026-07-10)
 
 - fix(iiif): add handlers for more possible IIIF errors
