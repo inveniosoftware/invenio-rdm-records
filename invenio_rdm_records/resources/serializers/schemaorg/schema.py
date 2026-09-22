@@ -435,9 +435,16 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         return self_url or missing
 
     def get_dates(self, obj):
-        """Get other dates of the record."""
+        """Get other dates of the record.
+
+        Dates of type ``coverage`` are left out: schema.org defines
+        ``temporal`` as a fallback for when a more specific property is not
+        known to be appropriate, and for those dates ``temporalCoverage`` is.
+        """
         dates = []
         for date in obj["metadata"].get("dates", []):
+            if py_.get(date, "type.id") == "coverage":
+                continue
             try:
                 parsed_date = parse_edtf(date["date"])
                 dates.append(str(parsed_date))

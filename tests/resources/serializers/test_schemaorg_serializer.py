@@ -209,8 +209,8 @@ def test_schemaorg_serializer_temporal_coverage(running_app, full_record_to_dict
     assert "temporalCoverage" not in without_coverage
     assert without_coverage["temporal"] == ["1939/1945"]
 
-    # A coverage date fills temporalCoverage, and "temporal" keeps carrying
-    # every date on the record as before.
+    # A coverage date fills temporalCoverage and is kept out of "temporal",
+    # which carries the record's other dates.
     record = deepcopy(full_record_to_dict)
     record["metadata"]["dates"].append(
         {
@@ -222,7 +222,7 @@ def test_schemaorg_serializer_temporal_coverage(running_app, full_record_to_dict
     with_coverage = serializer.dump_obj(record)
 
     assert with_coverage["temporalCoverage"] == "1815/1830"
-    assert with_coverage["temporal"] == ["1939/1945", "1815/1830"]
+    assert with_coverage["temporal"] == ["1939/1945"]
 
     # Several coverage dates are carried as a list.
     record["metadata"]["dates"].append(
@@ -234,3 +234,18 @@ def test_schemaorg_serializer_temporal_coverage(running_app, full_record_to_dict
     with_two = serializer.dump_obj(record)
 
     assert with_two["temporalCoverage"] == ["1815/1830", "1900"]
+    assert with_two["temporal"] == ["1939/1945"]
+
+    # A record whose only date is a coverage date has no "temporal" at all,
+    # rather than an empty list.
+    only_coverage = deepcopy(full_record_to_dict)
+    only_coverage["metadata"]["dates"] = [
+        {
+            "date": "1815/1830",
+            "type": {"id": "coverage", "title": {"en": "Coverage"}},
+        }
+    ]
+    serialized = serializer.dump_obj(only_coverage)
+
+    assert serialized["temporalCoverage"] == "1815/1830"
+    assert "temporal" not in serialized
