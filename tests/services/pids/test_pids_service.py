@@ -559,6 +559,77 @@ def test_pids_records_updates_external_to_managed(
         provider.get(pid_value=old_doi["identifier"], pid_provider=old_doi["provider"])
 
 
+def test_pids_records_updates_external_to_no_pid(
+    running_app, search_clear, minimal_record
+):
+    """Removing an optional external DOI on publish must free it in pidstore."""
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = False
+    service = current_rdm_records.records_service
+    superuser_identity = running_app.superuser_identity
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    try:
+        record = _create_and_publish_external(
+            service, provider, superuser_identity, minimal_record
+        )
+        old_doi = record["pids"]["doi"]["identifier"]
+        oai = record["pids"]["oai"]
+
+        # remove external doi only (keep oai) and publish
+        draft = service.edit(superuser_identity, record.id)
+        draft["pids"].pop("doi")
+        draft = service.update_draft(
+            id_=draft.id, identity=superuser_identity, data=draft.data
+        )
+        assert not draft["pids"].get("doi")
+        assert draft["pids"]["oai"] == oai
+        record = service.publish(superuser_identity, draft.id)
+        assert not record["pids"].get("doi")
+        assert record["pids"]["oai"] == oai
+
+        # the old external should be completely deleted and reusable
+        with pytest.raises(PIDDoesNotExistError):
+            provider.get(pid_value=old_doi, pid_provider="external")
+
+        data = deepcopy(minimal_record)
+        data["pids"]["doi"] = {"identifier": old_doi, "provider": "external"}
+        draft = service.create(superuser_identity, data)
+        record = service.publish(superuser_identity, draft.id)
+        assert record["pids"]["doi"]["identifier"] == old_doi
+    finally:
+        running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
+
+
+def test_pids_records_updates_managed_to_no_pid_optional(
+    running_app, search_clear, minimal_record
+):
+    """Removing an optional managed DOI must not discard the reserved PID."""
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = False
+    service = current_rdm_records.records_service
+    superuser_identity = running_app.superuser_identity
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    try:
+        record = _create_and_publish_managed(
+            service, provider, superuser_identity, minimal_record
+        )
+        doi = record["pids"]["doi"]["identifier"]
+
+        # manager can clear optional DOI from the draft and publish
+        draft = service.edit(superuser_identity, record.id)
+        draft["pids"].pop("doi")
+        draft = service.update_draft(
+            id_=draft.id, identity=superuser_identity, data=draft.data
+        )
+        assert not draft["pids"].get("doi")
+        record = service.publish(superuser_identity, draft.id)
+        assert not record["pids"].get("doi")
+
+        # managed DOI stays in the PID store (cannot discard reserved/registered)
+        pid = provider.get(pid_value=doi)
+        assert pid.status in [PIDStatus.RESERVED, PIDStatus.REGISTERED]
+    finally:
+        running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
+
+
 def test_pids_records_updates_managed_to_external_fail(
     running_app,
     search_clear,
