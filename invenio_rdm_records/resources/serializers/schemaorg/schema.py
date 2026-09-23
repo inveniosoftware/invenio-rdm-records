@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2021 Northwestern University.
 # SPDX-FileCopyrightText: 2023-2025 Graz University of Technology.
 # SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
+# SPDX-FileCopyrightText: 2026 EcoDeco AS.
 # SPDX-License-Identifier: MIT
 
 """Schemaorg based Schema for Invenio RDM Records."""

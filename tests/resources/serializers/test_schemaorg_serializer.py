@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2023-2024 CERN.
 # SPDX-FileCopyrightText: 2021 Caltech.
 # SPDX-FileCopyrightText: 2021 Northwestern University.
+# SPDX-FileCopyrightText: 2026 EcoDeco AS.
 # SPDX-License-Identifier: MIT
 
 """Resources serializers tests."""
