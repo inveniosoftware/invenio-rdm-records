@@ -19,11 +19,10 @@ from invenio_rdm_records.services.errors import (
 )
 
 
-def test_minimal_draft_creation(running_app, search_clear, minimal_record):
-    superuser_identity = running_app.superuser_identity
+def test_minimal_draft_creation(identity_simple, search_clear, minimal_record):
     service = current_rdm_records.records_service
 
-    record_item = service.create(superuser_identity, minimal_record)
+    record_item = service.create(identity_simple, minimal_record)
     record_dict = record_item.to_dict()
 
     assert record_dict["metadata"]["resource_type"] == {
@@ -32,8 +31,7 @@ def test_minimal_draft_creation(running_app, search_clear, minimal_record):
     }
 
 
-def test_draft_w_languages_creation(running_app, search_clear, minimal_record):
-    superuser_identity = running_app.superuser_identity
+def test_draft_w_languages_creation(identity_simple, search_clear, minimal_record):
     service = current_rdm_records.records_service
     minimal_record["metadata"]["languages"] = [
         {
@@ -41,7 +39,7 @@ def test_draft_w_languages_creation(running_app, search_clear, minimal_record):
         }
     ]
 
-    record_item = service.create(superuser_identity, minimal_record)
+    record_item = service.create(identity_simple, minimal_record)
     record_dict = record_item.to_dict()
 
     assert record_dict["metadata"]["languages"] == [
@@ -49,27 +47,30 @@ def test_draft_w_languages_creation(running_app, search_clear, minimal_record):
     ]
 
 
-# Test restricted record with doi creation
+def test_publish_full_record(identity_simple, search_clear, enhanced_full_record):
+    """Simple test to publish a record with all fields filled in."""
+    service = current_rdm_records.records_service
+    draft = service.create(identity_simple, enhanced_full_record)
+    record = service.publish(id_=draft.id, identity=identity_simple)
+    assert record["status"] == "published"
 
 
 def test_publish_public_record_with_default_doi(
-    running_app, search_clear, minimal_record, uploader
+    identity_simple, search_clear, minimal_record, uploader
 ):
-    superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
-    draft = service.create(superuser_identity, minimal_record)
-    record = service.publish(id_=draft.id, identity=superuser_identity)
+    draft = service.create(identity_simple, minimal_record)
+    record = service.publish(id_=draft.id, identity=identity_simple)
     assert "doi" in record._record.pids
 
 
 def test_publish_public_record_with_optional_doi(
-    running_app, search_clear, minimal_record
+    running_app, identity_simple, search_clear, minimal_record
 ):
     running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = False
-    superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
-    draft = service.create(superuser_identity, minimal_record)
-    record = service.publish(id_=draft.id, identity=superuser_identity)
+    draft = service.create(identity_simple, minimal_record)
+    record = service.publish(id_=draft.id, identity=identity_simple)
     assert "doi" not in record._record.pids
     assert "doi" not in record._record.parent.pids
     # Reset the running_app config for next tests
@@ -266,66 +267,52 @@ def test_delete_draft_discard_managed_pids_when_doi_optional(
     running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
 
 
-def test_publish_public_record_with_default_doi(
-    running_app, search_clear, minimal_record, uploader
-):
-    superuser_identity = running_app.superuser_identity
-    service = current_rdm_records.records_service
-    draft = service.create(superuser_identity, minimal_record)
-    record = service.publish(id_=draft.id, identity=superuser_identity)
-    assert "doi" in record._record.pids
-
-
 def test_publish_restricted_record_without_default_doi(
-    running_app, search_clear, minimal_restricted_record
+    identity_simple, search_clear, minimal_restricted_record
 ):
-    superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
-    draft = service.create(superuser_identity, minimal_restricted_record)
-    record = service.publish(id_=draft.id, identity=superuser_identity)
+    draft = service.create(identity_simple, minimal_restricted_record)
+    record = service.publish(id_=draft.id, identity=identity_simple)
     assert (
         "doi" not in record._record.pids
     )  # Restricted records do not create by default a doi
 
 
 def test_publish_restricted_record_with_external_doi(
-    running_app, search_clear, minimal_restricted_record
+    identity_simple, search_clear, minimal_restricted_record
 ):
-    superuser_identity = running_app.superuser_identity
     minimal_restricted_record["pids"]["doi"] = {
         "identifier": "10.1235/rdm.5678",
         "provider": "external",
     }
     service = current_rdm_records.records_service
-    draft = service.create(superuser_identity, minimal_restricted_record)
-    record = service.publish(id_=draft.id, identity=superuser_identity)
+    draft = service.create(identity_simple, minimal_restricted_record)
+    record = service.publish(id_=draft.id, identity=identity_simple)
     assert "doi" in record._record.pids
     assert record._record.pids["doi"]["identifier"] == "10.1235/rdm.5678"
     assert record._record.pids["doi"]["provider"] == "external"
 
 
-def test_embargo_lift_creates_doi(running_app, search_clear, embargoed_record):
-    superuser_identity = running_app.superuser_identity
+def test_embargo_lift_creates_doi(identity_simple, search_clear, embargoed_record):
     service = current_rdm_records.records_service
     assert "doi" not in embargoed_record._record.pids
-    service.lift_embargo(_id=embargoed_record["id"], identity=superuser_identity)
+    service.lift_embargo(_id=embargoed_record["id"], identity=identity_simple)
     record_lifted = service.record_cls.pid.resolve(embargoed_record["id"])
     assert "doi" in record_lifted.pids
 
 
 def test_public_record_to_restricted_keeps_doi(
-    running_app, search_clear, minimal_record
+    identity_simple, search_clear, minimal_record
 ):
-    superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
-    draft = service.create(superuser_identity, minimal_record)
-    record = service.publish(id_=draft.id, identity=superuser_identity)
+    draft = service.create(identity_simple, minimal_record)
+    record = service.publish(id_=draft.id, identity=identity_simple)
     assert "doi" in record._record.pids
 
-    draft = service.edit(superuser_identity, record.id)
+    draft = service.edit(identity_simple, record.id)
     draft["access"]["record"] = "restricted"
-    draft = service.update_draft(superuser_identity, draft.id, draft.data)
-    record = service.publish(superuser_identity, draft.id)
+    draft = service.update_draft(identity_simple, draft.id, draft.data)
+    record = service.publish(identity_simple, draft.id)
     assert "doi" in record._record.pids
 
 
@@ -336,7 +323,7 @@ def test_embargo_lift_without_draft(embargoed_files_record, running_app, search_
     record = embargoed_files_record
     service = current_rdm_records.records_service
 
-    service.lift_embargo(_id=record["id"], identity=running_app.superuser_identity)
+    service.lift_embargo(_id=record["id"], identity=running_app.identity_simple)
 
     record_lifted = service.record_cls.pid.resolve(record["id"])
     assert record_lifted.access.embargo.active is False
@@ -346,15 +333,15 @@ def test_embargo_lift_without_draft(embargoed_files_record, running_app, search_
 
 
 def test_embargo_lift_with_draft(
-    embargoed_files_record, search_clear, superuser_identity
+    embargoed_files_record, search_clear, identity_simple
 ):
     record = embargoed_files_record
     service = current_rdm_records.records_service
 
     # Edit a draft
-    ongoing_draft = service.edit(id_=record["id"], identity=superuser_identity)
+    ongoing_draft = service.edit(id_=record["id"], identity=identity_simple)
 
-    service.lift_embargo(_id=record["id"], identity=superuser_identity)
+    service.lift_embargo(_id=record["id"], identity=identity_simple)
     record_lifted = service.record_cls.pid.resolve(record["id"])
     draft_lifted = service.draft_cls.pid.resolve(ongoing_draft["id"])
 
@@ -368,13 +355,13 @@ def test_embargo_lift_with_draft(
 
 
 def test_embargo_lift_with_updated_draft(
-    embargoed_files_record, superuser_identity, search_clear
+    embargoed_files_record, identity_simple, search_clear
 ):
     record = embargoed_files_record
     service = current_rdm_records.records_service
 
     # This draft simulates an existing one while lifting the record
-    draft = service.edit(id_=record["id"], identity=superuser_identity).data
+    draft = service.edit(id_=record["id"], identity=identity_simple).data
 
     # Change record's title and access field to be restricted
     draft["metadata"]["title"] = "Record modified by the user"
@@ -382,10 +369,10 @@ def test_embargo_lift_with_updated_draft(
     draft["access"]["embargo"] = dict(active=False, until=None, reason=None)
     # Update the ongoing draft with the new data simulating the user's input
     ongoing_draft = service.update_draft(
-        id_=draft["id"], identity=superuser_identity, data=draft
+        id_=draft["id"], identity=identity_simple, data=draft
     )
 
-    service.lift_embargo(_id=record["id"], identity=superuser_identity)
+    service.lift_embargo(_id=record["id"], identity=identity_simple)
     record_lifted = service.record_cls.pid.resolve(record["id"])
     draft_lifted = service.draft_cls.pid.resolve(ongoing_draft["id"])
 
@@ -398,8 +385,7 @@ def test_embargo_lift_with_updated_draft(
     assert draft_lifted.access.protection.record == "public"
 
 
-def test_embargo_lift_with_error(running_app, search_clear, minimal_record):
-    superuser_identity = running_app.superuser_identity
+def test_embargo_lift_with_error(identity_simple, search_clear, minimal_record):
     service = current_rdm_records.records_service
     # Add embargo to record
     minimal_record["access"]["files"] = "restricted"
@@ -407,12 +393,12 @@ def test_embargo_lift_with_error(running_app, search_clear, minimal_record):
     minimal_record["access"]["embargo"] = dict(
         active=True, until="3220-06-01", reason=None
     )
-    draft = service.create(superuser_identity, minimal_record)
-    record = service.publish(id_=draft.id, identity=superuser_identity)
+    draft = service.create(identity_simple, minimal_record)
+    record = service.publish(id_=draft.id, identity=identity_simple)
 
     # Record should not be lifted since it didn't expire (until 3220)
     with pytest.raises(EmbargoNotLiftedError):
-        service.lift_embargo(_id=record["id"], identity=superuser_identity)
+        service.lift_embargo(_id=record["id"], identity=identity_simple)
 
 
 def test_search_sort_verified_enabled(
