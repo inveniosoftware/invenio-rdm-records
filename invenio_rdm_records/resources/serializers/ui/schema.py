@@ -30,6 +30,7 @@ from marshmallow_utils.fields import (
     StrippedHTML,
 )
 from marshmallow_utils.fields.babel import gettext_from_dict
+from marshmallow_utils.html import strip_html
 from pyparsing import ParseException
 
 from ....services.request_policies import RDMRecordDeletionPolicy
@@ -279,9 +280,16 @@ def compute_publishing_information(obj):
     def _format_thesis(thesis):
         """Formats a thesis entry into a string based on its attributes."""
         if not isinstance(thesis, dict):
-            return thesis
+            return strip_html(thesis) if isinstance(thesis, str) else thesis
         university = thesis.get("university")
+        if university:
+            university = strip_html(university)
         department = thesis.get("department")
+        if department:
+            department = strip_html(department)
+        thesis_type = thesis.get("type")
+        if thesis_type:
+            thesis_type = strip_html(thesis_type)
         if university and department:
             university = f"{university} ({department})"
         elif university is None:
@@ -292,7 +300,7 @@ def compute_publishing_information(obj):
         date_defended = thesis.get("date_defended")
         defended = f"{_('Defended: ')}{date_defended}" if date_defended else None
 
-        fields = [university, thesis.get("type"), submitted, defended]
+        fields = [university, thesis_type, submitted, defended]
         return ", ".join(filter(None, fields))
 
     attr = "custom_fields"
