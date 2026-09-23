@@ -29,7 +29,10 @@ CODEMETA_CUSTOM_FIELDS = [
     KeywordCF(
         name="code:codeRepository",
         field_args={
-            "validate": validate.URL(),
+            "validate": [
+                validate.URL(),
+                validate.Regexp(r"^[^<>]*$", error=_("No angle brackets allowed.")),
+            ],
             "error_messages": {"validate": _("You must provide a valid URL.")},
         },
     ),
