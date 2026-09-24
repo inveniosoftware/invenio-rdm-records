@@ -4,6 +4,8 @@
 
 """RDM record schema utilities."""
 
+from functools import partial
+
 from marshmallow import Schema, fields
 from marshmallow.schema import SchemaMeta
 from marshmallow_utils.fields import NestedAttribute
@@ -24,6 +26,14 @@ def dump_empty(schema_or_field):
         # Schema classes need to be instantiated to get .fields
         schema = schema_or_field()
         return {k: dump_empty(v) for (k, v) in schema.fields.items()}
+    if isinstance(schema_or_field, partial):
+        # Some Nested fields pass a factory (functools.partial) instead of
+        # a Schema class/instance directly, e.g.
+        # custom_fields = NestedAttribute(
+        #     partial(CustomFieldsSchema, fields_var="RDM_CUSTOM_FIELDS")
+        # )
+        # Calling it produces the actual Schema instance we can recurse into.
+        return dump_empty(schema_or_field())
     if isinstance(schema_or_field, fields.List):
         field = schema_or_field
         return [dump_empty(field.inner)]
