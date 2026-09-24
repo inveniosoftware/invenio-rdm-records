@@ -18,6 +18,7 @@ from datacite.errors import (
     DataCiteServerError,
 )
 from flask import current_app
+from invenio_db import db
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
 
@@ -189,14 +190,16 @@ class DataCitePIDProvider(PIDProvider):
         if not local_success:
             return False
 
+        doi_value = pid.pid_value
         try:
             doc = self.serializer.dump_obj(record)
             url = kwargs["url"]
-            self.client.api.public_doi(metadata=doc, url=url, doi=pid.pid_value)
+            db.session.commit()
+            self.client.api.public_doi(metadata=doc, url=url, doi=doi_value)
             return True
         except DataCiteError as e:
             current_app.logger.warning(
-                f"DataCite provider error when registering DOI for {pid.pid_value}"
+                f"DataCite provider error when registering DOI for {doi_value}"
             )
             self._log_errors(e)
 
@@ -217,18 +220,21 @@ class DataCitePIDProvider(PIDProvider):
         elif record["access"]["record"] == "restricted":
             hide = True
 
+        doi_value = pid.pid_value
         try:
             if hide:
-                self.client.api.hide_doi(doi=pid.pid_value)
+                db.session.commit()
+                self.client.api.hide_doi(doi=doi_value)
             else:
                 doc = self.serializer.dump_obj(record)
                 doc["event"] = (
                     "publish"  # Required for DataCite to make the DOI findable in the case it was hidden before. See https://support.datacite.org/docs/how-do-i-make-a-findable-doi-with-the-rest-api
                 )
-                self.client.api.update_doi(metadata=doc, doi=pid.pid_value, url=url)
+                db.session.commit()
+                self.client.api.update_doi(metadata=doc, doi=doi_value, url=url)
         except DataCiteError as e:
             current_app.logger.warning(
-                f"DataCite provider error when updating DOI for {pid.pid_value}"
+                f"DataCite provider error when updating DOI for {doi_value}"
             )
             self._log_errors(e)
 
@@ -242,7 +248,9 @@ class DataCitePIDProvider(PIDProvider):
     def restore(self, pid, **kwargs):
         """Restore previously deactivated DOI."""
         try:
-            self.client.api.show_doi(pid.pid_value)
+            doi_value = pid.pid_value
+            db.session.commit()
+            self.client.api.show_doi(doi_value)
         except DataCiteNotFoundError as e:
             if not current_app.config["DATACITE_TEST_MODE"]:
                 raise e
@@ -254,14 +262,17 @@ class DataCitePIDProvider(PIDProvider):
         Otherwise, also it's deleted also remotely.
         :returns: `True` if is deleted successfully.
         """
+        doi_value = pid.pid_value
         try:
             if pid.is_reserved():  # Delete only works for draft DOIs
-                self.client.api.delete_doi(pid.pid_value)
+                db.session.commit()
+                self.client.api.delete_doi(doi_value)
             elif pid.is_registered():
-                self.client.api.hide_doi(pid.pid_value)
+                db.session.commit()
+                self.client.api.hide_doi(doi_value)
         except DataCiteError as e:
             current_app.logger.warning(
-                f"DataCite provider error when deleting DOI for {pid.pid_value}"
+                f"DataCite provider error when deleting DOI for {doi_value}"
             )
             self._log_errors(e)
 
