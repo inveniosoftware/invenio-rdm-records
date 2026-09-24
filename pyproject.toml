@@ -172,6 +172,11 @@ tests = [
   "tripoli>=2.0.0",
 ]
 
+[dependency-groups]
+dev = [
+  "invenio-rdm-records[tests,opensearch2]",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
