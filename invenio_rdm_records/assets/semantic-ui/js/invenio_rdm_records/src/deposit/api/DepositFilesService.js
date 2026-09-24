@@ -13,6 +13,7 @@ import { UploadState } from "../state/reducers/files";
 class UploaderQueue {
   currents = [];
   pending = [];
+  cancelled = new Set();
 
   put(initializeUploadURL, file) {
     this.pending.push({
@@ -36,11 +37,40 @@ class UploaderQueue {
   }
 
   markCompleted(file) {
+    this.cancelled.delete(file);
     const index = this.currents.indexOf(file);
     if (index >= 0) {
       // remove from the current
       this.currents.splice(index, 1);
     }
+  }
+
+  // Drops an upload that hasn't started yet, returning whether it was found.
+  remove(fileName) {
+    const matchesName = (file) => file.name.normalize() === fileName?.normalize();
+    const index = this.pending.findIndex((pendingUpload) =>
+      matchesName(pendingUpload.file)
+    );
+
+    if (index >= 0) {
+      this.pending.splice(index, 1);
+      return true;
+    }
+
+    // An upload already being initialized can only be discarded once that finishes.
+    const startingUpload = this.currents.find(matchesName);
+
+    if (startingUpload) {
+      this.cancelled.add(startingUpload);
+      return true;
+    }
+
+    return false;
+  }
+
+  // One-shot check, the cancellation is forgotten once read.
+  isCancelled(file) {
+    return this.cancelled.delete(file);
   }
 }
 
@@ -96,11 +126,23 @@ export class DepositFilesService {
     throw new Error("Not implemented.");
   }
 
+  /**
+   * Cancels an upload that hasn't started yet, returning whether it was found.
+   * A no-op by default, as services without an upload queue have nothing to cancel.
+   */
+  cancelQueuedUpload(fileName) {
+    return false;
+  }
+
   async uploadPart(uploadParams) {
     throw new Error("Not implemented.");
   }
 
   async finalizeUpload(commitFileURL, file) {
+    throw new Error("Not implemented.");
+  }
+
+  async getFileMetadata(fileLinks) {
     throw new Error("Not implemented.");
   }
 
@@ -163,10 +205,29 @@ export class RDMDepositFilesService extends DepositFilesService {
     this._startNextUpload();
   };
 
+  // Deletes the backend entry of an upload cancelled during its initialization.
+  _discardCancelledUpload = async (file, fileLinks) => {
+    // Free the slot first, the cleanup must not hold up the queued uploads.
+    this.uploaderQueue.markCompleted(file);
+    this._startNextUpload();
+
+    try {
+      await this.delete(fileLinks);
+    } catch (error) {
+      console.error("Error deleting a cancelled upload", error, file);
+    }
+  };
+
   _startNewUpload = async (initializeUploadURL, file) => {
     let initializedFileMetadata;
     try {
       initializedFileMetadata = await this._initializeUpload(initializeUploadURL, file);
+
+      if (this.uploaderQueue.isCancelled(file)) {
+        await this._discardCancelledUpload(file, initializedFileMetadata.links);
+        return;
+      }
+
       this.progressNotifier.onUploadInitialized(
         file.name,
         initializedFileMetadata.links
@@ -217,6 +278,14 @@ export class RDMDepositFilesService extends DepositFilesService {
     this.progressNotifier.onUploadAdded(file.name);
 
     await this._startNextUpload();
+  };
+
+  cancelQueuedUpload = (fileName) => {
+    return this.uploaderQueue.remove(fileName);
+  };
+
+  getFileMetadata = async (fileLinks) => {
+    return (await this.fileApiClient.getFileMetadata(fileLinks)).data;
   };
 
   delete = async (fileLinks) => {

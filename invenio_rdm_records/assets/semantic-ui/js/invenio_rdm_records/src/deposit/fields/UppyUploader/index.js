@@ -6,6 +6,7 @@
 
 import { connect } from "react-redux";
 import {
+  checkFileExists,
   deleteFile,
   importParentFiles,
   initializeFileUpload,
@@ -25,6 +26,7 @@ const mapStateToProps = (state) => {
     config: state.deposit.config,
     permissions: state.deposit.permissions,
     isFileImportInProgress: state.files.isFileImportInProgress,
+    isFileDeletionInProgress: state.files.pendingDeletions > 0,
     hasParentRecord: Boolean(
       state.deposit.record?.versions?.index && state.deposit.record?.versions?.index > 1
     ),
@@ -37,6 +39,7 @@ const mapDispatchToProps = (dispatch) => ({
   importParentFiles: () => dispatch(importParentFiles()),
   setUploadProgress: (file, percent) => dispatch(setUploadProgress(file, percent)),
   deleteFile: (file) => dispatch(deleteFile(file)),
+  checkFileExists: (file) => dispatch(checkFileExists(file)),
   uploadPart: (uploadParams) => dispatch(uploadPart(uploadParams)),
   saveAndFetchDraft: (draft) => dispatch(saveAndFetchDraft(draft)),
 });
