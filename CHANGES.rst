@@ -1,5 +1,5 @@
 ..
-    SPDX-FileCopyrightText: 2019-2025 CERN.
+    SPDX-FileCopyrightText: 2019-2026 CERN.
     SPDX-FileCopyrightText: 2019-2024 Northwestern University.
     SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
     SPDX-FileCopyrightText: 2024-2026 Graz University of Technology.
@@ -7,6 +7,13 @@
 
 Changes
 =======
+
+Version v35.2.0 (released 2026-09-24)
+
+- fix: switch to simple_deepcopy in search dumper
+- fix(errors): fix incorrect constructor call
+- fix(iiif): handle DelegateError for unsupported file types
+- fix(changes): fix docutils bullet points indentation error
 
 Version v35.1.0 (released 2026-09-21)
 
