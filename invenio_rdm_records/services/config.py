@@ -15,6 +15,8 @@ from os.path import splitext
 from pathlib import Path
 
 from flask import current_app
+from invenio_checks.services.results import ChecksRunList, Item
+from invenio_checks.services.schema import CheckRunSchema
 from invenio_communities.communities.records.api import Community
 from invenio_drafts_resources.services.records.components import (
     DraftMediaFilesComponent,
@@ -28,6 +30,7 @@ from invenio_drafts_resources.services.records.config import (
     is_record,
 )
 from invenio_drafts_resources.services.records.search_params import AllVersionsParam
+from invenio_i18n import gettext as _
 from invenio_indexer.api import RecordIndexer
 from invenio_records_resources.services import (
     ConditionalLink,
@@ -62,6 +65,7 @@ from invenio_records_resources.services.records.params import (
 from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
+from sqlalchemy import asc, desc
 from werkzeug.local import LocalProxy
 
 from invenio_rdm_records.records.processors.tiles import TilesProcessor
@@ -247,6 +251,18 @@ class RDMSearchVersionsOptions(SearchVersionsOptions, SearchOptionsMixin):
     params_interpreters_cls = [
         PublishedRecordsParam
     ] + SearchVersionsOptions.params_interpreters_cls
+
+
+class RDMChecksSearchOptions(SearchOptions):
+    """Checks search options."""
+
+    sort_default = "created"
+    sort_direction_default = "asc"
+    sort_direction_options = {
+        "asc": dict(title=_("Ascending"), fn=asc),
+        "desc": dict(title=_("Descending"), fn=desc),
+    }
+    sort_options = {"created": dict(title=_("Created"), fields=["created"])}
 
 
 #
@@ -852,6 +868,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
                 else None
             ),
         ),
+        "checks": RecordEndpointLink("record_checks.search"),
     }
 
     nested_links_item = [
@@ -988,3 +1005,21 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     name_of_file_blueprint = "draft_media_files"
 
     file_schema = FileSchema
+
+
+class RDMRecordChecksServiceConfig(ServiceConfig, ConfiguratorMixin):
+    """Record communities service config."""
+
+    service_id = "record-checks"
+
+    record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
+    draft_cls = FromConfig("RDM_DRAFT_CLS", default=RDMDraft)
+    permission_policy_cls = FromConfig(
+        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
+    )
+
+    search = RDMChecksSearchOptions
+
+    schema = CheckRunSchema
+    result_list_cls = ChecksRunList
+    result_item_cls = Item

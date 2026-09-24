@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2019-2026 CERN.
 # SPDX-FileCopyrightText: 2019-2021 Northwestern University.
 # SPDX-FileCopyrightText: 2022 Universität Hamburg.
-# SPDX-FileCopyrightText: 2023-2024 Graz University of Technology.
+# SPDX-FileCopyrightText: 2023-2026 Graz University of Technology.
 # SPDX-FileCopyrightText: 2023 TU Wien.
 # SPDX-FileCopyrightText: 2025 KTH Royal Institute of Technology.
 # SPDX-License-Identifier: MIT
@@ -39,6 +39,7 @@ from .resources import (
     RDMParentGrantsResourceConfig,
     RDMParentRecordLinksResource,
     RDMParentRecordLinksResourceConfig,
+    RDMRecordChecksResource,
     RDMRecordCommunitiesResourceConfig,
     RDMRecordFilesResourceConfig,
     RDMRecordRequestsResourceConfig,
@@ -47,6 +48,7 @@ from .resources import (
 )
 from .resources.config import (
     RDMDraftMediaFilesResourceConfig,
+    RDMRecordChecksResourceConfig,
     RDMRecordMediaFilesResourceConfig,
 )
 from .resources.resources import RDMRecordCommunitiesResource, RDMRecordRequestsResource
@@ -63,11 +65,13 @@ from .services import (
     RecordAccessService,
     RecordRequestsService,
 )
+from .services.checks import RDMRecordChecksService
 from .services.communities.service import RecordCommunitiesService
 from .services.community_inclusion.service import CommunityInclusionService
 from .services.config import (
     RDMMediaFileDraftServiceConfig,
     RDMMediaFileRecordServiceConfig,
+    RDMRecordChecksServiceConfig,
     RDMRecordMediaFilesServiceConfig,
 )
 from .services.files import RDMFileService
@@ -157,6 +161,7 @@ class InvenioRDMRecords(object):
             record_communities = RDMRecordCommunitiesConfig.build(app)
             community_records = RDMCommunityRecordsConfig.build(app)
             record_requests = RDMRecordRequestsConfig.build(app)
+            record_checks = RDMRecordChecksServiceConfig.build(app)
 
         return ServiceConfigs
 
@@ -207,6 +212,11 @@ class InvenioRDMRecords(object):
         self.community_collections_service = CollectionsService(
             config=CollectionServiceConfig.build(app),
             records_service=self.community_records_service,
+        )
+
+        # Checks
+        self.checks_service = RDMRecordChecksService(
+            config=RDMRecordChecksServiceConfig.build(app),
         )
 
     def init_resource(self, app):
@@ -293,6 +303,12 @@ class InvenioRDMRecords(object):
         self.community_collections_resource = CollectionsResource(
             service=self.community_collections_service,
             config=RDMCollectionsResourceConfig.build(app),
+        )
+
+        # Checks
+        self.checks_resource = RDMRecordChecksResource(
+            service=self.checks_service,
+            config=RDMRecordChecksResourceConfig.build(app),
         )
 
     def fix_datacite_configs(self, app):
