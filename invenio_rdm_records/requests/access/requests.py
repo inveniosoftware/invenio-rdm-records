@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2023 TU Wien.
 # SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
 # SPDX-FileCopyrightText: 2025 Graz University of Technology.
+# SPDX-FileCopyrightText: 2026 CERN.
 # SPDX-License-Identifier: MIT
 
 """Access requests for records."""
@@ -226,9 +227,8 @@ class UserAcceptAction(actions.AcceptAction):
 
         # NOTE: we're using the system identity here to avoid the grant creation
         #       potentially being blocked by the requesting user's profile visibility
-        service.access.bulk_create_grants(system_identity, record.pid.pid_value, data)
-        uow.register(
-            ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))
+        service.access.bulk_create_grants(
+            system_identity, record.pid.pid_value, data, uow=uow
         )
         uow.register(
             NotificationOp(
@@ -275,6 +275,9 @@ class UserAccessRequest(BaseRequest):
     allowed_receiver_ref_types = ["user", "community"]
     allowed_topic_ref_types = ["record"]
 
+    resolve_topic_needs = True
+    needs_context = {"record_permission": "manage"}
+
     links_item = {
         "self_html": EndpointLink(
             "invenio_app_rdm_requests.user_dashboard_request_view",
@@ -311,6 +314,9 @@ class GuestAccessRequest(BaseRequest):
     allowed_creator_ref_types = ["email"]
     allowed_receiver_ref_types = ["user", "community"]
     allowed_topic_ref_types = ["record"]
+
+    resolve_topic_needs = True
+    needs_context = {"record_permission": "manage"}
 
     links_item = {
         "self_html": ConditionalLink(
