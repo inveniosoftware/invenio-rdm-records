@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2019-2022 CERN.
 # SPDX-FileCopyrightText: 2019-2022 Northwestern University.
+# SPDX-FileCopyrightText: 2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
 """Fake demo records."""
@@ -155,7 +156,7 @@ def fake_edtf_level_0():
     if random.choice([True, False]):
         # get f_date as date object
         parser = level0Expression("level0")
-        parsed_date = parser.parseString(f_date)[0]
+        parsed_date = parser.parse_string(f_date)[0]
         date_tuple = parsed_date.lower_strict()[:3]
         f_date_object = datetime.date(*date_tuple)
 

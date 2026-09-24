@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2020-2026 CERN.
 # SPDX-FileCopyrightText: 2020-2021 Northwestern University.
+# SPDX-FileCopyrightText: 2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
 """Test RDMRecordService generated links."""
@@ -14,7 +15,7 @@ from invenio_rdm_records.records import RDMDraft, RDMRecord
 @pytest.fixture
 def draft_json(running_app, client, minimal_record, users, headers):
     """RDM Draft fixture."""
-    login_user(users[0], remember=True)
+    login_user(users[0])
     login_user_via_session(client, email=users[0].email)
 
     response = client.post("/records", json=minimal_record, headers=headers)

@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2023-2025 CERN.
 # SPDX-FileCopyrightText: 2025-2026 Front Matter.
+# SPDX-FileCopyrightText: 2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
 """Resources serializers tests."""
@@ -180,7 +181,7 @@ def test_add_version_relations_parent_hasversion_all_versions():
     Unlike the ChainObject (which exposes only the latest child), this reaches
     DataCite parity: the concept DOI links to *all* versions.
     """
-    serializer = CrossrefXMLSerializer.__new__(CrossrefXMLSerializer)
+    serializer = CrossrefXMLSerializer(is_parent=True)
     record = _version_record("10.53731/kdqkf-nf052")
     metadata = Metadata(record, via="inveniordm")
     metadata.relations = []

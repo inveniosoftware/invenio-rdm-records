@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2020-2024 CERN.
 # SPDX-FileCopyrightText: 2020-2024 Northwestern University.
 # SPDX-FileCopyrightText: 2021 TU Wien.
-# SPDX-FileCopyrightText: 2023 Graz University of Technology.
+# SPDX-FileCopyrightText: 2023-2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
 """Facet definitions."""
@@ -62,26 +62,6 @@ resource_type = NestedTermsFacet(
     label=_("Resource types"),
     value_labels=VocabularyLabels("resourcetypes"),
 )
-
-
-def deprecated_subject_nested():
-    """Deprecated NestedTermsFacet.
-
-    Will warn until this is completely removed.
-    """
-    warn(
-        "subject_nested is deprecated. Use subject_combined instead.",
-        DeprecationWarning,
-    )
-    return NestedTermsFacet(
-        field="metadata.subjects.scheme",
-        subfield="metadata.subjects.subject.keyword",
-        label=_("Subjects"),
-        value_labels=SubjectsLabels(),
-    )
-
-
-subject_nested = deprecated_subject_nested()
 
 
 subject = TermsFacet(

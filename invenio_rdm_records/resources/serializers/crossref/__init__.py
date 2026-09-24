@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2021-2024 CERN.
 # SPDX-FileCopyrightText: 2026 Front Matter.
+# SPDX-FileCopyrightText: 2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
 """Crossref Serializers for Invenio RDM Records."""
@@ -23,9 +24,12 @@ from ....proxies import current_rdm_records_service
 class CrossrefXMLSerializer(MarshmallowSerializer):
     """Marshmallow based Crossref XML serializer for records."""
 
-    def __init__(self, **options):
+    is_parent = False
+
+    def __init__(self, is_parent=False, **options):
         """Constructor."""
         encoder = options.get("encoder", tostring)
+        self.is_parent = is_parent
         super().__init__(
             format_serializer_cls=SimpleSerializer,
             object_schema_cls=CrossrefXMLSchema,
@@ -134,11 +138,7 @@ class CrossrefXMLSerializer(MarshmallowSerializer):
                 if url and relation not in relations:
                     relations.append(relation)
 
-            # The parent/concept DOI is the only registration passed as a
-            # ChainObject (see invenio_rdm_records.utils.ChainObject).
-            is_parent = hasattr(record, "_child") and hasattr(record, "_parent")
-
-            if is_parent:
+            if self.is_parent:
                 child = record._child
                 child_id = (
                     child.get("id")

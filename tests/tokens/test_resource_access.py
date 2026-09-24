@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2023-2024 CERN.
-# SPDX-FileCopyrightText: 2025 Graz University of Technology.
+# SPDX-FileCopyrightText: 2025-2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
 """Test Resource access tokens."""
@@ -108,7 +108,9 @@ def test_rat_validation_failed(app, db, uploader, superuser_identity, oauth2_cli
         validate_rat("not_a.valid_jwt")
 
     # case: headers don't have "kid"
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token1")
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token1-should-be-32-bytes-long"
+    )
     with pytest.raises(MissingTokenIDError):
         validate_rat(_rat_gen(pat["token"], headers={}))
 
@@ -122,13 +124,19 @@ def test_rat_validation_failed(app, db, uploader, superuser_identity, oauth2_cli
 
     # case: PAT is in the wrong scope
     pat = _generate_pat_token(
-        db, uploader, oauth2_client, "rat_token2", scope="user:email"
+        db,
+        uploader,
+        oauth2_client,
+        "rat_token2-should-be-32-bytes-long",
+        scope="user:email",
     )
     with pytest.raises(InvalidTokenError):
         validate_rat(_rat_gen(pat["token"]))
 
     # case: RAT is expired
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token3")
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token3-should-be-32-bytes-long"
+    )
     with pytest.raises(ExpiredTokenError):
         # generate token issued an hour ago
         validate_rat(
@@ -167,7 +175,9 @@ def test_rec_files_permissions_with_rat(
     recid = create_record_w_file(record_owner, minimal_record, headers)
 
     # generate RAT
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={
             "iat": datetime.now(timezone.utc),
@@ -225,7 +235,9 @@ def test_rec_metadata_permissions_with_rat(
     recid = create_record_w_file(record_owner, minimal_record, headers)
 
     # generate RAT
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={
             "iat": datetime.now(timezone.utc),
@@ -283,7 +295,9 @@ def test_draft_files_permissions_with_rat(
     )
 
     # generate RAT
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={
             "iat": datetime.now(timezone.utc),
@@ -341,7 +355,9 @@ def test_draft_metadata_permissions_with_rat(
     )
 
     # generate RAT
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={
             "iat": datetime.now(timezone.utc),
@@ -398,7 +414,9 @@ def test_fully_restricted_rec_files_permissions_with_rat(
     recid = create_record_w_file(record_owner, minimal_record, headers)
 
     # generate RAT
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={
             "iat": datetime.now(timezone.utc),
@@ -457,7 +475,9 @@ def test_fully_restricted_draft_files_permissions_with_rat(
     )
 
     # generate RAT
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={
             "iat": datetime.now(timezone.utc),
@@ -514,7 +534,11 @@ def test_rec_files_permissions_with_rat_invalid_token_error(
 
     # generate RAT with invalid scope
     pat = _generate_pat_token(
-        db, uploader, oauth2_client, "rat_token", scope="user:email"
+        db,
+        uploader,
+        oauth2_client,
+        "rat_token-should-be-32-bytes-long",
+        scope="user:email",
     )["token"]
     rat_token = jwt.encode(
         payload={
@@ -574,7 +598,9 @@ def test_rec_files_permissions_with_rat_missing_token_id_error(
     recid = create_record_w_file(record_owner, minimal_record, headers)
 
     # generate RAT with empty headers
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={
             "iat": datetime.now(timezone.utc),
@@ -642,7 +668,9 @@ def test_rec_files_permissions_with_rat_invalid_token_id_error(
     recid = create_record_w_file(record_owner, minimal_record, headers)
 
     # generate RAT with invalid headers
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={
             "iat": datetime.now(timezone.utc),
@@ -710,7 +738,9 @@ def test_rec_files_permissions_with_rat_expired_token_error(
     recid = create_record_w_file(record_owner, minimal_record, headers)
 
     # generate expired RAT
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={"iat": datetime.now(timezone.utc) - timedelta(hours=1), "sub": {}},
         key=pat.access_token,
@@ -762,7 +792,9 @@ def test_rec_files_permissions_with_rat_wrong_file(
     recid = create_record_w_file(record_owner, minimal_record, headers)
 
     # generate RAT with different file names
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={
             "iat": datetime.now(timezone.utc),
@@ -820,7 +852,9 @@ def test_rec_files_permissions_with_rat_wrong_access(
     recid = create_record_w_file(record_owner, minimal_record, headers)
 
     # generate RAT with different access level
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={
             "iat": datetime.now(timezone.utc),
@@ -879,7 +913,9 @@ def test_rec_files_permissions_with_rat_wrong_recid(
     another_recid = create_record_w_file(record_owner, minimal_record, headers)
 
     # generate RAT with different record id
-    pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, uploader, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={
             "iat": datetime.now(timezone.utc),
@@ -938,7 +974,9 @@ def test_rec_files_permissions_with_rat_wrong_signer(
     recid = create_record_w_file(record_owner, minimal_record, headers)
 
     # generate RAT with PAT of a different user
-    pat = _generate_pat_token(db, community_owner, oauth2_client, "rat_token")["token"]
+    pat = _generate_pat_token(
+        db, community_owner, oauth2_client, "rat_token-should-be-32-bytes-long"
+    )["token"]
     rat_token = jwt.encode(
         payload={
             "iat": datetime.now(timezone.utc),
