@@ -75,6 +75,31 @@ def test_reserved_prefixes(running_app, search_clear, minimal_oai_set):
         service.create(superuser_identity, minimal_oai_set)
 
 
+def test_spec_is_validated_over_its_whole_length(
+    running_app, search_clear, minimal_oai_set
+):
+    """A spec is rejected on any invalid character, not just a leading one."""
+    superuser_identity = running_app.superuser_identity
+    service = current_oaipmh_server_service
+
+    # Each of these starts with a valid character but continues with an invalid
+    # one, so an unanchored match would accept them.
+    invalid = [
+        "spec with spaces",
+        "abc/def",
+        "abc<script>alert(1)</script>",
+        "a\nb",
+    ]
+    for spec in invalid:
+        with pytest.raises(ValidationError):
+            service.create(superuser_identity, {**minimal_oai_set, "spec": spec})
+
+    # A flat spec and a hierarchical (colon-separated) one both stay valid.
+    for spec in ["valid-spec", "parent:child"]:
+        oai_item = service.create(superuser_identity, {**minimal_oai_set, "spec": spec})
+        assert oai_item.to_dict()["spec"] == spec
+
+
 def test_rebuild_index(running_app, search_clear, minimal_oai_set):
     superuser_identity = running_app.superuser_identity
     service = current_oaipmh_server_service
