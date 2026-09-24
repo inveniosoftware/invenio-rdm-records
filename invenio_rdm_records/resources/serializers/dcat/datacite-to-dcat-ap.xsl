@@ -53,6 +53,7 @@
     xmlns:dct    = "http://purl.org/dc/terms/"
     xmlns:dctype = "http://purl.org/dc/dcmitype/"
     xmlns:dcat   = "http://www.w3.org/ns/dcat#"
+    xmlns:spdx   = "http://spdx.org/rdf/terms#"
     xmlns:foaf   = "http://xmlns.com/foaf/0.1/"
     xmlns:gsp    = "http://www.opengis.net/ont/geosparql#"
     xmlns:locn   = "http://www.w3.org/ns/locn#"
