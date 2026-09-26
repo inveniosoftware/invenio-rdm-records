@@ -40,6 +40,20 @@ class CrossrefClient:
         else:
             self.api_url = "https://doi.crossref.org/servlet/deposit"
 
+
+    @property
+    def test_mode(self):
+        """Get test mode."""
+        return self.cfg("test_mode", False)
+
+    @property
+    def api_url(self):
+        """Get API URL."""
+        if self.test_mode:
+            return "https://test.crossref.org/servlet/deposit"
+        else:
+            return "https://doi.crossref.org/servlet/deposit"
+
     def cfgkey(self, key):
         """Generate a configuration key."""
         return f"{self._config_prefix}_{key.upper()}"
