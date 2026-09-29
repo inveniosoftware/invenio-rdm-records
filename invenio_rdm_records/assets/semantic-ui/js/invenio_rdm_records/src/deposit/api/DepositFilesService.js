@@ -68,9 +68,9 @@ class UploaderQueue {
     return false;
   }
 
-  // One-shot check, the cancellation is forgotten once read.
+  // The cancellation is forgotten in `markCompleted`, once the upload leaves the queue.
   isCancelled(file) {
-    return this.cancelled.delete(file);
+    return this.cancelled.has(file);
   }
 }
 
@@ -126,12 +126,8 @@ export class DepositFilesService {
     throw new Error("Not implemented.");
   }
 
-  /**
-   * Cancels an upload that hasn't started yet, returning whether it was found.
-   * A no-op by default, as services without an upload queue have nothing to cancel.
-   */
   cancelQueuedUpload(fileName) {
-    return false;
+    throw new Error("Not implemented.");
   }
 
   async uploadPart(uploadParams) {
@@ -215,6 +211,11 @@ export class RDMDepositFilesService extends DepositFilesService {
       await this.delete(fileLinks);
     } catch (error) {
       console.error("Error deleting a cancelled upload", error, file);
+      // Its files list entry is already gone, bring it back as a failed upload
+      // so that the file left on the backend can be deleted again.
+      this.progressNotifier.onUploadAdded(file.name);
+      this.progressNotifier.onUploadInitialized(file.name, fileLinks);
+      this.progressNotifier.onUploadFailed(file.name);
     }
   };
 
@@ -280,6 +281,7 @@ export class RDMDepositFilesService extends DepositFilesService {
     await this._startNextUpload();
   };
 
+  // Cancels an upload that hasn't started yet, returning whether it was found.
   cancelQueuedUpload = (fileName) => {
     return this.uploaderQueue.remove(fileName);
   };
