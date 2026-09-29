@@ -13,7 +13,8 @@
 
 {% set community_title = community.metadata.title %}
 {% set record_title = record.metadata.title %}
-{% set cancel_name = executing_user.username or executing_user.profile.full_name %}
+{% set cancel_name = executing_user.profile.full_name 
+    or (executing_user.username and "@" ~ executing_user.username) %}
 
 {# TODO: use request.links.self_html when issue issue is resolved: https://github.com/inveniosoftware/invenio-rdm-records/issues/1327 #}
 {% set request_link = "{ui}/me/requests/{id}".format(
@@ -31,7 +32,7 @@
 {%- block html_body -%}
     <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
         <tr>
-            <td>{{ _("The record submission for your community '{community_title}' was cancelled by '@{cancel_name}'.").format(cancel_name=cancel_name, community_title=community_title) }}</td>
+            <td>{{ _("The record submission for your community '{community_title}' was cancelled by '{cancel_name}'.").format(cancel_name=cancel_name, community_title=community_title) }}</td>
         </tr>
         <tr>
             <td><a href="{{ request_link }}" class="button">{{ _("Check out the submission request")}}</a></td>
@@ -46,7 +47,7 @@
 {%- endblock html_body -%}
 
 {%- block plain_body -%}
-{{ _("The record submission for your community '{community_title}' was cancelled by @'{cancel_name}'.").format(cancel_name=cancel_name, community_title=community_title) }}
+{{ _("The record submission for your community '{community_title}' was cancelled by '{cancel_name}'.").format(cancel_name=cancel_name, community_title=community_title) }}
 
 {{ _("Check out the submission request: {request_link}").format(request_link=request_link) }}
 {%- endblock plain_body -%}
