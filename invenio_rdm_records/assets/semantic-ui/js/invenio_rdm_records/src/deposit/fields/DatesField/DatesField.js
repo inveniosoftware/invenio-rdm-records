@@ -117,6 +117,7 @@ class DatesFieldComponent extends Component {
                     fieldPath={`${fieldPathPrefix}.type`}
                     label={i18next.t("Type")}
                     aria-label={i18next.t("Type")}
+                    noResultsMessage={i18next.t("No results found.")}
                     options={sortOptions(options.type)}
                     disabled={hasRequiredTypeValue}
                     required

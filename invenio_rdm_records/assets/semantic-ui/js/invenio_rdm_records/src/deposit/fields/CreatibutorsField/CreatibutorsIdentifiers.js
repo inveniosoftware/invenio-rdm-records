@@ -60,7 +60,8 @@ export class CreatibutorsIdentifiers extends Component {
         label={label}
         options={selectedOptions}
         placeholder={placeholder}
-        noResultsMessage={i18next.t("Type the value of an identifier...")}
+        noQueryMessage={i18next.t("Type the value of an identifier...")}
+        noResultsMessage={i18next.t("No results found.")}
         search
         multiple
         selection
