@@ -527,6 +527,7 @@ export class CreatibutorsModal extends Component {
                             noQueryMessage={i18next.t(
                               "Search for persons by name, identifier, or affiliation..."
                             )}
+                            noResultsMessage={i18next.t("No results found.")}
                             required={false}
                             // Disable UI-side filtering of search results
                             search={(options) => options}
@@ -620,6 +621,7 @@ export class CreatibutorsModal extends Component {
                             noQueryMessage={i18next.t(
                               "Search for organization by name, identifier, or affiliation..."
                             )}
+                            noResultsMessage={i18next.t("No results found.")}
                             required={false}
                             // Disable UI-side filtering of search results
                             search={(options) => options}
@@ -692,6 +694,7 @@ export class CreatibutorsModal extends Component {
                         fieldPath={roleFieldPath}
                         label={i18next.t("Role")}
                         options={roleOptions}
+                        noResultsMessage={i18next.t("No results found.")}
                         placeholder={i18next.t("Select role")}
                         {...(this.isCreator() && { clearable: true })}
                         required={!this.isCreator()}

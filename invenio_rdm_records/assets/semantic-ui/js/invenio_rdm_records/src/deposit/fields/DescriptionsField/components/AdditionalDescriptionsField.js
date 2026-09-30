@@ -59,6 +59,7 @@ export class AdditionalDescriptionsField extends Component {
                   <SelectField
                     fieldPath={`${fieldPathPrefix}.type`}
                     label={i18next.t("Type")}
+                    noResultsMessage={i18next.t("No results found.")}
                     options={typeOptions}
                     required
                     optimized={optimized}

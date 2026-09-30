@@ -65,6 +65,7 @@ export class ResourceTypeFieldComponent extends Component {
       helpText: propHelpText,
       schema,
       optimized,
+      noResultsMessage,
       ...restProps
     } = this.props;
     const frontEndOptions = this.createOptions(options);
@@ -84,6 +85,7 @@ export class ResourceTypeFieldComponent extends Component {
         placeholder={placeholder}
         helpText={helpText}
         optimized={optimized}
+        noResultsMessage={noResultsMessage}
       >
         <SelectField
           fieldPath={fieldPath}
@@ -94,6 +96,7 @@ export class ResourceTypeFieldComponent extends Component {
           selectOnBlur={false}
           helpText={helpText}
           placeholder={placeholder}
+          noResultsMessage={noResultsMessage}
           required
           {...restProps}
         />
@@ -114,6 +117,7 @@ ResourceTypeFieldComponent.propTypes = {
   ).isRequired,
   schema: PropTypes.oneOf(["record", "relatedWork"]).isRequired,
   optimized: PropTypes.bool,
+  noResultsMessage: PropTypes.string,
   ...mandatoryFieldCommonProps,
 };
 
@@ -123,6 +127,7 @@ ResourceTypeFieldComponent.defaultProps = {
   labelclassname: "field-label-class",
   schema: "record",
   optimized: true,
+  noResultsMessage: i18next.t("No results found."),
 };
 
 export const ResourceTypeField = showHideOverridable(

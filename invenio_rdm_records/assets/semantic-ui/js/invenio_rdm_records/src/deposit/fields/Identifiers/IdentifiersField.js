@@ -74,6 +74,7 @@ class IdentifiersFieldComponent extends Component {
                     fieldPath={`${fieldPathPrefix}.scheme`}
                     label={i18next.t("Scheme")}
                     aria-label={i18next.t("Scheme")}
+                    noResultsMessage={i18next.t("No results found.")}
                     options={schemeOptions}
                     optimized={optimized}
                     required

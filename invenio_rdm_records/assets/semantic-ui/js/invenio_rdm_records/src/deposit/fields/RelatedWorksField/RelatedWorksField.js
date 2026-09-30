@@ -71,6 +71,7 @@ class RelatedWorksFieldComponent extends Component {
                   fieldPath={`${fieldPathPrefix}.relation_type`}
                   label={i18next.t("Relation")}
                   aria-label={i18next.t("Relation")}
+                  noResultsMessage={i18next.t("No results found.")}
                   optimized={optimized}
                   options={options.relations}
                   placeholder={{
@@ -93,6 +94,7 @@ class RelatedWorksFieldComponent extends Component {
                   fieldPath={`${fieldPathPrefix}.scheme`}
                   label={i18next.t("Scheme")}
                   aria-label={i18next.t("Scheme")}
+                  noResultsMessage={i18next.t("No results found.")}
                   optimized={optimized}
                   options={options.scheme}
                   required

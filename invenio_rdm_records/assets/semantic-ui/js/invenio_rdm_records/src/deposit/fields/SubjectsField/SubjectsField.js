@@ -34,6 +34,7 @@ class SubjectsFieldComponent extends Component {
       helpText,
       placeholder,
       noQueryMessage,
+      noResultsMessage,
       ...dropdownProps
     } = this.props;
     const { limitTo } = this.state;
@@ -54,6 +55,7 @@ class SubjectsFieldComponent extends Component {
         required={required}
         disabled={disabled}
         noQueryMessage={noQueryMessage}
+        noResultsMessage={noResultsMessage}
         helpText={helpText}
         placeholder={placeholder}
         {...dropdownProps}
@@ -87,6 +89,7 @@ class SubjectsFieldComponent extends Component {
           <SubjectAutocompleteDropdown
             {...dropdownProps}
             noQueryMessage={noQueryMessage}
+            noResultsMessage={noResultsMessage}
             fieldPath={fieldPath}
             label={
               !displaySuggestFromField && labelComponent // Add label to second field if suggest from is hidden
@@ -109,6 +112,7 @@ SubjectsFieldComponent.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   noQueryMessage: PropTypes.string,
+  noResultsMessage: PropTypes.string,
   ...fieldCommonProps,
 };
 
@@ -117,6 +121,7 @@ SubjectsFieldComponent.defaultProps = {
   labelIcon: "tag",
   placeholder: i18next.t("Search for a subject by name"),
   noQueryMessage: i18next.t("Search for subjects..."),
+  noResultsMessage: i18next.t("No results found."),
 };
 
 export const SubjectsField = showHideOverridable(

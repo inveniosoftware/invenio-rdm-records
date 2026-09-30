@@ -31,6 +31,7 @@ class LanguagesFieldComponent extends Component {
       disabled,
       helpText,
       noQueryMessage,
+      noResultsMessage,
       ...uiProps
     } = this.props;
     const serializeSuggestions = serializeSuggestionsFunc || null;
@@ -49,6 +50,7 @@ class LanguagesFieldComponent extends Component {
         label={label}
         helpText={helpText}
         noQueryMessage={noQueryMessage}
+        noResultsMessage={noResultsMessage}
       >
         <RemoteSelectField
           fieldPath={fieldPath}
@@ -65,6 +67,7 @@ class LanguagesFieldComponent extends Component {
           initialSuggestions={initialOptions}
           label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
           noQueryMessage={noQueryMessage}
+          noResultsMessage={noResultsMessage}
           {...(serializeSuggestions && { serializeSuggestions })}
           {...uiProps}
         />
@@ -79,6 +82,7 @@ LanguagesFieldComponent.propTypes = {
   clearable: PropTypes.bool,
   placeholder: PropTypes.string,
   noQueryMessage: PropTypes.string,
+  noResultsMessage: PropTypes.string,
   initialOptions: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.string,
@@ -97,6 +101,7 @@ LanguagesFieldComponent.defaultProps = {
   clearable: true,
   placeholder: i18next.t('Search for a language by name (e.g "eng", "fr" or "Polish")'),
   noQueryMessage: i18next.t("Search for languages..."),
+  noResultsMessage: i18next.t("No results found."),
   required: false,
   initialOptions: undefined,
   serializeSuggestions: undefined,

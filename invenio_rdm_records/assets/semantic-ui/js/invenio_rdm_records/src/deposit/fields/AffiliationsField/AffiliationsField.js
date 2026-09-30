@@ -41,6 +41,7 @@ export class AffiliationsField extends Component {
                 />
               }
               noQueryMessage={i18next.t("Search for affiliations..")}
+              noResultsMessage={i18next.t("No results found.")}
               allowAdditions
               clearable
               multiple

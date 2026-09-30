@@ -52,6 +52,7 @@ class AdditionalTitlesFieldComponent extends Component {
               <SelectField
                 fieldPath={`${fieldPathPrefix}.type`}
                 label={i18next.t("Type")}
+                noResultsMessage={i18next.t("No results found.")}
                 optimized={optimized}
                 options={options.type}
                 required
