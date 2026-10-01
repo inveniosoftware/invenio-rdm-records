@@ -11,12 +11,12 @@ from invenio_vocabularies.proxies import current_service
 
 from ...proxies import current_rdm_records_service
 from .tasks import (
-    delete_record,
+    delete_record_group,
     restore_record,
     user_block_cleanup,
     user_restore_cleanup,
 )
-from .utils import get_user_records
+from .utils import get_user_records, get_user_records_grouped
 
 
 def on_block(user_id, uow=None, **kwargs):
@@ -46,8 +46,14 @@ def on_block(user_id, uow=None, **kwargs):
         tombstone_data["removed_by"] = {"user": str(actor_id)}
 
     # Soft-delete all the published records of that user
-    for recid in get_user_records(user_id):
-        uow.register(TaskOp(delete_record, recid=recid, tombstone_data=tombstone_data))
+    for record_and_versions in get_user_records_grouped(user_id):
+        uow.register(
+            TaskOp(
+                delete_record_group,
+                recids=record_and_versions,
+                tombstone_data=tombstone_data,
+            )
+        )
 
     # Send cleanup task to make sure all records are deleted
     uow.register(
