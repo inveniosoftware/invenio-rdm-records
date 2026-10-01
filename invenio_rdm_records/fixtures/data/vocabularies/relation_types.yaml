@@ -27,7 +27,7 @@
      de: Ergänzt
      es: Es un suplemento de
      cs: Je doplňkem k (čemu)
-     ar: ملحق لـ  
+     ar: ملحق لـ
 - id: issupplementedby
   props:
      datacite: IsSupplementedBy
@@ -344,27 +344,32 @@
   title:
      en: Is translation of
      sv: Är översättning av
+     de: Ist Übersetzung von
 - id: hastranslation
   props:
      datacite: HasTranslation
   title:
      en: Has translation
      sv: Har översättning
+     de: Hat Übersetzung
 - id: iscollectedby
   props:
      datacite: IsCollectedBy
   title:
      en: Is collected by
      sv: Samlas in av
+     de: Wird gesammelt von
 - id: collects
   props:
      datacite: Collects
   title:
      en: Collects
      sv: Samlar in
+     de: Sammelt
 - id: other
   props:
      datacite: Other
   title:
      en: Other
      sv: Annat
+     de: Andere
