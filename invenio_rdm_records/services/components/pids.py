@@ -98,13 +98,16 @@ class PIDsComponent(ServiceComponent):
     def _find_changed_pids_to_discard_from_source(self, source_pids, dest_pids):
         """Finds PIDs that have changed between draft and record."""
         changed_pids = {}
-        draft_schemes = set(source_pids.keys())
-        record_schemes = set(dest_pids.keys())
-        for scheme in draft_schemes & record_schemes:
+        source_schemes = set(source_pids.keys())
+        dest_schemes = set(dest_pids.keys())
+        for scheme in source_schemes & dest_schemes:
             dest_pid_value = dest_pids[scheme]["identifier"]
             source_pid_value = source_pids[scheme]["identifier"]
             if dest_pid_value != source_pid_value:
                 changed_pids[scheme] = source_pids[scheme]
+        # Also discard PIDs present on source but removed from dest
+        for scheme in source_schemes - dest_schemes:
+            changed_pids[scheme] = source_pids[scheme]
         return changed_pids
 
     def create(self, identity, data=None, record=None, errors=None):
@@ -203,6 +206,9 @@ class PIDsComponent(ServiceComponent):
         changed_pids = self._find_changed_pids_to_discard_from_source(
             record_pids, draft_pids
         )
+        # Required PIDs removed from the draft are restored below — keep them.
+        for scheme in (record_schemes - draft_schemes) & required_schemes:
+            changed_pids.pop(scheme, None)
 
         self.service.pids.pid_manager.validate_restriction_level(draft)
 
