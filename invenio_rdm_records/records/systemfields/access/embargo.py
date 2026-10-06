@@ -6,7 +6,7 @@
 
 from datetime import datetime, timezone
 
-import arrow
+import pendulum
 
 
 class Embargo:
@@ -16,7 +16,7 @@ class Embargo:
         """Create a new Embargo."""
         self.until = until
         if isinstance(until, str):
-            self.until = arrow.get(until).datetime
+            self.until = pendulum.parse(until)
 
         self.reason = reason
         self._active = active
@@ -107,7 +107,10 @@ class Embargo:
 
         until = dict_.get("until")
         if until:
-            until = arrow.get(until).datetime
+            if isinstance(until, str):
+                until = pendulum.parse(until)
+            else:
+                until = pendulum.instance(until)
 
         reason = dict_.get("reason")
         active = dict_.get("active")
