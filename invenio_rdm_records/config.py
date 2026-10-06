@@ -232,6 +232,26 @@ RDM_REQUEST_RECORD_DELETION_POLICIES = [RequestDeletionPolicy()]
 RDM_REQUEST_RECORD_DELETION_CHECKLIST = []
 """Checklist which appears on the modal to redirect user from record deletion request if possible."""
 
+RDM_RECORD_DELETION_REASON_WARNINGS = {}
+"""Per-reason acknowledgment shown in the deletion modal when that reason is selected.
+
+Maps a removal reason vocabulary id to a dictionary with a required "message" and
+an optional "url". When the user selects a reason present in this config, an extra
+checkbox with the message (and a link to the url, if given) is shown and must be
+checked before the deletion can be submitted.
+
+Example config value:
+
+.. code-block:: python
+
+    RDM_RECORD_DELETION_REASON_WARNINGS = {
+        "test-record": {
+            "message": _("Next time, please use the Sandbox instead:"),
+            "url": "https://sandbox.example.org",
+        },
+    }
+"""
+
 #
 # File modification by users
 #
