@@ -106,20 +106,18 @@ class StorageService:
         return min(self.max_additional_quota, self.remaining_storage(user_id, record))
 
     def remaining_storage(self, user_id, record):
-        """Remaining storage for this draft and user."""
-        additional_storage_user = (
-            RDMRecordQuota.query.with_entities(
-                func.coalesce(
-                    func.sum(RDMRecordQuota.quota_size - self.default_quota(user_id)), 0
-                )
-            )
-            .filter(RDMRecordQuota.user_id == user_id)
-            .scalar()
-        )
+        """Remaining storage for this draft and user.
 
+        The draft's own quota is excluded, so that the requested quota for it is
+        only counted once.
+        """
+        other_records_additional_quota = RDMRecordQuota.get_additional_quota_size(
+            user_id,
+            self.default_quota(user_id),
+            exclude_parent_id=record.parent.id if record is not None else None,
+        )
         return max(
-            (self.max_additional_quota - int(additional_storage_user))
-            + self.additional_storage(user_id, record),
+            int(self.max_additional_quota) - other_records_additional_quota,
             0,
         )
 
