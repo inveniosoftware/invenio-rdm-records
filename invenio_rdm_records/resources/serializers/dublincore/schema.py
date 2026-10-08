@@ -7,7 +7,9 @@ import bleach
 import idutils
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_base import invenio_url_for
+from invenio_i18n import get_locale
 from marshmallow import fields, missing
+from marshmallow_utils.fields.babel import gettext_from_dict
 from pydash import py_
 
 from ..schemas import CommonFieldsMixin
@@ -126,7 +128,11 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
             rights.append(f"info:eu-repo/semantics/{access_right}Access")
 
         for right in obj.get("metadata", {}).get("rights", []):
-            rights.append(right.get("title").get(current_default_locale()))
+            rights.append(
+                gettext_from_dict(
+                    right.get("title"), get_locale(), current_default_locale()
+                )
+            )
             if right.get("id"):
                 license_url = right.get("props", {}).get("url")
                 if license_url:
