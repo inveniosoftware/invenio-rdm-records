@@ -7,6 +7,7 @@
 
 import uuid
 
+from invenio_access.permissions import system_user_id
 from invenio_accounts.models import User
 from invenio_communities.communities.records.models import CommunityMetadata
 from invenio_db import db
@@ -259,6 +260,19 @@ class RDMRecordQuota(db.Model, db.Timestamp):
     notes = db.Column(db.Text, nullable=False, default="")
     """Notes related to setting the quota."""
 
+    @classmethod
+    def get_additional_quota_size(cls, user_id, default_quota, exclude_parent_id=None):
+        """Sum of the quota granted above the default to the user's records.
+
+        Records with a quota below the default do not count negatively.
+        """
+        query = cls.query.with_entities(
+            db.func.coalesce(db.func.sum(cls.quota_size - default_quota), 0)
+        ).filter(cls.user_id == user_id, cls.quota_size > default_quota)
+        if exclude_parent_id is not None:
+            query = query.filter(cls.parent_id != str(exclude_parent_id))
+        return int(query.scalar())
+
 
 class RDMUserQuota(db.Model, db.Timestamp):
     """Store for the files bucket quota for a user."""
@@ -298,3 +312,16 @@ class RDMUserQuota(db.Model, db.Timestamp):
 
     notes = db.Column(db.Text, nullable=False, default="")
     """Notes related to setting the quota."""
+
+    @classmethod
+    def lock_user(cls, user_id):
+        """Serialize quota changes for a user until the transaction ends.
+
+        Locks the user's row, which always exists, so that concurrent quota
+        increases for the same user are checked one after the other.
+        """
+        if user_id is None or user_id == system_user_id:
+            return
+        db.session.query(User.id).filter(User.id == user_id).with_for_update(
+            key_share=True
+        ).one_or_none()
