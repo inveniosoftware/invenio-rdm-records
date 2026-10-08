@@ -12,7 +12,7 @@ from invenio_accounts.models import User
 from invenio_db import db
 from invenio_files_rest.models import Bucket
 from invenio_search.engine import dsl
-from sqlalchemy import func
+from sqlalchemy import case, func, text
 
 from invenio_rdm_records.records.models import (
     RDMDraftMetadata,
@@ -20,6 +20,7 @@ from invenio_rdm_records.records.models import (
     RDMRecordQuota,
     RDMUserQuota,
 )
+from invenio_rdm_records.services.errors import QuotaExceededError
 
 logger = logging.getLogger(__name__)
 
@@ -105,23 +106,53 @@ class StorageService:
         """Maximum additional quota value for a specific draft."""
         return min(self.max_additional_quota, self.remaining_storage(user_id, record))
 
+    def _other_records_additional_quota(self, user_id, parent_id=None):
+        """Sum of additional quota granted to the user's other records.
+
+        Records with a quota below the default do not count negatively.
+        """
+        default_quota = self.default_quota(user_id)
+        additional = RDMRecordQuota.quota_size - default_quota
+        query = db.session.query(
+            func.coalesce(func.sum(case((additional > 0, additional), else_=0)), 0)
+        ).filter(RDMRecordQuota.user_id == user_id)
+        if parent_id is not None:
+            query = query.filter(RDMRecordQuota.parent_id != str(parent_id))
+        return int(query.scalar() or 0)
+
     def remaining_storage(self, user_id, record):
         """Remaining storage for this draft and user."""
-        additional_storage_user = (
-            RDMRecordQuota.query.with_entities(
-                func.coalesce(
-                    func.sum(RDMRecordQuota.quota_size - self.default_quota(user_id)), 0
-                )
-            )
-            .filter(RDMRecordQuota.user_id == user_id)
-            .scalar()
-        )
-
+        parent_id = record.parent.id if record is not None else None
         return max(
-            (self.max_additional_quota - int(additional_storage_user))
-            + self.additional_storage(user_id, record),
+            int(self.max_additional_quota)
+            - self._other_records_additional_quota(user_id, parent_id),
             0,
         )
+
+    def _lock_user_quota(self, user_id):
+        """Serialize quota updates for a user until the transaction ends.
+
+        Only effective on PostgreSQL (advisory lock); a no-op on other databases.
+        """
+        if db.session.get_bind().dialect.name != "postgresql":
+            return
+        db.session.execute(
+            text("SELECT pg_advisory_xact_lock(hashtext(:key))"),
+            {"key": f"rdm-quota-user-{user_id}"},
+        )
+
+    def enforce_quota_limit(self, user_id, parent_id, requested_quota_size):
+        """Check the per-user additional quota cap under a per-user lock."""
+        if user_id is None:
+            return
+        self._lock_user_quota(user_id)
+        db.session.flush()
+        requested_additional = max(
+            int(requested_quota_size) - int(self.default_quota(user_id)), 0
+        )
+        total_others = self._other_records_additional_quota(user_id, parent_id)
+        if requested_additional + total_others > int(self.max_additional_quota):
+            raise QuotaExceededError()
 
     def _search_user_resources(self, user, drafts=False):
         """Fetch user records or drafts."""
