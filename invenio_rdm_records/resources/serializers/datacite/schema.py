@@ -13,9 +13,11 @@ from flask_resources.serializers import BaseSerializerSchema
 from idutils import is_ror
 from invenio_access.permissions import system_identity
 from invenio_base import invenio_url_for
+from invenio_i18n import get_locale
 from invenio_i18n import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, validate
 from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow_utils.fields.babel import gettext_from_dict
 from marshmallow_utils.html import strip_html
 from pydash import py_
 
@@ -559,7 +561,11 @@ class DataCite43Schema(BaseSerializerSchema):
 
         rights = obj["metadata"].get("rights", [])
         for right in rights:
-            entry = {"rights": right.get("title", {}).get(current_default_locale())}
+            entry = {
+                "rights": gettext_from_dict(
+                    right.get("title", {}), get_locale(), current_default_locale()
+                )
+            }
 
             id_ = right.get("id")
             if id_:
@@ -1041,7 +1047,11 @@ class DataCite45Schema(BaseSerializerSchema):
 
         rights = obj["metadata"].get("rights", [])
         for right in rights:
-            entry = {"rights": right.get("title", {}).get(current_default_locale())}
+            entry = {
+                "rights": gettext_from_dict(
+                    right.get("title", {}), get_locale(), current_default_locale()
+                )
+            }
 
             id_ = right.get("id")
             if id_:
