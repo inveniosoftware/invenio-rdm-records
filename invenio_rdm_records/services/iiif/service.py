@@ -117,7 +117,12 @@ class IIIFService(Service):
             return first_page_buf
         elif HAS_IMAGEMAGICK:
             try:
-                first_page = Image(blob=fp)
+                # Only read the first page; otherwise ImageMagick renders every
+                # page of the PDF into memory.
+                if file_.data["mimetype"] == "application/pdf":
+                    first_page = Image(blob=fp, format="pdf[0]")
+                else:
+                    first_page = Image(blob=fp)
                 first_page_buf = io.BytesIO()
                 with first_page.convert(format="png") as converted:
                     converted.save(file=first_page_buf)
