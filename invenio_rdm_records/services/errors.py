@@ -198,6 +198,14 @@ class AccessRequestExistsError(AccessRequestException):
             return _("The access request is a duplicate")
 
 
+class QuotaExceededError(RDMRecordsException):
+    """Requested quota exceeds the user's additional quota allowance."""
+
+    description = _(
+        "The requested quota exceeds your remaining additional storage allowance."
+    )
+
+
 class RecordSubmissionClosedCommunityError(PermissionDenied):
     """Record submission policy forbids non-members from submitting records to community."""
 
