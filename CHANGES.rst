@@ -8,6 +8,19 @@
 Changes
 =======
 
+Version v36.0.0 (released 2026-10-12)
+
+- fix(translations): add no results message to select fields explicitly
+- fix(translations): add missing German translations to fixtures
+- fix: InsecureKeyLengthWarning
+- fix: PyparsingDeprecationWarning
+- chore: remove deprecated code
+- fix(tests): missing os-v2 mapping
+- fix: DeprecationWarning
+- fix(alembic): SADeprecationWarning
+- fix: strip html from thesis not only sanitize unicode
+- fix!(iiif): reduce memory consumption for PDFs
+
 Version v35.2.0 (released 2026-09-24)
 
 - fix: switch to simple_deepcopy in search dumper
