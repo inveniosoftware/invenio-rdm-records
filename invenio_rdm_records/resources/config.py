@@ -37,6 +37,7 @@ from ..services.errors import (
     DeletionStatusException,
     GrantExistsError,
     InvalidAccessRestrictions,
+    QuotaExceededError,
     RecordDeletedException,
     RecordSubmissionClosedCommunityError,
     ReviewExistsError,
@@ -225,6 +226,12 @@ error_handlers = {
         HTTPJSONException(
             code=400,
             description=_("Cannot publish without selecting a community."),
+        )
+    ),
+    QuotaExceededError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=400,
+            description=e.description,
         )
     ),
 }

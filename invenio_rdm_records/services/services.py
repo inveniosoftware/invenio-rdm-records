@@ -33,11 +33,13 @@ from invenio_search.engine import dsl
 from marshmallow import ValidationError
 from sqlalchemy.exc import NoResultFound
 
+from invenio_rdm_records.proxies import current_rdm_records_storage_service
 from invenio_rdm_records.records.models import RDMRecordQuota, RDMUserQuota
 from invenio_rdm_records.requests.file_modification import FileModification
 from invenio_rdm_records.requests.quota_increase import QuotaIncrease
 from invenio_rdm_records.requests.record_deletion import RecordDeletion
 from invenio_rdm_records.services.pids.tasks import register_or_update_pid
+from invenio_rdm_records.services.request_policies import QuotaIncreaseAdminPolicy
 
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
 from .errors import (
@@ -772,6 +774,7 @@ class RDMRecordService(RecordService):
         id_,
         data,
         files_attr="files",
+        enforce_cap=False,
         uow=None,
     ):
         """Set draft files quota."""
@@ -785,6 +788,12 @@ class RDMRecordService(RecordService):
             },
             raise_errors=True,
         )
+        if enforce_cap:
+            current_rdm_records_storage_service.enforce_quota_limit(
+                parent.access.owned_by.owner_id,
+                parent.id,
+                data["quota_size"],
+            )
         # Set quota
         draft_quota = RDMRecordQuota.query.filter(
             RDMRecordQuota.parent_id == str(parent.id)
@@ -874,6 +883,9 @@ class RDMRecordService(RecordService):
             raise PermissionDeniedError()
 
         if immediate_quota_increase.allowed:
+            granted_by_policy = (immediate_quota_increase.policy or {}).get("id")
+            enforce_cap = granted_by_policy != QuotaIncreaseAdminPolicy.id
+
             request = requests_service.create(
                 identity,
                 request_type=QuotaIncrease,
@@ -896,6 +908,7 @@ class RDMRecordService(RecordService):
                 request.id,
                 "accept",
                 send_notification=False,
+                enforce_cap=enforce_cap,
                 uow=uow,
             )
 
