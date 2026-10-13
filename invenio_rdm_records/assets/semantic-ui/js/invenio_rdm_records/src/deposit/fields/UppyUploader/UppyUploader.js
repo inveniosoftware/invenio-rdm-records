@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: 2020-2025 CERN.
  * SPDX-FileCopyrightText: 2025 CESNET.
  * SPDX-FileCopyrightText: 2025-2026 KTH Royal Institute of Technology.
+ * SPDX-FileCopyrightText: 2026 Dhairya Jangir.
  * SPDX-License-Identifier: MIT
  */
 
@@ -19,6 +20,7 @@ import { NewVersionButton } from "../../controls/NewVersionButton";
 import { UploadState } from "../../state/reducers/files";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { getFilesList, FilesListTable, FileUploaderToolbar } from "../FileUploader";
+import { EditFilesAccordion } from "../FileUploader/EditFilesAccordion";
 import { QuotaManager } from "../FileUploader/QuotaManager/QuotaManager";
 import { useQuotaManager } from "../FileUploader/QuotaManager/useQuotaManager";
 import { useUppyLocale } from "./locale";
@@ -158,6 +160,8 @@ export const UppyUploaderComponent = ({
   allowEmptyFiles,
   ...uiProps
 }) => {
+  // Keep the policy available to existing overrides through uiProps.
+  const { fileModification } = uiProps;
   // We extract the working copy of the draft stored as `values` in formik
   const { values: formikDraft, errors, initialErrors } = useFormikContext();
   const { filesList } = getFilesList(files ?? {});
@@ -446,21 +450,31 @@ export const UppyUploaderComponent = ({
           {!isDraftRecord && filesLocked && (
             <Grid.Row className="file-upload-note pt-5">
               <Grid.Column width={16}>
-                <Message info>
-                  <NewVersionButton
+                {fileModification.enabled && fileModification.valid_user ? (
+                  <EditFilesAccordion
                     record={record}
-                    onError={() => {}}
-                    className="right-floated"
-                    disabled={!permissions.can_new_version}
+                    permissions={permissions}
+                    fileModification={fileModification}
+                    draft={formikDraft}
                     allowExternalDoiVersions={config.allow_external_doi_versions}
                   />
-                  <p className="mt-5 display-inline-block">
-                    <Icon name="info circle" size="large" />
-                    {i18next.t(
-                      "You must create a new version to add, modify or delete files."
-                    )}
-                  </p>
-                </Message>
+                ) : (
+                  <Message info>
+                    <NewVersionButton
+                      record={record}
+                      onError={() => {}}
+                      className="right-floated"
+                      disabled={!permissions.can_new_version}
+                      allowExternalDoiVersions={config.allow_external_doi_versions}
+                    />
+                    <p className="mt-5 display-inline-block">
+                      <Icon name="info circle" size="large" />
+                      {i18next.t(
+                        "You must create a new version to add, modify or delete files."
+                      )}
+                    </p>
+                  </Message>
+                )}
               </Grid.Column>
             </Grid.Row>
           )}
@@ -509,6 +523,7 @@ UppyUploaderComponent.propTypes = {
   filesLocked: PropTypes.bool,
   permissions: PropTypes.object,
   allowEmptyFiles: PropTypes.bool,
+  fileModification: PropTypes.object,
 };
 
 UppyUploaderComponent.defaultProps = {
@@ -530,4 +545,5 @@ UppyUploaderComponent.defaultProps = {
   decimalSizeDisplay: true,
   filesLocked: false,
   allowEmptyFiles: true,
+  fileModification: {},
 };

@@ -11,6 +11,7 @@ Authors
 DataCite-based data model for Invenio.
 
 - CERN <info@inveniosoftware.org>
+- Dhairya Jangir
 
 Translation:
 
