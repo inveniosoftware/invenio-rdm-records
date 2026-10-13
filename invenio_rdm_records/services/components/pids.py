@@ -360,12 +360,12 @@ class ParentPIDsComponent(ServiceComponent):
             self.service.pids.parent_pid_manager.discard_all(
                 parent_pids, soft_delete=True, record=record
             )
-
-        # Async register/update tasks after transaction commit.
-        for scheme in parent_pids.keys():
-            self.uow.register(
-                TaskOp(register_or_update_pid, record["id"], scheme, parent=True)
-            )
+        else:
+            # Async register/update tasks after transaction commit.
+            for scheme in parent_pids.keys():
+                self.uow.register(
+                    TaskOp(register_or_update_pid, record["id"], scheme, parent=True)
+                )
 
     def restore_record(self, identity, record=None, uow=None):
         """Restore previously invalidated pids."""
