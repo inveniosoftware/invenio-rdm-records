@@ -15,7 +15,7 @@ from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.uow import TaskOp
 
 from ..errors import ValidationErrorWithMessageAsList
-from ..pids.tasks import register_or_update_pid
+from ..pids.tasks import cleanup_parent_pids, register_or_update_pid
 
 OPTIONAL_DOI_TRANSITIONS = {
     "datacite": {
@@ -354,18 +354,9 @@ class ParentPIDsComponent(ServiceComponent):
 
     def delete_record(self, identity, data=None, record=None, uow=None):
         """Process pids on delete record."""
-        record_cls = self.service.record_cls
-        parent_pids = copy(record.parent.get("pids", {}))
-        if record_cls.next_latest_published_record_by_parent(record.parent) is None:
-            self.service.pids.parent_pid_manager.discard_all(
-                parent_pids, soft_delete=True, record=record
-            )
-
-        # Async register/update tasks after transaction commit.
-        for scheme in parent_pids.keys():
-            self.uow.register(
-                TaskOp(register_or_update_pid, record["id"], scheme, parent=True)
-            )
+        if not record:
+            return
+        self.uow.register(TaskOp(cleanup_parent_pids, record["id"]))
 
     def restore_record(self, identity, record=None, uow=None):
         """Restore previously invalidated pids."""
