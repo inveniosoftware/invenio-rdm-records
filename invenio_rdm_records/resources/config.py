@@ -13,12 +13,14 @@ from citeproc_styles import StyleNotFoundError
 from flask_resources import (
     JSONDeserializer,
     JSONSerializer,
+    MultiDictSchema,
     RequestBodyParser,
     ResourceConfig,
     ResponseHandler,
     create_error_handler,
     resource_requestctx,
 )
+from invenio_checks.resources.args import ChecksSearchRequestArgsSchema
 from invenio_collections.resources.config import CollectionsResourceConfig
 from invenio_communities.communities.resources import CommunityResourceConfig
 from invenio_communities.communities.resources.config import community_error_handlers
@@ -30,6 +32,7 @@ from invenio_records_resources.resources.files import FileResourceConfig
 from invenio_records_resources.resources.records.headers import etag_headers
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from invenio_requests.resources.requests.config import RequestSearchRequestArgsSchema
+from marshmallow import Schema, fields
 
 from ..services.errors import (
     AccessRequestExistsError,
@@ -641,4 +644,27 @@ class RDMCollectionsResourceConfig(CollectionsResourceConfig):
         "application/vnd.inveniordm.v1+json": ResponseHandler(
             UIJSONSerializer(), headers=etag_headers
         ),
+    }
+
+
+class RDMRecordChecksResourceConfig(ResourceConfig, ConfiguratorMixin):
+    """Record checks resource config."""
+
+    blueprint_name = "record_checks"
+    url_prefix = "/records"
+    routes = {
+        "list": "/<pid_value>/checks",
+    }
+
+    request_search_args = ChecksSearchRequestArgsSchema
+
+    request_view_args = {
+        "pid_value": ma.fields.Str(),
+    }
+
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": ResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **ResourceConfig.response_handlers,
     }
