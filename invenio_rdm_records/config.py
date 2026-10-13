@@ -28,6 +28,7 @@ from invenio_rdm_records.services.review.policy import NewRecordVersionReviewPol
 from . import tokens
 from .requests.community_inclusion import CommunityInclusion
 from .requests.community_submission import CommunitySubmission
+from .requests.record_deletion import RecordDeletion
 from .resources.serializers import DataCite45JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
@@ -332,6 +333,8 @@ to community curators, managers, and owners.
 Default: True (backwards compatible - owners can remove communities)
 """
 
+RDM_MODERATION_REQUEST_TYPES = [RecordDeletion.type_id]
+"""List of moderation request types for RDM records."""
 #
 # Search configuration
 #
