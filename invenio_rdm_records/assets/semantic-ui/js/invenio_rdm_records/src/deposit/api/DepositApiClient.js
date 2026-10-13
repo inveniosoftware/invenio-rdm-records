@@ -334,6 +334,10 @@ export class DepositFileApiClient {
     throw new Error("Not implemented.");
   }
 
+  getFileMetadata(fileLinks) {
+    throw new Error("Not implemented.");
+  }
+
   deleteFile(fileLinks) {
     throw new Error("Not implemented.");
   }
@@ -387,6 +391,10 @@ export class RDMDepositFileApiClient extends DepositFileApiClient {
   importParentRecordFiles(draftLinks) {
     const link = `${draftLinks.self}/actions/files-import`;
     return this.axiosWithConfig.post(link, {});
+  }
+
+  getFileMetadata(fileLinks) {
+    return this.axiosWithConfig.get(fileLinks.self);
   }
 
   deleteFile(fileLinks) {
