@@ -8,7 +8,9 @@ from dateutil.parser import parse
 from dojson.contrib.to_marc21.fields.bdleader import to_leader
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_base import invenio_url_for
+from invenio_i18n import get_locale
 from marshmallow import fields, missing
+from marshmallow_utils.fields.babel import gettext_from_dict
 from marshmallow_utils.html import sanitize_unicode
 from pydash import py_
 
@@ -391,7 +393,9 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             access_right = "closed"
 
         for right in obj["metadata"].get("rights", []):
-            title = right.get("title").get(current_default_locale())
+            title = gettext_from_dict(
+                right.get("title"), get_locale(), current_default_locale()
+            )
             right_dict = dict()
             if title:
                 right_dict["a"] = title
