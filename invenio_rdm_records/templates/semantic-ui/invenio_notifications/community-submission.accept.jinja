@@ -30,7 +30,13 @@
 {%- block html_body -%}
     <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
         <tr>
-            <td>{{ _("The community curator '{curator_name}' accepted the record '{record_title}' into the community '{community_title}'").format(curator_name=curator_name, community_title=community_title, record_title=record_title) }}
+            <td>
+            {% if curator_name %}
+            {{ _("The community curator '{curator_name}' accepted the record '{record_title}' into the community '{community_title}'").format(curator_name=curator_name, community_title=community_title, record_title=record_title) }}
+            {% else %}
+            {{ _("A community curator accepted the record '{record_title}' into the community '{community_title}'").format(community_title=community_title, record_title=record_title) }}
+            {% endif %}
+
             {% if message %}
             {{ _(" with the following message:")}}
             {% endif %}
@@ -54,7 +60,11 @@
 {%- endblock html_body %}
 
 {%- block plain_body -%}
-{{ _("The community curator {curator_name} accepted the record '{record_title}' into the community '{community_title}'").format(curator_name=curator_name, community_title=community_title, record_title=record_title) }}
+{% if curator_name %}
+{{ _("The community curator '{curator_name}' accepted the record '{record_title}' into the community '{community_title}'").format(curator_name=curator_name, community_title=community_title, record_title=record_title) }}
+{% else %}
+{{ _("A community curator accepted the record '{record_title}' into the community '{community_title}'").format(community_title=community_title, record_title=record_title) }}
+{% endif %}
 
 {% if message %}
 {{ _("with the following message:")}}
@@ -68,7 +78,11 @@
 
 {# Markdown for Slack/Mattermost/chat #}
 {%- block md_body -%}
+{% if curator_name %}
 {{ _("The community curator *{curator_name}* accepted the record *{record_title}* into the community *{community_title}*").format(curator_name=curator_name, community_title=community_title, record_title=record_title) }}
+{% else %}
+{{ _("A community curator accepted the record *{record_title}* into the community *{community_title}*").format(community_title=community_title, record_title=record_title) }}
+{% endif %}
 
 {% if message %}
 {{ _("with the following message:")}}
