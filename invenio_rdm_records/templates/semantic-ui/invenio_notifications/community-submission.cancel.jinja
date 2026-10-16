@@ -31,7 +31,13 @@
 {%- block html_body -%}
     <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
         <tr>
-            <td>{{ _("The record submission for your community '{community_title}' was cancelled by '{cancel_name}'.").format(cancel_name=cancel_name, community_title=community_title) }}</td>
+            <td>
+            {% if cancel_name %}
+            {{ _("The record submission for your community '{community_title}' was cancelled by '{cancel_name}'.").format(cancel_name=cancel_name, community_title=community_title) }}
+            {% else %}
+            {{ _("The record submission for your community '{community_title}' was cancelled.").format(community_title=community_title) }}
+            {% endif %}
+            </td>
         </tr>
         <tr>
             <td><a href="{{ request_link }}" class="button">{{ _("Check out the submission request")}}</a></td>
@@ -46,14 +52,22 @@
 {%- endblock html_body -%}
 
 {%- block plain_body -%}
+{% if cancel_name %}
 {{ _("The record submission for your community '{community_title}' was cancelled by '{cancel_name}'.").format(cancel_name=cancel_name, community_title=community_title) }}
+{% else %}
+{{ _("The record submission for your community '{community_title}' was cancelled.").format(community_title=community_title) }}
+{% endif %}
 
 {{ _("Check out the submission request: {request_link}").format(request_link=request_link) }}
 {%- endblock plain_body -%}
 
 {# Markdown for Slack/Mattermost/chat #}
 {%- block md_body -%}
+{% if cancel_name %}
 {{ _("The record submission for your community *'{community_title}'* was cancelled by *'{cancel_name}'*.").format(cancel_name=cancel_name, community_title=community_title) }}
+{% else %}
+{{ _("The record submission for your community *'{community_title}'* was cancelled.").format(community_title=community_title) }}
+{% endif %}
 
 [{{ _("Check out the submission request") }}]({{ request_link }})
 {%- endblock md_body -%}
