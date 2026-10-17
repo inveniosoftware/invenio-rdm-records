@@ -32,13 +32,20 @@ class CrossrefClient:
 
         # Set reasonable defaults
         self.timeout = 30
-        self.test_mode = False
 
-        # Set API URL based on test mode
+
+    @property
+    def test_mode(self):
+        """Get test mode."""
+        return self.cfg("test_mode", False)
+
+    @property
+    def api_url(self):
+        """Get API URL."""
         if self.test_mode:
-            self.api_url = "https://test.crossref.org/servlet/deposit"
+            return "https://test.crossref.org/servlet/deposit"
         else:
-            self.api_url = "https://doi.crossref.org/servlet/deposit"
+            return "https://doi.crossref.org/servlet/deposit"
 
     def cfgkey(self, key):
         """Generate a configuration key."""

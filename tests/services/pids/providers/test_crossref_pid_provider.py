@@ -291,3 +291,32 @@ def test_crossref_client_prefix_override(running_app, crossref_config, minimal_r
             current_app.config.pop("CROSSREF_ADDITIONAL_PREFIXES", None)
         else:
             current_app.config["CROSSREF_ADDITIONAL_PREFIXES"] = old_config
+
+
+def test_crossref_client_test_mode_and_api_url(running_app, crossref_config):
+    """Test that CrossrefClient evaluates test_mode and api_url dynamically."""
+    from flask import current_app
+
+    # Default: test_mode is False when not configured
+    client = CrossrefClient("crossref")
+    assert client.test_mode is False
+    assert client.api_url == "https://doi.crossref.org/servlet/deposit"
+
+    # App config sets test_mode to True
+    current_app.config["CROSSREF_TEST_MODE"] = True
+    assert client.test_mode is True
+    assert client.api_url == "https://test.crossref.org/servlet/deposit"
+
+    # config_overrides can override app config to False
+    client_override = CrossrefClient(
+        "crossref", config_overrides={"CROSSREF_TEST_MODE": False}
+    )
+    assert client_override.test_mode is False
+    assert client_override.api_url == "https://doi.crossref.org/servlet/deposit"
+
+    # Custom config_prefix
+    current_app.config["CUSTOM_CROSSREF_TEST_MODE"] = True
+    client_custom = CrossrefClient("crossref", config_prefix="CUSTOM_CROSSREF")
+    assert client_custom.test_mode is True
+    assert client_custom.api_url == "https://test.crossref.org/servlet/deposit"
+
