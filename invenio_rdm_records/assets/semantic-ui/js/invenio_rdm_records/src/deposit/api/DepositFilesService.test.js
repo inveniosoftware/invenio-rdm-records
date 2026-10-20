@@ -299,5 +299,80 @@ describe("DepositFilesService tests", () => {
       expect(queue.currents.length).toEqual(0);
       expect(queue.pending.length).toEqual(0);
     });
+
+    it("it should not start an upload cancelled while waiting in the queue", async () => {
+      fakeApiInitializeFileUpload.mockImplementation((_, filename) =>
+        fakeDataAfterInit(fakeFileData(filename))
+      );
+      fakeApiFinalizeFileUpload.mockImplementation((finalizeUploadUrl) => {
+        return { data: fakeFileData(finalizeUploadUrl) };
+      });
+      fakeApiUploadFile = jest.fn().mockImplementation(() => promiseDelay(100));
+
+      filesService.upload("init upload URL file1", { name: "file1" });
+      filesService.upload("init upload URL file2", { name: "file2" });
+      filesService.upload("init upload URL file3", { name: "file3" });
+
+      const queue = filesService.uploaderQueue;
+      expect(queue.pending.length).toEqual(1);
+
+      expect(filesService.cancelQueuedUpload("file3")).toEqual(true);
+      expect(queue.pending.length).toEqual(0);
+
+      await clock.tickAsync(1000);
+
+      expect(fakeApiInitializeFileUpload).not.toHaveBeenCalledWith(
+        "init upload URL file3",
+        "file3"
+      );
+      expect(fakeOnUploadCompleted).toHaveBeenCalledTimes(2);
+    });
+
+    it("it should discard an upload cancelled while being initialized", async () => {
+      fakeApiInitializeFileUpload.mockImplementation(async (_, filename) => {
+        await promiseDelay(100);
+        return fakeDataAfterInit(fakeFileData(filename));
+      });
+      fakeApiFinalizeFileUpload.mockImplementation((finalizeUploadUrl) => {
+        return { data: fakeFileData(finalizeUploadUrl) };
+      });
+      fakeApiUploadFile = jest.fn().mockImplementation(() => promiseDelay(100));
+
+      filesService.upload("init upload URL file1", { name: "file1" });
+      filesService.upload("init upload URL file2", { name: "file2" });
+      filesService.upload("init upload URL file3", { name: "file3" });
+
+      // Uploads are taken from the queue as soon as there is a free slot,
+      // so the first two are already being initialized.
+      const queue = filesService.uploaderQueue;
+      expect(queue.currents.length).toEqual(2);
+      expect(fakeOnUploadInitialized).not.toHaveBeenCalled();
+
+      expect(filesService.cancelQueuedUpload("file1")).toEqual(true);
+
+      // The slot of the cancelled upload has to be freed as soon as its
+      // cleanup starts, or the queued uploads would be held up by it.
+      await clock.tickAsync(150);
+      expect(fakeApiInitializeFileUpload).toHaveBeenCalledWith(
+        "init upload URL file3",
+        "file3"
+      );
+
+      await clock.tickAsync(1000);
+
+      const initializedFiles = fakeOnUploadInitialized.mock.calls.map(([name]) => name);
+      const uploadedFiles = fakeApiUploadFile.mock.calls.map(
+        ([uploadUrl]) => uploadUrl
+      );
+      expect(initializedFiles).not.toContain("file1");
+      expect(uploadedFiles).not.toContain("file1");
+      expect(fakeApiDeleteFile).toHaveBeenCalledWith(fakeFileData("file1").links);
+      expect(fakeOnUploadCompleted).toHaveBeenCalledTimes(2);
+      expect(queue.currents.length).toEqual(0);
+    });
+
+    it("it should report a cancellation of an upload that is not queued", () => {
+      expect(filesService.cancelQueuedUpload("unknown file")).toEqual(false);
+    });
   });
 });
