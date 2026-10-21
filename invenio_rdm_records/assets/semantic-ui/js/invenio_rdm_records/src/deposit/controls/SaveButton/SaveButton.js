@@ -5,7 +5,7 @@
  */
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import React, { Component } from "react";
+import { useContext } from "react";
 import { connect } from "react-redux";
 import { Button } from "semantic-ui-react";
 import {
@@ -18,12 +18,10 @@ import _omit from "lodash/omit";
 import { connect as connectFormik } from "formik";
 import PropTypes from "prop-types";
 
-export class SaveButtonComponent extends Component {
-  static contextType = DepositFormSubmitContext;
+export function SaveButtonComponent({ formik, actionState = undefined, ...ui }) {
+  const { setSubmitContext } = useContext(DepositFormSubmitContext);
 
-  handleSave = (event) => {
-    const { formik } = this.props;
-    const { setSubmitContext } = this.context;
+  const handleSave = (event) => {
     const { handleSubmit } = formik;
 
     setSubmitContext(DepositFormSubmitActions.SAVE);
@@ -31,34 +29,27 @@ export class SaveButtonComponent extends Component {
     scrollTop();
   };
 
-  render() {
-    const { actionState, formik, ...ui } = this.props;
-    const { isSubmitting } = formik;
+  const { isSubmitting } = formik;
 
-    const uiProps = _omit(ui, ["dispatch"]);
+  const uiProps = _omit(ui, ["dispatch"]);
 
-    return (
-      <Button
-        name="save"
-        disabled={isSubmitting}
-        onClick={(event) => this.handleSave(event)}
-        icon="save"
-        loading={isSubmitting && actionState === DRAFT_SAVE_STARTED}
-        labelPosition="left"
-        content={i18next.t("Save draft")}
-        {...uiProps}
-      />
-    );
-  }
+  return (
+    <Button
+      name="save"
+      disabled={isSubmitting}
+      onClick={(event) => handleSave(event)}
+      icon="save"
+      loading={isSubmitting && actionState === DRAFT_SAVE_STARTED}
+      labelPosition="left"
+      content={i18next.t("Save draft")}
+      {...uiProps}
+    />
+  );
 }
 
 SaveButtonComponent.propTypes = {
   formik: PropTypes.object.isRequired,
   actionState: PropTypes.string,
-};
-
-SaveButtonComponent.defaultProps = {
-  actionState: undefined,
 };
 
 const mapStateToProps = (state) => ({

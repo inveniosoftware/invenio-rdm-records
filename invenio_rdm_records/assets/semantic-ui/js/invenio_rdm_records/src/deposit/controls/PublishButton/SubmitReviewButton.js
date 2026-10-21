@@ -9,7 +9,7 @@ import { connect as connectFormik } from "formik";
 import _get from "lodash/get";
 import _omit from "lodash/omit";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { useState, useContext } from "react";
 import { connect } from "react-redux";
 import { Button } from "semantic-ui-react";
 import {
@@ -21,19 +21,32 @@ import { SubmitReviewModal } from "./SubmitReviewModal";
 import { DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS } from "../../state/types";
 import { scrollTop } from "../../utils";
 
-class SubmitReviewButtonComponent extends Component {
-  state = { isConfirmModalOpen: false };
-  static contextType = DepositFormSubmitContext;
+function SubmitReviewButtonComponent({
+  formik,
+  directPublish = false,
+  isDOIRequired = undefined,
+  noINeedDOI = undefined,
+  doiReservationCheck,
+  userCanManageRecord,
+  record,
+  actionState = undefined,
+  actionStateExtra,
+  community,
+  disableSubmitForReviewButton = undefined,
+  isRecordSubmittedForReview,
+  publishModalExtraContent = undefined,
+  filesState = undefined,
+  ...ui
+}) {
+  const { setSubmitContext } = useContext(DepositFormSubmitContext);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-  openConfirmModal = () => this.setState({ isConfirmModalOpen: true });
+  const openConfirmModal = () => setIsConfirmModalOpen(true);
 
-  closeConfirmModal = () => this.setState({ isConfirmModalOpen: false });
+  const closeConfirmModal = () => setIsConfirmModalOpen(false);
 
-  handleSubmitReview = ({ reviewComment }) => {
-    const { formik, directPublish, isDOIRequired, noINeedDOI, doiReservationCheck } =
-      this.props;
+  const handleSubmitReview = ({ reviewComment }) => {
     const { handleSubmit } = formik;
-    const { setSubmitContext } = this.context;
 
     const doiCheckFailed = doiReservationCheck(
       isDOIRequired,
@@ -50,13 +63,12 @@ class SubmitReviewButtonComponent extends Component {
       });
       handleSubmit();
     }
-    this.closeConfirmModal();
+    closeConfirmModal();
     // scroll top to show the global error
     scrollTop();
   };
 
-  isDisabled = (disableSubmitForReviewButton, filesState) => {
-    const { formik, userCanManageRecord, record } = this.props;
+  const isDisabled = (disableSubmitForReviewButton, filesState) => {
     const { values, isSubmitting } = formik;
 
     // record is coming from the Jinja template and it is refreshed on page reload
@@ -84,62 +96,45 @@ class SubmitReviewButtonComponent extends Component {
     return !allCompleted;
   };
 
-  render() {
-    const {
-      actionState,
-      actionStateExtra,
-      community,
-      disableSubmitForReviewButton,
-      directPublish,
-      formik,
-      isRecordSubmittedForReview,
-      publishModalExtraContent,
-      filesState,
-      ...ui
-    } = this.props;
+  const { isSubmitting } = formik;
 
-    const { isSubmitting } = formik;
+  const uiProps = _omit(ui, ["dispatch"]);
 
-    const uiProps = _omit(ui, ["dispatch"]);
+  const btnLblSubmitReview = isRecordSubmittedForReview
+    ? i18next.t("Submitted for review")
+    : i18next.t("Submit for review");
+  const buttonLbl = directPublish
+    ? i18next.t("Publish to community")
+    : btnLblSubmitReview;
 
-    const { isConfirmModalOpen } = this.state;
-
-    const btnLblSubmitReview = isRecordSubmittedForReview
-      ? i18next.t("Submitted for review")
-      : i18next.t("Submit for review");
-    const buttonLbl = directPublish
-      ? i18next.t("Publish to community")
-      : btnLblSubmitReview;
-
-    return (
-      <>
-        <Button
-          disabled={this.isDisabled(disableSubmitForReviewButton, filesState)}
-          name="SubmitReview"
-          onClick={this.openConfirmModal}
-          positive={directPublish}
-          primary={!directPublish}
-          icon="upload"
-          loading={isSubmitting && actionState === "DRAFT_SUBMIT_REVIEW_STARTED"}
-          labelPosition="left"
-          content={buttonLbl}
-          {...uiProps}
-          type="button" // needed so the formik form doesn't handle it as submit button i.e enable HTML validation on required input fields
+  return (
+    <>
+      <Button
+        disabled={isDisabled(disableSubmitForReviewButton, filesState)}
+        name="SubmitReview"
+        onClick={openConfirmModal}
+        positive={directPublish}
+        primary={!directPublish}
+        icon="upload"
+        loading={isSubmitting && actionState === "DRAFT_SUBMIT_REVIEW_STARTED"}
+        labelPosition="left"
+        content={buttonLbl}
+        {...uiProps}
+        type="button" // needed so the formik form doesn't handle it as submit button i.e enable HTML validation on required input fields
+      />
+      {isConfirmModalOpen && (
+        <SubmitReviewModal
+          isConfirmModalOpen={isConfirmModalOpen}
+          initialReviewComment={actionStateExtra.reviewComment}
+          onSubmit={handleSubmitReview}
+          community={community}
+          onClose={closeConfirmModal}
+          publishModalExtraContent={publishModalExtraContent}
+          directPublish={directPublish}
         />
-        {isConfirmModalOpen && (
-          <SubmitReviewModal
-            isConfirmModalOpen={isConfirmModalOpen}
-            initialReviewComment={actionStateExtra.reviewComment}
-            onSubmit={this.handleSubmitReview}
-            community={community}
-            onClose={this.closeConfirmModal}
-            publishModalExtraContent={publishModalExtraContent}
-            directPublish={directPublish}
-          />
-        )}
-      </>
-    );
-  }
+      )}
+    </>
+  );
 }
 
 SubmitReviewButtonComponent.propTypes = {
@@ -157,16 +152,6 @@ SubmitReviewButtonComponent.propTypes = {
   doiReservationCheck: PropTypes.func.isRequired,
   isDOIRequired: PropTypes.bool,
   noINeedDOI: PropTypes.bool,
-};
-
-SubmitReviewButtonComponent.defaultProps = {
-  actionState: undefined,
-  disableSubmitForReviewButton: undefined,
-  publishModalExtraContent: undefined,
-  directPublish: false,
-  filesState: undefined,
-  isDOIRequired: undefined,
-  noINeedDOI: undefined,
 };
 
 const mapStateToProps = (state) => ({

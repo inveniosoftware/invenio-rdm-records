@@ -9,7 +9,6 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { FormFeedbackSummary } from "./FormFeedbackSummary";
 import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
-import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Grid, Message, Icon } from "semantic-ui-react";
 import {
@@ -125,63 +124,58 @@ const feedbackConfig = {
   warning: { icon: "exclamation triangle", type: "warning" },
 };
 
-class DisconnectedFormFeedback extends Component {
-  constructor(props) {
-    super(props);
-    this.labels = {
-      ...props.labels,
-    };
+function DisconnectedFormFeedback({
+  labels = undefined,
+  errors: errorsProp = undefined,
+  actionState = undefined,
+  sectionsConfig = undefined,
+}) {
+  const errors = errorsProp || {};
+
+  const { feedback: initialFeedback, message } = _get(ACTIONS, actionState, {
+    feedback: undefined,
+    message: undefined,
+  });
+
+  if (!message) {
+    return null;
   }
 
-  render() {
-    const { errors: errorsProp, actionState, sectionsConfig } = this.props;
-    const errors = errorsProp || {};
+  const noSeverityChecksWithErrors = Object.values(errors).every(
+    (severityObject) => severityObject.severity !== "error"
+  );
 
-    const { feedback: initialFeedback, message } = _get(ACTIONS, actionState, {
-      feedback: undefined,
-      message: undefined,
-    });
+  // Determine final feedback without reassigning
+  const feedback =
+    _isEmpty(errors) && noSeverityChecksWithErrors ? "suggestive" : initialFeedback;
 
-    if (!message) {
-      return null;
-    }
+  // if no field is specified on the backend, then the validation message is on the `_schema` field
+  // if the backend returns an explicit message e.g server error, then we use that instead of the default one
+  const backendErrorMessage = errors.message || errors._schema;
 
-    const noSeverityChecksWithErrors = Object.values(errors).every(
-      (severityObject) => severityObject.severity !== "error"
-    );
+  // Retrieve the corresponding icon and type if the feedback is a valid key,
+  // else fallback to warning.
+  const { icon, type } = feedbackConfig[feedback] || feedbackConfig["warning"];
 
-    // Determine final feedback without reassigning
-    const feedback =
-      _isEmpty(errors) && noSeverityChecksWithErrors ? "suggestive" : initialFeedback;
-
-    // if no field is specified on the backend, then the validation message is on the `_schema` field
-    // if the backend returns an explicit message e.g server error, then we use that instead of the default one
-    const backendErrorMessage = errors.message || errors._schema;
-
-    // Retrieve the corresponding icon and type if the feedback is a valid key,
-    // else fallback to warning.
-    const { icon, type } = feedbackConfig[feedback] || feedbackConfig["warning"];
-
-    // generate dynamic id for easy getElementById calls.
-    // see feedbackConfig for possible values.
-    return (
-      <Message
-        visible
-        {...{ [type]: true }}
-        className="flashed top attached"
-        id={type + "-feedback-div"}
-      >
-        <Grid container>
-          <Grid.Column width={15} textAlign="left">
-            <strong>
-              <Icon name={icon} /> {backendErrorMessage || message}
-              <FormFeedbackSummary sectionsConfig={sectionsConfig} errors={errors} />
-            </strong>
-          </Grid.Column>
-        </Grid>
-      </Message>
-    );
-  }
+  // generate dynamic id for easy getElementById calls.
+  // see feedbackConfig for possible values.
+  return (
+    <Message
+      visible
+      {...{ [type]: true }}
+      className="flashed top attached"
+      id={type + "-feedback-div"}
+    >
+      <Grid container>
+        <Grid.Column width={15} textAlign="left">
+          <strong>
+            <Icon name={icon} /> {backendErrorMessage || message}
+            <FormFeedbackSummary sectionsConfig={sectionsConfig} errors={errors} />
+          </strong>
+        </Grid.Column>
+      </Grid>
+    </Message>
+  );
 }
 
 DisconnectedFormFeedback.propTypes = {
@@ -189,13 +183,6 @@ DisconnectedFormFeedback.propTypes = {
   actionState: PropTypes.string,
   labels: PropTypes.object,
   sectionsConfig: PropTypes.object,
-};
-
-DisconnectedFormFeedback.defaultProps = {
-  errors: undefined,
-  actionState: undefined,
-  labels: undefined,
-  sectionsConfig: undefined,
 };
 
 const mapStateToProps = (state) => ({

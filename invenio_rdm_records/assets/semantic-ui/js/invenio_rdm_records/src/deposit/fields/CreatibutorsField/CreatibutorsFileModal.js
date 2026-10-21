@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component, createRef } from "react";
 import PropTypes from "prop-types";
 import { Button, Header, Icon, Message, Modal, Segment } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
@@ -136,7 +136,7 @@ CreatibutorsFileImport.propTypes = {
 
 function CreatibutorsFileReview({
   schema,
-  fileName,
+  fileName = null,
   parseError,
   validEntries,
   invalidEntries,
@@ -144,12 +144,12 @@ function CreatibutorsFileReview({
   onReplace,
   onMove,
   roleOptions,
-  autocompleteNames,
-  addLabel,
-  editLabel,
-  serializeSuggestions,
-  serializeCreatibutor,
-  deserializeCreatibutor,
+  autocompleteNames = "search",
+  addLabel = undefined,
+  editLabel = undefined,
+  serializeSuggestions = undefined,
+  serializeCreatibutor = undefined,
+  deserializeCreatibutor = undefined,
 }) {
   const type = getCreatibutorSchemaLabel(schema);
 
@@ -261,16 +261,6 @@ CreatibutorsFileReview.propTypes = {
   deserializeCreatibutor: PropTypes.func,
 };
 
-CreatibutorsFileReview.defaultProps = {
-  fileName: null,
-  autocompleteNames: "search",
-  addLabel: undefined,
-  editLabel: undefined,
-  serializeSuggestions: undefined,
-  serializeCreatibutor: undefined,
-  deserializeCreatibutor: undefined,
-};
-
 export class CreatibutorsFileModal extends Component {
   constructor(props) {
     super(props);
@@ -283,7 +273,7 @@ export class CreatibutorsFileModal extends Component {
       invalidEntries: [],
       parseError: false,
     };
-    this.fileInputRef = React.createRef();
+    this.fileInputRef = createRef();
   }
 
   openModal = () => {
@@ -403,12 +393,12 @@ export class CreatibutorsFileModal extends Component {
       trigger,
       schema,
       roleOptions,
-      autocompleteNames,
-      addLabel,
-      editLabel,
-      serializeSuggestions,
-      serializeCreatibutor,
-      deserializeCreatibutor,
+      autocompleteNames = "search",
+      addLabel = undefined,
+      editLabel = undefined,
+      serializeSuggestions = undefined,
+      serializeCreatibutor = undefined,
+      deserializeCreatibutor = undefined,
     } = this.props;
     const { open, phase, loading, fileName, validEntries, invalidEntries, parseError } =
       this.state;
@@ -473,9 +463,12 @@ export class CreatibutorsFileModal extends Component {
               onClick={this.resetToCreatibutorsFileImport}
             />
           )}
-          <Button icon="close" type="button" onClick={this.closeModal}>
-            {i18next.t("Cancel")}
-          </Button>
+          <Button
+            icon="close"
+            content={i18next.t("Cancel")}
+            type="button"
+            onClick={this.closeModal}
+          />
           {phase === "review" && (
             <Button
               positive
@@ -503,13 +496,4 @@ CreatibutorsFileModal.propTypes = {
   serializeSuggestions: PropTypes.func,
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
-};
-
-CreatibutorsFileModal.defaultProps = {
-  autocompleteNames: "search",
-  addLabel: undefined,
-  editLabel: undefined,
-  serializeSuggestions: undefined,
-  serializeCreatibutor: undefined,
-  deserializeCreatibutor: undefined,
 };
