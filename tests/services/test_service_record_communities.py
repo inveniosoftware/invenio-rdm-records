@@ -114,6 +114,28 @@ def test_add_community_component_called(
     assert "dummy_id" not in [c["community_id"] for c in requests]
 
 
+def test_remove_default_with_remaining_community(
+    db, community, community2, uploader, record_factory
+):
+    """Test remaining community becomes default after removing the default."""
+    record = record_factory.create_record(uploader=uploader, community=community)
+
+    record.parent.communities.add(community2._record, default=False)
+    record.parent.commit()
+    db.session.commit()
+
+    current_record_communities_service.remove(
+        system_identity,
+        record["id"],
+        {"communities": [{"id": str(community.id)}]},
+    )
+
+    result = current_rdm_records_service.record_cls.pid.resolve(record["id"])
+
+    assert len(result.parent.communities.ids) == 1
+    assert str(result.parent.communities.default.id) == str(community2.id)
+
+
 def test_remove_community_from_record_component_called(
     db, community, community2, uploader, record_factory, set_app_config_fn_scoped
 ):
