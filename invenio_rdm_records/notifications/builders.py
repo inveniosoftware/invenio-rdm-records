@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 CERN.
+# SPDX-FileCopyrightText: 2023-2026 CERN.
 # SPDX-FileCopyrightText: 2023 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
@@ -16,6 +16,8 @@ from invenio_users_resources.notifications.generators import (
     IfUserRecipient,
     UserRecipient,
 )
+
+from invenio_rdm_records.notifications.generators import RecordManagersRecipient
 
 
 class CommunityInclusionNotificationBuilder(NotificationBuilder):
@@ -220,10 +222,12 @@ class GuestAccessRequestSubmitNotificationBuilder(NotificationBuilder):
     ]
 
     recipients = [
-        # Currently only these two are allowed. Adapt as needed.
         IfUserRecipient(
             key="receiver_entity",
-            then_=[UserRecipient(key="request.receiver")],
+            then_=[
+                UserRecipient(key="request.receiver"),
+                RecordManagersRecipient(key="request.topic"),
+            ],
             else_=[
                 CommunityMembersRecipient(
                     key="request.receiver", roles=["curator", "owner"]
@@ -371,10 +375,12 @@ class UserAccessRequestSubmitNotificationBuilder(NotificationBuilder):
     ]
 
     recipients = [
-        # Currently only these two are allowed. Adapt as needed.
         IfUserRecipient(
             key="receiver_entity",
-            then_=[UserRecipient(key="request.receiver")],
+            then_=[
+                UserRecipient(key="request.receiver"),
+                RecordManagersRecipient(key="request.topic"),
+            ],
             else_=[
                 CommunityMembersRecipient(
                     key="request.receiver", roles=["curator", "owner"]
