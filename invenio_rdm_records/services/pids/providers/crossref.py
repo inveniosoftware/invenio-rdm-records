@@ -24,6 +24,10 @@ from .base import PIDProvider
 class CrossrefClient:
     """Crossref Client."""
 
+    #: Where deposits go when test mode is on, and when it is off.
+    TEST_API_URL = "https://test.crossref.org/servlet/deposit"
+    API_URL = "https://doi.crossref.org/servlet/deposit"
+
     def __init__(self, name, config_prefix=None, config_overrides=None, **kwargs):
         """Constructor."""
         self.name = name
@@ -32,13 +36,20 @@ class CrossrefClient:
 
         # Set reasonable defaults
         self.timeout = 30
-        self.test_mode = False
 
-        # Set API URL based on test mode
-        if self.test_mode:
-            self.api_url = "https://test.crossref.org/servlet/deposit"
-        else:
-            self.api_url = "https://doi.crossref.org/servlet/deposit"
+    @property
+    def test_mode(self):
+        """Whether deposits go to Crossref's test system.
+
+        Defaults to True, as DataCiteClient does for the same setting.
+        Say <prefix>_TEST_MODE = False to deposit for real.
+        """
+        return self.cfg("test_mode", True)
+
+    @property
+    def api_url(self):
+        """The deposit endpoint, test or production, per test mode."""
+        return self.TEST_API_URL if self.test_mode else self.API_URL
 
     def cfgkey(self, key):
         """Generate a configuration key."""
