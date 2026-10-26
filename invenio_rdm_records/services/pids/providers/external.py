@@ -6,9 +6,11 @@
 
 """PID Base Provider."""
 
-from flask import current_app
+from flask import current_app, g
 from invenio_db import db
 from invenio_i18n import lazy_gettext as _
+from invenio_pidstore.errors import PIDDoesNotExistError
+from sqlalchemy.orm.exc import NoResultFound
 
 from .base import PIDProvider
 
@@ -124,7 +126,23 @@ class ExternalPIDProvider(PIDProvider):
 
     def _existing_record_url(self, record, identifier):
         """Return the URL of the readable published record using the identifier."""
-        return None
+        # Imported here to avoid a circular import.
+        from invenio_rdm_records.proxies import current_rdm_records_service
+
+        service = current_rdm_records_service
+        try:
+            pid = self.get(pid_value=identifier)
+            if not pid.object_uuid or pid.object_uuid == record.id:
+                return None
+            with db.session.no_autoflush:
+                # Drafts live in a different table, so they are not found here.
+                existing = service.record_cls.get_record(pid.object_uuid)
+            if not service.check_permission(g.identity, "read", record=existing):
+                return None
+            links = service.links_item_tpl.expand(g.identity, existing)
+            return links.get("self_html")
+        except (PIDDoesNotExistError, NoResultFound):
+            return None
 
     def _name_existing_record(self, errors, record, identifier):
         """Replace the "already exists" message with one linking the record."""
