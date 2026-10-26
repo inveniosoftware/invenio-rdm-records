@@ -58,12 +58,26 @@ class ExternalPIDProvider(PIDProvider):
 
     It does not support any other type of operation. However, it helps
     generalize the service code by using polymorphism.
+
+    :param link_existing_record: if ``True``, a duplicate identifier error
+        names (with its URL) the published record already using the
+        identifier, provided the current identity is allowed to read it.
+        Disabled by default so that the existence of restricted records is
+        not disclosed.
     """
 
-    def __init__(self, name, pid_type, validators=None, **kwargs):
+    def __init__(
+        self,
+        name,
+        pid_type,
+        validators=None,
+        link_existing_record=False,
+        **kwargs,
+    ):
         """Constructor."""
         super().__init__(name, pid_type=pid_type, managed=False, **kwargs)
         self._validators = validators or []
+        self._link_existing_record = link_existing_record
 
     @classmethod
     def is_enabled(cls, app):
@@ -89,6 +103,9 @@ class ExternalPIDProvider(PIDProvider):
 
         success, errors = super().validate(record, identifier, provider, **kwargs)
 
+        if errors and identifier and self._link_existing_record:
+            self._name_existing_record(errors, record, identifier)
+
         if not identifier:
             self._insert_pid_type_error_msg(
                 errors,
@@ -104,6 +121,34 @@ class ExternalPIDProvider(PIDProvider):
                 self._insert_pid_type_error_msg(errors, error_msgs)
 
         return (True, []) if not errors else (False, errors)
+
+    def _existing_record_url(self, record, identifier):
+        """Return the URL of the readable published record using the identifier."""
+        return None
+
+    def _name_existing_record(self, errors, record, identifier):
+        """Replace the "already exists" message with one linking the record."""
+        url = self._existing_record_url(record, identifier)
+        if not url:
+            return
+
+        default_msg = str(
+            _(
+                "%(pid_type)s:%(identifier)s already exists.",
+                pid_type=self.pid_type,
+                identifier=identifier,
+            )
+        )
+        new_msg = _(
+            "%(scheme)s %(identifier)s is already used by the record %(url)s.",
+            scheme=self.label,
+            identifier=identifier,
+            url=url,
+        )
+        for error in errors:
+            error["messages"] = [
+                new_msg if str(m) == default_msg else m for m in error["messages"]
+            ]
 
     def delete(self, pid, **kwargs):
         """Delete a persistent identifier."""

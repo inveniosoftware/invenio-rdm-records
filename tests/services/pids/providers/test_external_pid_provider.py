@@ -117,3 +117,63 @@ def test_blocked_prefixes_ignores_empty_prefix(running_app):
     finally:
         current_app.config.clear()
         current_app.config.update(old_config)
+
+
+def _duplicate_setup(provider, location, db):
+    """Publish a record holding an external PID and return it with a new draft."""
+    first = RDMRecord.publish(RDMDraft.create({}))
+    first.commit()
+    pid = provider.create(first, "dup-value")
+    provider.register(pid=pid, record=first)
+    db.session.commit()
+    other = RDMRecord.publish(RDMDraft.create({}))
+    return first, other
+
+
+def test_external_provider_duplicate_default_message(
+    running_app, location, db, external_provider
+):
+    """By default the duplicate error does not reveal the existing record."""
+    _, other = _duplicate_setup(external_provider, location, db)
+    success, errors = external_provider.validate(
+        record=other, identifier="dup-value", provider="external"
+    )
+    assert not success
+    messages = [str(m) for m in errors[0]["messages"]]
+    assert messages == ["testid:dup-value already exists."]
+
+
+def test_external_provider_duplicate_links_existing_record(
+    running_app, location, db, monkeypatch
+):
+    """With the option enabled the error links the readable existing record."""
+    provider = ExternalPIDProvider(
+        "external", "testid", label="DOI", link_existing_record=True
+    )
+    _, other = _duplicate_setup(provider, location, db)
+    url = "https://example.org/records/abcde-12345"
+    monkeypatch.setattr(provider, "_existing_record_url", lambda r, i: url)
+    success, errors = provider.validate(
+        record=other, identifier="dup-value", provider="external"
+    )
+    assert not success
+    assert [str(m) for m in errors[0]["messages"]] == [
+        f"DOI dup-value is already used by the record {url}."
+    ]
+
+
+def test_external_provider_duplicate_unreadable_record(
+    running_app, location, db, monkeypatch
+):
+    """If no URL can be given (draft/unreadable) the generic message is kept."""
+    provider = ExternalPIDProvider(
+        "external", "testid", label="DOI", link_existing_record=True
+    )
+    _, other = _duplicate_setup(provider, location, db)
+    monkeypatch.setattr(provider, "_existing_record_url", lambda r, i: None)
+    success, errors = provider.validate(
+        record=other, identifier="dup-value", provider="external"
+    )
+    assert not success
+    messages = [str(m) for m in errors[0]["messages"]]
+    assert messages == ["testid:dup-value already exists."]
