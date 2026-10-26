@@ -36,7 +36,7 @@ class CreateAction(actions.CreateAction):
 class AcceptAction(actions.AcceptAction):
     """Accept action."""
 
-    def execute(self, identity, uow, **kwargs):
+    def execute(self, identity, uow, enforce_cap=True, **kwargs):
         """Apply the quota increase."""
         DRAFT = self.request["topic"]["record"]
         QUOTA_SIZE = int(self.request["payload"]["quota_size"])
@@ -45,7 +45,9 @@ class AcceptAction(actions.AcceptAction):
             "quota_size": QUOTA_SIZE * 1000000000,
             "max_file_size": QUOTA_SIZE * 1000000000,
         }
-        records_service.set_quota(system_identity, DRAFT, data)
+        records_service.set_quota(
+            system_identity, DRAFT, data, enforce_cap=enforce_cap, uow=uow
+        )
 
         super().execute(identity, uow)
 
