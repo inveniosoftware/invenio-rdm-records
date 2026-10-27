@@ -152,7 +152,7 @@ def test_external_provider_duplicate_links_existing_record(
     )
     _, other = _duplicate_setup(provider, location, db)
     url = "https://example.org/records/abcde-12345"
-    monkeypatch.setattr(provider, "_existing_record_url", lambda r, i: url)
+    monkeypatch.setattr(provider, "_existing_record_url", lambda pid: url)
     success, errors = provider.validate(
         record=other, identifier="dup-value", provider="external"
     )
@@ -170,7 +170,7 @@ def test_external_provider_duplicate_unreadable_record(
         "external", "testid", label="DOI", link_existing_record=True
     )
     _, other = _duplicate_setup(provider, location, db)
-    monkeypatch.setattr(provider, "_existing_record_url", lambda r, i: None)
+    monkeypatch.setattr(provider, "_existing_record_url", lambda pid: None)
     success, errors = provider.validate(
         record=other, identifier="dup-value", provider="external"
     )

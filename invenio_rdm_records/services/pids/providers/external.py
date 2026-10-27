@@ -9,7 +9,6 @@
 from flask import current_app, g
 from invenio_db import db
 from invenio_i18n import lazy_gettext as _
-from invenio_pidstore.errors import PIDDoesNotExistError
 from sqlalchemy.orm.exc import NoResultFound
 
 from .base import PIDProvider
@@ -105,9 +104,6 @@ class ExternalPIDProvider(PIDProvider):
 
         success, errors = super().validate(record, identifier, provider, **kwargs)
 
-        if errors and identifier and self._link_existing_record:
-            self._name_existing_record(errors, record, identifier)
-
         if not identifier:
             self._insert_pid_type_error_msg(
                 errors,
@@ -124,21 +120,18 @@ class ExternalPIDProvider(PIDProvider):
 
         return (True, []) if not errors else (False, errors)
 
-    def _existing_record_url(self, record, identifier):
-        """Return the URL of the readable published record using the identifier."""
+    def _existing_record_url(self, pid):
+        """Return the URL of the readable published record holding the PID."""
+        # There is no identity outside a request (e.g. in scripts or tasks).
+        identity = getattr(g, "identity", None)
+        if identity is None or not pid.object_uuid:
+            return None
+
         # Imported here to avoid a circular import.
         from invenio_rdm_records.proxies import current_rdm_records_service
 
-        # There is no identity outside a request (e.g. in scripts or tasks).
-        identity = getattr(g, "identity", None)
-        if identity is None:
-            return None
-
         service = current_rdm_records_service
         try:
-            pid = self.get(pid_value=identifier)
-            if not pid.object_uuid or pid.object_uuid == record.id:
-                return None
             with db.session.no_autoflush:
                 # Drafts live in a different table, so they are not found here.
                 existing = service.record_cls.get_record(pid.object_uuid)
@@ -146,32 +139,25 @@ class ExternalPIDProvider(PIDProvider):
                 return None
             links = service.links_item_tpl.expand(identity, existing)
             return links.get("self_html")
-        except (PIDDoesNotExistError, NoResultFound):
+        except NoResultFound:
             return None
 
-    def _name_existing_record(self, errors, record, identifier):
-        """Replace the "already exists" message with one linking the record."""
-        url = self._existing_record_url(record, identifier)
-        if not url:
-            return
+    def _duplicate_error_message(self, pid, identifier):
+        """Return the duplicate error, naming the existing record if allowed."""
+        message = super()._duplicate_error_message(pid, identifier)
+        if not self._link_existing_record:
+            return message
 
-        default_msg = str(
-            _(
-                "%(pid_type)s:%(identifier)s already exists.",
-                pid_type=self.pid_type,
-                identifier=identifier,
-            )
-        )
-        new_msg = _(
+        url = self._existing_record_url(pid)
+        if not url:
+            return message
+
+        return _(
             "%(scheme)s %(identifier)s is already used by the record %(url)s",
             scheme=self.label,
             identifier=identifier,
             url=url,
         )
-        for error in errors:
-            error["messages"] = [
-                new_msg if str(m) == default_msg else m for m in error["messages"]
-            ]
 
     def delete(self, pid, **kwargs):
         """Delete a persistent identifier."""
