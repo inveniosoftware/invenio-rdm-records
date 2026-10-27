@@ -158,7 +158,7 @@ def test_external_provider_duplicate_links_existing_record(
     )
     assert not success
     assert [str(m) for m in errors[0]["messages"]] == [
-        f"DOI dup-value is already used by the record {url}."
+        f"DOI dup-value is already used by the record {url}"
     ]
 
 

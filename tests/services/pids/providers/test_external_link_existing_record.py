@@ -91,7 +91,7 @@ def test_published_record_is_named(
 
     if link_existing_record:
         url = first.links["self_html"]
-        assert messages == [f"DOI {DOI} is already used by the record {url}."]
+        assert messages == [f"DOI {DOI} is already used by the record {url}"]
     else:
         assert _generic_message(messages)
         assert not any("/records/" in m for m in messages)

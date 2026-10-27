@@ -158,7 +158,7 @@ class ExternalPIDProvider(PIDProvider):
             )
         )
         new_msg = _(
-            "%(scheme)s %(identifier)s is already used by the record %(url)s.",
+            "%(scheme)s %(identifier)s is already used by the record %(url)s",
             scheme=self.label,
             identifier=identifier,
             url=url,
