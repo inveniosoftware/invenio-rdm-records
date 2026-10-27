@@ -5,7 +5,7 @@
 
 import calendar
 
-from arrow import Arrow
+import pendulum
 from babel_edtf import parse_edtf
 from edtf.parser.edtf_exceptions import EDTFParseException
 from invenio_records.dictutils import dict_lookup, parse_lookup_key
@@ -15,8 +15,8 @@ from pytz import utc
 
 def _format_date(date):
     """Format the given date into ISO format."""
-    arrow = Arrow.fromtimestamp(calendar.timegm(date), tzinfo=utc)
-    return arrow.date().isoformat()
+    datetime = pendulum.from_timestamp(calendar.timegm(date), tz=utc)
+    return datetime.date().isoformat()
 
 
 class EDTFDumperExt(SearchDumperExt):
