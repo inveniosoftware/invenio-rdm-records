@@ -146,3 +146,21 @@ def test_draft_is_not_named(
     messages = _flatten(exc.value.messages)
     assert _generic_message(messages)
     assert draft.id not in " ".join(messages)
+
+
+def test_no_request_identity_keeps_generic_message(
+    running_app,
+    search_clear,
+    service,
+    minimal_record,
+    superuser_identity,
+):
+    """Without a request identity (e.g. a script) the generic message is kept."""
+    data = _external_doi_data(minimal_record)
+    service.publish(superuser_identity, service.create(superuser_identity, data).id)
+    g.pop("identity", None)
+
+    messages = _publish_duplicate(service, superuser_identity, data)
+
+    assert _generic_message(messages)
+    assert not any("/records/" in m for m in messages)

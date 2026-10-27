@@ -129,6 +129,11 @@ class ExternalPIDProvider(PIDProvider):
         # Imported here to avoid a circular import.
         from invenio_rdm_records.proxies import current_rdm_records_service
 
+        # There is no identity outside a request (e.g. in scripts or tasks).
+        identity = getattr(g, "identity", None)
+        if identity is None:
+            return None
+
         service = current_rdm_records_service
         try:
             pid = self.get(pid_value=identifier)
@@ -137,9 +142,9 @@ class ExternalPIDProvider(PIDProvider):
             with db.session.no_autoflush:
                 # Drafts live in a different table, so they are not found here.
                 existing = service.record_cls.get_record(pid.object_uuid)
-            if not service.check_permission(g.identity, "read", record=existing):
+            if not service.check_permission(identity, "read", record=existing):
                 return None
-            links = service.links_item_tpl.expand(g.identity, existing)
+            links = service.links_item_tpl.expand(identity, existing)
             return links.get("self_html")
         except (PIDDoesNotExistError, NoResultFound):
             return None
