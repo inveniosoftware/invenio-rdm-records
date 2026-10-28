@@ -143,12 +143,12 @@ class PIDProvider:
         if not soft_delete:
             return pid.delete()
 
-    def _duplicate_error_message(self, pid, identifier):
+    def _duplicate_error_message(self, pid):
         """Return the error message for an identifier that is already in use."""
         return _(
-            "%(pid_type)s:%(identifier)s already exists.",
+            "%(pid_type)s:%(pid_value)s already exists.",
             pid_type=self.pid_type,
-            identifier=identifier,
+            pid_value=pid.pid_value,
         )
 
     def validate(self, record, identifier=None, provider=None, **kwargs):
@@ -180,7 +180,7 @@ class PIDProvider:
                     # may come a time where there is a mismatch between the two.
                     {
                         "field": f"pids.{self.pid_type}",
-                        "messages": [self._duplicate_error_message(pid, identifier)],
+                        "messages": [self._duplicate_error_message(pid)],
                     }
                 ]
         except PIDDoesNotExistError:

@@ -142,9 +142,10 @@ class ExternalPIDProvider(PIDProvider):
         except NoResultFound:
             return None
 
-    def _duplicate_error_message(self, pid, identifier):
+    def _duplicate_error_message(self, pid):
         """Return the duplicate error, naming the existing record if allowed."""
-        message = super()._duplicate_error_message(pid, identifier)
+        identifier = pid.pid_value
+        message = super()._duplicate_error_message(pid)
         if not self._link_existing_record:
             return message
 
