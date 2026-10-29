@@ -261,6 +261,35 @@ def test_crossref_provider_validation(record, crossref_config):
     assert not success
 
 
+def test_crossref_provider_validation_duplicate_doi(
+    record, crossref_provider, crossref_config
+):
+    record["metadata"] = {"publisher": "Acme Inc"}
+    pid = crossref_provider.create(record)
+
+    # Another record cannot reuse the DOI minted for the first record.
+    other_record = RDMRecord.publish(RDMDraft.create({}))
+    other_record["metadata"] = {"publisher": "Acme Inc"}
+    success, errors = crossref_provider.validate(
+        record=other_record, identifier=pid.pid_value, provider="crossref"
+    )
+
+    assert not success
+    assert [
+        {
+            "field": "pids.doi",
+            "messages": [f"doi:{pid.pid_value} already exists."],
+        }
+    ] == errors
+
+    # The record owning the DOI can still validate it (edit/republish).
+    success, errors = crossref_provider.validate(
+        record=record, identifier=pid.pid_value, provider="crossref"
+    )
+    assert success
+    assert [] == errors
+
+
 def test_crossref_client_prefix_override(running_app, crossref_config, minimal_record):
     """Test that CrossrefClient respects prefix kwarg override."""
     from unittest.mock import Mock

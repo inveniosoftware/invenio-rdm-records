@@ -307,7 +307,7 @@ class CrossrefPIDProvider(PIDProvider):
                   error dicts of the form:
                   `{"field": <field>, "messages: ["<msgA1>", ...]}`.
         """
-        errors = []
+        success, errors = super().validate(record, identifier, provider, **kwargs)
 
         try:
             # Validate DOI. Should be a valid DOI.
