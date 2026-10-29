@@ -11,6 +11,7 @@ from invenio_db import db
 from invenio_i18n import lazy_gettext as _
 from sqlalchemy.orm.exc import NoResultFound
 
+from ....proxies import current_rdm_records_service
 from .base import PIDProvider
 
 
@@ -126,9 +127,6 @@ class ExternalPIDProvider(PIDProvider):
         identity = getattr(g, "identity", None)
         if identity is None or not pid.object_uuid:
             return None
-
-        # Imported here to avoid a circular import.
-        from invenio_rdm_records.proxies import current_rdm_records_service
 
         service = current_rdm_records_service
         try:
