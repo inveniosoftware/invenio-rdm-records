@@ -318,7 +318,8 @@ class CrossrefPIDProvider(PIDProvider):
                   error dicts of the form:
                   `{"field": <field>, "messages: ["<msgA1>", ...]}`.
         """
-        errors = []
+        # success is unused, but naming it _ would interfere with lazy_gettext as _
+        success, errors = super().validate(record, identifier, provider, **kwargs)
 
         try:
             # Validate DOI. Should be a valid DOI.
@@ -327,11 +328,9 @@ class CrossrefPIDProvider(PIDProvider):
                 or not idutils.is_doi(identifier)
                 or not validate_prefix(identifier)
             ):
-                errors.append(
-                    {
-                        "field": "pids.identifier.doi",
-                        "messages": [_("Missing or invalid DOI for registration.")],
-                    }
+                # modifies the error in errors in-place
+                self._insert_pid_type_error_msg(
+                    errors, _("Missing or invalid DOI for registration.")
                 )
 
             # Validate record
