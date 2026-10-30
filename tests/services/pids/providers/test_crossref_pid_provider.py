@@ -225,7 +225,7 @@ def test_crossref_provider_validation(record, crossref_config):
     assert not success
     expected = [
         {
-            "field": "pids.identifier.doi",
+            "field": "pids.doi",
             "messages": ["Missing or invalid DOI for registration."],
         }
     ]
@@ -240,7 +240,7 @@ def test_crossref_provider_validation(record, crossref_config):
     assert not success
     expected = [
         {
-            "field": "pids.identifier.doi",
+            "field": "pids.doi",
             "messages": ["Missing or invalid DOI for registration."],
         }
     ]
@@ -259,6 +259,67 @@ def test_crossref_provider_validation(record, crossref_config):
     ]
     assert expected == errors
     assert not success
+
+
+def test_crossref_provider_validation_duplicate_doi(
+    record, crossref_provider, crossref_config
+):
+    """A DOI that belongs to one record cannot be validated for another."""
+    record["metadata"] = {"publisher": "Acme Inc"}
+    pid = crossref_provider.create(record)
+
+    other_record = RDMRecord.publish(RDMDraft.create({}))
+    other_record["metadata"] = {"publisher": "Acme Inc"}
+    success, errors = crossref_provider.validate(
+        record=other_record, identifier=pid.pid_value, provider="crossref"
+    )
+
+    assert not success
+    assert [
+        {
+            "field": "pids.doi",
+            "messages": [f"doi:{pid.pid_value} already exists."],
+        }
+    ] == errors
+
+    # The record owning the DOI can still validate it (edit/republish).
+    success, errors = crossref_provider.validate(
+        record=record, identifier=pid.pid_value, provider="crossref"
+    )
+    assert success
+    assert [] == errors
+
+
+def test_crossref_provider_validation_duplicate_invalid_doi(
+    record, crossref_provider, crossref_config
+):
+    """A taken DOI that is also invalid reports both under pids.doi."""
+    invalid_doi = "20.1234/taken.1234"
+    PersistentIdentifier.create(
+        "doi",
+        invalid_doi,
+        pid_provider="crossref",
+        object_type="rec",
+        object_uuid=record.id,
+        status=PIDStatus.NEW,
+    )
+
+    other_record = RDMRecord.publish(RDMDraft.create({}))
+    other_record["metadata"] = {"publisher": "Acme Inc"}
+    success, errors = crossref_provider.validate(
+        record=other_record, identifier=invalid_doi, provider="crossref"
+    )
+
+    assert not success
+    assert [
+        {
+            "field": "pids.doi",
+            "messages": [
+                f"doi:{invalid_doi} already exists.",
+                "Missing or invalid DOI for registration.",
+            ],
+        }
+    ] == errors
 
 
 def test_crossref_client_prefix_override(running_app, crossref_config, minimal_record):
