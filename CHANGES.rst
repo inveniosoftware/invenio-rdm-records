@@ -9,6 +9,14 @@
 Changes
 =======
 
+Version v32.3.3 (released 2026-10-30)
+
+- fix(serializers): get correctly translated rights
+- fix(crossref): deposit a record's files with its Crossref metadata
+- fix(crossref): let CROSSREF_TEST_MODE choose the deposit endpoint
+- fix(crossref): default Crossref deposits to the test system
+- fix(crossref): check for duplicate DOIs and report errors on pids.doi
+
 Version v32.3.2 (released 2026-09-22)
 
 - fix(iiif): handle DelegateError for unsupported file types
