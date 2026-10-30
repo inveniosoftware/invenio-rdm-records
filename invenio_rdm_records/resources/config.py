@@ -304,7 +304,7 @@ class RDMRecordFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     url_prefix = "/records/<pid_value>"
 
     error_handlers = {
-        **ErrorHandlersMixin.error_handlers,
+        **FileResourceConfig.error_handlers,
         RecordDeletedException: create_error_handler(
             lambda e: (
                 HTTPJSONException(code=404, description=_("Record not found"))
@@ -354,7 +354,7 @@ class RDMRecordMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     }
 
     error_handlers = {
-        **ErrorHandlersMixin.error_handlers,
+        **FileResourceConfig.error_handlers,
         RecordDeletedException: create_error_handler(
             lambda e: (
                 HTTPJSONException(code=404, description=_("Record not found"))
