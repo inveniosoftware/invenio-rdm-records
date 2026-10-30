@@ -9,7 +9,6 @@
 from flask import current_app, g
 from invenio_db import db
 from invenio_i18n import lazy_gettext as _
-from sqlalchemy.orm.exc import NoResultFound
 
 from ....proxies import current_rdm_records_service
 from .base import PIDProvider
@@ -128,17 +127,9 @@ class ExternalPIDProvider(PIDProvider):
         if identity is None or not pid.object_uuid:
             return None
 
-        service = current_rdm_records_service
-        try:
-            with db.session.no_autoflush:
-                # Drafts live in a different table, so they are not found here.
-                existing = service.record_cls.get_record(pid.object_uuid)
-            if not service.check_permission(identity, "read", record=existing):
-                return None
-            links = service.links_item_tpl.expand(identity, existing)
-            return links.get("self_html")
-        except NoResultFound:
-            return None
+        return current_rdm_records_service.published_record_url(
+            identity, pid.object_uuid
+        )
 
     def _duplicate_error_message(self, pid):
         """Return the duplicate error, naming the existing record if allowed."""
