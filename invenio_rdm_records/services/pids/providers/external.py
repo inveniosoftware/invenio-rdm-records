@@ -6,10 +6,11 @@
 
 """PID Base Provider."""
 
-from flask import current_app
+from flask import current_app, g
 from invenio_db import db
 from invenio_i18n import lazy_gettext as _
 
+from ....proxies import current_rdm_records_service
 from .base import PIDProvider
 
 
@@ -58,12 +59,26 @@ class ExternalPIDProvider(PIDProvider):
 
     It does not support any other type of operation. However, it helps
     generalize the service code by using polymorphism.
+
+    :param link_existing_record: if ``True``, a duplicate identifier error
+        names (with its URL) the published record already using the
+        identifier, provided the current identity is allowed to read it.
+        Disabled by default so that the existence of restricted records is
+        not disclosed.
     """
 
-    def __init__(self, name, pid_type, validators=None, **kwargs):
+    def __init__(
+        self,
+        name,
+        pid_type,
+        validators=None,
+        link_existing_record=False,
+        **kwargs,
+    ):
         """Constructor."""
         super().__init__(name, pid_type=pid_type, managed=False, **kwargs)
         self._validators = validators or []
+        self._link_existing_record = link_existing_record
 
     @classmethod
     def is_enabled(cls, app):
@@ -104,6 +119,35 @@ class ExternalPIDProvider(PIDProvider):
                 self._insert_pid_type_error_msg(errors, error_msgs)
 
         return (True, []) if not errors else (False, errors)
+
+    def _existing_record_url(self, pid):
+        """Return the URL of the readable published record holding the PID."""
+        # There is no identity outside a request (e.g. in scripts or tasks).
+        identity = getattr(g, "identity", None)
+        if identity is None or not pid.object_uuid:
+            return None
+
+        return current_rdm_records_service.published_record_url(
+            identity, pid.object_uuid
+        )
+
+    def _duplicate_error_message(self, pid):
+        """Return the duplicate error, naming the existing record if allowed."""
+        identifier = pid.pid_value
+        message = super()._duplicate_error_message(pid)
+        if not self._link_existing_record:
+            return message
+
+        url = self._existing_record_url(pid)
+        if not url:
+            return message
+
+        return _(
+            "%(scheme)s %(identifier)s is already used by the record %(url)s",
+            scheme=self.label,
+            identifier=identifier,
+            url=url,
+        )
 
     def delete(self, pid, **kwargs):
         """Delete a persistent identifier."""
