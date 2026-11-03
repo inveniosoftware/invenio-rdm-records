@@ -12,9 +12,11 @@
 
 {% set request_link = submission_request.links.self_html %}
 {% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
+{% set show_emojis = config.get('NOTIFICATIONS_SHOW_EMOJIS', True) %}
 
 {%- block subject -%}
-    {{ _("❌ Access request canceled") }}
+{%- set emoji = "❌ " if show_emojis else "" -%}
+    {{ emoji }}{{ _("Access request canceled") }}
 {%- endblock subject -%}
 
 {%- block html_body -%}

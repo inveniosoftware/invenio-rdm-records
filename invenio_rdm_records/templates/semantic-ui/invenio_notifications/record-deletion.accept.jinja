@@ -9,9 +9,11 @@
 {% set request_links = notification.context.request.links %}
 
 {% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
+{% set show_emojis = config.get('NOTIFICATIONS_SHOW_EMOJIS', True) %}
 
 {%- block subject -%}
-    {{ _("✅ Your record has been deleted") }}
+{%- set emoji = "✅ " if show_emojis else "" -%}
+    {{ emoji }}{{ _("Your record has been deleted") }}
 {%- endblock subject -%}
 
 {%- block html_body -%}
