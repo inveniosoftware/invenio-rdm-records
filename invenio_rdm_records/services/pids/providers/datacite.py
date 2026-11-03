@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2021-2024 CERN.
 # SPDX-FileCopyrightText: 2023 Northwestern University.
-# SPDX-FileCopyrightText: 2023-2024 Graz University of Technology.
+# SPDX-FileCopyrightText: 2023-2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
 """DataCite DOI Provider."""
@@ -185,15 +185,10 @@ class DataCitePIDProvider(PIDProvider):
         elif record["access"]["record"] == "restricted":
             return False
 
-        local_success = super().register(pid)
-        if not local_success:
-            return False
-
         try:
             doc = self.serializer.dump_obj(record)
             url = kwargs["url"]
             self.client.api.public_doi(metadata=doc, url=url, doi=pid.pid_value)
-            return True
         except DataCiteError as e:
             current_app.logger.warning(
                 f"DataCite provider error when registering DOI for {pid.pid_value}"
@@ -201,6 +196,13 @@ class DataCitePIDProvider(PIDProvider):
             self._log_errors(e)
 
             return False
+
+        local_success = super().register(pid)
+        if not local_success:
+            return False
+
+        return True
+
 
     def update(self, pid, record, url=None, **kwargs):
         """Update metadata associated with a DOI.
