@@ -9,8 +9,7 @@ class BibTexFormatter:
 
     It defines each bibtex entry type supported by the default biblatex data model along with the fields supported by each type.
 
-    .. seealso::
-
+    See Also:
         Entry types follow the specification from https://mirror.foobar.to/CTAN/macros/latex/contrib/biblatex/doc/biblatex.pdf and legacy Zenodo.
     """
 

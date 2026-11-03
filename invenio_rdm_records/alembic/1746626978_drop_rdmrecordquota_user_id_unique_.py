@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2025 TU Wien.
 # SPDX-License-Identifier: MIT
 
-"""Drop ``RDMRecordQuota.user_id`` unique constraint."""
+"""Drop `RDMRecordQuota.user_id` unique constraint."""
 
 from alembic import op
 

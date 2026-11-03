@@ -443,10 +443,11 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
     def bulk_add(self, identity, community_id, record_ids, set_default=False, uow=None):
         """Bulk adds records to a community.
 
-        :param identity: The identity performing the action.
-        :param community_id: The ID of the community.
-        :param record_ids: List of record IDs to be added to the community.
-        :param set_default: Whether to set the community as default for the added records.
+        Args:
+            identity: The identity performing the action.
+            community_id: The ID of the community.
+            record_ids: List of record IDs to be added to the community.
+            set_default: Whether to set the community as default for the added records.
         """
         self.require_permission(identity, "bulk_add")
         errors = []
@@ -507,8 +508,9 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         request reviewers (who have can_read but not can_review on the record)
         also see the relevant requests.
 
-        :param identity: The identity performing the action.
-        :param record: The record (RecordItem) to get the community requests for.
+        Args:
+            identity: The identity performing the action.
+            record: The record (RecordItem) to get the community requests for.
 
         Output: {<Community-UUID>: <Request-UUID>}
         """

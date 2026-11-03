@@ -50,15 +50,20 @@ def validate_optional_doi(
 ):
     """Validate optional DOI.
 
-    :param draft: The draft record.
-    :param previous_published_record: The previous published record.
-    :param errors: List of draft validation errors to append to when saving a draft. Raise to emit errors on publish instead.
-    :raises ValidationErrorWithMessageAsList: If the DOI transition is not allowed and there is no errors object passed.
-    :return: The DOI transitions in the format:
+    Args:
+        draft: The draft record.
+        previous_published_record: The previous published record.
+        errors: List of draft validation errors to append to when saving a draft. Raise to emit errors on publish instead.
+
+    Returns:
+        The DOI transitions in the format:
         {
             "allowed_providers": [<list of allowed providers>],
             "message": <message to be shown in the UI for disallowed providers>
         }
+
+    Raises:
+        ValidationErrorWithMessageAsList: If the DOI transition is not allowed and there is no errors object passed.
     """
     sitename = current_app.config.get("THEME_SITENAME", "this repository")
     if transitions_config is None:

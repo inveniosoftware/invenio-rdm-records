@@ -75,10 +75,11 @@ class ExternalPIDProvider(PIDProvider):
     def validate(self, record, identifier=None, provider=None, client=None, **kwargs):
         """Validate the pid attributes and record.
 
-        :returns: A tuple (success, errors). `success` is a bool that specifies
-                  if the validation was successful. `errors` is a list of
-                  error dicts of the form:
-                  `{"field": <field>, "messages: ["<msgA1>", ...]}`.
+        Returns:
+            A tuple (success, errors). `success` is a bool that specifies
+            if the validation was successful. `errors` is a list of
+            error dicts of the form:
+            `{"field": <field>, "messages: ["<msgA1>", ...]}`.
         """
         if client:
             current_app.logger.error(

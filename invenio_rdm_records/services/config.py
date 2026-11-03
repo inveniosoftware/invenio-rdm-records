@@ -841,7 +841,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ),
         "quota_increase": RecordEndpointLink("records.quota_increase"),
         # Requests
-        # Unfortunately `record_pid`` was used in `RDMRecordRequestsResourceConfig``
+        # Unfortunately `record_pid` was used in `RDMRecordRequestsResourceConfig`
         # instead of `pid_value`, so we have to pass a bespoke vars func
         "requests": EndpointLink(
             "record_requests.search",

@@ -22,7 +22,8 @@ class StatisticsDumperExt(SearchDumperExt):
     def __init__(self, target_field):
         """Constructor.
 
-        :param target_field: dot separated path where to dump the tokens.
+        Args:
+            target_field: dot separated path where to dump the tokens.
         """
         super().__init__()
         self.keys = parse_lookup_key(target_field)

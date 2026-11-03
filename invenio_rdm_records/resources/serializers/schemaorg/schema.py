@@ -27,9 +27,11 @@ from ..utils import convert_size, get_vocabulary_props
 def _serialize_identifiers(ids):
     """Serialize related and alternate identifiers to URLs.
 
-    :param ids: List of related_identifier or alternate_identifier objects.
-    :returns: List of identifiers in schema.org format.
-    :rtype dict:
+    Args:
+        ids: List of related_identifier or alternate_identifier objects.
+
+    Returns:
+        List of identifiers in schema.org format.
     """
     res = []
     for i in ids:
@@ -338,8 +340,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
     def get_funding(self, obj):
         """Serialize funding to schema.org.
 
-        .. note::
-
+        Note:
             Property 'funding': https://schema.org/funding
             Type 'Grant': https://schema.org/Grant
         """
@@ -496,10 +497,11 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
     def _filter_related_identifier_type(self, identifiers, relation_types):
         """Filters identifier by relation types.
 
-        Relation types must be a sequence where to look items (e.g. ``list``, ``set``).
-        A single ``str`` is also accepted but it's converted to a ``set``.
+        Relation types must be a sequence where to look items (e.g. `list`, `set`).
+        A single `str` is also accepted but it's converted to a `set`.
 
-        :returns: the filter object.
+        Returns:
+            the filter object.
         """
         if type(relation_types) == str:
             relation_types = {relation_types}

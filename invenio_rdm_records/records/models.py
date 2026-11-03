@@ -29,12 +29,12 @@ from .systemfields.deletion_status import RecordDeletionStatusEnum
 class RecordMetadataBase(OriginalRecordMetadataBase):
     """Record metadata class with a lighter decode mechanism.
 
-    This class replaces the ``copy.deepcopy()`` call that's being done by the parent
+    This class replaces the `copy.deepcopy()` call that's being done by the parent
     classes with a simple shallow copy for performance gains on read operations on
     record data.
 
     This less defensive approach may require some extra precautions when manipulating
-    data dictionaries from records than are necessary with ``copy.deepcopy()``.
+    data dictionaries from records than are necessary with `copy.deepcopy()`.
     In InvenioRDM, such use cases are few and far between however.
     """
 
@@ -57,10 +57,10 @@ class CommunityRelationMixin:
 
     Usage:
 
-    .. code-block:: python
-
-        class CommunityRecordM2M(db.Model, CommunityRelationMixin):
-            __record_model__ = MyParentRecord
+    ```python
+    class CommunityRecordM2M(db.Model, CommunityRelationMixin):
+        __record_model__ = MyParentRecord
+    ```
     """
 
     __record_model__ = None

@@ -39,11 +39,13 @@ class RecordAccess:
     ):
         """Create a new RecordAccess object for a record.
 
-        If ``protection`` or ``embargo`` are not specified,
-        a new instance of ``protection_cls`` or ``embargo_cls``
+        If `protection` or `embargo` are not specified,
+        a new instance of `protection_cls` or `embargo_cls`
         will be used, respectively.
-        :param protection: The record and file protection levels
-        :param embargo: The embargo on the record (None means no embargo)
+
+        Args:
+            protection: The record and file protection levels
+            embargo: The embargo on the record (None means no embargo)
         """
         protection_cls = protection_cls or RecordAccess.protection_cls
         embargo_cls = embargo_cls or RecordAccess.embargo_cls
@@ -81,7 +83,7 @@ class RecordAccess:
     def lift_embargo(self):
         """Update the embargo active status if it has expired.
 
-        Returns ``True`` if the embargo was actually lifted (i.e. it was
+        Returns `True` if the embargo was actually lifted (i.e. it was
         expired but still marked as active).
         """
         if self.embargo._lift():
@@ -103,10 +105,10 @@ class RecordAccess:
     ):
         """Create a new Access object from the specified 'access' property.
 
-        The new ``RecordAccess`` object will be populated with new instances
+        The new `RecordAccess` object will be populated with new instances
         from the configured classes.
-        If ``access_dict`` is empty, the ``Access`` object will be populated
-        with new instances of ``protection_cls`` and ``embargo_cls``.
+        If `access_dict` is empty, the `Access` object will be populated
+        with new instances of `protection_cls` and `embargo_cls`.
         """
         protection_cls = protection_cls or cls.protection_cls
         embargo_cls = embargo_cls or cls.embargo_cls

@@ -42,7 +42,7 @@ class CrossrefXMLSerializer(MarshmallowSerializer):
         """Serialize a single record to Crossref XML bytes.
 
         Overrides the default to avoid double-encoding, since
-        ``dump_obj`` already returns XML bytes.
+        `dump_obj` already returns XML bytes.
         """
         return self.dump_obj(obj)
 
@@ -52,16 +52,17 @@ class CrossrefXMLSerializer(MarshmallowSerializer):
         Config variables for Crossref XML head elements are used in the
         XML head element.
 
-        :param record: Record instance (dict, Record model, or ChainObject).
-        :param url: the landing page URL for the DOI.
-            Falls back to ``SITE_UI_URL``/records/<id> if not provided.
+        Args:
+            record: Record instance (dict, Record model, or ChainObject).
+            url: the landing page URL for the DOI.
+                Falls back to `SITE_UI_URL`/records/<id> if not provided.
         """
         # Determine the URL that the DOI resolves to, in the following order:
         #
-        # 1. identifier of type url in ``metadata.identifiers``
+        # 1. identifier of type url in `metadata.identifiers`
         #    (e.g. archived original content)
         # 2. The landing page URL passed by the PID service
-        # 3. Default constructed from ``SITE_UI_URL`` and record ID
+        # 3. Default constructed from `SITE_UI_URL` and record ID
         #    (e.g. for Celery tasks or tests without UI endpoints)
         identifiers = (
             record.get("metadata", {}).get("identifiers", [])
@@ -117,10 +118,10 @@ class CrossrefXMLSerializer(MarshmallowSerializer):
     def _with_file_entries(self, record):
         """The record with its file entries filled in, where there are any.
 
-        commonmeta reads a record's files from ``files.entries``, and each
-        entry's download url from ``links.content``, and turns them into the
-        ``<collection property="text-mining">`` items that become a work's
-        ``link`` array in the Crossref API. A record object has neither. Only
+        commonmeta reads a record's files from `files.entries`, and each
+        entry's download url from `links.content`, and turns them into the
+        `<collection property="text-mining">` items that become a work's
+        `link` array in the Crossref API. A record object has neither. Only
         the files are taken from the service's projection; every other
         field is left exactly as the caller passed it, so this adds what was
         missing rather than changing what already worked.
@@ -162,13 +163,13 @@ class CrossrefXMLSerializer(MarshmallowSerializer):
         """Inject parent/child version relations into the commonmeta metadata.
 
         Mirrors the DataCite serializer: the concept (parent) DOI lists *every*
-        version via ``HasVersion``; a version DOI links to its concept DOI via
-        ``IsVersionOf``. This uses the records service (``scan_versions``), which
+        version via `HasVersion`; a version DOI links to its concept DOI via
+        `IsVersionOf`. This uses the records service (`scan_versions`), which
         the commonmeta reader cannot reach, so the concept DOI can list all
         versions rather than only the latest one exposed by the ChainObject.
 
-        Emitting ``HasVersion`` requires a commonmeta-py that serializes it
-        (versions < 0.263 dropped it); ``IsVersionOf`` works regardless. Lookup
+        Emitting `HasVersion` requires a commonmeta-py that serializes it
+        (versions < 0.263 dropped it); `IsVersionOf` works regardless. Lookup
         failures are logged and swallowed so version relations never block a DOI
         registration.
         """

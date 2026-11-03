@@ -190,15 +190,15 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         Contains OAI and communities. It should serialize into:
 
-        .. code-block:: xml
+        ```xml
+        <datafield tag="909" ind1="C" ind2="O">
+            <subfield code="p">user-community_name1</subfield>
+            <subfield code="p">user-community_name2</subfield>
+            <subfield code="o">oai:invenio.org:123456</subfield>
+        </datafield>
+        ```
 
-            <datafield tag="909" ind1="C" ind2="O">
-                <subfield code="p">user-community_name1</subfield>
-                <subfield code="p">user-community_name2</subfield>
-                <subfield code="o">oai:invenio.org:123456</subfield>
-            </datafield>
-
-        Communities slugs are prefixed with ``user-``.
+        Communities slugs are prefixed with `user-`.
         """
         result = {}
 
@@ -432,7 +432,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     def _serialize_description(self, description):
         """Serializes one description.
 
-        The description string is sanitized using ``bleach.clean``.
+        The description string is sanitized using `bleach.clean`.
         """
         return {
             "a": bleach.clean(

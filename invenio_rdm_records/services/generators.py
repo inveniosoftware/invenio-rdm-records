@@ -54,7 +54,7 @@ class IfRestricted(ConditionalGenerator):
         """Check if the record is restricted."""
         if record is None:
             # TODO - when permissions on links are checked, the record is not
-            # passes properly, causing below ``record.access`` to fail.
+            # passes properly, causing below `record.access` to fail.
             return False
         is_restricted = getattr(record.access.protection, self.field, "restricted")
         return is_restricted == "restricted"
@@ -403,10 +403,10 @@ class IfRequestType(ConditionalGenerator):
 
 
 class GuestAccessRequestToken(Generator):
-    """Require a ``AccessRequestTokenNeed(request['payload']['token'])``."""
+    """Require a `AccessRequestTokenNeed(request['payload']['token'])`."""
 
     def needs(self, request=None, **kwargs):
-        """Require a ``AccessRequestTokenNeed(request['payload']['token'])``."""
+        """Require a `AccessRequestTokenNeed(request['payload']['token'])`."""
         if request is not None:
             return [AccessRequestTokenNeed(request["payload"]["token"])]
 

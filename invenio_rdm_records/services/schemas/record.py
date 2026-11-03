@@ -62,8 +62,8 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin, CleanReviewMixin):
 
         unknown = EXCLUDE
 
-    # ATTENTION: In this schema you should be using the ``NestedAttribute``
-    # instead  of Marshmallow's ``fields.Nested``. Using NestedAttribute
+    # ATTENTION: In this schema you should be using the `NestedAttribute`
+    # instead  of Marshmallow's `fields.Nested`. Using NestedAttribute
     # ensures that the nested schema will receive the system field instead of
     # the record dict (i.e. record.myattr instead of record['myattr']).
 

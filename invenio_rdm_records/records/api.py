@@ -349,10 +349,11 @@ def get_files_quota(record=None):
     Note: The files manager initialization runs before any service components
           (including the access component which initializes the ownership info)
           causing the quota to not be picked up correctly here for new drafts.
-          To remedy that, it is run as part of the ``RDMDraftFilesComponent.create()``
+          To remedy that, it is run as part of the `RDMDraftFilesComponent.create()`
           as well.
 
-    :returns: dict i.e {quota_size, max_file_size}: dict is passed to the
+    Returns:
+        dict i.e {quota_size, max_file_size}: dict is passed to the
         Bucket.create(...) method.
     """
     if record is not None:
@@ -409,7 +410,9 @@ def get_media_files_quota(record=None):
     """Called by the file manager in create_bucket() during record.post_create.
 
     The quota is configured using config variables.
-        :returns: dict i.e {quota_size, max_file_size}: dict is passed to the
+
+    Returns:
+        dict i.e {quota_size, max_file_size}: dict is passed to the
         Bucket.create(...) method.
     """
     return dict(
@@ -546,8 +549,9 @@ class RDMRecord(CommonFieldsMixin, Record):
         This method gives back the next published latest record by parent or None if all
         records are deleted i.e `record.deletion_status != 'P'`.
 
-        :param parent: parent record.
-        :param excluded_latest: latest record to exclude find next published version
+        Args:
+            parent: parent record.
+            excluded_latest: latest record to exclude find next published version
         """
         with db.session.no_autoflush:
             rec_model_query = (

@@ -56,9 +56,12 @@ class PIDProvider:
     def get(self, pid_value, pid_provider=None):
         """Get a persistent identifier for this provider.
 
-        :param pid_type: Persistent identifier type.
-        :param pid_value: Persistent identifier value.
-        :returns: A :class:`invenio_pidstore.models.base.PersistentIdentifier`
+        Args:
+            pid_type: Persistent identifier type.
+            pid_value: Persistent identifier value.
+
+        Returns:
+            A `invenio_pidstore.models.base.PersistentIdentifier`
             instance.x
         """
         args = {"pid_type": self.pid_type, "pid_value": pid_value}
@@ -71,9 +74,12 @@ class PIDProvider:
     def create(self, record, pid_value=None, status=None, **kwargs):
         """Get or create the PID with given value for the given record.
 
-        :param record: the record to create the PID for.
-        :param value: the PID value.
-        :returns: A :class:`invenio_pidstore.models.base.PersistentIdentifier`
+        Args:
+            record: the record to create the PID for.
+            value: the PID value.
+
+        Returns:
+            A `invenio_pidstore.models.base.PersistentIdentifier`
             instance.
         """
         if pid_value is None:
@@ -111,7 +117,7 @@ class PIDProvider:
         This might or might not be useful depending on the service of the
         provider.
 
-        See: :meth:`invenio_pidstore.models.PersistentIdentifier.reserve`.
+        See: `invenio_pidstore.models.PersistentIdentifier.reserve`.
         """
         is_reserved_or_registered = pid.is_reserved() or pid.is_registered()
         if not is_reserved_or_registered:
@@ -121,7 +127,7 @@ class PIDProvider:
     def register(self, pid, **kwargs):
         """Register a persistent identifier.
 
-        See: :meth:`invenio_pidstore.models.PersistentIdentifier.register`.
+        See: `invenio_pidstore.models.PersistentIdentifier.register`.
         """
         if not pid.is_registered():
             return pid.register()
@@ -138,7 +144,7 @@ class PIDProvider:
     def delete(self, pid, soft_delete=False, **kwargs):
         """Delete a persistent identifier.
 
-        See: :meth:`invenio_pidstore.models.PersistentIdentifier.delete`.
+        See: `invenio_pidstore.models.PersistentIdentifier.delete`.
         """
         if not soft_delete:
             return pid.delete()
@@ -146,10 +152,11 @@ class PIDProvider:
     def validate(self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier.
 
-        :returns: A tuple (success, errors). `success` is a bool that specifies
-                  if the validation was successful. `errors` is a list of
-                  error dicts of the form:
-                  `{"field": <field>, "messages: ["<msgA1>", ...]}`.
+        Returns:
+            A tuple (success, errors). `success` is a bool that specifies
+            if the validation was successful. `errors` is a list of
+            error dicts of the form:
+            `{"field": <field>, "messages: ["<msgA1>", ...]}`.
         """
         if provider and provider != self.name:
             current_app.logger.error(
@@ -197,8 +204,9 @@ class PIDProvider:
         to append pid identifier error messages to the pid identifier error_dict
         (as opposed to creating a new error dict).
 
-        :param errors: list of error dicts of the form `{"field": ..., "messages": ...}`
-        :param error_msg: string OR list of strings
+        Args:
+            errors: list of error dicts of the form `{"field": ..., "messages": ...}`
+            error_msg: string OR list of strings
         """
         field = f"pids.{self.pid_type}"
         error = next((error for error in errors if error.get("field") == field), None)

@@ -51,7 +51,7 @@ class IIIFService(Service):
     def _iiif_uuid(self, uuid):
         """Split the uuid content.
 
-        We assume the uuid is build as ``<record|draft>:<pid_value>``.
+        We assume the uuid is build as `<record|draft>:<pid_value>`.
         """
         try:
             type_, id_ = uuid.split(":")
@@ -63,7 +63,7 @@ class IIIFService(Service):
     def _iiif_image_uuid(self, uuid):
         """Split the uuid content.
 
-        We assume the uuid is build as ``<record|draft>:<pid_value>:<key>``.
+        We assume the uuid is build as `<record|draft>:<pid_value>:<key>`.
         """
         try:
             type_, id_, key = uuid.split(":", 2)
@@ -143,13 +143,15 @@ class IIIFService(Service):
         return fp
 
     def get_file(self, identity, uuid, key=None):
-        """Get the file for the given ``uuid``.
+        """Get the file for the given `uuid`.
 
-        If the ``uuid`` has the shape ``<record|draft>:<pid_value>:<key>``, then the
-        ``key`` argument is ignored.
-        If it is of the shape ``<record|draft>:<pid_value>`` however, the ``key``
+        If the `uuid` has the shape `<record|draft>:<pid_value>:<key>`, then the
+        `key` argument is ignored.
+        If it is of the shape `<record|draft>:<pid_value>` however, the `key`
         argument is required.
-        :raises FileKeyNotFoundError: If the record has no file for the ``key``
+
+        Raises:
+            FileKeyNotFoundError: If the record has no file for the `key`
         """
         if key:
             type_, id_ = self._iiif_uuid(uuid)
@@ -172,7 +174,8 @@ class IIIFService(Service):
     ):
         """Run the IIIF image API workflow.
 
-        :raises FileKeyNotFoundError: If the record has no file for the ``key``
+        Raises:
+            FileKeyNotFoundError: If the record has no file for the `key`
         """
         # Validate IIIF parameters
         IIIFImageAPIWrapper.validate_api(

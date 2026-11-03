@@ -211,5 +211,5 @@ class EmailResolver(EntityResolver):
         return {"email": entity}
 
     def get_service(self):
-        """Return ``None``, because email addresses don't have a service."""
+        """Return `None`, because email addresses don't have a service."""
         return self._service

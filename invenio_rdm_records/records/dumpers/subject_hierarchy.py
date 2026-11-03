@@ -53,7 +53,8 @@ class SubjectHierarchyDumperExt(SearchDumperExt):
     def __init__(self, splitchar=","):
         """Constructor.
 
-        :param splitchar: string to use to combine subject ids in hierarchy
+        Args:
+            splitchar: string to use to combine subject ids in hierarchy
         """
         super().__init__()
         self._splitchar = splitchar

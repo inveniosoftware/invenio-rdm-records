@@ -10,10 +10,10 @@ associated review request.
 
 For instance:
 
-.. code-block:: python
-
-    class Record():
-        draft_status = DraftStatus()
+```python
+class Record():
+    draft_status = DraftStatus()
+```
 
 """
 
@@ -47,8 +47,9 @@ class DraftStatus(SystemField):
 
         It stores the `draft.draft_status` value in the record metadata.
 
-        :param key: Attribute name to store the DraftStatus value.
-        :param draft_cls: The draft class to check against e.g RDMDraft.
+        Args:
+            key: Attribute name to store the DraftStatus value.
+            draft_cls: The draft class to check against e.g RDMDraft.
         """
         super().__init__(key=key)
         self.draft_cls = draft_cls

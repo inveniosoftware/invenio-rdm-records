@@ -10,16 +10,17 @@ from invenio_records.dumpers import SearchDumperExt
 class GrantTokensDumperExt(SearchDumperExt):
     """Search dumper extension for access grant tokens support.
 
-    On dump, it uses the record's ``Access`` system field to generate tokens
-    from the record's (access) ``Grants`` and dump them in the specified target
-    field in the dictionary (per default: ``access.grant_tokens``).
+    On dump, it uses the record's `Access` system field to generate tokens
+    from the record's (access) `Grants` and dump them in the specified target
+    field in the dictionary (per default: `access.grant_tokens`).
     On load, it simply removes the target field from the dictionary again.
     """
 
     def __init__(self, target_field):
         """Constructor.
 
-        :param target_field: dot separated path where to dump the tokens.
+        Args:
+            target_field: dot separated path where to dump the tokens.
         """
         super().__init__()
         self.keys = parse_lookup_key(target_field)

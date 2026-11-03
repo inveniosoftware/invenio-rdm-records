@@ -123,8 +123,8 @@ def get_request_type(app):
     """Return the community inclusion request type from config.
 
     This function is only used to register the request type via the
-    ``invenio_requests.types`` entrypoint, and allow to customize the request type
-    class via the ``RDM_COMMUNITY_INCLUSION_REQUEST_CLS`` application config.
+    `invenio_requests.types` entrypoint, and allow to customize the request type
+    class via the `RDM_COMMUNITY_INCLUSION_REQUEST_CLS` application config.
     """
     if not app:
         return

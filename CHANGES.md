@@ -1,14 +1,14 @@
-..
-    SPDX-FileCopyrightText: 2019-2026 CERN.
-    SPDX-FileCopyrightText: 2019-2024 Northwestern University.
-    SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
-    SPDX-FileCopyrightText: 2024-2026 Graz University of Technology.
-    SPDX-License-Identifier: MIT
+<!--
+SPDX-FileCopyrightText: 2019-2026 CERN.
+SPDX-FileCopyrightText: 2019-2024 Northwestern University.
+SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
+SPDX-FileCopyrightText: 2024-2026 Graz University of Technology.
+SPDX-License-Identifier: MIT
+-->
 
-Changes
-=======
+# Changes
 
-Version v37.0.0 (released 2026-11-10)
+## Version v37.0.0 (released 2026-11-10)
 
 - chore(setup): bump dependencies
 - feat: upgrade to react 18
@@ -21,7 +21,7 @@ Version v37.0.0 (released 2026-11-10)
 - fix: call super.validate in CrossrefPIDProvider.validate method
 - fix(serializers): get correctly translated rights
 
-Version v36.0.0 (released 2026-10-12)
+## Version v36.0.0 (released 2026-10-12)
 
 - fix(translations): add no results message to select fields explicitly
 - fix(translations): add missing German translations to fixtures
@@ -34,14 +34,14 @@ Version v36.0.0 (released 2026-10-12)
 - fix: strip html from thesis not only sanitize unicode
 - fix!(iiif): reduce memory consumption for PDFs
 
-Version v35.2.0 (released 2026-09-24)
+## Version v35.2.0 (released 2026-09-24)
 
 - fix: switch to simple_deepcopy in search dumper
 - fix(errors): fix incorrect constructor call
 - fix(iiif): handle DelegateError for unsupported file types
 - fix(changes): fix docutils bullet points indentation error
 
-Version v35.1.0 (released 2026-09-21)
+## Version v35.1.0 (released 2026-09-21)
 
 - fix(github): resolve badge DOI in 1 query
     * `RDMGithubRelease.badge_value` was doing 110 SQL
@@ -143,26 +143,26 @@ Version v35.1.0 (released 2026-09-21)
 
 - feat(translations): add Swedish translations for date, relation, and resource types
 
-Version v35.0.2 (released 2026-08-27)
+## Version v35.0.2 (released 2026-08-27)
 
 - fix(internal_note): fix update wiping out the field value if sufficient permissions
                       are not available
 
-Version v35.0.1 (released 2026-08-27)
+## Version v35.0.1 (released 2026-08-27)
 
 - fix(record_community_service): rely on request permission to return community requests
 
-Version v35.0.0 (released 2026-08-13)
+## Version v35.0.0 (released 2026-08-13)
 
 - fix(checks): Define CheckTarget for record
 - fix(checks): explicitly add target_type
 
-Version v34.1.0 (released 2026-08-13)
+## Version v34.1.0 (released 2026-08-13)
 
 - fix(files): extract metadata after draft publication
 - fix(file-modification): handle validation errors
 
-Version v34.0.1 (released 2026-08-04)
+## Version v34.0.1 (released 2026-08-04)
 
 - feat(quota): implement policy evaluation for allowing users
 - fix(quota): don't cast record id to int
@@ -176,20 +176,20 @@ Version v34.0.1 (released 2026-08-04)
 - fix(awards): drop organizations from funding award relation
 - fix(creatibutors): only accept txt files
 
-Version v34.0.0 (released 2026-07-21)
+## Version v34.0.0 (released 2026-07-21)
 
 - feat!(Creatibutors): Add optimized inline scrolling and file import for large author/contributor lists in the deposit form.
 - fix(alembic): Safely alter indices in database migrations to support upgrades regardless of the module version.
 - fix: fixed isParentAlreadyPublished not working on /new
 
-Version v33.3.0 (released 2026-07-17)
+## Version v33.3.0 (released 2026-07-17)
 
 - feat: add support for crossref schema 5.5 via commonmeta-py
 - fix(iiif): add handlers for more possible IIIF errors
 - fix(iiif): validate expected shape of identifiers
 - fix(tests): add tests for invalid identifiers in IIIF endpoints
 
-Version v33.2.0 (released 2026-07-09)
+## Version v33.2.0 (released 2026-07-09)
 
 - feat(ui): make NewVersionButton overridable
 - fix(checks): Removed redundant check
@@ -198,7 +198,7 @@ Version v33.2.0 (released 2026-07-09)
 - tests: update citation string for csl 1.0.2
 - fix(citation): use harvard-cite-them-right and setup _extras in tests
 
-Version v33.1.0 (released 2026-07-01)
+## Version v33.1.0 (released 2026-07-01)
 
 - chore(setup): migrate build backend from setuptools to hatchling
 - chore(cleanup): remove outdated and unnecessary files
@@ -208,17 +208,17 @@ Version v33.1.0 (released 2026-07-01)
 - fix(requests): expose record version in expanded topic
 - feat(auditlog): Add audit logs for file create/delete
 
-Version v33.0.0 (released 2026-06-18)
+## Version v33.0.0 (released 2026-06-18)
 
 - chore(setup): bump dependencies
 
-Version v32.0.1 (released 2026-06-12)
+## Version v32.0.1 (released 2026-06-12)
 
 - fix(get_record_requests): allow anonymous users to access landing page
 - chore(git-blame): ignore the SPDX license header commit
 - chore(licenses): update license headers to use SPDX
 
-Version v32.0.0 (released 2026-06-12)
+## Version v32.0.0 (released 2026-06-12)
 
 - feat(RecordCommunitiesService): Add get_record_requests service method
 - alembic: create record_id index in rdm_parents_community
@@ -226,14 +226,14 @@ Version v32.0.0 (released 2026-06-12)
 - fix(CreatibutorsField): Mount CreatibutorsModal only when opened
 - fix(signposting): serialize typed link w/ profile for described_by and item
 
-Version v31.0.0 (released 2026-06-05)
+## Version v31.0.0 (released 2026-06-05)
 
 - feat(reviews): per-record-version unit tests
 - feat(reviews): per-record-version service/api changes
 - feat(reviews): per-record-version data model changes
 - feat(reviews): add config for record version review policy
 
-Version v30.0.0 (released 2026-06-05)
+## Version v30.0.0 (released 2026-06-05)
 
 - chore(setup): bump dependencies
 - fix: update test_crossref_serializer.py
@@ -250,7 +250,7 @@ Version v30.0.0 (released 2026-06-05)
 - fix: fixed confusing feedback message when preview fails due to validation errors
 - fix: file not possible to delete if it fails between operations
 
-Version v29.0.0 (released 2026-05-29)
+## Version v29.0.0 (released 2026-05-29)
 
 - chore(setup): bump dependencies
 - fix: alembic migrations
@@ -264,12 +264,12 @@ Version v29.0.0 (released 2026-05-29)
 - fix(vcs): extract license ID when returning
 - fix: add `policy_id` to request metadata of file modification (#2310)
 
-Version v28.6.1 (released 2026-05-06)
+## Version v28.6.1 (released 2026-05-06)
 
 - fix(metadata): fix `CustomFieldsComponent` subclass overrides
 - fix(metadata): use UTC date instead of datetime for publication_date
 
-Version v28.6.0 (released 2026-05-06)
+## Version v28.6.0 (released 2026-05-06)
 
 - fix(serializers): avoid request context in access status description
 - fix(vcs): have fallback publisher value be THEME_SITENAME
@@ -279,11 +279,11 @@ Version v28.6.0 (released 2026-05-06)
 - fix: add funder to marcxml
 - fix: add funder ror to datacite serialization
 
-Version v28.5.0 (released 2026-04-21)
+## Version v28.5.0 (released 2026-04-21)
 
 - feat(moderation): handle `actor_id` and `note` in user block callback
 
-Version v28.4.0 (released 2026-04-21)
+## Version v28.4.0 (released 2026-04-21)
 
 - fix(vcs): avoid failing on unrecognised license; include warning messages in notification
 - feat: add optional record parameter to support per-community PID assignment (#2279)
@@ -293,16 +293,16 @@ Version v28.4.0 (released 2026-04-21)
 - fix: using only depositable resource type for fake data
 - fix: add preview button to publish modal
 
-Version v28.3.1 (released 2026-04-14)
+## Version v28.3.1 (released 2026-04-14)
 
 - fix: display DOI validation errors in deposit form
 
-Version v28.3.0 (released 2026-04-13)
+## Version v28.3.0 (released 2026-04-13)
 
 - feat: add new RDMSubCommunity request class
 - fix: remove duplicate definition of collections service proxy
 
-Version v28.2.0 (released 2026-04-09)
+## Version v28.2.0 (released 2026-04-09)
 
 - feat(storage-quota): settings integration
 - feat(storage-quota): implement self-served quota increases
@@ -310,10 +310,10 @@ Version v28.2.0 (released 2026-04-09)
     This was deprecated in RDM records in August 2024
     https://github.com/inveniosoftware/invenio-rdm-records/pull/1789/changes
 
-Version v28.1.0 (released 2026-04-09)
+## Version v28.1.0 (released 2026-04-09)
 - fix: switch to accordion data-label
 
-Version v28.0.0 (released 2026-04-08)
+## Version v28.0.0 (released 2026-04-08)
 
 - fix: user access request routing
 - chore: upgrade invenio-communities
@@ -330,11 +330,11 @@ Version v28.0.0 (released 2026-04-08)
 - ui(translations): mark message as translatable
 - ui(translations): mark strings as translatable
 
-Version v27.0.0 (released 2026-03-20)
+## Version v27.0.0 (released 2026-03-20)
 
 - change(setup): upgrade invenio-checks
 
-Version v26.0.0 (released 2026-03-18)
+## Version v26.0.0 (released 2026-03-18)
 
 - change(setup): upgrade invenio-checks and invenio-communities
 - feat(contrib): add thesis field display template
@@ -342,21 +342,21 @@ Version v26.0.0 (released 2026-03-18)
 - feat(translations): add Arabic language
 - fix(accordion): get accordion data-label instead of the label
 
-Version v25.0.0 (released 2026-03-10)
+## Version v25.0.0 (released 2026-03-10)
 
 - change(setup): upgrade invenio-checks and invenio-communities
 
-Version v24.1.1 (released 2026-02-27)
+## Version v24.1.1 (released 2026-02-27)
 
 - fix(ui-access-status): show login hint for restricted files
 
-Version v24.1.0 (released 2026-02-17)
+## Version v24.1.0 (released 2026-02-17)
 
 - feat(facets): add publication date facet
 - fix(request-events): include anchor method in override
 - fix: use role IDs instead of names.
 
-Version v24.0.0 (released 2026-02-03)
+## Version v24.0.0 (released 2026-02-03)
 
 - chore(setup): bump dependencies
 - refactor(Link): take into account upstream changes
@@ -379,12 +379,12 @@ Version v24.0.0 (released 2026-02-03)
 - refactor(schema): remove usage of object_key
 - fix(access_requests_ui): Fix view for guest when receiver isnt community
 
-Version 23.2.2 (release 2026-01-27)
+## Version 23.2.2 (release 2026-01-27)
 
 - fix(deposit): prevent Enter key from removing array field rows
 
 
-Version 23.2.1 (release 2026-01-22)
+## Version 23.2.1 (release 2026-01-22)
 
 - fix(permissions): allow system user to manage files
 - fix(request_policies): allow system user to modify files
@@ -393,7 +393,7 @@ Version 23.2.1 (release 2026-01-22)
 - fix(deposit): rename conflicting prop func
 
 
-Version v23.2.0 (released 2026-01-16)
+## Version v23.2.0 (released 2026-01-16)
 
 - fix(requests): inherit from BaseRequest to fix self_html links
 - fix(tests): update wikidata identifier
@@ -401,11 +401,11 @@ Version v23.2.0 (released 2026-01-16)
 - Add Arabic translations for resource types
 - fix(schema): take the list of allowed tags and attrs from the app config
 
-Version v23.1.1 (released 2026-01-08)
+## Version v23.1.1 (released 2026-01-08)
 
 - bibtex: schema: add publication-thesis for compatibility
 
-Version v23.1.0 (released 2026-01-07)
+## Version v23.1.0 (released 2026-01-07)
 
 - fix(tests): use valid WikiData IDs and Geonames in fixtures
 - feat(config): validate WikiData IDs for locations
@@ -418,55 +418,55 @@ Version v23.1.0 (released 2026-01-07)
       the list of revision IDs may have "holes" in it:
       https://github.com/inveniosoftware/invenio-records/blob/master/invenio_records/api.py
 
-Version v23.0.0 (released 2025-12-12)
+## Version v23.0.0 (released 2025-12-12)
 
 - chore(setup): bump major versions
 - feat(permissions): add reply_comment permission
 
-Version v22.7.0 (released 2025-12-08)
+## Version v22.7.0 (released 2025-12-08)
 
 - fix(access_requests_ui): Fix permissions for commenting with guest token when request is locked
 - fix(permissions): Fix can_create_comment to use parent attibute
 
-Version v22.6.0 (released 2025-11-21)
+## Version v22.6.0 (released 2025-11-21)
 
 - fix(requests): don't hard-code /me for record review request
 - refactor(requests): move _update_link_config to new BaseRequest
 
-Version v22.5.0 (released 2025-11-20)
+## Version v22.5.0 (released 2025-11-20)
 
 - feat(file-modification): allow admins to unlock files for editing by default
 - feat(file-modification): allows to configure conditions for users to edit files of published records
 
-Version v22.4.0 (released 2025-11-12)
+## Version v22.4.0 (released 2025-11-12)
 
 - setup: bump `invenio-github` major version
 
-Version v22.3.0 (released 2025-11-05)
+## Version v22.3.0 (released 2025-11-05)
 
 - feat(serializers.datacite): Add DataCite schema version 4.5 support
 - fix(services): Make 'notes' parameter optional in _update_quota
 
-Version v22.2.0 (released 2025-11-04)
+## Version v22.2.0 (released 2025-11-04)
 
 - feat(secret-links): make expiration date optional or required for secret links
 - feat(community-records): adds service component calls to RecordCommunitiesService
 
-Version v22.1.0 (released 2025-10-27)
+## Version v22.1.0 (released 2025-10-27)
 
 - feat(form): add support for help text to creatibutors button in the deposit form
 
-Version v22.0.1 (released 2025-10-27)
+## Version v22.0.1 (released 2025-10-27)
 
 - fix(contrib): meeting field ID allowed schemas source
 - fix(deposit): duplicate uploads from resetting progress
 
-Version v22.0.0 (released 2025-10-21)
+## Version v22.0.0 (released 2025-10-21)
 
 - feat(resource_types)!: Remove publication-thesis
     * BREAKING CHANGE: resource_type with id publication-dissertation will now be used instead as it is correctly mapped to the "Dissertation" type in DataCite
 
-Version v21.3.0 (released 2025-10-20)
+## Version v21.3.0 (released 2025-10-20)
 
 - fix(deposit-ui): disable drag-n-drop files when files are locked
 - fix(deposit-ui): re-add code removed in 9e8f553
@@ -482,15 +482,15 @@ Version v21.3.0 (released 2025-10-20)
     * since both of them are subclasses of `PermissionDenied`, we simply
       handle that instead
 
-Version v21.2.0 (released 2025-10-01)
+## Version v21.2.0 (released 2025-10-01)
 
 - feat(config): add last activity sort option
 
-Version v21.1.0 (released 2025-09-24)
+## Version v21.1.0 (released 2025-09-24)
 
 - installation: upgrade invenio-jobs
 
-Version v21.0.0 (released 2025-09-24)
+## Version v21.0.0 (released 2025-09-24)
 
 - installation: bump invenio-communities and invenio-checks
 - feat(deletion-request): different checklist for immediate and request
@@ -507,7 +507,7 @@ Version v21.0.0 (released 2025-09-24)
 - fix(datacite test link): update Datacite test DOI link
 - fix: invalid datacite test mode link
 
-Version v20.2.0 (released 2025-09-16)
+## Version v20.2.0 (released 2025-09-16)
 
 - **feat(deposit-form)!: added `react-overridable` support more consistently across all deposit form fields**
     - Added Overridable for many components that did not already have it. This was done following the existing naming convention. New Overridables do not represent any breaking or behavior changes.
@@ -535,19 +535,19 @@ Version v20.2.0 (released 2025-09-16)
         - `InvenioRdmRecords.DatesField.RemoveFormField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.RemoveButton`
     - No existing overridables have been removed completely to avoid breaking current implementations in an unresolvable way.
 
-Version v20.1.0 (released 2025-09-05)
+## Version v20.1.0 (released 2025-09-05)
 
 - setup: bump major versions of invenio-jobs and invenio-vocabularies
 - fix: improve rendering of ErrorMessage in deposit form
 
-Version v20.0.3 (released 2025-09-03)
+## Version v20.0.3 (released 2025-09-03)
 
 - fix(deposit-form): correct wrong propType for optionalDOItransitions
 - fix(deposit-form): on delete draft discard all changed pids
     * discard all draft pids if there is no published record (i.e. new version or new draft)
     * discard all draft pids that are not in the published record
 
-Version v20.0.2 (released 2025-09-01)
+## Version v20.0.2 (released 2025-09-01)
 
 - fix(optional-doi): show correctly showed value on form initialization
     * uses published record doi to check if the managed DOI can be unreserved.
@@ -555,7 +555,7 @@ Version v20.0.2 (released 2025-09-01)
       before it was taking into account only the pids object and there more pids could be present e.g. oai
 - fix(iiif): add error handler for `MultimediaImageNotFound`
 
-Version v20.0.1 (released 2025-08-27)
+## Version v20.0.1 (released 2025-08-27)
 
 - fix: use config variable instead of redefining
 - services: create RDMCommunityRecordSearchOptions
@@ -572,7 +572,7 @@ Version v20.0.1 (released 2025-08-27)
 - UI: use X for discard instead of trash icon
 - UI: add icon to delete button
 
-Version v20.0.0 (released 2025-08-01)
+## Version v20.0.0 (released 2025-08-01)
 
 - feat: implement request reviewers functionality
   - Add RequestReviewers generator with configuration support
@@ -583,22 +583,22 @@ Version v20.0.0 (released 2025-08-01)
 - setup: bump major versions of invenio-communities and invenio-checks
   - needed to isolate the new request reviewers functionality
 
-Version v19.5.3 (released 2025-07-31)
+## Version v19.5.3 (released 2025-07-31)
 
 - optional-DOI: validation workflow improvements
   - fixes issue where optional DOI validation was not properly handled during the submit for review process
   - adds proper optional DOI validation when submitting records for review
 - components: adds informative error message when attempting to create duplicate review requests
 
-Version v19.5.2 (released 2025-07-30)
+## Version v19.5.2 (released 2025-07-30)
 
 - fix(serializers): Strip none and trailing whitespace for thesis
 
-Version v19.5.1 (released 2025-07-21)
+## Version v19.5.1 (released 2025-07-21)
 
 - fix: cross-origin-file-uploads
 
-Version v19.5.0 (released 2025-07-17)
+## Version v19.5.0 (released 2025-07-17)
 
 - meeting cf: fix typo in the mapping
 - i18n: pulled translations
@@ -606,17 +606,17 @@ Version v19.5.0 (released 2025-07-17)
 - tests: serializers: Add test for bibtex all versions
 - serializers: bibtex: Add all versions export support
 
-Version v19.4.2 (released 2025-07-16)
+## Version v19.4.2 (released 2025-07-16)
 
 - PublishButton: Separate PublishModal and add checkbox easily via params
 - assets: PublishModal: Ensure unique fieldPath and id for checkboxes
 - Fix: installation failed due to type error
 
-Version v19.4.1 (released 2025-07-14)
+## Version v19.4.1 (released 2025-07-14)
 
 - doi: handle case with no configured parent dois
 
-Version v19.4.0 (released 2025-07-10)
+## Version v19.4.0 (released 2025-07-10)
 
 - chores: replacing importlib_metadata with importlib.metadata
 - i18n: run js extract msgs
@@ -641,7 +641,7 @@ Version v19.4.0 (released 2025-07-10)
 - resource: fix remove last community error
 - fix: added overridable blocks and passing serializing functions as props
 
-Version v19.3.0 (released 2025-07-02)
+## Version v19.3.0 (released 2025-07-02)
 
 - fix: disabled remote and fetch transport in permissions
 - fix: RemovedInMarshmallow4Warning
@@ -658,11 +658,11 @@ Version v19.3.0 (released 2025-07-02)
 - i18n: localize embargoed date
 - records-api: add Data Package serializer
 
-Version v19.2.0 (released 2025-06-13)
+## Version v19.2.0 (released 2025-06-13)
 
 - checks: integrate service component and community requests
 
-Version v19.1.0 (released 2025-06-12)
+## Version v19.1.0 (released 2025-06-12)
 
 - form: display errors on draft load
 - deposit: updated fieldpath for feedback label
@@ -678,7 +678,7 @@ Version v19.1.0 (released 2025-06-12)
 - localizing dates based on application selected locale
 - contrib-meeting: add missing `url` field to deposit form
 
-Version v19.0.1 (released 2025-06-10)
+## Version v19.0.1 (released 2025-06-10)
 
 - file uploader: change from checkbox to radio
 - file uploader: improve exceeded limit message
@@ -686,7 +686,7 @@ Version v19.0.1 (released 2025-06-10)
 - creatibutors: adapt to new feedback label interface
 - creatibutors: fix nested errors & feedback display
 
-Version v19.0.0 (released 2025-06-03)
+## Version v19.0.0 (released 2025-06-03)
 
 - setup: version bump on dependent packages
 - fix: added permissions for getting/setting transfer metadata
@@ -700,82 +700,82 @@ Version v19.0.0 (released 2025-06-03)
   * Switched to IfTransferType permission generators
 - installation: remove collections dependency
 
-Version v18.14.0 (released 2025-06-02)
+## Version v18.14.0 (released 2025-06-02)
 
 - config: make community request type classes customizable
     * Allows to customize community submissions and inclusion request type
       classes via the ``RDM_COMMUNITY_SUBMISSION_REQUEST_CLS`` and
       ``RDM_COMMUNITY_INCLUSION_REQUEST_CLS`` config variables.
 
-Version v18.13.0 (released 2025-06-02)
+## Version v18.13.0 (released 2025-06-02)
 
 - Move collections implementaiton to Invenio-Collections
 
-Version v18.12.0 (released 2025-05-23)
+## Version v18.12.0 (released 2025-05-23)
 
 - resources: expose get current revision of record
 - deposit: fix global server errors in frontend
 - feedback-ui: Add specific ID to disconnected feedback form
 
-Version v18.11.0 (released 2025-05-16)
+## Version v18.11.0 (released 2025-05-16)
 
 - deposit-ui: fix upload files error state
 - deposit-ui: add feedback messages on the file level
 
-Version v18.10.0 (released 2025-05-13)
+## Version v18.10.0 (released 2025-05-13)
 
 - review: add components hook for submitting review
 - deposit: show global backend validation message
 
-Version v18.9.0 (released 2025-05-13)
+## Version v18.9.0 (released 2025-05-13)
 
 - mappings: remove objectfields from "index.query.default_field" settings
 - update setup.cfg
 
-Version v18.8.1 (released 2025-05-07)
+## Version v18.8.1 (released 2025-05-07)
 
 - schemas: provide default value for quota increase notes
 - metadata: copyrights placeholder and help text changes
 - ui serializer: display more thesis information
 
-Version v18.8.0 (released 2025-05-06)
+## Version v18.8.0 (released 2025-05-06)
 
 - services: make commit file link dependent on allow_upload
 - meeting: add identifiers to data model of meeting contrib field
 - services: include Opensearch meta in the results
 
 
-Version v18.7.0 (released 2025-04-28)
+## Version v18.7.0 (released 2025-04-28)
 
 - logging: add basic logging for expired embargoes
 
-Version v18.6.1 (released 2025-04-28)
+## Version v18.6.1 (released 2025-04-28)
 
 - services: remove commit file link from record (bugfix)
 
-Version v18.6.0 (released 2025-04-24)
+## Version v18.6.0 (released 2025-04-24)
 
 - datamodel contrib: add defense and submission date to thesis field
 
-Version v18.5.0 (released 2025-04-24)
+## Version v18.5.0 (released 2025-04-24)
 
 - datamodel: add copyright field
 
-Version v18.4.0 (released 2025-04-23)
+## Version v18.4.0 (released 2025-04-23)
 
 - urls: integrate invenio_url_for
 - permissions: replace Disabled with SystemProcess
 
-Version v18.3.2 (released 2025-04-17)
+## Version v18.3.2 (released 2025-04-17)
 
 - custom_fields: added fallback to old thesis format and conditionally handle form display based on config
 
-Version v18.3.1 (released 2025-04-14)
+## Version v18.3.1 (released 2025-04-14)
 
 - user quota: anticipate system user
 - doi: increase label width
 
-Version v18.3.0 (released 2025-04-10)
+## Version v18.3.0 (released 2025-04-10)
 
 - pids: change optional DOI validation
 - views: FAIR signposting level 1 support (remove comment)
@@ -783,20 +783,20 @@ Version v18.3.0 (released 2025-04-10)
 - owner: allow system_user to be record owner
 
 
-Version v18.2.0 (released 2025-04-03)
+## Version v18.2.0 (released 2025-04-03)
 
 - fix: deletion_status gone after record.commit
 - fix: tombstone gone after record.commit
 - file_links: prepare for changes in invenio-records-resources
 - deposit-ui: show icon and tooltip for new error format with severity error
 
-Version v18.1.0 (released 2025-03-27)
+## Version v18.1.0 (released 2025-03-27)
 
 - align licenses modal with funders modal
 - use underscores for setuptools configuration instead of dashes
 - lots of translations
 
-Version v18.0.0 (released 2025-03-26)
+## Version v18.0.0 (released 2025-03-26)
 
 deposit-ui: creatibutors: support general new error format with severity (fix null)
 deposit-ui: creatibutors: support general new error format with severity
@@ -804,12 +804,12 @@ deposit-ui: fix: do not consider new error format's description as a field
 thesis: add department and type (breaking change)
 imprint: add edition
 
-Version v17.4.0 (released 2025-03-18)
+## Version v17.4.0 (released 2025-03-18)
 
 - deposit-ui: Support new error format with severity and description
   - FeedbackLabel for creatibutors and license
 
-Version v17.3.0 (released 2025-03-11)
+## Version v17.3.0 (released 2025-03-11)
 
 - resources: add param to filter shared with my uploads
   - returns record needs on entity resolution
@@ -817,7 +817,7 @@ Version v17.3.0 (released 2025-03-11)
 - service: change community submission actions on who can manage
 - links: add preview_html link
 
-Version v17.2.0 (released 2025-03-10)
+## Version v17.2.0 (released 2025-03-10)
 
 - views: signposting: files: fix filename encoding issues for downloads
 - resource_types: fix datapaper and interactiveresource datacite mapping
@@ -825,56 +825,56 @@ Version v17.2.0 (released 2025-03-10)
 - cff: add default "message" field
 - iiif: fix info request not being proxied
 
-Version v17.1.0 (released 2025-02-21)
+## Version v17.1.0 (released 2025-02-21)
 
 - views: FAIR signposting level 1 support
 - views: FAIR signposting remove linkset link to itself
 
-Version v17.0.2 (released 2025-02-14)
+## Version v17.0.2 (released 2025-02-14)
 
 - serializers/dcat: fix broken subject serialization for terms with apostrophes
 
-Version v17.0.1 (released 2025-02-13)
+## Version v17.0.1 (released 2025-02-13)
 
 - Bump pre-release dependencies to stable.
 
-Version v17.0.0 (released 2025-02-13)
+## Version v17.0.0 (released 2025-02-13)
 
 - Promote to stable release.
 - serializers: DataCite to DCAT-AP: fix undefined variable $cheme for relation type has metadata
 - services: proper escape the fields key in links generation
 - UISerializer: add polygon locations to serializer in addition to points (#1924)
 
-Version v17.0.0.dev2 (released 2025-01-23)
+## Version v17.0.0.dev2 (released 2025-01-23)
 
-Version v17.0.0.dev1 (released 2024-12-16)
+## Version v17.0.0.dev1 (released 2024-12-16)
 
 - fix: flask-sqlalchemy.pagination >= 3.0.0
 - comp: make compatible to flask-sqlalchemy>=3.1
 - setup: change to reusable workflows
 - setup: bump major dependencies
 
-Version v16.8.0 (released 2025-01-27)
+## Version v16.8.0 (released 2025-01-27)
 
 - resources: expose record revisions
 
-Version v16.7.1 (released 2025-01-21)
+## Version v16.7.1 (released 2025-01-21)
 
 - optional-doi: fix new upload disabled states
 
-Version v16.7.0 (released 2025-01-21)
+## Version v16.7.0 (released 2025-01-21)
 
 - pids: improve deposit UI for optional DOI
 - deposit-ui: fix affiliation selection input display
 
-Version v16.6.1 (released 2025-01-16)
+## Version v16.6.1 (released 2025-01-16)
 
 - Revert "bug: add custom comment notification for record/draft requests"
     * This is actually a breaking change since it introduces a new
       set of notification templates that will potentialy not be
       styled if overridden in an instance's overlay.
 
-Version v16.6.0 (released 2025-01-16)
+## Version v16.6.0 (released 2025-01-16)
 
 - notifications: add custom comment template for record inclusion
   and draft review requests
@@ -885,21 +885,21 @@ Version v16.6.0 (released 2025-01-16)
 - serializers/bibtex: year and month using publication date
 - rights: fix serialize condition for controlled license
 
-Version v16.5.1 (released 2024-12-16)
+## Version v16.5.1 (released 2024-12-16)
 
 - pids: add manage permission to be able to manage DOIs
 - deposit: fix validation check when user needs a DOI and DOI is optional
 
-Version v16.5.0 (released 2024-12-16)
+## Version v16.5.0 (released 2024-12-16)
 
 - pids: add support for optional DOI
 
-Version v16.4.1 (released 2024-12-11)
+## Version v16.4.1 (released 2024-12-11)
 
 - mappings: add missing `identifiers` to community orgs
     * Adds the missing `identifiers` mapping field to community organizations
 
-Version v16.4.0 (released 2024-12-10)
+## Version v16.4.0 (released 2024-12-10)
 
 - bibtex: add trailing comma in url field
 - community-records: allow scan search
@@ -910,22 +910,22 @@ Version v16.4.0 (released 2024-12-10)
 - schema: added identifiers to subjects
 - serializers: add datapackage serializer (#1742)
 
-Version v16.3.4 (released 2024-12-06)
+## Version v16.3.4 (released 2024-12-06)
 
 - github: return None for `NOASSERTION` license
 - datacite: fix funding serialization for optional award fields
     * Makes sure that we handle missing values for optional award fields
       like "title" and "number".
 
-Version v16.3.3 (released 2024-12-04)
+## Version v16.3.3 (released 2024-12-04)
 
 - github: handle missing repo license
 
-Version v16.3.2 (released 2024-12-04)
+## Version v16.3.2 (released 2024-12-04)
 
 - github: lower license spdx id
 
-Version v16.3.1 (released 2024-12-02)
+## Version v16.3.1 (released 2024-12-02)
 
 - deposit-ui: make sure we handle null/undefined for SchemaField
 - deposit-ui: skip unecessary removal of empty values in serialization
@@ -938,7 +938,7 @@ Version v16.3.1 (released 2024-12-02)
     * This can help with debugging unexpected non-network related errors
       that might occur in the logic before/after a REST API requests.
 
-Version v16.3.0 (released 2024-11-27)
+## Version v16.3.0 (released 2024-11-27)
 
 - github: added default license from Github API
 - deposit-ui: fix affiliations rendering during edits
@@ -951,11 +951,11 @@ Version v16.3.0 (released 2024-11-27)
 - config: added service schema from config
 - requests: manage sending notifications
 
-Version v16.2.0 (released 2024-11-19)
+## Version v16.2.0 (released 2024-11-19)
 
 - search: pass search parameters to collection records
 
-Version v16.1.1 (released 2024-11-19)
+## Version v16.1.1 (released 2024-11-19)
 
 - communities: fix set/unset of default record community
     * Closes https://github.com/inveniosoftware/invenio-app-rdm/issues/2869
@@ -965,7 +965,7 @@ Version v16.1.1 (released 2024-11-19)
       value when setting the "default" field, which was a currently wrong
       behavior in some UI logic.
 
-Version v16.1.0 (released 2024-11-18)
+## Version v16.1.0 (released 2024-11-18)
 
 - tokens: disable "sub" verification
     * According to the JWT Specification (https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2)
@@ -978,18 +978,18 @@ Version v16.1.0 (released 2024-11-18)
       migration overhead.
 - UI: display all affiliations
 
-Version v16.0.1 (released 2024-11-11)
+## Version v16.0.1 (released 2024-11-11)
 
 - deposit-ui: fix creator affiliations selection display
     * Fixes a bug where the selected affiliations from the dropdown do not
       appear inside the input box.
 
-Version v16.0.0 (released 2024-11-11)
+## Version v16.0.0 (released 2024-11-11)
 
 - identifiers: allow alternative identifiers with the same scheme but different values
 - records: add intenal_notes schema field and bump of jsonschema version
 
-Version v15.7.1 (released 2024-11-06)
+## Version v15.7.1 (released 2024-11-06)
 
 - installation: bump babel-edtf to >=1.2.0
 - tests: fix EDTF interval with unknown start/end
@@ -997,7 +997,7 @@ Version v15.7.1 (released 2024-11-06)
 - setup: forward compatibility to itsdangerous>=2.1
 - fix: DeprecationWarning of SQLAlchemy
 
-Version v15.7.0 (released 2024-11-04)
+## Version v15.7.0 (released 2024-11-04)
 
 - resources: make record error handlers configurable
     * Possible via the new `RDM_RECORDS_ERROR_HANDLERS` config variable.
@@ -1019,97 +1019,97 @@ Version v15.7.0 (released 2024-11-04)
 - access notification: provide correct draft preview link
     * Closes inveniosoftware/invenio-app-rdm#2827
 
-Version v15.6.0 (released 2024-10-18)
+## Version v15.6.0 (released 2024-10-18)
 
 - community: added myCommunitiesEnabled prop to CommunitySelectionSearch
 
-Version v15.5.0 (released 2024-10-18)
+## Version v15.5.0 (released 2024-10-18)
 
 - community: added autofocus prop to CommunitySelectionSearch
 
-Version v15.4.0 (released 2024-10-17)
+## Version v15.4.0 (released 2024-10-17)
 
 - DOI: fix wrong parent DOI link
 - community: added props to make CommunitySelectionSearch reusable
 
-Version v15.3.0 (released 2024-10-16)
+## Version v15.3.0 (released 2024-10-16)
 
 - collections: display pages and REST API
 - deposit: add feature flag for required community submission flow
 - mappings: disable doc_values for geo_shape fields (#1807)
     * Fixes multiple values for ``metadata.locaations.features``.
 
-Version v15.2.0 (released 2024-10-10)
+## Version v15.2.0 (released 2024-10-10)
 
 - webpack: update axios and react-searchkit(due to axios) major versions
 
-Version v15.1.0 (released 2024-10-10)
+## Version v15.1.0 (released 2024-10-10)
 
 - jobs: register embargo update job type
 - installation: upgrade invenio-jbs
 
-Version v15.0.0 (released 2024-10-08)
+## Version v15.0.0 (released 2024-10-08)
 
 - installation: bump invenio-communities
 - dumper: refactor and updated docstring
 - awards: added subjects and orgs, updated mappings
 - relations: added subject relation in awards
 
-Version v14.0.0 (released 2024-10-04)
+## Version v14.0.0 (released 2024-10-04)
 
 - installation: bump invenio-vocabularies & invenio-communities
 
-Version v13.0.0 (released 2024-10-03)
+## Version v13.0.0 (released 2024-10-03)
 
 - collections: added feature, containing core functionalities and DB models
 - ui: fixed propTypes warnings
 - dependencies: bump flask-iiif to >1.0.0
 
-Version v12.2.2 (released 2024-09-30)
+## Version v12.2.2 (released 2024-09-30)
 
 - Improve handling of draft PID in RecordCommunitiesService
 - Revert "deposit: check permission and set disable tooltip for publish button"
 - Remove DeprecationWarning for sqlalchemy
 - Add compatibility layer to move to flask>=3
 
-Version v12.2.1 (released 2024-09-19)
+## Version v12.2.1 (released 2024-09-19)
 
 - file upload: better handling of errors when uploading empty files
 - serializers: ensure that the vocab id is set before performing a look up
 - deposit: take into account the can_publish permission to control when the
            Publish button should be enabled or disabled
 
-Version v12.1.1 (released 2024-09-11)
+## Version v12.1.1 (released 2024-09-11)
 
 - resource: fix add record to community
 - controls: refactored isDisabled function
 
-Version v12.1.0 (released 2024-08-30)
+## Version v12.1.0 (released 2024-08-30)
 
 - config: added links for thumbnails (#1799)
 
-Version v12.0.4 (released 2024-08-28)
+## Version v12.0.4 (released 2024-08-28)
 
 - stats: add missing "is_machine" field
 
-Version v12.0.3 (released 2024-08-27)
+## Version v12.0.3 (released 2024-08-27)
 
 - add permissions checks for community submission policy
 
-Version v12.0.2 (released 2024-08-26)
+## Version v12.0.2 (released 2024-08-26)
 
 - update file quota and size vars
 - add quota config for media_files bucket
 
-Version v12.0.1 (released 2024-08-22)
+## Version v12.0.1 (released 2024-08-22)
 
 - bump invenio-vocabularies
 
-Version v12.0.0 (released 2024-08-22)
+## Version v12.0.0 (released 2024-08-22)
 
 - mappings: add analyzers and filters to improve results when searching records
 
-Version v11.8.0 (released 2024-08-21)
+## Version v11.8.0 (released 2024-08-21)
 
 - pids: fix parent DOI link generation
 - schemaorg: add ``dateCreated`` field (closes #1777)
@@ -1118,12 +1118,12 @@ Version v11.8.0 (released 2024-08-21)
 - subjects: remove suggest from dropdown if not required
     * closes https://github.com/inveniosoftware/invenio-app-rdm/issues/2767
 
-Version v11.7.0 (released 2024-08-12)
+## Version v11.7.0 (released 2024-08-12)
 
 - resources: add vnd.inveniordm.v1+json http header
 - translation: update file paths for strings (UI)
 
-Version v11.6.0 (released 2024-08-07)
+## Version v11.6.0 (released 2024-08-07)
 
 - creatibutors: fix buttons order
 - permissions: change error handler for resolving pid permission denied
@@ -1141,23 +1141,23 @@ Version v11.6.0 (released 2024-08-07)
     * The default property of the CommunitiesRelationManager needs a string.
       It can't handle a dict.
 
-Version v11.5.0 (released 2024-07-22)
+## Version v11.5.0 (released 2024-07-22)
 
 - codemeta: added identifier to schema
 - signposting: generate 1 link context object for metadata
 - fix: abort on record deletion exception
 
-Version v11.4.0 (released 2024-07-15)
+## Version v11.4.0 (released 2024-07-15)
 
 - affiliations: update defaults to ror v2
 
-Version 11.3.1 (released 2024-07-12)
+## Version 11.3.1 (released 2024-07-12)
 
 - processors: fix tiles files iteration
     * Creates a copy of the files list to be iterated since we might be
       modifying the underlying dictionary while processing tiles.
 
-Version 11.3.0 (released 2024-07-12)
+## Version 11.3.0 (released 2024-07-12)
 
 * media-files: generate ptif and include in manifets
 * fix: pids required behavior
@@ -1172,26 +1172,26 @@ Version 11.3.0 (released 2024-07-12)
       the "is_enabled" configuration.
 * iiif: handle DecompressionBombError
 
-Version 11.2.0 (released 2024-07-05)
+## Version 11.2.0 (released 2024-07-05)
 
 - iiif: schema: only return images within size limit in manifest
 
-Version 11.1.0 (released 2024-07-04)
+## Version 11.1.0 (released 2024-07-04)
 
 - installation: upgrade invenio-drafts-resources
 
-Version 11.0.0 (released 2024-06-04)
+## Version 11.0.0 (released 2024-06-04)
 
 - installation: bump invenio-communities, invenio-vocabularies, invenio-drafts-resources and invenio-records-resources
 - installation: added invenio-jobs
 
-Version 10.7.1 (released 2024-05-31)
+## Version 10.7.1 (released 2024-05-31)
 
 - secret links: set csrf token for all requests with secret links,
   i.e. fixes edit button CSRF error message on record landing page
 
 
-Version 10.7.0 (released 2024-05-28)
+## Version 10.7.0 (released 2024-05-28)
 
 - pids service: resolve owned_by for the emails
 - entity_resolver: match drafts while resolving
@@ -1199,28 +1199,28 @@ Version 10.7.0 (released 2024-05-28)
 - pids: unify pid behaviour, disable/enable parent DOI on demand, based on
   DATACITE_ENABLED configuration
 
-Version 10.6.0 (released 2024-05-22)
+## Version 10.6.0 (released 2024-05-22)
 
 - pids: prevent creating pids for restricted records
 - pids: restrict updating permission levels for records based on a grace period
 
-Version 10.5.0 (released 2024-05-21)
+## Version 10.5.0 (released 2024-05-21)
 
 - iiif: add PyVIPS support for PDF thumbnail rendering
 
-Version 10.4.3 (released 2024-05-17)
+## Version 10.4.3 (released 2024-05-17)
 
 - services: fix permission for file edit
 
-Version 10.4.2 (released 2024-05-08)
+## Version 10.4.2 (released 2024-05-08)
 
 - iiif: resolve relative tiles storage against instance path
 
-Version 10.4.1 (released 2024-05-07)
+## Version 10.4.1 (released 2024-05-07)
 
 - grants: add new endpoint to grant access to records by groups
 
-Version 10.4.0 (released 2024-05-07)
+## Version 10.4.0 (released 2024-05-07)
 
 - config: add default values for IIIF tiles generation
 - config: new variable for default IIIF manifest formats
@@ -1234,23 +1234,23 @@ Version 10.4.0 (released 2024-05-07)
 - iiif: added fallback for iip server
 - licenses: fix some delimiters not been recognized.
 
-Version 10.3.2 (released 2024-04-30)
+## Version 10.3.2 (released 2024-04-30)
 
 - iiif: fix proxy path generation
 
-Version 10.3.1 (released 2024-04-25)
+## Version 10.3.1 (released 2024-04-25)
 
 - resources: make IIIF proxy configurable via import string
 
-Version 10.3.0 (released 2024-04-24)
+## Version 10.3.0 (released 2024-04-24)
 
 - services: added nested links for record files
 
-Version 10.2.0 (released 2024-04-23)
+## Version 10.2.0 (released 2024-04-23)
 
 - iiif: added proxy to image server
 
-Version 10.1.2 (released 2024-04-22)
+## Version 10.1.2 (released 2024-04-22)
 
 - review: fix draft indexing operations order
     - Fixes a bug where when publishing directly to a community (e.g.
@@ -1259,18 +1259,18 @@ Version 10.1.2 (released 2024-04-22)
       appearing in the users' dashboard both as a published record and
       as a draft in review.
 
-Version 10.1.1 (released 2024-04-19)
+## Version 10.1.1 (released 2024-04-19)
 
 - pids: fix register/update serialization
 
-Version 10.1.0 (released 2024-04-15)
+## Version 10.1.0 (released 2024-04-15)
 
 - licenses: fix wrong characters encoding
 - facets: integrate combined_subjects / fix nested subject faceting
 - resources: fixed missing imports
 - dublincore: fix license URL lookup
 
-Version 10.0.0 (released 2024-04-11)
+## Version 10.0.0 (released 2024-04-11)
 
 - Fixes datacite, dcat, dublin core, marcxml and schema.org serializer performance (reduced from ~500 queries in an OAI-PMH page down to 5).
 - resources: fix performance of serializers
@@ -1299,19 +1299,19 @@ Version 10.0.0 (released 2024-04-11)
 - links: fix ESLint map expects a return value from arrow function
 - vocab: add marc to roles.yaml
 
-Version 9.1.0 (released 2024-04-04)
+## Version 9.1.0 (released 2024-04-04)
 
 - api: added new endpoint to manage access restrictions of records
 - deposit: improved communities sorting when uploading a new record
 - serializers: marcxml: fixes to transformation rules
 
-Version 9.0.1 (released 2024-03-25)
+## Version 9.0.1 (released 2024-03-25)
 
 - serializers: DataCite to DCAT-AP - fix missing prov namespace for contributors project roles
 - serializers: DataCite to DCAT-AP - include upstream editorial changes
 - serializers: marcxml: Add leader to schema
 
-Version 9.0.0 (released 2024-03-23)
+## Version 9.0.0 (released 2024-03-23)
 
 - views: add signposting
 - fixtures: added subject type creation on load
@@ -1325,38 +1325,38 @@ Version 9.0.0 (released 2024-03-23)
 - ux: DOI prefix error message improvement
 - init: move record_once to finalize_app
 
-Version 8.3.0 (released 2024-03-06)
+## Version 8.3.0 (released 2024-03-06)
 
 - services: introduced bulk_add permission
 - requests: added community transfer request type
 - services: added bulk addition to record community
 - services: add metrics param interpreter
 
-Version 8.2.0 (released 2024-03-05)
+## Version 8.2.0 (released 2024-03-05)
 
 - bumps react-invenio-forms
 - ui: center disabled new version popup tooltip
 - fix: show popup tooltip on disabled new version button
 
-Version 8.1.1 (released 2024-02-27)
+## Version 8.1.1 (released 2024-02-27)
 
 - Revert "serializers: updated datacite schema rights."
 
-Version 8.1.0 (released 2024-02-27)
+## Version 8.1.0 (released 2024-02-27)
 
 - pids: allow empty-string PIDs
 - config: safer parent PID conditional check
 - serializers: updated datacite schema rights
 
-Version 8.0.0 (released 2024-02-20)
+## Version 8.0.0 (released 2024-02-20)
 
 - Bump due to major version upgrade in invenio-users-resources
 
-Version 7.1.1 (released 2024-02-19)
+## Version 7.1.1 (released 2024-02-19)
 
 - communities: add CommunityParentComponent
 
-Version 7.1.0 (released 2024-02-19)
+## Version 7.1.0 (released 2024-02-19)
 
 - mappings: change "dynamic" values to string
 - requests: change default removal reason to spam
@@ -1366,7 +1366,7 @@ Version 7.1.0 (released 2024-02-19)
 - datacite: updated schema
 - mapping: add community children
 
-Version 7.0.0 (released 2024-02-16)
+## Version 7.0.0 (released 2024-02-16)
 
 - services: update community components
 - installation: bump invenio-communities
@@ -1375,11 +1375,11 @@ Version 7.0.0 (released 2024-02-16)
 - requests: add check on parent community on accept
 - community selection: small ui fixes
 
-Version 6.2.1 (released 2024-02-11)
+## Version 6.2.1 (released 2024-02-11)
 
 - requests: add record to parent community
 
-Version 6.2.0 (released 2024-02-09)
+## Version 6.2.0 (released 2024-02-09)
 
 - tests: make deleted file fetching deterministic
 - deposit: change upload workflow for styled communities
@@ -1387,43 +1387,43 @@ Version 6.2.0 (released 2024-02-09)
 - deposit: add community.theme.enabled to selection modal
 - installation: bump invenio-communities version
 
-Version 6.1.1 (released 2024-02-05)
+## Version 6.1.1 (released 2024-02-05)
 
 - oai: exclude deleted records from search
 - models: add bucket_id index
 - serializers: fix DataDownload missing mimetype
 
-Version 6.1.0 (released 2024-02-01)
+## Version 6.1.0 (released 2024-02-01)
 
 - Add CSV records serializer
 
-Version 6.0.0 (released 2024-01-31)
+## Version 6.0.0 (released 2024-01-31)
 
 - installation: bump dependencies
 - installation: pin commonmeta-py
 
-Version 5.1.1 (released 2024-01-30)
+## Version 5.1.1 (released 2024-01-30)
 
 - Custom field ui: fix deserializing for primitive types
 
-Version 5.1.0 (released 2024-01-29)
+## Version 5.1.0 (released 2024-01-29)
 
 - pids: restore required PIDs on publish
 - schema: add dataset specific fields to jsonld
 
-Version 5.0.0 (2024-01-16)
+## Version 5.0.0 (2024-01-16)
 
 - communities: utilize community theming mechanism
 
-Version 4.43.2 (2024-01-16)
+## Version 4.43.2 (2024-01-16)
 
 - dependencies: pin commonmeta-py
 
-Version 4.43.1 (2023-12-12)
+## Version 4.43.1 (2023-12-12)
 
 - replace ckeditor with tinymce
 
-Version 4.43.0 (2023-12-11)
+## Version 4.43.0 (2023-12-11)
 
 - fixtures: method to add/update entries
 - fixtures: add KTH affiliation
@@ -1440,12 +1440,12 @@ Version 4.43.0 (2023-12-11)
 - export: santized filename in marcxml
 - deposit-ui: improve error messages
 
-Version 4.42.0 (2023-11-30)
+## Version 4.42.0 (2023-11-30)
 
 - services: add signals component
 - contrib: codemeta serializer
 
-Version 4.41.0 (2023-11-29)
+## Version 4.41.0 (2023-11-29)
 
 - metadata: use DateAndTime format for dates field
 - contrib: update imprint labels to be more descriptive
@@ -1453,7 +1453,7 @@ Version 4.41.0 (2023-11-29)
 - service: improve check for record existance
 - generators: add community inclusion reviewers
 
-Version 4.40.0 (2023-11-20)
+## Version 4.40.0 (2023-11-20)
 
 - access: avoid setting ``access_request_token``
 - resources: add parent doi redirection
@@ -1461,129 +1461,129 @@ Version 4.40.0 (2023-11-20)
 - config: update OAISERVER_RECORD_SETS_FETCHER
 - deposit-ui: fix affiliations serialization
 
-Version 4.39.3 (2023-11-13)
+## Version 4.39.3 (2023-11-13)
 
 - secret-links: remove token from session on expiration
 
-Version 4.39.2 (2023-11-07)
+## Version 4.39.2 (2023-11-07)
 
 - resources: fix dcat serializer for restricted record files
 - email templates: fix access request submit templates
 - schemaorg: added fields to schema to improve fair score
 - notifications: send community inclusion emails to community managers
 
-Version 4.39.1 (2023-11-01)
+## Version 4.39.1 (2023-11-01)
 
 - installation: remove upper pin for invenio-oauth2server
 - draft: fix creatibutors affiliation de-duplication in select dropdown
 
-Version 4.39.0 (2023-10-31)
+## Version 4.39.0 (2023-10-31)
 
 - jsonschema: remove unique items constraints
 - ui: deposit fields license Custom SearchBar
 - fix: upload going blank on translation
 
-Version 4.38.3 (2023-10-30)
+## Version 4.38.3 (2023-10-30)
 
 - oaiserver: fix record loading for db results
 - tests: add OAI endpoint tests
 
-Version 4.38.2 (2023-10-27)
+## Version 4.38.2 (2023-10-27)
 
 - datacite: fix related identifiers serialization.
 
-Version 4.38.1 (2023-10-26)
+## Version 4.38.1 (2023-10-26)
 
 - files: updating url  encoding
 - entity: catch soft deleted draft
 - schemaorg: serialize "creator"
 - user access request e-mail: include requestor email address
 
-Version 4.38.0 (2023-10-25)
+## Version 4.38.0 (2023-10-25)
 
 - github: fix identity fetch for releases
 
-Version 4.37.4 (2023-10-25)
+## Version 4.37.4 (2023-10-25)
 
 - serializers: fix award serialization in marcxml
 - assets: improve email templates formatting
 
-Version 4.37.3 (2023-10-23)
+## Version 4.37.3 (2023-10-23)
 
 - subjects: validate that values are unique
 - github: added default repo creators
 - service: fix draft access on deleted published record
 
-Version 4.37.2 (2023-10-20)
+## Version 4.37.2 (2023-10-20)
 
 - email: case-insensitive comparison of user email
 - resources: make search request args class configurable
 - service: make search option class configurable
 - serializers: fix bibtex for github record-releases and requiring given_name field
 
-Version 4.37.1 (2023-10-19)
+## Version 4.37.1 (2023-10-19)
 
 - serializing: patch edtf date parser
 
-Version 4.37.0 (2023-10-19)
+## Version 4.37.0 (2023-10-19)
 
 - service config: change lock edit publish file
 - installation: bump invenio-drafts-resources
 
-Version 4.36.10 (2023-10-19)
+## Version 4.36.10 (2023-10-19)
 
 - access: relax serialization checks
 
-Version 4.36.9 (2023-10-18)
+## Version 4.36.9 (2023-10-18)
 
 - github: added support for extra metadata.
 - edit: fix serialization of creator roles
 - deposit: fix required identifiers for creators
 - serializers: fix wrongly used get
 
-Version 4.36.8 (2023-10-17)
+## Version 4.36.8 (2023-10-17)
 
 - github metadata: fix empty affiliations
 
-Version 4.36.7 (2023-10-17)
+## Version 4.36.7 (2023-10-17)
 
 - github: fixed authors serialization.
 
-Version 4.36.6 (2023-10-16)
+## Version 4.36.6 (2023-10-16)
 
 - reindex stats in batches of 10k
 
-Version 4.36.5 (2023-10-16)
+## Version 4.36.5 (2023-10-16)
 
 - allow users to delete pending files
 - fix beforeunload event in upload form
 
-Version 4.36.4 (2023-10-15)
+## Version 4.36.4 (2023-10-15)
 
 - remove dependency in `flask_login.current_user` on service layer
 
-Version 4.36.3 (2023-10-15)
+## Version 4.36.3 (2023-10-15)
 
 - fix search of drafts
 
-Version 4.36.2 (2023-10-14)
+## Version 4.36.2 (2023-10-14)
 
 - datastore: prevent autoflush on search
 
-Version 4.36.1 (2023-10-14)
+## Version 4.36.1 (2023-10-14)
 
 - github: read releases by user identity permission
 
-Version 4.36.0 (2023-10-13)
+## Version 4.36.0 (2023-10-13)
 
 - service add version scan method
 
-Version 4.35.0 (2023-10-13)
+## Version 4.35.0 (2023-10-13)
 
 - datacite: hide DOI on delete record admin action
 - datacite: show DOI on restore record admin action
 
-Version 4.34.0 (2023-10-12)
+## Version 4.34.0 (2023-10-12)
 
 - oai: add alias methods for backwards compatibility
 - oai: marcxml: string encoding bug
@@ -1591,126 +1591,126 @@ Version 4.34.0 (2023-10-12)
 - add schemaorg serializer
 - oaiserver: add rebuild index method
 
-Version 4.33.2 (2023-10-11)
+## Version 4.33.2 (2023-10-11)
 
 - deposit form: improve UX of contributors modal
 - tombstone: fix information removed by Admin
 
-Version 4.33.1 (2023-10-10)
+## Version 4.33.1 (2023-10-10)
 
 - service: fix restore/delete of specific record version
 
-Version 4.33.0 (2023-10-09)
+## Version 4.33.0 (2023-10-09)
 
 - journal: ui serializer formatting improvements
 - serializers: ui - add publication date to journal citation
 - github: store name and family name of author
 
-Version 4.32.0 (2023-10-06)
+## Version 4.32.0 (2023-10-06)
 
 - deposit form: report invalid value errors on each draft save
 - access-requests: send notification on submit action
 - access-requests: replace EmailOp with NotificationOp on guest access token create
 - access-requests: replace EmailOp with NotificationOp
 
-Version 4.31.1 (2023-10-04)
+## Version 4.31.1 (2023-10-04)
 
 - deposit: make name's affiliation/id optionals
 
-Version 4.31.0 (2023-10-04)
+## Version 4.31.0 (2023-10-04)
 
 - files: add check for deleted record
 - communities: add resource and service handlers for setting default community
 - versions: add status param interpreter
 - communities-records: set correct links
 
-Version 4.30.0 (2023-10-03)
+## Version 4.30.0 (2023-10-03)
 
 - add task to reindex records to update views/downloads stats
 
-Version 4.29.0 (2023-10-03)
+## Version 4.29.0 (2023-10-03)
 
 - serializers: replace slugs caching with invenio-cache
 - assets: remove redundant recover on file upload fail
 - notifications: add submission accept action notification
 - ui: added autoFocus to Deposit Form modals
 
-Version 4.28.2 (2023-09-28)
+## Version 4.28.2 (2023-09-28)
 
 - serializers: fix cache ttl when fetching communities slugs
 
-Version 4.28.1 (2023-09-28)
+## Version 4.28.1 (2023-09-28)
 
 - serializers: use cache when fetching communities slugs
 - service: fix config sort object being wrongly updated
 
-Version 4.28.0 (2023-09-26)
+## Version 4.28.0 (2023-09-26)
 
 - services: add community deletion component
 - resources: fix response code on delete action
 - resources: accept if_match header with revision id on DELETE
 
-Version 4.27.0 (2023-09-22)
+## Version 4.27.0 (2023-09-22)
 
 - services: added record components config support
 - links: return parent_doi for both records and drafts
 
-Version 4.26.0 (2023-09-21)
+## Version 4.26.0 (2023-09-21)
 
 - deposit: add accessibility attributes
 - resources: add etag headers
 - search: query filter for deleted records on the main search endpoint
 - services: add search params
 
-Version 4.25.0 (2023-09-19)
+## Version 4.25.0 (2023-09-19)
 
 - permissions: allow moderator to see all drafts
 - services: filter out deleted records
 - service: add quota load schema
 
-Version 4.24.0 (2023-09-19)
+## Version 4.24.0 (2023-09-19)
 
 - community submission: fix modal text for different cases
 - resources: add administration and moderation actions
 - models: avoid flushing when getting records
 
-Version 4.23.2 (2023-09-17)
+## Version 4.23.2 (2023-09-17)
 
 - config: fix ADS bibcode idutils scheme
 
-Version 4.23.1 (2023-09-15)
+## Version 4.23.1 (2023-09-15)
 
 - resources: remove response handler from submit review
 
-Version 4.23.0 (2023-09-14)
+## Version 4.23.0 (2023-09-14)
 
 - fixtures: update names and affiliations to use model PIDs
 
-Version 4.22.0 (2023-09-14)
+## Version 4.22.0 (2023-09-14)
 
 - service: set records and user quota
 - deposit modals: fix modal headlines and list options styling for creatibutors
 
-Version 4.21.0 (2023-09-13)
+## Version 4.21.0 (2023-09-13)
 
 - service: prevent creating a request if invalid restrictions
 - mappings: added award acronym to os-v1 and es-v7
 
-Version 4.20.1 (2023-09-12)
+## Version 4.20.1 (2023-09-12)
 
 - records: adds conditional dumping of files
 - records: revert file dumper
 - entity_resolvers: add missing ghost_record representation
 - deposit: update headers for submit review action
 
-Version 4.20.0 (2023-09-11)
+## Version 4.20.0 (2023-09-11)
 
 - export formats: fix serializers
 - links: add media files archive link
 - moderation: delete user's records when blocking them
 - serializers: added locations to UI serializer
 
-Version 4.19.0 (2023-09-06)
+## Version 4.19.0 (2023-09-06)
 
 - custom fields: update namespace values
 - tokens: make RAT subject schema configurable
@@ -1722,34 +1722,34 @@ Version 4.19.0 (2023-09-06)
 - schema: expose checksum and file ID
 - services: make record/draft API classes configurable
 
-Version 4.18.0 (2023-09-06)
+## Version 4.18.0 (2023-09-06)
 
 - uow: use ParentRecordCommitOp when committing parent
 - resolver: resolve records first when draft is published
 
-Version 4.17.0 (2023-09-05)
+## Version 4.17.0 (2023-09-05)
 
 - dumper: add files dumper ext
 - services: add record deletion workflow
 - alembic: fix record consent recipe
 
-Version 4.16.1 (2023-09-04)
+## Version 4.16.1 (2023-09-04)
 
 - stats: omit events from records without parent
 - views: fix non existing avatar fetch in guest access request
 
-Version 4.16.0 (2023-08-30)
+## Version 4.16.0 (2023-08-30)
 
 - access request: record the consent to share personal data
 - access request: ensure compliance of endpoints with the RFC
 - access request: add load serialization schema
 - oai-pmh: read oai sets prefix from app config
 
-Version 4.15.1 (2023-08-25)
+## Version 4.15.1 (2023-08-25)
 
 - access-field: rely on `instance.files.enabled` to indicate if files exist or not
 
-Version 4.15.0 (2023-08-24)
+## Version 4.15.0 (2023-08-24)
 
 - access request: add secret_link_expiration to guest access request payload schema
 - permissions: add create/update conditions for managing access options
@@ -1757,7 +1757,7 @@ Version 4.15.0 (2023-08-24)
 - access request: add permission on secret_link_expiration request field
 
 
-Version 4.14.0 (2023-08-17)
+## Version 4.14.0 (2023-08-17)
 
 - alembic: add recipe for files and media files versioning
 - permissions: fix permissions about whom can add a record to community
@@ -1771,11 +1771,11 @@ Version 4.14.0 (2023-08-17)
 - access request: add secret link expiration access request setting
 - deposit: fix license modal
 
-Version 4.13.1 (2023-08-11)
+## Version 4.13.1 (2023-08-11)
 
 - vocabularies: add new values to resource types
 
-Version 4.13.0 (2023-08-09)
+## Version 4.13.0 (2023-08-09)
 
 - alembic: fix wrong revision id
 - access requests: new endpoint to update access request settings
@@ -1785,95 +1785,95 @@ Version 4.13.0 (2023-08-09)
 - user moderation: add empty actions hooks
 - ui: fix layout issues with community modals
 
-Version 4.12.2 (2023-07-25)
+## Version 4.12.2 (2023-07-25)
 
 - permissions: fix permission syntax error
 
-Version 4.12.1 (2023-07-25)
+## Version 4.12.1 (2023-07-25)
 
 - permissions: fix external doi versioning generator
 
-Version 4.12.0 (2023-07-24)
+## Version 4.12.0 (2023-07-24)
 
 - access: allow dump of parent.access.settings field
 - github: fix metadata validation issues
 - github: add badges support
 - records: add parent access settings schema
 
-Version 4.11.0 (2023-07-21)
+## Version 4.11.0 (2023-07-21)
 
 - add parent doi resolution
 
-Version 4.10.0 (2023-07-18)
+## Version 4.10.0 (2023-07-18)
 
 - access-requests: change expires_at to isodatestring
 - ui: align commmunity header logo with other community headers
 - github: add invenio github integration
 
-Version 4.9.1 (2023-07-17)
+## Version 4.9.1 (2023-07-17)
 
 - available actions: reorder actions
 
-Version 4.9.0 (2023-07-13)
+## Version 4.9.0 (2023-07-13)
 
 - add access requests for users and guests
 
-Version 4.8.0 (2023-07-12)
+## Version 4.8.0 (2023-07-12)
 
 - add media files
 
-Version 4.7.0 (2023-07-05)
+## Version 4.7.0 (2023-07-05)
 
 - transifex: update config
 - conf: add variable to enable files by default
 
-Version 4.6.0 (2023-07-03)
+## Version 4.6.0 (2023-07-03)
 
 - implement resource access (RAT) tokens
 - ui: fix deposit form access value when submitting to restricted community
 
-Version 4.5.0 (2023-06-30)
+## Version 4.5.0 (2023-06-30)
 
 - fix custom fields issue with nested array in an object
 - use reindex_users method
 
-Version 4.4.1 (released 2023-06-28)
+## Version 4.4.1 (released 2023-06-28)
 
 - Fixes permission checks when there is no record object to check i.e new record
 
-Version 4.4.0 (released 2023-06-15)
+## Version 4.4.0 (released 2023-06-15)
 
 - access: fix permissions check for managing access
 - schemas: remove redundant permission check
 - setup: upgrade invenio-communities
 
-Version 4.3.0 (released 2023-06-07)
+## Version 4.3.0 (released 2023-06-07)
 
 - add notification on community submission / community review request
 - add notification templates
 
-Version 4.2.5 (released 2023-06-05)
+## Version 4.2.5 (released 2023-06-05)
 
 - custom-fields: fix deserialization for array of string values
 
-Version 4.2.4 (released 2023-06-02)
+## Version 4.2.4 (released 2023-06-02)
 
 - results: implement abstract method for system record
 
-Version 4.2.3 (released 2023-05-31)
+## Version 4.2.3 (released 2023-05-31)
 
 - resource-types: more fixes on types/subtypes
 
-Version 4.2.2 (released 2023-05-30)
+## Version 4.2.2 (released 2023-05-30)
 
 - export all file-uploader components
 - resource types: fix wrongly mapped ids
 
-Version 4.2.1 (released 2023-05-27)
+## Version 4.2.1 (released 2023-05-27)
 
 - fix on resource types vocabularies
 
-Version 4.2.0 (released 2023-05-26)
+## Version 4.2.0 (released 2023-05-26)
 
 - update resource types vocabularies
 - add permission flag system field
@@ -1882,54 +1882,54 @@ Version 4.2.0 (released 2023-05-26)
 - add missing dumper to citation serializer
 - improve a11y for community modals
 
-Version 4.1.0 (released 2023-05-05)
+## Version 4.1.0 (released 2023-05-05)
 
 - add reference fields to deposit components
 - fix records and drafts mappings
 - fix custom field components exports
 
-Version 4.0.0 (released 2023-04-25)
+## Version 4.0.0 (released 2023-04-25)
 
 - record: add file metadata to the indexing
 - fixtures: add user locale preferences
 
-Version 3.1.0 (released 2023-04-21)
+## Version 3.1.0 (released 2023-04-21)
 
 - assets: move react deposit components
 
-Version 3.0.0 (released 2023-04-20)
+## Version 3.0.0 (released 2023-04-20)
 
 - usage statistics: refactor files structure
 
-Version 2.13.0 (released 2023-04-17)
+## Version 2.13.0 (released 2023-04-17)
 
 - serializers: added schema processors (custom fields)
 - serializers: created dump and load mixins for custom fields
 
-Version 2.12.0 (released 2023-04-06)
+## Version 2.12.0 (released 2023-04-06)
 
 - api: add record community suggestion endpoint
 
-Version 2.11.0 (released 2023-03-30)
+## Version 2.11.0 (released 2023-03-30)
 
 - add usage statistics indexing (by system field)
 - add sorting by most viewed to the config
 - move statistics events from invenio-app-rdm
 
-Version 2.10.0 (released 2023-03-28)
+## Version 2.10.0 (released 2023-03-28)
 
 - add requests endpoint to the record
 - dublincore: transform identifiers tu urls
 - record service: update community records
 
-Version 2.9.0 (released 2023-03-24)
+## Version 2.9.0 (released 2023-03-24)
 
 - communities: return ghost parent community when cannot be resolved
 - contrib: add journal and meeting sort options
 - contrib: updated custom fields UI widgets
 - custom_fields: rename CodeMeta to Software
 
-Version 2.8.0 (released 2023-03-20)
+## Version 2.8.0 (released 2023-03-20)
 
 - fix marcxml format incompatibility
 - add DCAT-AP export format serializer
@@ -1937,30 +1937,30 @@ Version 2.8.0 (released 2023-03-20)
 - normalize commmunity config variable names
 - configure community service error handlers
 
-Version 2.7.0 (released 2023-03-13)
+## Version 2.7.0 (released 2023-03-13)
 
 - record: implement multiple communities inclusion via new request type
 - communities: allow overwriting access component
 - serializers: refactor accessing fields in the schema
 
-Version 2.6.0 (released 2023-03-09)
+## Version 2.6.0 (released 2023-03-09)
 
 - review service: expand links
 - review service: validate request type
 
 
-Version 2.5.0 (released 2023-03-09)
+## Version 2.5.0 (released 2023-03-09)
 
 - serializer: add bibtex
 - serializer: rename coverage to locations in dublincore schema
 - contrib custom fields: index titles both as text and keyword
 
-Version 2.4.0 (released 2023-03-06)
+## Version 2.4.0 (released 2023-03-06)
 
 - contrib custom fields: add journal, meeting
 - configure metadata only records by feature flag and permissions
 
-Version 2.3.0 (released 2023-03-03)
+## Version 2.3.0 (released 2023-03-03)
 
 - records: remove from community
 - oai-sets admin: frontend fixes
@@ -1969,35 +1969,35 @@ Version 2.3.0 (released 2023-03-03)
 - serializers: refactoring to provide better abstraction
 - remove deprecated flask_babelex dependency and imports
 
-Version 2.2.0 (released 2023-02-20)
+## Version 2.2.0 (released 2023-02-20)
 
 - records: remove communities from a record
 - communities: support both slug (id) and uuid in communities endpoints
 - communities: support direct publish (without review)
 - fixtures: fix duplicated user creation
 
-Version 2.1.0 (released 2023-02-14)
+## Version 2.1.0 (released 2023-02-14)
 
 - export: add MARCXML serializer, including in OAI-PMH
 - resources: add stubs for records' communities
 
-Version 2.0.0 (released 2023-02-07)
+## Version 2.0.0 (released 2023-02-07)
 
 - export: add GEOJSON serializer
 
-Version 1.3.3 (released 2023-02-06)
+## Version 1.3.3 (released 2023-02-06)
 
 - datacite: fix reversion in affiliation ROR handling and cleanup
 
-Version 1.3.2 (released 2023-01-30)
+## Version 1.3.2 (released 2023-01-30)
 
 - records: remove double permission check on community records search
 
-Version 1.3.1 (released 2023-01-23)
+## Version 1.3.1 (released 2023-01-23)
 
 - Add feature flag for archive download endpoint on record and draft resources
 
-Version 1.3.0 (released 2023-01-20)
+## Version 1.3.0 (released 2023-01-20)
 
 - add mechanism to validate a record based on each PID provider
 - fix demo records creation adding missing search index prefix on index refresh
@@ -2005,37 +2005,37 @@ Version 1.3.0 (released 2023-01-20)
 - remove validation on DOI discard action
 - skips PIDs modification when no data is passed
 
-Version 1.2.1 (released 2022-12-01)
+## Version 1.2.1 (released 2022-12-01)
 
 - Add identity to links template expand method.
 
-Version 1.2.0 (released 2022-11-29)
+## Version 1.2.0 (released 2022-11-29)
 
 - add records fixtures
 
-Version 1.1.0 (released 2022-11-25)
+## Version 1.1.0 (released 2022-11-25)
 
 - use communities v4
 - use Axios centralized configuration
 - add i18n translations
 - refactor OAI sets view
 
-Version 1.0.3 (released 2022-11-16)
+## Version 1.0.3 (released 2022-11-16)
 
 - add draft indexer in registry
 
-Version 1.0.2 (released 2022-11-15)
+## Version 1.0.2 (released 2022-11-15)
 
 - fix service_id config values
 - sanitize html in additional descriptions instead of stripping html
 
-Version 1.0.1 (released 2022-11-04)
+## Version 1.0.1 (released 2022-11-04)
 
 - upgrade invenio-vocabularies
 - upgrade invenio-drafts-resources
 - add dynamic formats to administration of oai sets
 - add RO-Crate serializer
 
-Version 1.0.0
+## Version 1.0.0
 
 - Initial public release.

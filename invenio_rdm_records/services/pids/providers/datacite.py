@@ -175,9 +175,12 @@ class DataCitePIDProvider(PIDProvider):
     def register(self, pid, record, **kwargs):
         """Register a DOI via the DataCite API.
 
-        :param pid: the PID to register.
-        :param record: the record metadata for the DOI.
-        :returns: `True` if is registered successfully.
+        Args:
+            pid: the PID to register.
+            record: the record metadata for the DOI.
+
+        Returns:
+            `True` if is registered successfully.
         """
         if isinstance(record, ChainObject):
             if record._child["access"]["record"] == "restricted":
@@ -206,9 +209,13 @@ class DataCitePIDProvider(PIDProvider):
         """Update metadata associated with a DOI.
 
         This can be called before/after a DOI is registered.
-        :param pid: the PID to register.
-        :param record: the record metadata for the DOI.
-        :returns: `True` if is updated successfully.
+
+        Args:
+            pid: the PID to register.
+            record: the record metadata for the DOI.
+
+        Returns:
+            `True` if is updated successfully.
         """
         hide = False
         if isinstance(record, ChainObject):
@@ -252,7 +259,9 @@ class DataCitePIDProvider(PIDProvider):
 
         If the PID has not been reserved then it's deleted only locally.
         Otherwise, also it's deleted also remotely.
-        :returns: `True` if is deleted successfully.
+
+        Returns:
+            `True` if is deleted successfully.
         """
         try:
             if pid.is_reserved():  # Delete only works for draft DOIs
@@ -272,10 +281,11 @@ class DataCitePIDProvider(PIDProvider):
     def validate(self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier.
 
-        :returns: A tuple (success, errors). `success` is a bool that specifies
-                  if the validation was successful. `errors` is a list of
-                  error dicts of the form:
-                  `{"field": <field>, "messages: ["<msgA1>", ...]}`.
+        Returns:
+            A tuple (success, errors). `success` is a bool that specifies
+            if the validation was successful. `errors` is a list of
+            error dicts of the form:
+            `{"field": <field>, "messages: ["<msgA1>", ...]}`.
         """
         # success is unused, but naming it _ would interfere with lazy_gettext as _
         success, errors = super().validate(record, identifier, provider, **kwargs)

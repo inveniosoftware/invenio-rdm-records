@@ -21,21 +21,22 @@ class Grant:
     ):
         """Permission grant for a specific subject (e.g. a user).
 
-        If the ``subject`` argument is specified, it will be used to determine the
-        values for ``subject_type`` and ``subject_id`` automatically.
+        If the `subject` argument is specified, it will be used to determine the
+        values for `subject_type` and `subject_id` automatically.
         In case they are still specified at the same time, their values will
         take precedence over the automatically determined values.
 
-        The ``origin`` value is an optional string describing the origin of the token.
+        The `origin` value is an optional string describing the origin of the token.
         For example, it could indicate that the grant was created manually by the
         record's owner via the API, or that it was automatically created by the system.
         It is purely informational and not included in equality checks or similar.
 
-        :param permission: The granted permission level.
-        :param origin: The origin of the grant.
-        :param subject: The subject of the permission grant.
-        :param subject_type: An override for the subject's type.
-        :param subject_id: An override for the subject's ID.
+        Args:
+            permission: The granted permission level.
+            origin: The origin of the grant.
+            subject: The subject of the permission grant.
+            subject_type: An override for the subject's type.
+            subject_id: An override for the subject's ID.
         """
         self._subject_type = self._subject_id = self._subject = None
 
@@ -77,7 +78,7 @@ class Grant:
         """Force resolving of the grant's subject.
 
         If the grant subject should be resolvable (i.e. it is not a system role) but
-        cannot be found, a ``LookupError`` will be raised.
+        cannot be found, a `LookupError` will be raised.
         """
         registered_system_roles = current_access.system_roles
         type_ = self._subject_type
@@ -176,11 +177,12 @@ class Grant:
     ):
         """Create a Grant from the specified parts (all of which should be strings).
 
-        :param subject_type: The grant subject's type (user, role or system_role).
-        :param subject_id: The grant subject's ID.
-        :param permission: The grant's permission level.
-        :param origin: A string describing the origin of the grant token.
-        :param resolve_subject: Whether to fetch the subject entity from the DB eagerly.
+        Args:
+            subject_type: The grant subject's type (user, role or system_role).
+            subject_id: The grant subject's ID.
+            permission: The grant's permission level.
+            origin: A string describing the origin of the grant token.
+            resolve_subject: Whether to fetch the subject entity from the DB eagerly.
         """
         if subject_type not in ["user", "role", "system_role"]:
             raise ValueError(f"Unknown subject type: {subject_type}")

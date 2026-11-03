@@ -40,7 +40,7 @@ class InternalNotesComponent(ServiceComponent):
         We don't allow updates to existing notes since each one
         has a user and timestamp - therefore should be "locked" in time
 
-        If the field is entirely absent from ``data`` the existing notes are
+        If the field is entirely absent from `data` the existing notes are
         left untouched. This is the case e.g. when the caller lacks permission
         to manage internal notes and the field is stripped from the payload by
         the schema: absence must not be interpreted as "remove all notes".

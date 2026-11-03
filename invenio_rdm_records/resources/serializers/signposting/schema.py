@@ -98,9 +98,12 @@ class LandingPageSchema(Schema):
     def _serialize_typed_link(self, href, mimetype):
         """Serialize href and mimetype to a typed link dict.
 
-        :param href: string. URL
-        :param mimetype: string. mimetype potentially including `;profile="..."`
-        :return: dict. Typed link dict.
+        Args:
+            href: string. URL
+            mimetype: string. mimetype potentially including `;profile="..."`
+
+        Returns:
+            dict. Typed link dict.
         """
         if ";" in mimetype:
             media_type, _, params = mimetype.partition(";")

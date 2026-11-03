@@ -8,7 +8,7 @@
 [project]
 name = "invenio-rdm-records"
 description = "InvenioRDM module for the communities feature."
-readme = "README.rst"
+readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
 authors = [{ name = "CERN", email = "info@inveniosoftware.org" }]
@@ -167,7 +167,6 @@ tests = [
   "pytest-black>=0.6.0",
   "pytest-invenio>=4.0.0,<5.0.0",
   "pytest-mock>=1.6.0",
-  "sphinx>=4.5.0",
   "tripoli>=2.0.0",
 ]
 
@@ -226,7 +225,7 @@ profile = "black"
 add_ignore = "D401,D403"
 
 [tool.pytest.ini_options]
-addopts = '--black --isort --pydocstyle --doctest-glob="*.rst" --doctest-modules --cov=invenio_rdm_records --cov-report=term-missing'
+addopts = '--black --isort --pydocstyle --doctest-modules --cov=invenio_rdm_records --cov-report=term-missing'
 filterwarnings = ["ignore::marshmallow.warnings.RemovedInMarshmallow4Warning"]
 testpaths = "tests invenio_rdm_records"
 live_server_scope = "module"

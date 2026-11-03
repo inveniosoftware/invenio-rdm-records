@@ -264,7 +264,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     def image_api(self):
         """IIIF API Implementation.
 
-        .. note::
+        Note:
             * IIF IMAGE API v1.0
                 * For more infos please visit <http://iiif.io/api/image/>.
             * IIIF Image API v2.0

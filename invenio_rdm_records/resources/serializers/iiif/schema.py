@@ -125,7 +125,7 @@ class IIIFCanvasV2Schema(Schema):
 
 
 class ListIIIFFilesAttribute(fields.List):
-    """Similar to ``NestedAttribute`` but for lists."""
+    """Similar to `NestedAttribute` but for lists."""
 
     def get_value(self, obj, *args, **kwargs):
         """Return the value for a given key from an object attribute."""

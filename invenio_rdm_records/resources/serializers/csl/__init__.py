@@ -118,8 +118,9 @@ class StringCitationSerializer(MarshmallowSerializer):
     def __init__(self, url_args_retriever, **options):
         """Constructor.
 
-        :param url_args_retriever: callable func or object that return the
-                                   style and locale URL args
+        Args:
+            url_args_retriever: callable func or object that return the
+                style and locale URL args
         """
         super().__init__(
             format_serializer_cls=JSONSerializer,
@@ -135,7 +136,8 @@ class StringCitationSerializer(MarshmallowSerializer):
     def serialize_object(self, record):
         """Serialize the output of a RecordItem.to_dict() to a citation string.
 
-        :param record: dict from RecordItem.to_dict().
+        Args:
+            record: dict from RecordItem.to_dict().
         """
         style, locale = (
             self.url_args_retriever()
@@ -159,7 +161,8 @@ class StringCitationSerializer(MarshmallowSerializer):
     def serialize_object_list(self, records):
         """Serialize a list of records.
 
-        :param records: List of records instance.
+        Args:
+            records: List of records instance.
         """
         return "\n".join(
             [self.serialize_object(rec) for rec in records["hits"]["hits"]]

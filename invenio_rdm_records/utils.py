@@ -78,7 +78,7 @@ class ChainObject:
         return ChainMap(*objs)[key]
 
     def get(self, key, default=None):
-        """Index lookup a la ``dict.get`` over all objects."""
+        """Index lookup a la `dict.get` over all objects."""
         objs = super().__getattribute__("_objs")
         return ChainMap(*objs).get(key, default=default)
 
@@ -151,11 +151,11 @@ def verify_token(identity):
 
 
 def simple_deepcopy(data):
-    """A simpler variant of ``deepcopy()`` that's sufficient for our use cases.
+    """A simpler variant of `deepcopy()` that's sufficient for our use cases.
 
     This function only creates deep copies of some specific data structures; basically
     the ones that are representable in JSON.
-    This makes it faster than ``deepcopy()``.
+    This makes it faster than `deepcopy()`.
 
     This is sufficient in many cases in InvenioRDM since we don't generally manipulate
     data from sources where we care about manipulations via side effects.
@@ -168,13 +168,13 @@ def simple_deepcopy(data):
 
 
 def very_simple_deepcopy(data):
-    """An even simpler variant of ``deepcopy()`` that does the job sometimes.
+    """An even simpler variant of `deepcopy()` that does the job sometimes.
 
     This function only creates deep copies of dictionaries, and creates new references
     for lists (but does not touch the items within them).
-    This makes it much faster than ``deepcopy()``.
+    This makes it much faster than `deepcopy()`.
 
-    Like ``simple_deepcopy()``, this is sufficient for some use cases in InvenioRDM.
+    Like `simple_deepcopy()`, this is sufficient for some use cases in InvenioRDM.
     """
     if isinstance(data, dict):
         return {k: very_simple_deepcopy(v) for k, v in data.items()}

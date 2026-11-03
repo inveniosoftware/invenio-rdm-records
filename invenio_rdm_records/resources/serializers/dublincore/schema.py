@@ -20,11 +20,11 @@ from ..utils import get_vocabulary_props
 class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
     """Schema for Dublin Core in JSON.
 
-    The identifier handling behavior is determined by the schema's ``context``,
-    particularly by the values ``urlize_identifiers`` and ``prefix_identifier_schemes``.
+    The identifier handling behavior is determined by the schema's `context`,
+    particularly by the values `urlize_identifiers` and `prefix_identifier_schemes`.
     Both of them are expected to be boolean values, and determine whether or not
     identifiers should be transformed into URLs if possible (like DOIs), and/or
-    whether the scheme should be used as prefix (i.e. ``{scheme}:{identifier}``)
+    whether the scheme should be used as prefix (i.e. `{scheme}:{identifier}`)
     for the identifier as fallback.
     """
 
@@ -48,13 +48,13 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
     formats = fields.Method("get_formats")
 
     def _transform_identifier(self, identifier, scheme):
-        """Transform the raw identifier according to the rules in the ``context``.
+        """Transform the raw identifier according to the rules in the `context`.
 
         If the identifier can be turned into a URL (like DOIs and handles) and the
-        ``context`` doesn't have a falsy ``urlize_identifiers`` value, it will
+        `context` doesn't have a falsy `urlize_identifiers` value, it will
         be turned into a URL.
-        Otherwise, and if the ``context`` has a truthy value for
-        ``prefix_identifier_schemes``, the identifier will be prefixed with its scheme
+        Otherwise, and if the `context` has a truthy value for
+        `prefix_identifier_schemes`, the identifier will be prefixed with its scheme
         if it isn't prefixed yet.
         As a last resort, the original identifier will be returned as is.
         """

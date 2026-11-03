@@ -22,8 +22,9 @@ class HasDraftCheckField(SystemField):
         system's record or defaults to `False` if the `draft_cls` is not passed
         e.g Draft records.
 
-        :param key: Attribute name of the HasDraftCheckField.
-        :param draft_cls: The draft class to use for querying.
+        Args:
+            key: Attribute name of the HasDraftCheckField.
+            draft_cls: The draft class to use for querying.
         """
         super().__init__(key=key)
         self.draft_cls = draft_cls

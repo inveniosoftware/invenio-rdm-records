@@ -137,8 +137,9 @@ class ValidationErrorWithMessageAsList(Exception):
         a marshmallow ValidationError even though it is annoying that the field
         is then called by `self.messages`.
 
-        :param message: list of dicts in the shape:
-                        `{"<fieldA>": ["<msgA1>", ...], ...}`
+        Args:
+            message: list of dicts in the shape:
+                `{"<fieldA>": ["<msgA1>", ...], ...}`
         """
         assert isinstance(message, list)
         self.messages = message
