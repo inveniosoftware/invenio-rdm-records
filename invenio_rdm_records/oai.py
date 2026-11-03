@@ -103,9 +103,12 @@ def oai_datacite_etree(pid, record):
 def oaiid_fetcher(record_uuid, data):
     """Fetch a record's identifier.
 
-    :param record_uuid: The record UUID.
-    :param data: The record data.
-    :returns: A :class:`invenio_pidstore.fetchers.FetchedPID` instance.
+    Args:
+        record_uuid: The record UUID.
+        data: The record data.
+
+    Returns:
+        A `invenio_pidstore.fetchers.FetchedPID` instance.
     """
     pid_value = data.get("pids", {}).get("oai", {}).get("identifier")
     if pid_value is None:

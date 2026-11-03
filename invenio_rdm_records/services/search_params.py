@@ -83,20 +83,20 @@ class MetricsParam(ParamInterpreter):
 
         Usage:
 
-        .. code-block:: python
-
-            "params": {
-                ...
-                "metrics": {
-                    "total_data": {
-                        "name": "total_data",
-                        "type": "sum",
-                        "kwargs": {
-                            "field": "files.totalbytes"
-                        }
+        ```python
+        "params": {
+            ...
+            "metrics": {
+                "total_data": {
+                    "name": "total_data",
+                    "type": "sum",
+                    "kwargs": {
+                        "field": "files.totalbytes"
                     }
                 }
             }
+        }
+        ```
         """
         value = params.pop("metrics", {})
         for key, metric_params in value.items():

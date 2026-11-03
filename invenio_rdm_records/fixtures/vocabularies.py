@@ -288,7 +288,7 @@ class VocabulariesFixture:
         ignore: iterable of ids to ignore
 
         For subjects (or any vocabulary with a dict of data-file), the id
-        that counts is ``<vocabulary id>.<dict key>``.
+        that counts is `<vocabulary id>.<dict key>`.
 
         Returns all vocabulary ids loaded so far.
         """

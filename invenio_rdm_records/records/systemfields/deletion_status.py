@@ -61,7 +61,7 @@ class RecordDeletionStatus:
         """Check if self and other are equal.
 
         This allows checking against other instances of the same type, strings,
-        and ``RecordDeletionStatusEnum`` values.
+        and `RecordDeletionStatusEnum` values.
         """
         if isinstance(other, type(self)):
             return self.status == other.status

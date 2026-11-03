@@ -60,12 +60,12 @@ def _serialize_org(org):
 class CFFSchema(BaseSerializerSchema):
     """CFF Schema.
 
-    .. note::
-
+    Note:
         The schema is defined in:
             https://github.com/citation-file-format/citation-file-format/blob/main/schema-guide.md
 
-    :raises ValidationError: when the resource type is not allowed.
+    Raises:
+        ValidationError: when the resource type is not allowed.
     """
 
     allowed_types = {"software", "dataset"}
@@ -183,7 +183,7 @@ class CFFSchema(BaseSerializerSchema):
         rights = obj.get("metadata", {}).get("rights", [])
         result = []
         for right in rights:
-            # Only serialize licenses that have an ``id```. IDs in RDM match SPDX ids.
+            # Only serialize licenses that have an `id`. IDs in RDM match SPDX ids.
             _id = right.get("id")
             if _id:
                 result.append(_id)
@@ -199,7 +199,7 @@ class CFFSchema(BaseSerializerSchema):
         rights = obj.get("metadata", {}).get("rights", [])
         result = None
         for right in rights:
-            # Only serialize licenses that have an ``id```. IDs in RDM match SPDX ids.
+            # Only serialize licenses that have an `id`. IDs in RDM match SPDX ids.
             _id = right.get("id")
             link = right.get("link")
             if not _id and link:

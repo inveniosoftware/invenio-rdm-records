@@ -53,12 +53,13 @@ class TokenSerializerMixin(Serializer):
     def validate_token(self, token, expected_data=None, force=False):
         """Load and validate secret link token.
 
-        :param token: Token value.
-        :param expected_data: A dictionary of key/values that must be present
-                              in the data part of the token (i.e. included
-                              via ``extra_data`` in ``create_token``).
-        :param force: Load token data even if signature expired.
-                      Default: False.
+        Args:
+            token: Token value.
+            expected_data: A dictionary of key/values that must be present
+                in the data part of the token (i.e. included
+                via `extra_data` in `create_token`).
+            force: Load token data even if signature expired.
+                Default: False.
         """
         try:
             # Load token and remove random data.
@@ -78,9 +79,10 @@ class TokenSerializerMixin(Serializer):
     def load_token(self, token, force=False):
         """Load data in a token.
 
-        :param token: Token to load.
-        :param force: Load token data even if signature expired.
-                      Default: False.
+        Args:
+            token: Token to load.
+            force: Load token data even if signature expired.
+                Default: False.
         """
         try:
             data = self.loads(token)
@@ -101,8 +103,8 @@ class TimedSecretLinkSerializer(TimedJSONWebSignatureSerializer, TokenSerializer
     def __init__(self, expires_at=None, **kwargs):
         """Initialize underlying TimedJSONWebSignatureSerializer.
 
-        If ``expires_at`` is set to ``None``, a default value will
-        be used by the ``TimedJSONWebSignatureSerializer`` superclass.
+        If `expires_at` is set to `None`, a default value will
+        be used by the `TimedJSONWebSignatureSerializer` superclass.
         """
         assert isinstance(expires_at, datetime) or expires_at is None
 

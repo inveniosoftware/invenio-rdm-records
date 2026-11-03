@@ -8,7 +8,7 @@ from marshmallow_utils.fields import SanitizedHTML as SanitizedHTMLBase
 
 
 class SanitizedHTML(SanitizedHTMLBase):
-    """String field that sanitizes HTML tags with the ``bleach`` library.
+    """String field that sanitizes HTML tags with the `bleach` library.
 
     In contrast to the base class, this field takes the Flask application's
     configuration into account.

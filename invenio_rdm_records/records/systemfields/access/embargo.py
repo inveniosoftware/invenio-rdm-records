@@ -40,7 +40,7 @@ class Embargo:
     def _lift(self):
         """Internal method to lift the embargo.
 
-        Returns ``True`` if the embargo was actually lifted (i.e. it was
+        Returns `True` if the embargo was actually lifted (i.e. it was
         expired but still marked as active).
         """
         if self.until is not None:

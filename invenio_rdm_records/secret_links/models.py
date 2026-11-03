@@ -159,9 +159,9 @@ class SecretLink(db.Model):
     def load_token(token, expected_data=None, force=False):
         """Validate a secret link token (non-expiring + expiring).
 
-        If ``expected_data`` is supplied, its presence in the token will be
+        If `expected_data` is supplied, its presence in the token will be
         required in order for the token to be considered valid.
-        If ``force`` is set to ``True``, the token's expiration date is
+        If `force` is set to `True`, the token's expiration date is
         ignored.
         """
         for algorithm in SUPPORTED_DIGEST_ALGORITHMS:

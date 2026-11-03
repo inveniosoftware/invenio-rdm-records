@@ -206,7 +206,7 @@ class PIDsService(RecordService):
                 break
 
         # NOTE: This is not the best place to do this, since we shouldn't be aware of
-        #       the fact that the record has a `RelationsField``. However, without
+        #       the fact that the record has a `RelationsField`. However, without
         #       dereferencing, we're not able to serialize the record properly for
         #       registration/updates (e.g. for the DataCite DOIs).
         #       Some possible alternatives:

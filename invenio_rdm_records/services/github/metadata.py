@@ -91,8 +91,7 @@ class RDMReleaseMetadata(object):
     def contributors(self):
         """Serializes contributors retrieved from github.
 
-        .. note::
-
+        Note:
             `self.rdm_release.contributors` might fail with a `UnexpectedGithubResponse`. This is an error from which the RDM release
             processing can't recover since `creators` is a mandatory field.
         """

@@ -14,7 +14,7 @@ class IsVerifiedField(CalculatedField):
         super().__init__(key=key, use_cache=False)
 
     def calculate(self, record):
-        """Calculate the ``is_verified`` property of the record."""
+        """Calculate the `is_verified` property of the record."""
         owner = record.access.owner.resolve()
         if not owner:
             # `null` or deleted user

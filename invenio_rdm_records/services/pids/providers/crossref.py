@@ -63,7 +63,8 @@ class CrossrefClient:
     def check_credentials(self, **kwargs):
         """Check if the client has the credentials properly set up.
 
-        :returns: True if credentials are properly configured, False otherwise.
+        Returns:
+            True if credentials are properly configured, False otherwise.
         """
         if (
             not self.cfg("username")
@@ -124,9 +125,14 @@ class CrossrefClient:
     def deposit(self, input_xml):
         """Upload metadata for a new or existing DOI.
 
-        :param input_xml: XML metadata following the Crossref Metadata Schema (str or bytes).
-        :return: Status string ('SUCCESS' or 'ERROR' on failure).
-        :raises RuntimeError: If credentials are not configured.
+        Args:
+            input_xml: XML metadata following the Crossref Metadata Schema (str or bytes).
+
+        Returns:
+            Status string ('SUCCESS' or 'ERROR' on failure).
+
+        Raises:
+            RuntimeError: If credentials are not configured.
         """
         if not self.check_credentials():
             raise RuntimeError("Crossref client credentials not properly configured.")
@@ -242,10 +248,13 @@ class CrossrefPIDProvider(PIDProvider):
     def register(self, pid, record, url=None, **kwargs):
         """Register metadata with the Crossref XML API.
 
-        :param pid: the PID to register.
-        :param record: the record metadata for the DOI.
-        :param url: the landing page URL for the DOI.
-        :returns: `True` if is registered successfully.
+        Args:
+            pid: the PID to register.
+            record: the record metadata for the DOI.
+            url: the landing page URL for the DOI.
+
+        Returns:
+            `True` if is registered successfully.
         """
         local_success = super().register(pid)
         if not local_success:
@@ -265,10 +274,13 @@ class CrossrefPIDProvider(PIDProvider):
     def update(self, pid, record, url=None, **kwargs):
         """Update metadata with the Crossref XML API.
 
-        :param pid: the PID to update.
-        :param record: the record metadata for the DOI.
-        :param url: the landing page URL for the DOI.
-        :returns: `True` if is updated successfully.
+        Args:
+            pid: the PID to update.
+            record: the record metadata for the DOI.
+            url: the landing page URL for the DOI.
+
+        Returns:
+            `True` if is updated successfully.
         """
         try:
             doc = self.serializer.dump_obj(record, url=url)
@@ -286,7 +298,9 @@ class CrossrefPIDProvider(PIDProvider):
 
         If the PID has not been reserved then it's deleted only locally.
         Otherwise, also it's deleted also remotely.
-        :returns: `True` if is deleted successfully.
+
+        Returns:
+            `True` if is deleted successfully.
         """
         try:
             if pid.is_reserved():  # Delete only works for draft DOIs
@@ -313,10 +327,11 @@ class CrossrefPIDProvider(PIDProvider):
     def validate(self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier.
 
-        :returns: A tuple (success, errors). `success` is a bool that specifies
-                  if the validation was successful. `errors` is a list of
-                  error dicts of the form:
-                  `{"field": <field>, "messages: ["<msgA1>", ...]}`.
+        Returns:
+            A tuple (success, errors). `success` is a bool that specifies
+            if the validation was successful. `errors` is a list of
+            error dicts of the form:
+            `{"field": <field>, "messages: ["<msgA1>", ...]}`.
         """
         # success is unused, but naming it _ would interfere with lazy_gettext as _
         success, errors = super().validate(record, identifier, provider, **kwargs)

@@ -24,7 +24,7 @@ class EDTFDumperExt(SearchDumperExt):
 
     It parses the value (i.e. the EDTF level 0 string) of the specified
     field in the document and adds a dictionary holding the values
-    :code:`{"lte": lower_strict, "gte": upper_strict}`, whose values correspond
+    `{"lte": lower_strict, "gte": upper_strict}`, whose values correspond
     to the lower strict and upper strict bounds.
     They are required for sorting.
     In an ascending sort (most recent last), sort by `<FIELD_NAME>_range.gte`
@@ -35,7 +35,8 @@ class EDTFDumperExt(SearchDumperExt):
     def __init__(self, field):
         """Constructor.
 
-        :param field: dot separated path to the EDTF field to process.
+        Args:
+            field: dot separated path to the EDTF field to process.
         """
         super(EDTFDumperExt, self).__init__()
         self.keys = parse_lookup_key(field)
@@ -73,7 +74,7 @@ class EDTFListDumperExt(SearchDumperExt):
 
     It iterates over the items at the specified field in the
     document and adds dictionaries holding the values
-    :code:`{"lte": lower_strict, "gte": upper_strict}`, as parsed
+    `{"lte": lower_strict, "gte": upper_strict}`, as parsed
     from their EDTF fields (specified by the key).
     These values correspond to the lower strict and upper strict bounds.
     They are required for sorting.
@@ -85,11 +86,12 @@ class EDTFListDumperExt(SearchDumperExt):
     def __init__(self, list_field, key):
         """Constructor.
 
-        :param list_field: dot-separated path to the array to process.
-        :param key: name of the (scalar) EDTF field. This field has to be
-                    present in each array item. In contrast to `list_field`,
-                    this should be a simple field name (and not a
-                    dot-separated path).
+        Args:
+            list_field: dot-separated path to the array to process.
+            key: name of the (scalar) EDTF field. This field has to be
+                present in each array item. In contrast to `list_field`,
+                this should be a simple field name (and not a
+                dot-separated path).
         """
         super(EDTFListDumperExt, self).__init__()
         self.keys = parse_lookup_key(list_field)

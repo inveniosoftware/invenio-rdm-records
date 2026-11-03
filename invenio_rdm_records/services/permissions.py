@@ -55,7 +55,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     """Access control configuration for records.
 
     Note that even if the array is empty, the invenio_access Permission class
-    always adds the ``superuser-access``, so admins will always be allowed.
+    always adds the `superuser-access`, so admins will always be allowed.
     """
 
     NEED_LABEL_TO_ACTION = {

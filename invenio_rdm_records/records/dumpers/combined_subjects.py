@@ -24,9 +24,10 @@ class CombinedSubjectsDumperExt(SearchDumperExt):
     def __init__(self, splitchar=SPLITCHAR):
         """Constructor.
 
-        :param splitchar: string to use to combine scheme + subject.
-                          It must be identical to the splitchar value used in the
-                          CombinedTermsFacet.
+        Args:
+            splitchar: string to use to combine scheme + subject.
+                It must be identical to the splitchar value used in the
+                CombinedTermsFacet.
         """
         super().__init__()
         self._splitchar = splitchar

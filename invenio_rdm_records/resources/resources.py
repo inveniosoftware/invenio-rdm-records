@@ -32,10 +32,11 @@ from sqlalchemy.exc import NoResultFound
 def response_header_signposting(f):
     """Add signposting link to view's reponse headers.
 
-    :param headers: response headers
-    :type headers: dict
-    :return: updated response headers
-    :rtype: dict
+    Args:
+        headers (dict): response headers
+
+    Returns:
+        dict: updated response headers
     """
 
     @wraps(f)
@@ -117,7 +118,8 @@ class RDMRecordResource(RecordResource):
     def read_revision(self):
         """Read a specific revision of a record.
 
-        :param: include_previous: If True, return the precedent revision of the record of interest.
+        Args:
+            include_previous: If True, return the precedent revision of the record of interest.
         """
         item = self.service.read_revision(
             identity=g.identity,

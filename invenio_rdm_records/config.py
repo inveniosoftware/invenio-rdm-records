@@ -50,11 +50,11 @@ RDM_RECORDS_USER_FIXTURE_PASSWORDS = {"admin@inveniosoftware.org": None}
 """Overrides for the user fixtures' passwords.
 
 The password set for a user fixture in this dictionary overrides the
-password set in the ``users.yaml`` file. This can be used to set custom
+password set in the `users.yaml` file. This can be used to set custom
 passwords for the fixture users (of course, this has to be configured
 before the fixtures are installed, e.g. by setting up the services).
-If ``None`` or an empty string is configured in this dictionary, then the
-password from ``users.yaml`` will be used. If that is also absent, a password
+If `None` or an empty string is configured in this dictionary, then the
+password from `users.yaml` will be used. If that is also absent, a password
 will be generated randomly.
 """
 
@@ -205,23 +205,23 @@ case the user selects "Yes" on the checklist item.
 
 Example config value:
 
-.. code-block:: python
-
-    RDM_IMMEDIATE_RECORD_DELETION_CHECKLIST = [
-        {
-            "label": _("I want to change the metadata (title, description, etc.)"),
-            "message": _(
-                "You can edit the metadata of a published record at any time."
-            ),
-        },
-        {
-            "label": _("I forgot to submit to a community"),
-            "message": _(
-                "You can submit a published record to a community by going to the "
-                "record landing page and selecting the cog in the communities sidebar."
-            ),
-        },
-    ]
+```python
+RDM_IMMEDIATE_RECORD_DELETION_CHECKLIST = [
+    {
+        "label": _("I want to change the metadata (title, description, etc.)"),
+        "message": _(
+            "You can edit the metadata of a published record at any time."
+        ),
+    },
+    {
+        "label": _("I forgot to submit to a community"),
+        "message": _(
+            "You can submit a published record to a community by going to the "
+            "record landing page and selecting the cog in the communities sidebar."
+        ),
+    },
+]
+```
 """
 
 RDM_REQUEST_RECORD_DELETION_ENABLED = False
@@ -247,19 +247,19 @@ RDM_IMMEDIATE_FILE_MODIFICATION_POLICIES = [FileModificationAdminPolicy()]
 
 To enable users to modify the files of their records, configure as:
 
-.. code-block:: python
-
-    from invenio_rdm_records.services.request_policies import (
-        FileModificationGracePeriodPolicy,
-        FileModificationAdminPolicy,
-    )
-    RDM_IMMEDIATE_FILE_MODIFICATION_POLICIES = [
-        FileModificationGracePeriodPolicy(),
-        FileModificationAdminPolicy(),
-    ]
+```python
+from invenio_rdm_records.services.request_policies import (
+    FileModificationGracePeriodPolicy,
+    FileModificationAdminPolicy,
+)
+RDM_IMMEDIATE_FILE_MODIFICATION_POLICIES = [
+    FileModificationGracePeriodPolicy(),
+    FileModificationAdminPolicy(),
+]
+```
 
 Also check whether you also want to pass a custom grace period or change
-``RDM_FILE_MODIFICATION_PERIOD``.
+`RDM_FILE_MODIFICATION_PERIOD`.
 
 Policies are executed in order and the first one to return True is used
 as the policy for the record. As such, policies should be specified from most
@@ -294,16 +294,16 @@ RDM_IMMEDIATE_QUOTA_INCREASE_POLICIES = []
 
 To enable users and admins to increase the quota for drafts, configure as:
 
-.. code-block:: python
-
-    from invenio_rdm_records.services.request_policies import (
-        QuotaIncreaseAdminPolicy,
-        QuotaIncreasePolicy,
-    )
-    RDM_IMMEDIATE_QUOTA_INCREASE_POLICIES = [
-        QuotaIncreasePolicy(),
-        QuotaIncreaseAdminPolicy(),
-    ]
+```python
+from invenio_rdm_records.services.request_policies import (
+    QuotaIncreaseAdminPolicy,
+    QuotaIncreasePolicy,
+)
+RDM_IMMEDIATE_QUOTA_INCREASE_POLICIES = [
+    QuotaIncreasePolicy(),
+    QuotaIncreaseAdminPolicy(),
+]
+```
 
 Policies are executed in order and the first one to return True is used
 as the policy for the record. As such, policies should be specified from most
@@ -477,18 +477,18 @@ RDM_SEARCH = {
 
 The configuration has four possible keys:
 
-- ``facets`` - A list of facet names which must have been defined in
-  ``RDM_FACETS``.
-- ``sort`` -  A list of sort option names which must have been defined in
-  ``RDM_SORT_OPTIONS``.
-- ``sort_default`` - The default sort option when a query is provided. Must be
+- `facets` - A list of facet names which must have been defined in
+  `RDM_FACETS`.
+- `sort` -  A list of sort option names which must have been defined in
+  `RDM_SORT_OPTIONS`.
+- `sort_default` - The default sort option when a query is provided. Must be
   a single sort option name which must have been defined in
-  ``RDM_SORT_OPTIONS``. If not provided, will use the first element of
-  the ``sort`` list.
-- ``sort_default_no_query`` - The default sort option when no query is
+  `RDM_SORT_OPTIONS`. If not provided, will use the first element of
+  the `sort` list.
+- `sort_default_no_query` - The default sort option when no query is
   provided. Must be a single sort option name which must have been defined in
-  ``RDM_SORT_OPTIONS``. If not provided, will use the second element of
-  the ``sort`` list.
+  `RDM_SORT_OPTIONS`. If not provided, will use the second element of
+  the `sort` list.
 """
 
 RDM_SEARCH_DRAFTS = {
@@ -585,7 +585,7 @@ This name is stored in the database and used in the REST API in order to
 identify the given provider and client.
 
 The name is further used to configure the desired persistent identifiers (see
-``RDM_PERSISTENT_IDENTIFIERS`` below)
+`RDM_PERSISTENT_IDENTIFIERS` below)
 """
 
 RDM_PERSISTENT_IDENTIFIERS = {
@@ -609,12 +609,12 @@ RDM_PERSISTENT_IDENTIFIERS = {
 }
 """The configured persistent identifiers for records.
 
-.. code-block:: python
-
-    "<scheme>": {
-        "providers": ["<default-provider-name>", "<provider-name>", ...],
-        "required": True/False,
-    }
+```python
+"<scheme>": {
+    "providers": ["<default-provider-name>", "<provider-name>", ...],
+    "required": True/False,
+}
+```
 """
 
 RDM_PARENT_PERSISTENT_IDENTIFIER_PROVIDERS = [
@@ -675,16 +675,16 @@ DATACITE_TEST_MODE = True
 DATACITE_FORMAT = "{prefix}/{id}"
 """A string used for formatting the DOI or a callable.
 
-If set to a string, you can used ``{prefix}`` and ``{id}`` inside the string.
+If set to a string, you can used `{prefix}` and `{id}` inside the string.
 
 You can also provide a callable instead:
 
-.. code-block:: python
+```python
+def make_doi(prefix, record):
+    return f"{prefix}/{record.pid.pid_value}"
 
-    def make_doi(prefix, record):
-        return f"{prefix}/{record.pid.pid_value}"
-
-    DATACITE_FORMAT = make_doi
+DATACITE_FORMAT = make_doi
+```
 """
 
 DATACITE_DATACENTER_SYMBOL = ""
@@ -726,16 +726,16 @@ CROSSREF_TEST_MODE = True
 CROSSREF_FORMAT = "{prefix}/{id}"
 """A string used for formatting the DOI or a callable.
 
-If set to a string, you can used ``{prefix}`` and ``{id}`` inside the string.
+If set to a string, you can used `{prefix}` and `{id}` inside the string.
 
 You can also provide a callable instead:
 
-.. code-block:: python
+```python
+def make_doi(prefix, record):
+    return f"{prefix}/{record.pid.pid_value}"
 
-    def make_doi(prefix, record):
-        return f"{prefix}/{record.pid.pid_value}"
-
-    CROSSREF_FORMAT = make_doi
+CROSSREF_FORMAT = make_doi
+```
 """
 
 #
@@ -744,33 +744,33 @@ You can also provide a callable instead:
 RDM_NAMESPACES = {}
 """Custom fields namespaces.
 
-.. code-block:: python
-
-    {<namespace>: <uri>, ...}
+```python
+{<namespace>: <uri>, ...}
+```
 
 For example:
 
-.. code-block:: python
-
-    {
-        "cern": "https://cern.ch/terms",
-        "dwc": "http://rs.tdwg.org/dwc/terms/"
-    }
+```python
+{
+    "cern": "https://cern.ch/terms",
+    "dwc": "http://rs.tdwg.org/dwc/terms/"
+}
+```
 
 """
 
 RDM_CUSTOM_FIELDS = []
 """Records custom fields definition.
 
-.. code-block:: python
-
-    [<custom-field-class-type>, <custom-field-class-type>, ...]
+```python
+[<custom-field-class-type>, <custom-field-class-type>, ...]
+```
 
 For example:
 
-.. code-block:: python
-
-    [TextCF(name="experiment"), ...]
+```python
+[TextCF(name="experiment"), ...]
+```
 """
 
 RDM_CUSTOM_FIELDS_UI = []
@@ -778,44 +778,44 @@ RDM_CUSTOM_FIELDS_UI = []
 
 Of the shape:
 
-.. code-block:: python
+```python
+[{
+    section: <section_name>,
+    fields: [
+        {
+            field: "path-to-field",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
+            ui_widget: "<ui-widget-name>",  # predefined or user defined ui widget
+            props: {
+                label:"<ui-label-to-display>",
+                placeholder:"<placeholder-passed-to-widget>",
+                icon:"<icon-passed-to-widget>",
+                description:"<description-passed-to-widget>",
+            }
+        },
+    ],
 
-    [{
-        section: <section_name>,
-        fields: [
-            {
-                field: "path-to-field",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
-                ui_widget: "<ui-widget-name>",  # predefined or user defined ui widget
-                props: {
-                    label:"<ui-label-to-display>",
-                    placeholder:"<placeholder-passed-to-widget>",
-                    icon:"<icon-passed-to-widget>",
-                    description:"<description-passed-to-widget>",
-                }
-            },
-        ],
-
-        # ...
-    }]
+    # ...
+}]
+```
 
 For example:
 
-.. code-block:: python
-
-    [{
-        "section": "CERN Experiment"
-        "fields" : [{
-            field: "experiment",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
-            ui_widget: "CustomTextField",  # user defined widget in my-site
-            props: {
-                label: "Experiment",
-                placeholder: "Type an experiment...",
-                icon: "pencil",
-                description: "You should fill this field with one of the experiments e.g LHC, ATLAS etc.",
-            }
-        },
-        ...
-    }]
+```python
+[{
+    "section": "CERN Experiment"
+    "fields" : [{
+        field: "experiment",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
+        ui_widget: "CustomTextField",  # user defined widget in my-site
+        props: {
+            label: "Experiment",
+            placeholder: "Type an experiment...",
+            icon: "pencil",
+            description: "You should fill this field with one of the experiments e.g LHC, ATLAS etc.",
+        }
+    },
+    ...
+}]
+```
 """
 
 # Feature flag to enable/disable Resource access tokens (RATs)

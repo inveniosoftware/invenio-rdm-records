@@ -32,14 +32,15 @@ class ParentRecordAccess:
     ):
         """Create a new Access object for a record.
 
-        If ``owned_by`` is not specified, it will be initialized with a new instance of
-        ``owner_cls(None)``.
-        If ``grants`` or ``links`` are not specified, a new instance of
-        ``grants_cls`` or ``links_cls`` will be used, respectively.
+        If `owned_by` is not specified, it will be initialized with a new instance of
+        `owner_cls(None)`.
+        If `grants` or `links` are not specified, a new instance of
+        `grants_cls` or `links_cls` will be used, respectively.
 
-        :param owned_by: The record owner
-        :param grants: The grants permitting access to the record
-        :param links: The secret links permitting access to the record
+        Args:
+            owned_by: The record owner
+            grants: The grants permitting access to the record
+            links: The secret links permitting access to the record
         """
         owner_cls = owner_cls or ParentRecordAccess.owner_cls
         grants_cls = grants_cls or ParentRecordAccess.grant_cls
@@ -116,11 +117,11 @@ class ParentRecordAccess:
     ):
         """Create a new Access object from the specified 'access' property.
 
-        The new ``ParentRecordAccess`` object will be populated with new
+        The new `ParentRecordAccess` object will be populated with new
         instances from the configured classes.
-        If ``access_dict`` is empty, the ``ParentRecordAccess`` object will
-        be populated with new instances of ``grants_cls``, ``links_cls``, and
-        ``settings_cls``.
+        If `access_dict` is empty, the `ParentRecordAccess` object will
+        be populated with new instances of `grants_cls`, `links_cls`, and
+        `settings_cls`.
         """
         grants_cls = grants_cls or cls.grant_cls
         links_cls = links_cls or cls.links_cls

@@ -23,11 +23,11 @@ class StatsPermissionTranslator:
 
         This method acts as a translation layer between the statistics API endpoint
         and the records service and is intended to be overridden by potential
-        subclasses. It takes the ``params`` from the query and translates
+        subclasses. It takes the `params` from the query and translates
         them into something that can be used by the records service (as keyword
         arguments) to check for permissions.
-        For example, the query ``params`` might provide a ``recid`` value, but the
-        permission generators may require a ``record`` class. This could be retrieved
+        For example, the query `params` might provide a `recid` value, but the
+        permission generators may require a `record` class. This could be retrieved
         in this method.
         """
         return self.params

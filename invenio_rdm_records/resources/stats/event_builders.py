@@ -5,10 +5,10 @@
 """Custom event builders for the InvenioRDM statistics.
 
 Note that the arguments to these functions will be the same as passed to the
-``EventEmitter`` objects when they are called.
+`EventEmitter` objects when they are called.
 Currently in InvenioRDM this is done in resources (for API) and view functions (for UI).
 As such, it is assumed that a request context is available (and thus, Flask's global
-``request`` is accessible).
+`request` is accessible).
 """
 
 from datetime import datetime, timezone
@@ -51,7 +51,7 @@ def file_download_event_builder(event, sender_app, **kwargs):
     """Build a file-download event.
 
     *Note* that this function assumes a request context by accessing properties of
-    Flask's global ``request`` object.
+    Flask's global `request` object.
     """
     assert "record" in kwargs
     assert "obj" in kwargs
@@ -89,7 +89,7 @@ def record_view_event_builder(event, sender_app, **kwargs):
     """Build a record-view event.
 
     *Note* that this function assumes a request context by accessing properties of
-    Flask's global ``request`` object.
+    Flask's global `request` object.
     """
     assert "record" in kwargs
     record = kwargs["record"]
@@ -124,7 +124,7 @@ def check_if_via_api(event, sender_app, **kwargs):
     """Check if the event comes from an API request.
 
     *Note* that this function assumes a request context by accessing properties of
-    Flask's global ``request`` object.
+    Flask's global `request` object.
     """
     via_api = None
     if "via_api" in kwargs:

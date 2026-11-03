@@ -11,7 +11,7 @@ from ...utils import simple_deepcopy
 class SearchDumper(BaseSearchDumper):
     """Search dumper that creates a faster deep-ish copy of the data before dumping.
 
-    In this version of the search dumper, we replace ``copy.deepcopy()`` with a simpler
+    In this version of the search dumper, we replace `copy.deepcopy()` with a simpler
     copy deep-ish copy mechanism that still satisfies our expectations, for performance
     gains.
     """

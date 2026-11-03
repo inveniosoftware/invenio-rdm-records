@@ -147,9 +147,9 @@ class RecordAccessService(RecordService):
     ):
         """Validate the given expiration date.
 
-        If a ``secret_link`` is specified, the validity of setting its
-        expiration date to ``expires_at`` will be checked additionally.
-        The ``is_specified`` flag hints at if the value of ``expires_at``
+        If a `secret_link` is specified, the validity of setting its
+        expiration date to `expires_at` will be checked additionally.
+        The `is_specified` flag hints at if the value of `expires_at`
         was set in the given data, or if it was omitted (which makes a
         difference in patch operations).
         """

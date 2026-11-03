@@ -21,7 +21,7 @@ class AccessRequestToken(db.Model):
     signify that somebody has requested access to a record via e-mail,
     but hasn't verified their e-mail yet.
     Once the e-mail address is verified to create the access request, this
-    the corresponding ``AccessRequestToken`` will be deleted, and a new
+    the corresponding `AccessRequestToken` will be deleted, and a new
     guest access request will be created with some of the token's information.
     """
 
@@ -104,14 +104,15 @@ class AccessRequestToken(db.Model):
     ):
         """Create a new request access token.
 
-        The ``expires_at`` value will take precedence over the ``shelf_life``.
+        The `expires_at` value will take precedence over the `shelf_life`.
 
-        :param email: The email address for which the request is made.
-        :param full_name: The full name of the requester.
-        :param message: The message attached to the request.
-        :param record_pid: The PID value for the record that is subject to the request.
-        :param shelf_life: The ``timedelta`` for how long the token will live for.
-        :param expires_at: The expiration date of the access request token.
+        Args:
+            email: The email address for which the request is made.
+            full_name: The full name of the requester.
+            message: The message attached to the request.
+            record_pid: The PID value for the record that is subject to the request.
+            shelf_life: The `timedelta` for how long the token will live for.
+            expires_at: The expiration date of the access request token.
         """
         if shelf_life and not expires_at:
             expires_at = datetime.now(timezone.utc) + shelf_life
