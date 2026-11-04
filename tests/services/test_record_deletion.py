@@ -7,7 +7,7 @@
 from copy import deepcopy
 from datetime import datetime, timezone
 
-import arrow
+import pendulum
 import pytest
 
 from invenio_rdm_records.proxies import current_rdm_records
@@ -49,7 +49,10 @@ def test_record_deletion(running_app, minimal_record, search_clear):
     assert tombstone.removal_reason is None
     assert tombstone.note == tombstone_info["note"]
     assert tombstone.citation_text
-    assert arrow.get(tombstone.removal_date).date() == datetime.now(timezone.utc).date()
+    assert (
+        pendulum.parse(tombstone.removal_date).date()
+        == datetime.now(timezone.utc).date()
+    )
 
     # mark the record for purge
     record = service.mark_record_for_purge(superuser_identity, record.id)
