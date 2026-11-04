@@ -17,7 +17,8 @@ from invenio_i18n import lazy_gettext as _
 class OaiPmhListView(AdminResourceListView):
     """Configuration for OAI-PMH sets list view."""
 
-    api_endpoint = "/oaipmh/sets"
+    api_endpoint = "/oaipmh/sets"  # Deprecated
+    api_endpoint_name = "oaipmh-server.search"
     name = "OAI-PMH"
     resource_config = "oaipmh_server_resource"
     search_request_headers = {"Accept": "application/json"}
@@ -54,7 +55,8 @@ class OaiPmhEditView(AdminResourceEditView):
     url = "/oai-pmh/<pid_value>/edit"
     resource_config = "oaipmh_server_resource"
     pid_path = "id"
-    api_endpoint = "/oaipmh/sets"
+    api_endpoint = "/oaipmh/sets"  # Deprecated
+    api_endpoint_name = "oaipmh-server.search"
     title = _("Edit OAI-PMH set")
 
     list_view_name = _("OAI-PMH")
@@ -94,7 +96,8 @@ class OaiPmhCreateView(AdminResourceCreateView):
     url = "/oai-pmh/create"
     resource_config = "oaipmh_server_resource"
     pid_path = "id"
-    api_endpoint = "/oaipmh/sets"
+    api_endpoint = "/oaipmh/sets"  # Deprecated
+    api_endpoint_name = "oaipmh-server.search"
     title = _("Create OAI-PMH set")
 
     list_view_name = _("OAI-PMH")
@@ -128,7 +131,8 @@ class OaiPmhDetailView(AdminResourceDetailView):
     """Configuration for OAI-PMH sets detail view."""
 
     url = "/oai-pmh/<pid_value>"
-    api_endpoint = "/oaipmh/sets"
+    api_endpoint = "/oaipmh/sets"  # Deprecated
+    api_endpoint_name = "oaipmh-server.search"
     search_request_headers = {"Accept": "application/json"}
     name = "OAI-PMH details"
     resource_config = "oaipmh_server_resource"
