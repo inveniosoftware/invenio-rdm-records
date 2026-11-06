@@ -466,13 +466,17 @@ class UIRecordSchema(BaseObjectSchema):
 
         masked = _("NA")
         removed_by = tombstone.get("removed_by", {}).get("user", None)
-        orig_owner = orig["parent"]["access"]["owned_by"].get("user", None)
+        # 'owned_by' is omitted from dumps for users not allowed to see the owner
+        orig_owner = orig["parent"]["access"].get("owned_by", {}).get("user")
 
         if removed_by == "system":
             masked = _("System (automatic)")
+        elif removed_by is None or orig_owner is None:
+            # without the owner we cannot tell "Owner" from "Admin", so don't guess
+            pass
         elif removed_by == orig_owner:
             masked = _("Owner")
-        elif removed_by is not None:
+        else:
             masked = _("Admin")
 
         obj["tombstone"]["removed_by"] = masked
