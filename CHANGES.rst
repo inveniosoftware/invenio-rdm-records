@@ -8,6 +8,19 @@
 Changes
 =======
 
+Version v37.0.0 (released 2026-11-10)
+
+- chore(setup): bump dependencies
+- feat: upgrade to react 18
+- feat(deposit-ui): allow overriding file items
+- chore(deps): remove redundant unused nameparser
+- fix(crossref): report invalid DOIs on pids.doi
+- fix: default Crossref deposits to the test system
+- fix: let CROSSREF_TEST_MODE choose the deposit endpoint
+- fix: deposit a record's files with its Crossref metadata
+- fix: call super.validate in CrossrefPIDProvider.validate method
+- fix(serializers): get correctly translated rights
+
 Version v36.0.0 (released 2026-10-12)
 
 - fix(translations): add no results message to select fields explicitly
