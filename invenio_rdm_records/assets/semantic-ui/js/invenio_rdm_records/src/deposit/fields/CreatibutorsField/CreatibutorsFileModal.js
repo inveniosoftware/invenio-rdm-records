@@ -5,16 +5,17 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Button, Header, Icon, Message, Modal, Segment } from "semantic-ui-react";
+import { Button, Header, Icon, Message, Modal, Segment, Tab } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { validateCreatibutorEntry } from "./CreatibutorsModal";
 import { CreatibutorsInlinePanel } from "./CreatibutorsDisplay/CreatibutorsInlinePanel";
 import { CreatibutorsItemContext } from "./CreatibutorsFieldItem";
+import { parseCreatibutorFile } from "./parseCreatibutorFile";
 
 const getCreatibutorSchemaLabel = (schema) =>
   schema === "creators" ? "authors/creators" : "contributors";
 
-const CREATIBUTOR_IMPORT_EXAMPLE = `[
+const JSON_IMPORT_EXAMPLE = `[
   {
     "person_or_org": {
       "type": "personal",
@@ -32,28 +33,56 @@ const CREATIBUTOR_IMPORT_EXAMPLE = `[
   }
 ]`;
 
-/**
- * Parse a raw file text as a JSON array of plain objects.
- * Returns the parsed array when the data formatting is valid,
- * or `null` when the data cannot be interpreted in the expected format.
- */
-const parseCreatibutorFile = (text) => {
-  let parsed;
-  try {
-    parsed = JSON.parse(text);
-  } catch {
-    return null;
-  }
-  if (!Array.isArray(parsed)) {
-    return null;
-  }
-  for (const entry of parsed) {
-    if (typeof entry !== "object" || entry === null || Array.isArray(entry)) {
-      return null;
-    }
-  }
-  return parsed;
-};
+const AUTHOR_XML_IMPORT_EXAMPLE = `<collaborationauthorlist
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:cal="http://inspirehep.net/info/HepNames/tools/authors_xml/">
+  <cal:organizations>
+    <foaf:Organization id="a1">
+      <foaf:name>CERN</foaf:name>
+      <cal:orgName source="ROR">https://ror.org/01ggx4157</cal:orgName>
+    </foaf:Organization>
+  </cal:organizations>
+  <cal:authors>
+    <foaf:Person>
+      <foaf:name>Jane Smith</foaf:name>
+      <foaf:givenName>Jane</foaf:givenName>
+      <foaf:familyName>Smith</foaf:familyName>
+      <cal:authorNamePaper>J. Smith</cal:authorNamePaper>
+      <cal:authorAffiliations>
+        <cal:authorAffiliation organizationid="a1"/>
+      </cal:authorAffiliations>
+      <cal:authorids>
+        <cal:authorid source="ORCID">0000-0002-1825-0097</cal:authorid>
+      </cal:authorids>
+    </foaf:Person>
+  </cal:authors>
+</collaborationauthorlist>`;
+
+const fileFormatTab = (label, example, note) => ({
+  menuItem: i18next.t(label),
+  render: () => (
+    <Tab.Pane attached={false}>
+      <pre className="creatibutors-import-example">{example}</pre>
+      {note && <p className="text-muted mb-0">{note}</p>}
+    </Tab.Pane>
+  ),
+});
+
+const FileFormatExamples = () => (
+  <Tab
+    menu={{ secondary: true, pointing: true }}
+    panes={[
+      fileFormatTab("JSON", JSON_IMPORT_EXAMPLE),
+      fileFormatTab(
+        "XML (author.xml)",
+        AUTHOR_XML_IMPORT_EXAMPLE,
+        i18next.t(
+          "Author identifiers are read from the ORCID, GND, ISNI and ROR sources."
+        )
+      ),
+    ]}
+  />
+);
 
 function CreatibutorsFileImport({
   schema,
@@ -94,7 +123,7 @@ function CreatibutorsFileImport({
           <Icon name="cloud upload" />
           {i18next.t(`Upload ${type} from file`)}
           <Header.Subheader>
-            {i18next.t("Only .json files are supported")}
+            {i18next.t("Supported file types: .json, .xml")}
           </Header.Subheader>
         </Header>
         <Button
@@ -112,15 +141,20 @@ function CreatibutorsFileImport({
           type="file"
           hidden
           ref={fileInputRef}
-          accept=".json"
+          accept=".json,.xml"
           onChange={onFileChange}
         />
       </Segment>
 
       <Message info size="small" className="text-left mt-15">
         <Message.Header>{i18next.t("File format")}</Message.Header>
-        <p>{i18next.t(`Upload a JSON file containing a list of ${type}.`)}</p>
-        <pre className="creatibutors-import-example">{CREATIBUTOR_IMPORT_EXAMPLE}</pre>
+        <p>
+          {i18next.t(
+            "Upload a JSON file containing a list of {{type}}, or an XML author list (author.xml) file.",
+            { type, interpolation: { escapeValue: false } }
+          )}
+        </p>
+        <FileFormatExamples />
       </Message>
     </>
   );
@@ -166,17 +200,16 @@ function CreatibutorsFileReview({
             <Icon name="exclamation triangle" />
             {i18next.t("The file does not match the expected {{type}} format.", {
               type,
+              interpolation: { escapeValue: false },
             })}
           </Message.Header>
           <p>
             {i18next.t(
-              "Please upload a JSON file containing an array of {{type}} objects:",
-              { type }
+              "Please upload a JSON file containing an array of {{type}} objects, or an XML author list (author.xml) file:",
+              { type, interpolation: { escapeValue: false } }
             )}
           </p>
-          <pre className="creatibutors-import-example">
-            {CREATIBUTOR_IMPORT_EXAMPLE}
-          </pre>
+          <FileFormatExamples />
         </Message>
       ) : (
         <>
@@ -345,11 +378,10 @@ export class CreatibutorsFileModal extends Component {
       return;
     }
 
-    const { schema } = this.props;
     const validEntries = [];
     const invalidEntries = [];
     rows.forEach((raw) => {
-      const error = validateCreatibutorEntry(raw, schema);
+      const error = validateCreatibutorEntry(raw);
       if (error) {
         invalidEntries.push({ raw, reason: error });
       } else {

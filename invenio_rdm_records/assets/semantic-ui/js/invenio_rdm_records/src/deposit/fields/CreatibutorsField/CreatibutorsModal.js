@@ -53,13 +53,37 @@ const getCreatibutorValidationSchema = (schema) => {
   });
 };
 
-export const validateCreatibutorEntry = (entry, schema) => {
+/**
+ * Validation of a creatibutor read from a file. The add/edit modal requires a
+ * role for contributors, but `role` is not required by the record schema and a
+ * file has no way of providing one at import time, so it is not checked here.
+ */
+const getCreatibutorFileEntrySchema = () =>
+  Yup.object({
+    person_or_org: Yup.object({
+      type: Yup.string()
+        .oneOf([CREATIBUTOR_TYPE.PERSON, CREATIBUTOR_TYPE.ORGANIZATION])
+        .required(i18next.t("Type is a required field.")),
+      family_name: Yup.string().when("type", (type, fieldSchema) => {
+        if (type === CREATIBUTOR_TYPE.PERSON) {
+          return fieldSchema.required(i18next.t("Family name is a required field."));
+        }
+      }),
+      name: Yup.string().when("type", (type, fieldSchema) => {
+        if (type === CREATIBUTOR_TYPE.ORGANIZATION) {
+          return fieldSchema.required(i18next.t("Name is a required field."));
+        }
+      }),
+    }),
+  });
+
+export const validateCreatibutorEntry = (entry) => {
   if (typeof entry !== "object" || entry === null) {
     return i18next.t("Entry is not a valid JSON object");
   }
 
   try {
-    getCreatibutorValidationSchema(schema).validateSync(entry, { abortEarly: true });
+    getCreatibutorFileEntrySchema().validateSync(entry, { abortEarly: true });
     return null;
   } catch (error) {
     return error.message;
