@@ -1,4 +1,6 @@
-# SPDX-FileCopyrightText: 2025 CERN.
+# SPDX-FileCopyrightText: 2021-2025 CERN.
+# SPDX-FileCopyrightText: 2021-2026 Caltech.
+# SPDX-FileCopyrightText: 2021 Northwestern University.
 # SPDX-License-Identifier: MIT
 
 """Resources serializers tests."""
@@ -429,6 +431,23 @@ def test_datacite45_alternate_identifiers(running_app, minimal_record):
         },
     ]
     assert serialized_record["doi"] == "10.1234/inveniordm.1234"
+
+
+def test_datacite45_record_url_already_in_identifiers(running_app, minimal_record):
+    """Record URL is not added twice if it is already in the identifiers."""
+    minimal_record["metadata"]["identifiers"] = [
+        {"identifier": "https://self-link.com/", "scheme": "url"}
+    ]
+
+    serializer = DataCite45JSONSerializer()
+    serialized_record = serializer.dump_obj(minimal_record)
+
+    assert serialized_record["alternateIdentifiers"] == [
+        {
+            "alternateIdentifier": "https://self-link.com/",
+            "alternateIdentifierType": "URL",
+        },
+    ]
 
 
 def test_datacite45_access_right(running_app, minimal_record, set_app_config_fn_scoped):
