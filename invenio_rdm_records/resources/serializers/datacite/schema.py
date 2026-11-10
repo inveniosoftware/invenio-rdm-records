@@ -50,6 +50,26 @@ def get_record_url(obj):
     return url
 
 
+def dedupe_related_identifiers(related_identifiers):
+    """Remove duplicate related identifiers, keeping the first occurrence.
+
+    Related identifiers are generated automatically (e.g. community URLs and
+    version DOIs) in addition to the ones in the record metadata, so the same
+    identifier and relation type can show up more than once.
+    """
+    seen = set()
+    deduped = []
+    for rel_id in related_identifiers:
+        key = (
+            _normalize_url(rel_id.get("relatedIdentifier")),
+            (rel_id.get("relationType") or "").lower(),
+        )
+        if key not in seen:
+            seen.add(key)
+            deduped.append(rel_id)
+    return deduped
+
+
 RELATED_IDENTIFIER_SCHEMES = {
     "ark",
     "arxiv",
@@ -496,7 +516,7 @@ class DataCite43Schema(BaseSerializerSchema):
                     "relatedIdentifierType": "URL",
                 }
             )
-        return serialized_identifiers or missing
+        return dedupe_related_identifiers(serialized_identifiers) or missing
 
     def get_locations(self, obj):
         """Get locations."""
@@ -982,7 +1002,7 @@ class DataCite45Schema(BaseSerializerSchema):
                     "relatedIdentifierType": "URL",
                 }
             )
-        return serialized_identifiers or missing
+        return dedupe_related_identifiers(serialized_identifiers) or missing
 
     def get_locations(self, obj):
         """Get locations."""

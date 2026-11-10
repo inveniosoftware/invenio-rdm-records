@@ -11,6 +11,9 @@ from invenio_rdm_records.resources.serializers import (
     DataCite45JSONSerializer,
     DataCite45XMLSerializer,
 )
+from invenio_rdm_records.resources.serializers.datacite.schema import (
+    dedupe_related_identifiers,
+)
 
 
 @pytest.fixture(scope="function")
@@ -448,6 +451,41 @@ def test_datacite45_record_url_already_in_identifiers(running_app, minimal_recor
             "alternateIdentifierType": "URL",
         },
     ]
+
+
+def test_dedupe_related_identifiers():
+    """Duplicate related identifiers (e.g. community URLs) are removed."""
+    community = {
+        "relatedIdentifier": "https://data.caltech.edu/communities/tccon/",
+        "relationType": "IsPartOf",
+        "relatedIdentifierType": "URL",
+        "resourceTypeGeneral": "Collection",
+    }
+    generated_community = {
+        "relatedIdentifier": "https://data.caltech.edu/communities/tccon",
+        "relationType": "IsPartOf",
+        "relatedIdentifierType": "URL",
+    }
+    parent_doi = {
+        "relatedIdentifier": "10.1234/PARENT",
+        "relationType": "IsVersionOf",
+        "relatedIdentifierType": "DOI",
+    }
+    generated_parent_doi = {
+        "relatedIdentifier": "10.1234/parent",
+        "relationType": "IsVersionOf",
+        "relatedIdentifierType": "DOI",
+    }
+    # Same identifier with a different relation type is kept
+    cited_by = {
+        "relatedIdentifier": "10.1234/parent",
+        "relationType": "IsCitedBy",
+        "relatedIdentifierType": "DOI",
+    }
+
+    assert dedupe_related_identifiers(
+        [community, parent_doi, cited_by, generated_parent_doi, generated_community]
+    ) == [community, parent_doi, cited_by]
 
 
 def test_datacite45_access_right(running_app, minimal_record, set_app_config_fn_scoped):
