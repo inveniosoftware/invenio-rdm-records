@@ -45,7 +45,7 @@ class AcceptAction(actions.AcceptAction):
             "quota_size": QUOTA_SIZE * 1000000000,
             "max_file_size": QUOTA_SIZE * 1000000000,
         }
-        records_service.set_quota(system_identity, DRAFT, data)
+        records_service.set_quota(system_identity, DRAFT, data, uow=uow)
 
         super().execute(identity, uow)
 
