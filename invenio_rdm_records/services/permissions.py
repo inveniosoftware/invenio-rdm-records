@@ -77,6 +77,10 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         AccessGrant("manage"),
         SystemProcess(),
     ]
+    # who may see the record owner (``parent.access.owned_by``) in serialized
+    # output, including the expanded user profile. The owner is otherwise not
+    # shown in the UI, so exposing it lets anyone link a record to its uploader.
+    can_read_owner = SameAs("can_manage") + [Administration(), UserManager]
     can_curate = SameAs("can_manage") + [AccessGrant("edit"), SecretLinks("edit")]
     can_review = SameAs("can_curate") + [SubmissionReviewer()]
     can_preview = SameAs("can_review") + [
