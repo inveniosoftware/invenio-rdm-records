@@ -12,6 +12,7 @@ from flask import current_app
 from invenio_drafts_resources.services.records.components import ServiceComponent
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
+from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.services.uow import TaskOp
 
 from ..errors import ValidationErrorWithMessageAsList
@@ -103,13 +104,16 @@ class PIDsComponent(ServiceComponent):
     def _find_changed_pids_to_discard_from_source(self, source_pids, dest_pids):
         """Finds PIDs that have changed between draft and record."""
         changed_pids = {}
-        draft_schemes = set(source_pids.keys())
-        record_schemes = set(dest_pids.keys())
-        for scheme in draft_schemes & record_schemes:
+        source_schemes = set(source_pids.keys())
+        dest_schemes = set(dest_pids.keys())
+        for scheme in source_schemes & dest_schemes:
             dest_pid_value = dest_pids[scheme]["identifier"]
             source_pid_value = source_pids[scheme]["identifier"]
             if dest_pid_value != source_pid_value:
                 changed_pids[scheme] = source_pids[scheme]
+        # Also discard PIDs present on source but removed from dest
+        for scheme in source_schemes - dest_schemes:
+            changed_pids[scheme] = source_pids[scheme]
         return changed_pids
 
     def create(self, identity, data=None, record=None, errors=None):
@@ -208,6 +212,27 @@ class PIDsComponent(ServiceComponent):
         changed_pids = self._find_changed_pids_to_discard_from_source(
             record_pids, draft_pids
         )
+        # Required PIDs removed from the draft are restored below — keep them.
+        # Also keep removed PIDs that cannot be modified (e.g. a published managed
+        # DOI when doi is optional): discard would raise, and they stay sticky.
+        removed_schemes = record_schemes - draft_schemes
+        for scheme in removed_schemes:
+            if scheme not in changed_pids:
+                continue
+            if scheme in required_schemes:
+                changed_pids.pop(scheme, None)
+                continue
+            pid_attrs = changed_pids[scheme]
+            provider = self.service.pids.pid_manager._get_provider(
+                scheme, pid_attrs.get("provider")
+            )
+            try:
+                pid = provider.get(pid_attrs.get("identifier"))
+            except PIDDoesNotExistError:
+                changed_pids.pop(scheme, None)
+                continue
+            if not provider.can_modify(pid):
+                changed_pids.pop(scheme, None)
 
         self.service.pids.pid_manager.validate_restriction_level(draft)
 
