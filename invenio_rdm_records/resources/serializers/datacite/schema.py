@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021-2025 CERN.
 # SPDX-FileCopyrightText: 2021-2025 Northwestern University.
 # SPDX-FileCopyrightText: 2023-2025 Graz University of Technology.
-# SPDX-FileCopyrightText: 2023 Caltech.
+# SPDX-FileCopyrightText: 2023-2026 Caltech.
 # SPDX-License-Identifier: MIT
 
 """DataCite based Schema for Invenio RDM Records."""
@@ -24,6 +24,51 @@ from pydash import py_
 from ....proxies import current_rdm_records_service
 from ...serializers.ui.schema import current_default_locale
 from ..utils import get_preferred_identifier, get_vocabulary_props
+
+
+def _normalize_url(url):
+    """Normalize a URL for comparison (case and trailing slash insensitive)."""
+    return (url or "").strip().rstrip("/").lower()
+
+
+def get_record_url(obj):
+    """Get the record URL, unless it is already in the identifiers field.
+
+    Some records (e.g. migrated ones) already list their own landing page URL
+    in the identifiers field, in which case we don't add it a second time.
+    """
+    url = (obj.get("links") or {}).get("self_html")
+    if not url:
+        return None
+
+    normalized_url = _normalize_url(url)
+    identifiers = obj["metadata"].get("identifiers", [])
+    for id_ in identifiers:
+        if _normalize_url(id_.get("identifier")) == normalized_url:
+            return None
+
+    return url
+
+
+def dedupe_related_identifiers(related_identifiers):
+    """Remove duplicate related identifiers, keeping the first occurrence.
+
+    Related identifiers are generated automatically (e.g. community URLs and
+    version DOIs) in addition to the ones in the record metadata, so the same
+    identifier and relation type can show up more than once.
+    """
+    seen = set()
+    deduped = []
+    for rel_id in related_identifiers:
+        key = (
+            _normalize_url(rel_id.get("relatedIdentifier")),
+            (rel_id.get("relationType") or "").lower(),
+        )
+        if key not in seen:
+            seen.add(key)
+            deduped.append(rel_id)
+    return deduped
+
 
 RELATED_IDENTIFIER_SCHEMES = {
     "ark",
@@ -332,11 +377,11 @@ class DataCite43Schema(BaseSerializerSchema):
         """Get (main and alternate) identifiers list."""
         # Add local URL
         serialized_identifiers = []
-        links = obj.get("links")
-        if links:
+        record_url = get_record_url(obj)
+        if record_url:
             serialized_identifiers.append(
                 {
-                    "identifier": obj["links"]["self_html"],
+                    "identifier": record_url,
                     "identifierType": "URL",
                 }
             )
@@ -471,7 +516,7 @@ class DataCite43Schema(BaseSerializerSchema):
                     "relatedIdentifierType": "URL",
                 }
             )
-        return serialized_identifiers or missing
+        return dedupe_related_identifiers(serialized_identifiers) or missing
 
     def get_locations(self, obj):
         """Get locations."""
@@ -830,11 +875,11 @@ class DataCite45Schema(BaseSerializerSchema):
         serialized_identifiers = []
 
         # We send the record URL and the oai identifier in the identifiers field
-        links = obj.get("links")
-        if links:
+        record_url = get_record_url(obj)
+        if record_url:
             serialized_identifiers.append(
                 {
-                    "alternateIdentifier": obj["links"]["self_html"],
+                    "alternateIdentifier": record_url,
                     "alternateIdentifierType": "URL",
                 }
             )
@@ -957,7 +1002,7 @@ class DataCite45Schema(BaseSerializerSchema):
                     "relatedIdentifierType": "URL",
                 }
             )
-        return serialized_identifiers or missing
+        return dedupe_related_identifiers(serialized_identifiers) or missing
 
     def get_locations(self, obj):
         """Get locations."""
