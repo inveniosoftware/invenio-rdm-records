@@ -4,18 +4,18 @@
 """Search dumpers for ETDF dates."""
 
 import calendar
+from datetime import timezone
 
 from arrow import Arrow
 from babel_edtf import parse_edtf
 from edtf.parser.edtf_exceptions import EDTFParseException
 from invenio_records.dictutils import dict_lookup, parse_lookup_key
 from invenio_records.dumpers import SearchDumperExt
-from pytz import utc
 
 
 def _format_date(date):
     """Format the given date into ISO format."""
-    arrow = Arrow.fromtimestamp(calendar.timegm(date), tzinfo=utc)
+    arrow = Arrow.fromtimestamp(calendar.timegm(date), tzinfo=timezone.utc)
     return arrow.date().isoformat()
 
 
