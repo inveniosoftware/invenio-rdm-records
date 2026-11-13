@@ -28,22 +28,36 @@ import { CreatibutorsIdentifiers } from "./CreatibutorsIdentifiers";
 import { CREATIBUTOR_TYPE } from "./type";
 import Overridable from "react-overridable";
 
+/**
+ * Schema of `person_or_org`. `requireNames` makes the family name (persons) or
+ * name (organizations) mandatory; `requireType` makes the type mandatory.
+ */
+const getPersonOrOrgSchema = ({ requireNames, requireType }) =>
+  Yup.object({
+    type: requireType
+      ? Yup.string()
+          .oneOf([CREATIBUTOR_TYPE.PERSON, CREATIBUTOR_TYPE.ORGANIZATION])
+          .required(i18next.t("Type is a required field."))
+      : Yup.string(),
+    family_name: Yup.string().when("type", (type, fieldSchema) => {
+      if (type === CREATIBUTOR_TYPE.PERSON && requireNames) {
+        return fieldSchema.required(i18next.t("Family name is a required field."));
+      }
+    }),
+    name: Yup.string().when("type", (type, fieldSchema) => {
+      if (type === CREATIBUTOR_TYPE.ORGANIZATION && requireNames) {
+        return fieldSchema.required(i18next.t("Name is a required field."));
+      }
+    }),
+  });
+
 const getCreatibutorValidationSchema = (schema) => {
   const isCreator = schema === "creators";
 
   return Yup.object({
-    person_or_org: Yup.object({
-      type: Yup.string(),
-      family_name: Yup.string().when("type", (type, fieldSchema) => {
-        if (type === CREATIBUTOR_TYPE.PERSON && isCreator) {
-          return fieldSchema.required(i18next.t("Family name is a required field."));
-        }
-      }),
-      name: Yup.string().when("type", (type, fieldSchema) => {
-        if (type === CREATIBUTOR_TYPE.ORGANIZATION && isCreator) {
-          return fieldSchema.required(i18next.t("Name is a required field."));
-        }
-      }),
+    person_or_org: getPersonOrOrgSchema({
+      requireNames: isCreator,
+      requireType: false,
     }),
     role: Yup.string().when("_", (_, fieldSchema) => {
       if (!isCreator) {
@@ -53,13 +67,39 @@ const getCreatibutorValidationSchema = (schema) => {
   });
 };
 
-export const validateCreatibutorEntry = (entry, schema) => {
+/**
+ * Validation of a creatibutor read from a file. The add/edit modal requires a
+ * role for contributors, but `role` is not required by the record schema and a
+ * file has no way of providing one at import time, so it is optional here.
+ */
+const getCreatibutorFileEntrySchema = () =>
+  Yup.object({
+    person_or_org: getPersonOrOrgSchema({ requireNames: true, requireType: true }),
+    role: Yup.string().typeError(
+      i18next.t('Role must be a role id, e.g. "projectmember".')
+    ),
+  });
+
+/**
+ * Bring a creatibutor read from a file to the form's representation. Exported
+ * records carry the role as a vocabulary object (`{ id, title }`), while the
+ * form stores only its id.
+ */
+export const normalizeCreatibutorFileEntry = (entry) => {
+  const role = entry?.role;
+  if (role && typeof role === "object" && typeof role.id === "string") {
+    return { ...entry, role: role.id };
+  }
+  return entry;
+};
+
+export const validateCreatibutorEntry = (entry) => {
   if (typeof entry !== "object" || entry === null) {
     return i18next.t("Entry is not a valid JSON object");
   }
 
   try {
-    getCreatibutorValidationSchema(schema).validateSync(entry, { abortEarly: true });
+    getCreatibutorFileEntrySchema().validateSync(entry, { abortEarly: true });
     return null;
   } catch (error) {
     return error.message;
