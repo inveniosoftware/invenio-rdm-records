@@ -9,7 +9,6 @@
 # Tibor Simko <tibor.simko@cern.ch>, 2025
 # Keziah Okyere, 2025
 # 
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: invenio-rdm-records 19.3.0\n"
