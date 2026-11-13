@@ -31,21 +31,17 @@ class StorageService:
         """Constructor."""
         self.records_service = records_service
 
+    def _user_quota(self, user=None):
+        """Get the ``RDMUserQuota`` entry for a user (or ``None``)."""
+        if not user:
+            return None
+
+        user_id = user.id if isinstance(user, User) else user
+        return RDMUserQuota.query.filter(RDMUserQuota.user_id == user_id).one_or_none()
+
     def default_quota(self, user=None):
         """Default quota for user."""
-        user_id = user.id if isinstance(user, User) else user
-
-        user_quota = (
-            getattr(
-                RDMUserQuota.query.filter(
-                    RDMUserQuota.user_id == user_id
-                ).one_or_none(),
-                "quota_size",
-                None,
-            )
-            if user
-            else None
-        )
+        user_quota = getattr(self._user_quota(user), "quota_size", None)
 
         return user_quota or current_app.config.get(
             "RDM_FILES_DEFAULT_QUOTA_SIZE", 10 * 10**9
@@ -98,12 +94,24 @@ class StorageService:
 
     @property
     def max_additional_quota(self):
-        """Get the maximum additional quota allowed."""
+        """Get the default maximum additional quota allowed (from config)."""
         return current_app.config.get("RDM_FILES_DEFAULT_MAX_ADDITIONAL_QUOTA_SIZE", 0)
+
+    def user_max_additional_quota(self, user=None):
+        """Get the maximum additional quota allowed for a user.
+
+        Uses the user's ``RDMUserQuota.max_additional_quota_size`` if set,
+        otherwise falls back to the configured default.
+        """
+        value = getattr(self._user_quota(user), "max_additional_quota_size", None)
+        return value if value is not None else self.max_additional_quota
 
     def max_additional_quota_value(self, user_id, record=None):
         """Maximum additional quota value for a specific draft."""
-        return min(self.max_additional_quota, self.remaining_storage(user_id, record))
+        return min(
+            self.user_max_additional_quota(user_id),
+            self.remaining_storage(user_id, record),
+        )
 
     def remaining_storage(self, user_id, record):
         """Remaining storage for this draft and user."""
@@ -118,7 +126,7 @@ class StorageService:
         )
 
         return max(
-            (self.max_additional_quota - int(additional_storage_user))
+            (self.user_max_additional_quota(user_id) - int(additional_storage_user))
             + self.additional_storage(user_id, record),
             0,
         )
@@ -217,7 +225,7 @@ class StorageService:
         default_quota = self.default_quota(user)
         return {
             "default_quota": default_quota,
-            "max_additional_quota": self.max_additional_quota,
+            "max_additional_quota": self.user_max_additional_quota(user),
             "total_extra": extra_r + extra_d,
             "total_used": used_r + used_d,
             "entries": record_data + draft_data,

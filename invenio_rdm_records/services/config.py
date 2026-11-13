@@ -92,7 +92,7 @@ from .schemas.parent.access import Grants as GrantsSchema
 from .schemas.parent.access import RequestAccessSchema
 from .schemas.parent.access import SecretLink as SecretLinkSchema
 from .schemas.parent.communities import CommunitiesSchema
-from .schemas.quota import QuotaSchema
+from .schemas.quota import QuotaSchema, UserQuotaSchema
 from .schemas.record_communities import RecordCommunitiesSchema
 from .schemas.tombstone import TombstoneSchema
 from .search_params import (
@@ -595,6 +595,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     schema_request_access = RequestAccessSchema
     schema_tombstone = TombstoneSchema
     schema_quota = QuotaSchema
+    schema_user_quota = UserQuotaSchema
 
     # Permission policy
     permission_policy_cls = FromConfig(
