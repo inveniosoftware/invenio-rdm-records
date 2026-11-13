@@ -218,7 +218,6 @@ class PIDsService(RecordService):
         relations = getattr(pid_record, "relations", None)
         if relations:
             relations.dereference()
-
         if pid.is_registered():
             self.require_permission(identity, "pid_update", record=record)
             pid_manager.update(pid_record, scheme, url=url)
