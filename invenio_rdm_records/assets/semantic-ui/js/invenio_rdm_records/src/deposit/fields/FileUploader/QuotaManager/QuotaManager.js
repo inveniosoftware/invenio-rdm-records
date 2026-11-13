@@ -136,7 +136,7 @@ export const QuotaManagerComponent = (props) => {
               <div>
                 <Trans
                   i18n={i18next}
-                  defaults={"New total: <bold>{{quota}} GB</bold>"}
+                  defaults="New total: <bold>{{quota}} GB</bold>"
                   values={{ quota: defaultStorage + additionalQuota }}
                   components={{ bold: <strong /> }}
                 />

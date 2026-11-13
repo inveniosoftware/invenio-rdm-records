@@ -20,9 +20,7 @@ export function NoLicenseResults({ switchToCustom }) {
         <p>
           <Trans
             i18n={i18next}
-            defaults={
-              "Did not find your license? <customLink>Add a custom license.</customLink>"
-            }
+            defaults="Did not find your license? <customLink>Add a custom license.</customLink>"
             components={{
               customLink: (
                 <a

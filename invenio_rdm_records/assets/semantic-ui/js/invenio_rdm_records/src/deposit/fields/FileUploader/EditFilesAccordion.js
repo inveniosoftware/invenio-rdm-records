@@ -50,9 +50,7 @@ export function EditFilesAccordion({
                 <p className="mt-5 display-inline-block">
                   <Trans
                     i18n={i18next}
-                    defaults={
-                      "To <strong>add, modify or remove files</strong>, it is recommended that you create a new version. A new record is created which tracks the evolution of your work."
-                    }
+                    defaults="To <strong>add, modify or remove files</strong>, it is recommended that you create a new version. A new record is created which tracks the evolution of your work."
                     components={{ strong: <strong /> }}
                   />
                 </p>
@@ -71,9 +69,7 @@ export function EditFilesAccordion({
                 <p className="mt-5 display-inline-block">
                   <Trans
                     i18n={i18next}
-                    defaults={
-                      "To <strong>correct</strong> minor errors, you can unlock the files."
-                    }
+                    defaults="To <strong>correct</strong> minor errors, you can unlock the files."
                     components={{ strong: <strong /> }}
                   />
                 </p>

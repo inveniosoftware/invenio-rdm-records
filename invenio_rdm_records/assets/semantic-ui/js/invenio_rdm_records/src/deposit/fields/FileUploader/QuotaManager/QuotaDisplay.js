@@ -153,9 +153,7 @@ export const QuotaDisplay = (props) => {
           <div>
             <Trans
               i18n={i18next}
-              defaults={
-                "See your <settingsLink>storage settings</settingsLink> for usage across all records"
-              }
+              defaults="See your <settingsLink>storage settings</settingsLink> for usage across all records"
               components={{ settingsLink: <a href="/account/settings/quota" /> }}
             />
           </div>
