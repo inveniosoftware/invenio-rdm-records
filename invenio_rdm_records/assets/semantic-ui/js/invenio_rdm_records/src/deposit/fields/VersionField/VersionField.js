@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: 2020-2023 CERN.
  * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
  * SPDX-FileCopyrightText: 2021 Graz University of Technology.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -13,6 +14,7 @@ import {
   showHideOverridable,
   fieldCommonProps,
 } from "react-invenio-forms";
+import { Trans } from "react-i18next";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 function VersionFieldComponent({
@@ -25,14 +27,15 @@ function VersionFieldComponent({
 }) {
   const helpText = (
     <span>
-      {i18next.t(
-        "Mostly relevant for software and dataset uploads. A semantic version string is preferred see"
-      )}
-      <a href="https://semver.org/" target="_blank" rel="noopener noreferrer">
-        {" "}
-        semver.org
-      </a>
-      {i18next.t(", but any version string is accepted.")}{" "}
+      <Trans
+        i18n={i18next}
+        defaults="Mostly relevant for software and dataset uploads. A semantic version string is preferred see <semverLink>semver.org</semverLink>, but any version string is accepted."
+        components={{
+          semverLink: (
+            <a href="https://semver.org/" target="_blank" rel="noopener noreferrer" />
+          ),
+        }}
+      />{" "}
       {i18next.t(
         "Maximum 191 characters. For longer descriptions, use 'Additional descriptions' with type 'Note'."
       )}
