@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2025 KTH Royal Institute of Technology.
+ * SPDX-FileCopyrightText: 2025-2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -14,9 +14,9 @@ const packageJson = require("../package");
 
 const commands = [
   // Convert to .pot format
-  "i18next-conv -l en -s ./messages/en/translations.json -t ./translations.pot",
+  "i18next-conv --compatibilityJSON v4 -l en -s ./messages/en/translations.json -t ./translations.pot",
   // Convert to .po format
-  "i18next-conv -l en -s ./messages/en/translations.json -t ./messages/en/messages.po",
+  "i18next-conv --compatibilityJSON v4 -l en -s ./messages/en/translations.json -t ./messages/en/messages.po",
   // Fix trailing newlines
   "node scripts/fixTrailingNewlines.js",
 ];

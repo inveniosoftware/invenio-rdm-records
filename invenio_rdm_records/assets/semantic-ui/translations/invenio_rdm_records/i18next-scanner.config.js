@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2022 CERN.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
