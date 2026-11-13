@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2026 CERN.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -13,6 +14,7 @@ import {
   Message,
 } from "semantic-ui-react";
 import PropTypes from "prop-types";
+import { Trans } from "react-i18next";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 export default function StorageOverview({ storage }) {
@@ -27,10 +29,11 @@ export default function StorageOverview({ storage }) {
         <strong>{i18next.t("Quota overview")}</strong>
       </Header>
       <p className="text-muted mb-4">
-        {i18next.t(
-          "You can now manage your record storage by assigning additional quota as needed."
-        )}{" "}
-        <a href="./">{i18next.t("Find out more.")}</a>{" "}
+        <Trans
+          i18n={i18next}
+          defaults="You can now manage your record storage by assigning additional quota as needed. <helpLink>Find out more.</helpLink>"
+          components={{ helpLink: <a href="./" /> }}
+        />
         {/* Need to link to help guide.*/}
       </p>
 
@@ -154,7 +157,7 @@ export default function StorageOverview({ storage }) {
                       </Grid.Column>
                     </Grid>
                     <p className="text-muted">
-                      {percent}% {i18next.t("used")}
+                      {i18next.t("{{percent}}% used", { percent })}
                     </p>
                   </Table.Cell>
 
@@ -164,7 +167,11 @@ export default function StorageOverview({ storage }) {
 
                   <Table.Cell>
                     <Label size="tiny" color={statusColor[record.status] || "grey"}>
-                      {i18next.t(record.status)}
+                      {record.status === "Draft"
+                        ? i18next.t("Draft")
+                        : record.status === "Published"
+                        ? i18next.t("Published")
+                        : record.status}
                     </Label>
                   </Table.Cell>
                 </Table.Row>
