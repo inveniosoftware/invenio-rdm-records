@@ -12,13 +12,16 @@ from invenio_accounts.models import User
 from invenio_db import db
 from invenio_files_rest.models import Bucket
 from invenio_search.engine import dsl
-from sqlalchemy import func
+from sqlalchemy import func, or_
 
 from invenio_rdm_records.records.models import (
     RDMDraftMetadata,
     RDMRecordMetadata,
     RDMRecordQuota,
     RDMUserQuota,
+)
+from invenio_rdm_records.records.systemfields.deletion_status import (
+    RecordDeletionStatusEnum,
 )
 
 logger = logging.getLogger(__name__)
@@ -107,13 +110,30 @@ class StorageService:
 
     def remaining_storage(self, user_id, record):
         """Remaining storage for this draft and user."""
+        has_published_records = db.session.query(RDMRecordMetadata.parent_id).filter(
+            RDMRecordMetadata.parent_id == RDMRecordQuota.parent_id,
+            RDMRecordMetadata.deletion_status
+            == RecordDeletionStatusEnum.PUBLISHED.value,
+        )
+
+        has_draft = db.session.query(RDMDraftMetadata.parent_id).filter(
+            RDMDraftMetadata.parent_id == RDMRecordQuota.parent_id,
+            RDMDraftMetadata.json.isnot(None),  # filter-out soft-deleted drafts
+        )
+
         additional_storage_user = (
             RDMRecordQuota.query.with_entities(
                 func.coalesce(
                     func.sum(RDMRecordQuota.quota_size - self.default_quota(user_id)), 0
                 )
             )
-            .filter(RDMRecordQuota.user_id == user_id)
+            .filter(
+                RDMRecordQuota.user_id == user_id,
+                or_(
+                    has_published_records.exists(),
+                    has_draft.exists(),
+                ),
+            )
             .scalar()
         )
 
