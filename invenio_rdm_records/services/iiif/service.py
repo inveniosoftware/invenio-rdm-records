@@ -12,6 +12,7 @@ from flask_iiif.api import IIIFImageAPIWrapper
 from flask_iiif.errors import MultimediaError
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services import Service
+from PIL import Image as PILImage
 
 from ..errors import IdentifierShapeException
 
@@ -35,6 +36,30 @@ except ModuleNotFoundError:
 except OSError:
     # Underlying library libvips not installed
     HAS_VIPS = False
+
+
+def _flatten_on_white(fp):
+    """Return the given image with its transparency flattened onto white.
+
+    Images without transparency are returned unchanged.
+    """
+    try:
+        image = PILImage.open(fp)
+    except (PILImage.UnidentifiedImageError, OSError):
+        fp.seek(0)
+        return fp
+
+    if image.mode not in ("RGBA", "LA", "PA") and "transparency" not in image.info:
+        fp.seek(0)
+        return fp
+
+    flattened = PILImage.new("RGBA", image.size, (255, 255, 255, 255))
+    flattened.alpha_composite(image.convert("RGBA"))
+    buffer = io.BytesIO()
+    flattened.convert("RGB").save(buffer, format="PNG")
+    buffer.seek(0)
+    fp.close()
+    return buffer
 
 
 class IIIFService(Service):
@@ -94,8 +119,10 @@ class IIIFService(Service):
 
     def _open_image(self, file_):
         fp = file_.get_stream("rb")
+        mimetype = file_.data["mimetype"]
+        is_pdf = mimetype == "application/pdf"
         # If the file is not a PDF or text, return the file
-        if file_.data["mimetype"] not in {"application/pdf", "text/plain"}:
+        if mimetype not in {"application/pdf", "text/plain"}:
             return fp
 
         # If Wand (ImageMagick) or PyVIPS is installed, extract the first page
@@ -114,12 +141,17 @@ class IIIFService(Service):
             # Convert to memory to be able to return a file-like object
             first_page_buf = io.BytesIO(first_page.write_to_memory())
             fp.close()
+            if is_pdf:
+                # PDF pages have no background of their own, so they render
+                # transparent; flatten onto white like a PDF viewer does, as
+                # otherwise transparent areas turn black in JPEG output.
+                first_page_buf = _flatten_on_white(first_page_buf)
             return first_page_buf
         elif HAS_IMAGEMAGICK:
             try:
                 # Only read the first page; otherwise ImageMagick renders every
                 # page of the PDF into memory.
-                if file_.data["mimetype"] == "application/pdf":
+                if is_pdf:
                     first_page = Image(blob=fp, format="pdf[0]")
                 else:
                     first_page = Image(blob=fp)
@@ -128,6 +160,8 @@ class IIIFService(Service):
                     converted.save(file=first_page_buf)
                 first_page_buf.seek(0)
                 fp.close()
+                if is_pdf:
+                    first_page_buf = _flatten_on_white(first_page_buf)
                 return first_page_buf
 
             except DelegateError as e:
