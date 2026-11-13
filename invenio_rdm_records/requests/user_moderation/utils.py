@@ -42,3 +42,34 @@ def get_user_records(user_id, from_db=False, status=None):
             status = [s.value for s in status]
             search = search.filter("terms", deletion_status=status)
         return (hit["id"] for hit in search.scan())
+
+
+def get_user_records_grouped(user_id: str) -> list[list[str]]:
+    """
+    Returns all the ids of records of a user in an ordered way.
+
+    :result:
+    ```python
+    [
+        [record_v3.id, record_v2.id, record_v1.id],
+        [record_2_v1.id],
+        ...
+    ]
+    ```
+    """
+    record_cls = current_rdm_records_service.record_cls
+
+    search = (
+        RecordsSearchV2(index=record_cls.index._name)
+        .filter("term", **{"parent.access.owned_by.user": user_id})
+        .source(["id", "parent.id", "versions.index"])
+    )
+
+    groups = {}
+    for hit in search.scan():
+        groups.setdefault(hit.parent.id, []).append((hit.versions.index, hit.id))
+
+    return [
+        [record_id for _, record_id in sorted(versions, reverse=True)]
+        for versions in groups.values()
+    ]
