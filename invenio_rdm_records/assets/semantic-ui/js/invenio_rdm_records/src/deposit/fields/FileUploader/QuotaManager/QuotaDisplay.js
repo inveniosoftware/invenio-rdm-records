@@ -132,28 +132,32 @@ export const QuotaDisplay = (props) => {
             <div className="flex align-items-center">
               <Label circular color="blue" empty key="blue" />
               <span className="ml-5">
-                {i18next.t("Default")} ({defaultStorage}&nbsp;GB)
+                {i18next.t("Default ({{quota}} GB)", { quota: defaultStorage })}
               </span>
             </div>
             <div className="flex align-items-center ml-10">
               <Label circular color="green" empty key="green" />
               <span className="ml-5">
-                {i18next.t("Additional")} (+{additionalQuota}&nbsp;GB)
+                {i18next.t("Additional (+{{quota}} GB)", { quota: additionalQuota })}
               </span>
             </div>
             <div className="flex align-items-center ml-10">
               <Label circular color="grey" empty key="grey" />
               <span className="ml-5">
-                {i18next.t("Available")} ({remainingStorage - additionalQuota}
-                &nbsp;GB)
+                {i18next.t("Available ({{quota}} GB)", {
+                  quota: remainingStorage - additionalQuota,
+                })}
               </span>
             </div>
           </div>
           <div>
-            <Trans>
-              See your <a href="/account/settings/quota">storage settings</a> for usage
-              across all records
-            </Trans>
+            <Trans
+              i18n={i18next}
+              defaults={
+                "See your <settingsLink>storage settings</settingsLink> for usage across all records"
+              }
+              components={{ settingsLink: <a href="/account/settings/quota" /> }}
+            />
           </div>
         </div>
       </div>
