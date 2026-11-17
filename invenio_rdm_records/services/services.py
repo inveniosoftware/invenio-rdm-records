@@ -18,6 +18,8 @@ from invenio_drafts_resources.resources.records.errors import DraftNotCreatedErr
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
+from invenio_pidstore.errors import PersistentIdentifierError
+from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_resources.services import LinksTemplate, ServiceSchemaWrapper
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import (
@@ -689,6 +691,23 @@ class RDMRecordService(RecordService):
                 raise RecordDeletedException(record, result_item=result)
 
         return result
+
+    def published_record_url(self, identity, object_uuid):
+        """Return the HTML link of a published record the identity can read.
+
+        :param object_uuid: UUID of the record, e.g. from one of its PIDs.
+        :returns: the link, or ``None`` if the record is not published (e.g. a
+            draft) or the identity is not allowed to read it.
+        """
+        try:
+            recid = PersistentIdentifier.get_by_object("recid", "rec", object_uuid)
+            record = self.record_cls.pid.resolve(recid.pid_value)
+        except PersistentIdentifierError:
+            return None
+
+        if not self.check_permission(identity, "read", record=record):
+            return None
+        return self.links_item_tpl.expand(identity, record).get("self_html")
 
     def read_draft(self, identity, id_, expand=False):
         """Retrieve a draft of a record.
