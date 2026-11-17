@@ -8,6 +8,12 @@ SPDX-License-Identifier: MIT
 
 # Changes
 
+## Version v37.0.1 (released 2026-11-17)
+
+- fix(languages): update title for lang `uig`
+- fix: flatten transparent pdf page on white to prevent black JPEG output
+- docs: remove docs directory and switch to md formatting
+
 ## Version v37.0.0 (released 2026-11-10)
 
 - chore(setup): bump dependencies
