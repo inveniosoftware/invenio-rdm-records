@@ -5,3 +5,8 @@
  */
 
 export { CreatibutorsField } from "./CreatibutorsField";
+export {
+  CREATIBUTORS_FILE_MODAL_ID,
+  CreatibutorsFileModal,
+} from "./CreatibutorsFileModal";
+export { creatibutorFileFormatPropType, jsonFileFormat } from "./fileFormats";
