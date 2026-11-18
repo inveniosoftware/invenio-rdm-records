@@ -70,6 +70,11 @@ class RDMRecordService(RecordService):
             self, schema=self.config.schema_tombstone
         )
         self._schema_quota = ServiceSchemaWrapper(self, schema=self.config.schema_quota)
+        self._schema_user_quota = ServiceSchemaWrapper(
+            self,
+            # fall back for custom service configs that don't define it
+            schema=getattr(self.config, "schema_user_quota", self.config.schema_quota),
+        )
 
     #
     # Subservices
@@ -114,6 +119,11 @@ class RDMRecordService(RecordService):
     def schema_quota(self):
         """Returns the featured data schema instance."""
         return self._schema_quota
+
+    @property
+    def schema_user_quota(self):
+        """Returns the user quota schema instance."""
+        return self._schema_user_quota
 
     #
     # Service methods
@@ -824,13 +834,18 @@ class RDMRecordService(RecordService):
 
         self.require_permission(identity, "manage_quota", record=user)
 
-        data, errors = self.schema_quota.load(
+        data, errors = self.schema_user_quota.load(
             data,
             context={
                 "identity": identity,
             },
             raise_errors=True,
         )
+        # Only touch the user's max additional quota if it was explicitly passed
+        # (``None`` resets it to the configured default)
+        set_max_additional = "max_additional_quota_size" in data
+        max_additional = data.pop("max_additional_quota_size", None)
+
         # Set quota
         if user.id == system_user_id:
             user_quota = None
@@ -843,6 +858,9 @@ class RDMRecordService(RecordService):
         else:
             # update user quota
             self._update_quota(user_quota, **data)
+
+        if set_max_additional:
+            user_quota.max_additional_quota_size = max_additional
 
         db.session.add(user_quota)
 

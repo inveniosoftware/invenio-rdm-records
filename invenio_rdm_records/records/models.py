@@ -296,5 +296,11 @@ class RDMUserQuota(db.Model, db.Timestamp):
     )
     """Max size of a single file in the record's bucket."""
 
+    max_additional_quota_size = db.Column(db.BigInteger, nullable=True)
+    """Max total additional quota (in bytes) the user can get across their records.
+
+    If not set, ``RDM_FILES_DEFAULT_MAX_ADDITIONAL_QUOTA_SIZE`` is used.
+    """
+
     notes = db.Column(db.Text, nullable=False, default="")
     """Notes related to setting the quota."""
