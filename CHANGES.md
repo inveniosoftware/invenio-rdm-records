@@ -8,6 +8,11 @@ SPDX-License-Identifier: MIT
 
 # Changes
 
+## Version v37.0.2 (released 2026-11-18)
+
+- fix: enforce per-user quota cap on increase
+- feat(deposit-ui): pass icon to deserialized errors
+
 ## Version v37.0.1 (released 2026-11-17)
 
 - fix(languages): update title for lang `uig`
