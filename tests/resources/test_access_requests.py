@@ -539,3 +539,97 @@ def test_access_grant_for_role(
 
     response = client.get(f"/records/{record.id}")
     assert response.status_code == 200
+
+
+def _fail_build(*args, **kwargs):
+    raise RuntimeError("simulated failure after the grant/link was created")
+
+
+def test_user_access_request_accept_rolls_back_on_failure(
+    running_app, client, users, minimal_record, monkeypatch
+):
+    """A failure while accepting must not leave a grant behind on an open request."""
+    from invenio_rdm_records.requests.access import requests as access_requests
+
+    record_owner, user = users
+    identity = _identity(record_owner)
+    login_user(user)
+    login_user_via_session(client, email=user.email)
+    record = _create_public_record_restricted_files(identity, minimal_record)
+
+    response = client.post(
+        f"/records/{record.id}/access/request",
+        json={"message": "Please!", "email": user.email, "full_name": "User"},
+    )
+    assert response.status_code == 200
+    request_id = response.json["id"]
+
+    monkeypatch.setattr(
+        access_requests.UserAccessRequestAcceptNotificationBuilder,
+        "build",
+        _fail_build,
+    )
+    with pytest.raises(RuntimeError):
+        current_requests_service.execute_action(identity, request_id, "accept", data={})
+    db.session.rollback()
+
+    record = service.read(identity=identity, id_=record.id)
+    assert not record._record.parent.access.grants
+    result = current_requests_service.read(system_identity, request_id)
+    assert result["status"] == "submitted"
+
+    # Retrying after the failure is gone works
+    monkeypatch.undo()
+    current_requests_service.execute_action(identity, request_id, "accept", data={})
+    result = current_requests_service.read(system_identity, request_id)
+    assert result["status"] == "accepted"
+    record = service.read(identity=identity, id_=record.id)
+    assert len(record._record.parent.access.grants) == 1
+
+
+def test_guest_access_request_accept_rolls_back_on_failure(
+    running_app, client, users, minimal_record, monkeypatch
+):
+    """A failure while accepting must not leave a secret link on an open request."""
+    from invenio_rdm_records.requests.access import requests as access_requests
+
+    with running_app.app.extensions["mail"].record_messages() as outbox:
+        record_owner, _ = users
+        identity = _identity(record_owner)
+        guest_identity = Identity(None)
+        guest_identity.provides.add(any_user)
+        record = _create_public_record_restricted_files(identity, minimal_record)
+
+        response = client.post(
+            f"/records/{record.id}/access/request",
+            json={
+                "message": "This is not spam!",
+                "email": "guest@example.com",
+                "full_name": "Guest User",
+                "consent_to_share_personal_data": "true",
+            },
+        )
+        assert response.status_code == 200
+        match = re.compile(r"(https?://.*?)\s?$").search(str(outbox[0].body))
+        assert match
+        parsed = urllib.parse.urlparse(match.group(1))
+        args = {k: v for k, v in [kv.split("=") for kv in parsed.query.split("&")]}
+        token = args["access_request_token"]
+        guest_identity.provides.add(AccessRequestTokenNeed(token))
+        request = service.access.create_guest_access_request(
+            identity=guest_identity, token=token
+        )
+
+    monkeypatch.setattr(
+        access_requests.GuestAccessRequestAcceptNotificationBuilder,
+        "build",
+        _fail_build,
+    )
+    with pytest.raises(RuntimeError):
+        current_requests_service.execute_action(identity, request.id, "accept", data={})
+    db.session.rollback()
+
+    record = service.read(identity=identity, id_=record.id)
+    assert not record._obj.parent.access.links
+    result = current_requests_service.read(system_identity, request.id)
+    assert result["status"] == "submitted"
