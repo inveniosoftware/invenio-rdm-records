@@ -585,6 +585,17 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
     draft_cls = FromConfig("RDM_DRAFT_CLS", default=RDMDraft)
 
+    # Inverse relations used by RecordService.on_relation_update
+    relations = {
+        "affiliations": [
+            "metadata.creators.affiliations",
+            "metadata.contributors.affiliations",
+        ],
+        "funders": [
+            "metadata.funding.funder",
+        ],
+    }
+
     # Schemas
     schema = FromConfig("RDM_RECORD_SCHEMA", default=RDMRecordSchema)
     schema_parent = RDMParentSchema
