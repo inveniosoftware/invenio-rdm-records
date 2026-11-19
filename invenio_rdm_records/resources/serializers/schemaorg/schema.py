@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 CERN.
+# SPDX-FileCopyrightText: 2023-2026 CERN.
 # SPDX-FileCopyrightText: 2021 Northwestern University.
 # SPDX-FileCopyrightText: 2023-2025 Graz University of Technology.
 # SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
@@ -17,11 +17,10 @@ from idutils import to_url
 from invenio_i18n import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, missing
 from marshmallow_utils.fields import SanitizedUnicode
-from pydash import py_
 
 from ....services.schemas.fields import SanitizedHTML
 from ..schemas import CommonFieldsMixin
-from ..utils import convert_size, get_vocabulary_props
+from ..utils import convert_size, dict_get, get_vocabulary_props
 
 
 def _serialize_identifiers(ids):
@@ -90,7 +89,7 @@ class PersonOrOrgSchema(Schema):
 
         Defaults to Person.
         """
-        name_type = py_.get(obj, "person_or_org.type")
+        name_type = dict_get(obj, "person_or_org.type")
         return "Organization" if name_type == "organizational" else "Person"
 
     def get_name_identifier(self, obj):
@@ -206,14 +205,14 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_id(self, obj):
         """Get id. Use the DOI expressed as a URL."""
-        doi = py_.get(obj, "pids.doi.identifier")
+        doi = dict_get(obj, "pids.doi.identifier")
         if doi:
             return doi_as_url(doi)
         return missing
 
     def get_type(self, obj):
         """Get type. Use the vocabulary service to get the schema.org type."""
-        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        resource_type_id = dict_get(obj, "metadata.resource_type.id")
         if not resource_type_id:
             return missing
 
@@ -228,19 +227,19 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
     def get_size(self, obj):
         """Get size."""
         ret = None
-        size = py_.get(obj, "files.total_bytes")
+        size = dict_get(obj, "files.total_bytes")
         if size:
             ret = convert_size(size)
         return ret or missing
 
     def get_format(self, obj):
         """Get format."""
-        formats = py_.get(obj, "metadata.formats")
+        formats = dict_get(obj, "metadata.formats")
         return unwrap(wrap(formats)) or missing
 
     def get_publication_date(self, obj):
         """Get publication date."""
-        publication_date = py_.get(obj, "metadata.publication_date")
+        publication_date = dict_get(obj, "metadata.publication_date")
         if not publication_date:
             return missing
 
@@ -270,7 +269,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         for the name. Use only the first of multiple languages provided.
         """
         language = first(
-            parse_attributes(py_.get(obj, "metadata.languages"), content="id")
+            parse_attributes(dict_get(obj, "metadata.languages"), content="id")
         )
         if not language:
             return missing
@@ -285,10 +284,10 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_identifiers(self, obj):
         """Get (main and alternate) identifiers list."""
-        doi = py_.get(obj, "pids.doi.identifier")
+        doi = dict_get(obj, "pids.doi.identifier")
         if doi:
             return doi_as_url(doi)
-        self_url = py_.get(obj, "links.self")
+        self_url = dict_get(obj, "links.self")
         return self_url or missing
 
     def get_spatial_coverage(self, obj):
@@ -298,7 +297,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_publisher(self, obj):
         """Get publisher."""
-        publisher = py_.get(obj, "metadata.publisher")
+        publisher = dict_get(obj, "metadata.publisher")
         if publisher:
             return {"@type": "Organization", "name": publisher}
 
@@ -309,7 +308,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         Schema.org expects a comma-separated string, not a list as in the Zenodo implementation.
         """
-        subjects = py_.get(obj, "metadata.subjects")
+        subjects = dict_get(obj, "metadata.subjects")
         if not subjects:
             return missing
         subjects = [
@@ -323,10 +322,10 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         Find first license id or link in metadata.rights, then find matching SPDX metadata. Schemaorg expects a URL.
         """
         license_ = next(
-            (i for i in wrap(py_.get(obj, "metadata.rights")) if i.get("id", None)),
+            (i for i in wrap(dict_get(obj, "metadata.rights")) if i.get("id", None)),
             None,
         ) or next(
-            (i for i in wrap(py_.get(obj, "metadata.rights")) if i.get("link", None)),
+            (i for i in wrap(dict_get(obj, "metadata.rights")) if i.get("link", None)),
             None,
         )
         if license_ and license_.get("id", None):
@@ -356,7 +355,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         def _serialize_award(award):
             """Serializes an award (or grant) to schema.org."""
-            title = py_.get(award, "title.en")
+            title = dict_get(award, "title.en")
             number = award.get("number")
             id_ = award.get("id")
 
@@ -389,7 +388,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         result = []
 
-        funding = py_.get(obj, "metadata.funding", [])
+        funding = dict_get(obj, "metadata.funding", [])
         for fund in funding:
             serialized_funding = {}
             # Serialize funder
@@ -407,31 +406,31 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_is_part_of(self, obj):
         """Get records that this record is part of."""
-        identifiers = py_.get(obj, "metadata.related_identifiers", [])
+        identifiers = dict_get(obj, "metadata.related_identifiers", [])
         relids = self._filter_related_identifier_type(identifiers, "ispartof")
         ids = _serialize_identifiers(relids)
         return ids or missing
 
     def get_has_part(self, obj):
         """Get parts of the record."""
-        identifiers = py_.get(obj, "metadata.related_identifiers", [])
+        identifiers = dict_get(obj, "metadata.related_identifiers", [])
         relids = self._filter_related_identifier_type(identifiers, "haspart")
         ids = _serialize_identifiers(relids)
         return ids or missing
 
     def get_sameAs(self, obj):
         """Get identical identifiers of the record."""
-        identifiers = py_.get(obj, "metadata.related_identifiers", [])
+        identifiers = dict_get(obj, "metadata.related_identifiers", [])
         relids = self._filter_related_identifier_type(identifiers, "isidenticalto")
         ids = _serialize_identifiers(relids)
 
-        alt_identifiers = py_.get(obj, "metadata.alternate_identifiers", [])
+        alt_identifiers = dict_get(obj, "metadata.alternate_identifiers", [])
         ids += [i["@id"] for i in _serialize_identifiers(alt_identifiers)]
         return ids or missing
 
     def get_url(self, obj):
         """Get URL of the record."""
-        self_url = py_.get(obj, "links.self_html")
+        self_url = dict_get(obj, "links.self_html")
         return self_url or missing
 
     def get_dates(self, obj):
@@ -447,7 +446,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_citation(self, obj):
         """Get citations of the record."""
-        identifiers = py_.get(obj, "metadata.related_identifiers", [])
+        identifiers = dict_get(obj, "metadata.related_identifiers", [])
         relids = self._filter_related_identifier_type(
             identifiers, {"cites", "references"}
         )
@@ -463,11 +462,11 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         if not self._is_dataset(obj):
             return missing
 
-        additional_descriptions = py_.get(obj, "metadata.additional_descriptions", [])
+        additional_descriptions = dict_get(obj, "metadata.additional_descriptions", [])
         res = None
         for additional_description in additional_descriptions:
-            description = py_.get(additional_description, "description")
-            is_method = py_.get(additional_description, "type.id") == "methods"
+            description = dict_get(additional_description, "description")
+            is_method = dict_get(additional_description, "type.id") == "methods"
             if is_method and description:
                 # Use the first method as measurement technique
                 res = description
@@ -480,7 +479,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         if not self._is_dataset(obj):
             return missing
 
-        files = py_.get(obj, "files.entries", {})
+        files = dict_get(obj, "files.entries", {})
         distribution_list = []
         for f_name, f_object in files.items():
             entry = {

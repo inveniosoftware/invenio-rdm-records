@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2025 CERN.
+# SPDX-FileCopyrightText: 2021-2026 CERN.
 # SPDX-FileCopyrightText: 2021-2025 Northwestern University.
 # SPDX-FileCopyrightText: 2023-2025 Graz University of Technology.
 # SPDX-FileCopyrightText: 2023 Caltech.
@@ -19,11 +19,10 @@ from marshmallow import Schema, ValidationError, fields, missing, post_dump, val
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.fields.babel import gettext_from_dict
 from marshmallow_utils.html import strip_html
-from pydash import py_
 
 from ....proxies import current_rdm_records_service
 from ...serializers.ui.schema import current_default_locale
-from ..utils import get_preferred_identifier, get_vocabulary_props
+from ..utils import dict_get, get_preferred_identifier, get_vocabulary_props
 
 RELATED_IDENTIFIER_SCHEMES = {
     "ark",
@@ -209,7 +208,7 @@ class DataCite43Schema(BaseSerializerSchema):
 
     def get_type(self, obj):
         """Get resource type."""
-        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        resource_type_id = dict_get(obj, "metadata.resource_type.id")
         if not resource_type_id:
             return missing
 
@@ -268,7 +267,7 @@ class DataCite43Schema(BaseSerializerSchema):
 
     def get_publication_year(self, obj):
         """Get publication year from edtf date."""
-        publication_date = py_.get(obj, "metadata.publication_date")
+        publication_date = dict_get(obj, "metadata.publication_date")
         if not publication_date:
             return missing
 
@@ -284,7 +283,7 @@ class DataCite43Schema(BaseSerializerSchema):
 
     def get_dates(self, obj):
         """Get dates."""
-        pub_date = py_.get(obj, "metadata.publication_date")
+        pub_date = dict_get(obj, "metadata.publication_date")
         dates = [{"date": pub_date, "dateType": "Issued"}] if pub_date else []
 
         updated = False
@@ -698,7 +697,7 @@ class DataCite45Schema(BaseSerializerSchema):
 
     def get_type(self, obj):
         """Get resource type."""
-        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        resource_type_id = dict_get(obj, "metadata.resource_type.id")
         if not resource_type_id:
             return missing
 
@@ -764,7 +763,7 @@ class DataCite45Schema(BaseSerializerSchema):
 
     def get_publication_year(self, obj):
         """Get publication year from edtf date."""
-        publication_date = py_.get(obj, "metadata.publication_date")
+        publication_date = dict_get(obj, "metadata.publication_date")
         if not publication_date:
             return missing
 
@@ -780,7 +779,7 @@ class DataCite45Schema(BaseSerializerSchema):
 
     def get_dates(self, obj):
         """Get dates."""
-        pub_date = py_.get(obj, "metadata.publication_date")
+        pub_date = dict_get(obj, "metadata.publication_date")
         dates = [{"date": pub_date, "dateType": "Issued"}] if pub_date else []
 
         updated = False

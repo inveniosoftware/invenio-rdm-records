@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2024 CERN
+# SPDX-FileCopyrightText: 2023-2026 CERN
 # SPDX-License-Identifier: MIT
 
 """MARCXML based Schema for Invenio RDM Records."""
@@ -12,11 +12,10 @@ from invenio_i18n import get_locale
 from marshmallow import fields, missing
 from marshmallow_utils.fields.babel import gettext_from_dict
 from marshmallow_utils.html import sanitize_unicode
-from pydash import py_
 
 from ..schemas import CommonFieldsMixin
 from ..ui.schema import current_default_locale
-from ..utils import get_vocabulary_props
+from ..utils import dict_get, get_vocabulary_props
 
 
 class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
@@ -504,7 +503,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             slugs = [community.get("slug") for community in communities]
             output += [{"a": f"user-{slug}"} for slug in slugs]
 
-        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        resource_type_id = dict_get(obj, "metadata.resource_type.id")
         if resource_type_id:
             props = get_vocabulary_props(
                 "resourcetypes",

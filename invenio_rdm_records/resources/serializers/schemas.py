@@ -1,11 +1,12 @@
-# SPDX-FileCopyrightText: 2023 CERN
+# SPDX-FileCopyrightText: 2023-2026 CERN
 # SPDX-FileCopyrightText: 2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
 """Base parsing functions for the various serializers."""
 
 from marshmallow import missing
-from pydash import py_
+
+from .utils import dict_get
 
 
 class CommonFieldsMixin:
@@ -57,7 +58,7 @@ class CommonFieldsMixin:
 
     def get_titles(self, obj):
         """Get titles."""
-        title = py_.get(obj, "metadata.title")
+        title = dict_get(obj, "metadata.title")
         return [title] if title else missing
 
     def get_identifiers(self, obj):

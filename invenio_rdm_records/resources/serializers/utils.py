@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 CERN.
+# SPDX-FileCopyrightText: 2021-2026 CERN.
 # SPDX-FileCopyrightText: 2021 Northwestern University.
 # SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
 # SPDX-License-Identifier: MIT
@@ -9,10 +9,28 @@ import math
 
 from invenio_access.permissions import system_identity
 from invenio_i18n import lazy_gettext as _
+from invenio_records.dictutils import dict_lookup
 from invenio_search.engine import dsl
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
 from .errors import VocabularyItemNotFoundError
+
+
+def dict_get(source, lookup_key, default=None):
+    """Make a lookup into a dict based on a dot notation.
+
+    The behavior is the same as `invenio_records.dictutils.dict_lookup`,
+    but `default` (instead of raising a `KeyError`) is returned
+    when the path does not exist.
+
+    :param source: The dictionary object to perform the lookup in.
+    :param lookup_key: A string using dot notation, or a list of keys.
+    :param default: The value to return if the path does not exist.
+    """
+    try:
+        return dict_lookup(source, lookup_key)
+    except KeyError:
+        return default
 
 
 def get_vocabulary_props(vocabulary, fields, id_):

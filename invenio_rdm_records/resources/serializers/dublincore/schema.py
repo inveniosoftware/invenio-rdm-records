@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2021 Graz University of Technology.
+# SPDX-FileCopyrightText: 2026 CERN.
 # SPDX-License-Identifier: MIT
 
 """Dublin Core based Schema for Invenio RDM Records."""
@@ -10,11 +11,10 @@ from invenio_base import invenio_url_for
 from invenio_i18n import get_locale
 from marshmallow import fields, missing
 from marshmallow_utils.fields.babel import gettext_from_dict
-from pydash import py_
 
 from ..schemas import CommonFieldsMixin
 from ..ui.schema import current_default_locale
-from ..utils import get_vocabulary_props
+from ..utils import dict_get, get_vocabulary_props
 
 
 class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
@@ -120,7 +120,7 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
         """Get rights."""
         rights = []
 
-        access_right = py_.get(obj, "access.status")
+        access_right = dict_get(obj, "access.status")
         if access_right:
             if access_right == "metadata-only":
                 access_right = "closed"
@@ -148,11 +148,11 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
         """Get dates."""
         dates = []
 
-        publication_date = py_.get(obj, "metadata.publication_date")
+        publication_date = dict_get(obj, "metadata.publication_date")
         if publication_date:
             dates.append(publication_date)
 
-        access_right = py_.get(obj, "access.status")
+        access_right = dict_get(obj, "access.status")
         if access_right == "embargoed":
             date = obj["access"]["embargo"]["until"]
             dates.append(f"info:eu-repo/date/embargoEnd/{date}")
@@ -194,7 +194,7 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_types(self, obj):
         """Get resource type."""
-        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        resource_type_id = dict_get(obj, "metadata.resource_type.id")
         if not resource_type_id:
             return missing
 
