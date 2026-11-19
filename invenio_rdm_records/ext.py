@@ -346,7 +346,8 @@ def init(app):
     """Init app."""
     # Register services - cannot be done in extension because
     # Invenio-Records-Resources might not have been initialized.
-    sregistry = app.extensions["invenio-records-resources"].registry
+    rr_ext = app.extensions["invenio-records-resources"]
+    sregistry = rr_ext.registry
     ext = app.extensions["invenio-rdm-records"]
     sregistry.register(ext.records_service, service_id="records")
     sregistry.register(ext.records_service.files, service_id="files")
@@ -365,3 +366,7 @@ def init(app):
     iregistry = app.extensions["invenio-indexer"].registry
     iregistry.register(ext.records_service.indexer, indexer_id="records")
     iregistry.register(ext.records_service.draft_indexer, indexer_id="records-drafts")
+    # Propagate ROR affiliation/funder updates into denormalized record index docs
+    nregistry = rr_ext.notification_registry
+    nregistry.register("affiliations", ext.records_service.on_relation_update)
+    nregistry.register("funders", ext.records_service.on_relation_update)
