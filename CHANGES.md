@@ -8,6 +8,16 @@ SPDX-License-Identifier: MIT
 
 # Changes
 
+## Version v37.0.3 (released 2026-11-19)
+
+- chore(deps): remove pytz
+    * flask-babel depends on pytz so the
+      library is still included.
+
+-chore: replace pytz.utc usage by datetime.timezone.utc
+    * The pytz library is deprecated and the Python standard
+      library can be used to get the UTC timezone.
+
 ## Version v37.0.2 (released 2026-11-18)
 
 - fix: enforce per-user quota cap on increase
