@@ -12,10 +12,10 @@ from edtf.parser.grammar import ParseException
 from edtf.parser.parser_classes import Date, Interval
 from flask_resources.serializers import BaseSerializerSchema
 from marshmallow import fields, missing, post_dump
-from pydash import py_
 from slugify import slugify
 
 from ..schemas import CommonFieldsMixin
+from ..utils import dict_get
 from .schema_formats import BibTexFormatter
 
 
@@ -91,7 +91,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_date_published(self, obj):
         """Get publication year and month from edtf date."""
-        publication_date = py_.get(obj, "metadata.publication_date")
+        publication_date = dict_get(obj, "metadata.publication_date")
         if not publication_date:
             return None
 
