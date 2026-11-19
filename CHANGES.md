@@ -8,6 +8,10 @@ SPDX-License-Identifier: MIT
 
 # Changes
 
+## Version v37.1.0
+
+- feat: reindex records when referenced affiliations/funders change
+
 ## Version v37.0.3 (released 2026-11-19)
 
 - chore(deps): remove pytz
