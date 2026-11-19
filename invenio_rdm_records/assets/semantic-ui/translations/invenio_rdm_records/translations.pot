@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-11-13T18:11:00.863Z\n"
-"PO-Revision-Date: 2026-11-13T18:11:00.863Z\n"
+"POT-Creation-Date: 2026-11-18T13:56:08.915Z\n"
+"PO-Revision-Date: 2026-11-18T13:56:08.916Z\n"
 "Language: en\n"
 
 msgid "Copy to clipboard"
@@ -247,15 +247,6 @@ msgstr "Before requesting review, please read and check the following:"
 
 msgid "Submit record for review"
 msgstr "Submit record for review"
-
-msgid "The '{{communityTitle}}' curators will have access to"
-msgstr "The '{{communityTitle}}' curators will have access to"
-
-msgid "view and edit"
-msgstr "view and edit"
-
-msgid "your upload's metadata and files."
-msgstr "your upload's metadata and files."
 
 msgid "Message to curators (optional)"
 msgstr "Message to curators (optional)"
@@ -633,9 +624,6 @@ msgstr "Storage available"
 msgid "{{length}} out of {{maxfiles}} files"
 msgstr "{{length}} out of {{maxfiles}} files"
 
-msgid "out of"
-msgstr "out of"
-
 msgid "Add identifier"
 msgstr "Add identifier"
 
@@ -726,12 +714,6 @@ msgstr "Add license"
 msgid "Change license"
 msgstr "Change license"
 
-msgid "Did not find your license? "
-msgstr "Did not find your license? "
-
-msgid "Add a custom license."
-msgstr "Add a custom license."
-
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
@@ -807,69 +789,12 @@ msgstr "Additional title"
 msgid "Version"
 msgstr "Version"
 
-msgid "On"
-msgstr "On"
-
-msgid ""
-"the record will automatically be made publicly accessible. Until then, the "
-"record can"
-msgstr ""
-"the record will automatically be made publicly accessible. Until then, the "
-"record can"
-
-msgid "only"
-msgstr "only"
-
-msgid "be accessed by"
-msgstr "be accessed by"
-
-msgid "users specified"
-msgstr "users specified"
-
-msgid "in the permissions."
-msgstr "in the permissions."
-
-msgid "The record can"
-msgstr "The record can"
-
-msgid "The record is publicly accessible. The files can"
-msgstr "The record is publicly accessible. The files can"
-
-msgid "The record is publicly accessible. On"
-msgstr "The record is publicly accessible. On"
-
-msgid ""
-"the files will automatically be made publicly accessible. Until then, the "
-"files can"
-msgstr ""
-"the files will automatically be made publicly accessible. Until then, the "
-"files can"
-
-msgid "Record or files protection must be"
-msgstr "Record or files protection must be"
-
-msgid "restricted"
-msgstr "restricted"
-
-msgid "to apply an embargo."
-msgstr "to apply an embargo."
-
 msgid ""
 "Uploading the selected files would result in {{total}} of storage use, "
 "exceeding the limit of {{limit}}."
 msgstr ""
 "Uploading the selected files would result in {{total}} of storage use, "
 "exceeding the limit of {{limit}}."
-
-msgid ""
-"Mostly relevant for software and dataset uploads. A semantic version string "
-"is preferred see"
-msgstr ""
-"Mostly relevant for software and dataset uploads. A semantic version string "
-"is preferred see"
-
-msgid ", but any version string is accepted."
-msgstr ", but any version string is accepted."
 
 msgid "Search in all communities"
 msgstr "Search in all communities"
@@ -889,16 +814,6 @@ msgstr "Storage"
 
 msgid "Quota overview"
 msgstr "Quota overview"
-
-msgid ""
-"You can now manage your record storage by assigning additional quota as "
-"needed."
-msgstr ""
-"You can now manage your record storage by assigning additional quota as "
-"needed."
-
-msgid "Find out more."
-msgstr "Find out more."
 
 msgid "Default quota per record"
 msgstr "Default quota per record"
@@ -929,9 +844,6 @@ msgstr "Status"
 msgid "{{total}} GB total"
 msgstr "{{total}} GB total"
 
-msgid "used"
-msgstr "used"
-
 msgid "No allocated storage"
 msgstr "No allocated storage"
 
@@ -944,32 +856,6 @@ msgid ""
 msgstr ""
 "You can't create a new version of this record due to external DOI "
 "restrictions."
-
-msgid "If your upload is accepted by the community curators, it will be"
-msgstr "If your upload is accepted by the community curators, it will be"
-
-msgid "immediately published"
-msgstr "immediately published"
-
-msgid ""
-"Before that, you will still be able to modify metadata and files of this "
-"upload."
-msgstr ""
-"Before that, you will still be able to modify metadata and files of this "
-"upload."
-
-msgid "Your upload will be"
-msgstr "Your upload will be"
-
-msgid ""
-"in '{{communityTitle}}'. You will no longer be able to change the files in "
-"the upload!"
-msgstr ""
-"in '{{communityTitle}}'. You will no longer be able to change the files in "
-"the upload!"
-
-msgid "However, you will still be able to update the record's metadata later."
-msgstr "However, you will still be able to update the record's metadata later."
 
 msgid "Unable to submit request."
 msgstr "Unable to submit request."
@@ -1107,18 +993,6 @@ msgstr "Checksum not yet calculated."
 msgid "Manage storage"
 msgstr "Manage storage"
 
-msgid "Default"
-msgstr "Default"
-
-msgid "Additional"
-msgstr "Additional"
-
-msgid "Available"
-msgstr "Available"
-
-msgid "See your <1>storage settings</1> for usage across all records"
-msgstr "See your <1>storage settings</1> for usage across all records"
-
 msgid "Could not submit the quota increase request"
 msgstr "Could not submit the quota increase request"
 
@@ -1142,9 +1016,6 @@ msgstr ""
 
 msgid "Additional storage"
 msgstr "Additional storage"
-
-msgid "New total:"
-msgstr "New total:"
 
 msgid "Unable to increase quota"
 msgstr "Unable to increase quota"
@@ -1186,3 +1057,181 @@ msgstr ""
 
 msgid "Select a community for this repository's records"
 msgstr "Select a community for this repository's records"
+
+msgid "{{percent}}% used"
+msgstr "{{percent}}% used"
+
+msgid ""
+"You can now manage your record storage by assigning additional quota as "
+"needed. <helpLink>Find out more.</helpLink>"
+msgstr ""
+"You can now manage your record storage by assigning additional quota as "
+"needed. <helpLink>Find out more.</helpLink>"
+
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr "DOI is needed. You need to reserve a DOI before publishing."
+
+msgid "DOI is needed. You need to reserve a DOI before submitting for review."
+msgstr "DOI is needed. You need to reserve a DOI before submitting for review."
+
+msgid ""
+"The '{{communityTitle}}' curators will have access to <bold>view and "
+"edit</bold> your upload's metadata and files."
+msgstr ""
+"The '{{communityTitle}}' curators will have access to <bold>view and "
+"edit</bold> your upload's metadata and files."
+
+msgid ""
+"If your upload is accepted by the community curators, it will be "
+"<bold>immediately published</bold>. Before that, you will still be able to "
+"modify metadata and files of this upload."
+msgstr ""
+"If your upload is accepted by the community curators, it will be "
+"<bold>immediately published</bold>. Before that, you will still be able to "
+"modify metadata and files of this upload."
+
+msgid ""
+"Your upload will be <bold>immediately published</bold> in "
+"'{{communityTitle}}'. You will no longer be able to change the files in the "
+"upload! However, you will still be able to update the record's metadata "
+"later."
+msgstr ""
+"Your upload will be <bold>immediately published</bold> in "
+"'{{communityTitle}}'. You will no longer be able to change the files in the "
+"upload! However, you will still be able to update the record's metadata "
+"later."
+
+msgid ""
+"On <bold>{{fmtDate}}</bold> the record will automatically be made publicly "
+"accessible. Until then, the record can <bold>only</bold> be accessed by "
+"<bold>users specified</bold> in the permissions."
+msgstr ""
+"On <bold>{{fmtDate}}</bold> the record will automatically be made publicly "
+"accessible. Until then, the record can <bold>only</bold> be accessed by "
+"<bold>users specified</bold> in the permissions."
+
+msgid ""
+"The record can <bold>only</bold> be accessed by <bold>users "
+"specified</bold> in the permissions."
+msgstr ""
+"The record can <bold>only</bold> be accessed by <bold>users "
+"specified</bold> in the permissions."
+
+msgid ""
+"The record is publicly accessible. The files can <bold>only</bold> be "
+"accessed by <bold>users specified</bold> in the permissions."
+msgstr ""
+"The record is publicly accessible. The files can <bold>only</bold> be "
+"accessed by <bold>users specified</bold> in the permissions."
+
+msgid ""
+"The record is publicly accessible. On <bold>{{fmtDate}}</bold> the files "
+"will automatically be made publicly accessible. Until then, the files can "
+"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
+"permissions."
+msgstr ""
+"The record is publicly accessible. On <bold>{{fmtDate}}</bold> the files "
+"will automatically be made publicly accessible. Until then, the files can "
+"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
+"permissions."
+
+msgid ""
+"Record or files protection must be <bold>restricted</bold> to apply an "
+"embargo."
+msgstr ""
+"Record or files protection must be <bold>restricted</bold> to apply an "
+"embargo."
+
+msgid "Filter contributors..."
+msgstr "Filter contributors..."
+
+msgid "Filter authors/creators..."
+msgstr "Filter authors/creators..."
+
+msgid "Upload contributors from file"
+msgstr "Upload contributors from file"
+
+msgid "Upload authors/creators from file"
+msgstr "Upload authors/creators from file"
+
+msgid "Upload a JSON file containing a list of contributors."
+msgstr "Upload a JSON file containing a list of contributors."
+
+msgid "Upload a JSON file containing a list of authors/creators."
+msgstr "Upload a JSON file containing a list of authors/creators."
+
+msgid "Valid contributors ({{count}})"
+msgid_plural "Valid contributors ({{count}})"
+msgstr[0] "Valid contributors ({{count}})"
+msgstr[1] "Valid contributors ({{count}})"
+
+msgid "Valid authors/creators ({{count}})"
+msgid_plural "Valid authors/creators ({{count}})"
+msgstr[0] "Valid authors/creators ({{count}})"
+msgstr[1] "Valid authors/creators ({{count}})"
+
+msgid "Add authors/creators from file"
+msgstr "Add authors/creators from file"
+
+msgid "Review contributors from file"
+msgstr "Review contributors from file"
+
+msgid "Review authors/creators from file"
+msgstr "Review authors/creators from file"
+
+msgid "Import {{count}} contributors"
+msgid_plural "Import {{count}} contributors"
+msgstr[0] "Import {{count}} contributors"
+msgstr[1] "Import {{count}} contributors"
+
+msgid "Import {{count}} authors/creators"
+msgid_plural "Import {{count}} authors/creators"
+msgstr[0] "Import {{count}} authors/creators"
+msgstr[1] "Import {{count}} authors/creators"
+
+msgid ""
+"Uploading the selected files would result in {{count}} files "
+"(max.{{maxFiles}})"
+msgid_plural ""
+"Uploading the selected files would result in {{count}} files "
+"(max.{{maxFiles}})"
+msgstr[0] ""
+"Uploading the selected files would result in {{count}} files "
+"(max.{{maxFiles}})"
+msgstr[1] ""
+"Uploading the selected files would result in {{count}} files "
+"(max.{{maxFiles}})"
+
+msgid "{{used}} out of {{available}}"
+msgstr "{{used}} out of {{available}}"
+
+msgid "Default ({{quota}} GB)"
+msgstr "Default ({{quota}} GB)"
+
+msgid "Additional (+{{quota}} GB)"
+msgstr "Additional (+{{quota}} GB)"
+
+msgid "Available ({{quota}} GB)"
+msgstr "Available ({{quota}} GB)"
+
+msgid ""
+"See your <settingsLink>storage settings</settingsLink> for usage across all "
+"records"
+msgstr ""
+"See your <settingsLink>storage settings</settingsLink> for usage across all "
+"records"
+
+msgid "New total: <bold>{{quota}} GB</bold>"
+msgstr "New total: <bold>{{quota}} GB</bold>"
+
+msgid "Did not find your license? <customLink>Add a custom license.</customLink>"
+msgstr "Did not find your license? <customLink>Add a custom license.</customLink>"
+
+msgid ""
+"Mostly relevant for software and dataset uploads. A semantic version string "
+"is preferred see <semverLink>semver.org</semverLink>, but any version "
+"string is accepted."
+msgstr ""
+"Mostly relevant for software and dataset uploads. A semantic version string "
+"is preferred see <semverLink>semver.org</semverLink>, but any version "
+"string is accepted."

@@ -1,8 +1,10 @@
 /*
  * SPDX-FileCopyrightText: 2025 CERN.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
+import { Trans } from "react-i18next";
 import { useState } from "react";
 import { Grid, Button, Icon, Message, Input } from "semantic-ui-react";
 import PropTypes from "prop-types";
@@ -132,8 +134,12 @@ export const QuotaManagerComponent = (props) => {
             <div className="flex align-items-center justify-space-between pb-20">
               <div>0 GB</div>
               <div>
-                {i18next.t("New total:")}{" "}
-                <strong>{defaultStorage + additionalQuota} GB</strong>
+                <Trans
+                  i18n={i18next}
+                  defaults="New total: <bold>{{quota}} GB</bold>"
+                  values={{ quota: defaultStorage + additionalQuota }}
+                  components={{ bold: <strong /> }}
+                />
               </div>
               <div>{remainingStorage} GB</div>
             </div>

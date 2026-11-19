@@ -1,10 +1,12 @@
 /*
  * SPDX-FileCopyrightText: 2025 CERN.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
 import { useState } from "react";
 import { Trans } from "react-i18next";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
 import { Accordion, Grid, Icon, Message } from "semantic-ui-react";
 import { NewVersionButton } from "../../controls/NewVersionButton";
@@ -47,11 +49,11 @@ export function EditFilesAccordion({
             <Grid.Row className="p-0">
               <Grid.Column width={12}>
                 <p className="mt-5 display-inline-block">
-                  <Trans>
-                    To <strong>add, modify or remove files</strong>, it is recommended
-                    that you create a new version. A new record is created which tracks
-                    the evolution of your work.
-                  </Trans>
+                  <Trans
+                    i18n={i18next}
+                    defaults="To <strong>add, modify or remove files</strong>, it is recommended that you create a new version. A new record is created which tracks the evolution of your work."
+                    components={{ strong: <strong /> }}
+                  />
                 </p>
               </Grid.Column>
               <Grid.Column width={4} className="right aligned">
@@ -66,9 +68,11 @@ export function EditFilesAccordion({
             <Grid.Row className="p-0">
               <Grid.Column width={12}>
                 <p className="mt-5 display-inline-block">
-                  <Trans>
-                    To <strong>correct</strong> minor errors, you can unlock the files.
-                  </Trans>
+                  <Trans
+                    i18n={i18next}
+                    defaults="To <strong>correct</strong> minor errors, you can unlock the files."
+                    components={{ strong: <strong /> }}
+                  />
                 </p>
               </Grid.Column>
 

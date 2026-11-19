@@ -1,6 +1,7 @@
 /*
  * SPDX-FileCopyrightText: 2020-2023 CERN.
  * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -52,7 +53,9 @@ function SubmitReviewButtonComponent({
       isDOIRequired,
       noINeedDOI,
       formik,
-      "DOI is needed. You need to reserve a DOI before submitting for review.",
+      i18next.t(
+        "DOI is needed. You need to reserve a DOI before submitting for review."
+      ),
       DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS
     );
 

@@ -3,6 +3,7 @@
  * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
  * SPDX-FileCopyrightText: 2021 Graz University of Technology.
  * SPDX-FileCopyrightText: 2022 TU Wien.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -115,15 +116,17 @@ export const FileUploaderToolbar = ({
                       ? { color: "blue" }
                       : {})}
                   >
-                    {humanReadableBytes(filesSize, decimalSizeDisplay)}{" "}
-                    {i18next.t("out of")}{" "}
-                    {quota.quotaIncrease?.enabled && quota.quotaIncrease?.valid_user
-                      ? humanReadableBytes(
-                          quota.quotaIncrease.defaultStorage +
-                            additionalQuota * Math.pow(10, 9),
-                          decimalSizeDisplay
-                        )
-                      : humanReadableBytes(quota.maxStorage, decimalSizeDisplay)}
+                    {i18next.t("{{used}} out of {{available}}", {
+                      used: humanReadableBytes(filesSize, decimalSizeDisplay),
+                      available:
+                        quota.quotaIncrease?.enabled && quota.quotaIncrease?.valid_user
+                          ? humanReadableBytes(
+                              quota.quotaIncrease.defaultStorage +
+                                additionalQuota * Math.pow(10, 9),
+                              decimalSizeDisplay
+                            )
+                          : humanReadableBytes(quota.maxStorage, decimalSizeDisplay),
+                    })}
                   </Label>
                 </List.Item>
                 {quota.quotaIncrease?.enabled && quota.quotaIncrease?.valid_user && (
