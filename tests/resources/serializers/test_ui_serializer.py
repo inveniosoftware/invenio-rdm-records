@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2020-2024 CERN.
 # SPDX-FileCopyrightText: 2020 Northwestern University.
+# SPDX-FileCopyrightText: 2026 Max Hawkins.
 # SPDX-License-Identifier: MIT
 
 """Resources serializers tests."""
@@ -281,3 +282,33 @@ def test_ui_serializer(app, full_to_dict_record):
         {"hits": {"hits": [full_to_dict_record]}}
     )
     assert json.loads(serialized_records)["hits"]["hits"][0]["ui"] == expected_data
+
+
+@pytest.mark.parametrize(
+    "removed_by,owner,expected",
+    [
+        ("system", None, "System (automatic)"),
+        ("2", "2", "Owner"),
+        ("3", "2", "Admin"),
+        # the owner is omitted for users not allowed to see it; don't guess
+        ("2", None, "NA"),
+        (None, None, "NA"),
+    ],
+)
+def test_ui_serializer_tombstone_removed_by(
+    app, full_to_dict_record, removed_by, owner, expected
+):
+    """Masking of 'removed_by' works with and without the owner in the dump."""
+    record = deepcopy(full_to_dict_record)
+    record["tombstone"] = {
+        "removed_by": {"user": removed_by} if removed_by else {},
+        "is_visible": True,
+    }
+    if owner is None:
+        record["parent"]["access"].pop("owned_by")
+    else:
+        record["parent"]["access"]["owned_by"] = {"user": owner}
+
+    serialized = UIJSONSerializer().dump_obj(record)
+
+    assert serialized["ui"]["tombstone"]["removed_by"] == expected

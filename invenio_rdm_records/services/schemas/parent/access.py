@@ -91,9 +91,11 @@ class ParentAccessSchema(Schema, FieldPermissionsMixin):
 
     field_dump_permissions = {
         # omit fields from dumps except for users with 'manage' permissions
-        # allow only 'settings' and 'owned_by'
         "grants": "manage",
         "links": "manage",
+        # omit the owner from dumps (and hence from the expanded user profile)
+        # except for users allowed to see who uploaded the record
+        "owned_by": "read_owner",
     }
 
     grants = fields.List(fields.Nested(Grant))
