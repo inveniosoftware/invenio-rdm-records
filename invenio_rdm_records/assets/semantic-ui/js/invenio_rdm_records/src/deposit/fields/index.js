@@ -8,7 +8,14 @@ export { AccessRightField } from "./AccessField";
 export { DescriptionsField } from "./DescriptionsField";
 export { LanguagesField } from "./LanguagesField";
 export { CopyrightsField } from "./CopyrightsField";
-export { CreatibutorsField } from "./CreatibutorsField";
+export {
+  CreatibutorsField,
+  CREATIBUTORS_FILE_MODAL_ID,
+  CreatibutorsFileModal,
+  creatibutorFileFormatPropType,
+  jsonFileFormat,
+} from "./CreatibutorsField";
+export { CREATIBUTOR_TYPE } from "./CreatibutorsField/type";
 export { DatesField } from "./DatesField";
 export * from "./FileUploader";
 export { PIDField, IdentifiersField } from "./Identifiers";
