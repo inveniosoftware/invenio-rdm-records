@@ -109,10 +109,16 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
   };
 
   #onFileRemoved = (file) => {
-    if (!file.progress.uploadComplete) {
-      file.links = file.meta.links;
-      this.opts.abortUpload(file);
+    if (file.progress?.uploadComplete) {
+      return;
     }
+    if (!file.meta?.links) {
+      // The file was never initialized on the backend (e.g. it was added to the
+      // Dashboard but the upload was never started), so there is nothing to abort.
+      return;
+    }
+    file.links = file.meta.links;
+    this.opts.abortUpload(file);
   };
 
   #removeFileOnSuccess = (file) => {
