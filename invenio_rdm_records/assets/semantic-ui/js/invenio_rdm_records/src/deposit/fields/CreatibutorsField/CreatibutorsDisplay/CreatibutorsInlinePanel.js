@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2026 CERN.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -140,7 +141,11 @@ export const CreatibutorsInlinePanel = memo(function CreatibutorsInlinePanel({
             className="creatibutors-filter-input"
             icon="search"
             iconPosition="left"
-            placeholder={i18next.t(`Filter ${type}...`)}
+            placeholder={
+              type === "contributors"
+                ? i18next.t("Filter contributors...")
+                : i18next.t("Filter authors/creators...")
+            }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

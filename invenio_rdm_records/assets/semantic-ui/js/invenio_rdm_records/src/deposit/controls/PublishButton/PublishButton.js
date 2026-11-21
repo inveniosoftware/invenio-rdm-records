@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: 2020-2025 CERN.
  * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
  * SPDX-FileCopyrightText: 2025 Graz University of Technology.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -48,7 +49,7 @@ function PublishButtonComponent({
       isDOIRequired,
       noINeedDOI,
       formik,
-      "DOI is needed. You need to reserve a DOI before publishing.",
+      i18next.t("DOI is needed. You need to reserve a DOI before publishing."),
       DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS
     );
 

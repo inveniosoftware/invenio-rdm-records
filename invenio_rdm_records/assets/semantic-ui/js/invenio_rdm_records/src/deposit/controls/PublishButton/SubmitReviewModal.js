@@ -1,9 +1,11 @@
 /*
  * SPDX-FileCopyrightText: 2020-2023 CERN.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
 import { useEffect } from "react";
+import { Trans } from "react-i18next";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
 import Overridable from "react-overridable";
@@ -69,24 +71,19 @@ function SubmitReviewModalComponent({
       ),
       submitBtnLbl: i18next.t("Submit record for review"),
       acceptAccessToRecordText: (
-        <>
-          {i18next.t("The '{{communityTitle}}' curators will have access to", {
-            communityTitle,
-          })}{" "}
-          <b>{i18next.t("view and edit")}</b>{" "}
-          {i18next.t("your upload's metadata and files.")}
-        </>
+        <Trans
+          i18n={i18next}
+          defaults="The '{{communityTitle}}' curators will have access to <bold>view and edit</bold> your upload's metadata and files."
+          values={{ communityTitle }}
+          components={{ bold: <b /> }}
+        />
       ),
       acceptAfterPublishRecordText: (
-        <>
-          {i18next.t(
-            "If your upload is accepted by the community curators, it will be"
-          )}{" "}
-          <b>{i18next.t("immediately published")}</b>.{" "}
-          {i18next.t(
-            "Before that, you will still be able to modify metadata and files of this upload."
-          )}
-        </>
+        <Trans
+          i18n={i18next}
+          defaults="If your upload is accepted by the community curators, it will be <bold>immediately published</bold>. Before that, you will still be able to modify metadata and files of this upload."
+          components={{ bold: <b /> }}
+        />
       ),
     };
 
@@ -102,18 +99,12 @@ function SubmitReviewModalComponent({
         "Before publishing to the community, please read and check the following:"
       );
       modalContent["acceptAfterPublishRecordText"] = (
-        <>
-          {i18next.t("Your upload will be")} <b>{i18next.t("immediately published")}</b>{" "}
-          {i18next.t(
-            "in '{{communityTitle}}'. You will no longer be able to change the files in the upload!",
-            {
-              communityTitle,
-            }
-          )}{" "}
-          {i18next.t(
-            "However, you will still be able to update the record's metadata later."
-          )}
-        </>
+        <Trans
+          i18n={i18next}
+          defaults="Your upload will be <bold>immediately published</bold> in '{{communityTitle}}'. You will no longer be able to change the files in the upload! However, you will still be able to update the record's metadata later."
+          values={{ communityTitle }}
+          components={{ bold: <b /> }}
+        />
       );
       modalContent["submitBtnLbl"] = i18next.t("Publish record to community");
     }

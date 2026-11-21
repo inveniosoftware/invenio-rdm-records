@@ -116,9 +116,11 @@ export const FileUploaderComponent = ({
               icon="warning circle"
               header={i18next.t("Could not upload files.")}
               content={i18next.t(
-                `Uploading the selected files would result in ${
-                  filesList.length + acceptedFiles.length
-                } files (max.${quota.maxFiles})`
+                "Uploading the selected files would result in {{count}} files (max.{{maxFiles}})",
+                {
+                  count: filesList.length + acceptedFiles.length,
+                  maxFiles: quota.maxFiles,
+                }
               )}
             />
           </div>

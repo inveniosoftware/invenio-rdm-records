@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2026 CERN.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -92,7 +93,9 @@ function CreatibutorsFileImport({
       >
         <Header icon>
           <Icon name="cloud upload" />
-          {i18next.t(`Upload ${type} from file`)}
+          {type === "contributors"
+            ? i18next.t("Upload contributors from file")
+            : i18next.t("Upload authors/creators from file")}
           <Header.Subheader>
             {i18next.t("Only .json files are supported")}
           </Header.Subheader>
@@ -119,7 +122,11 @@ function CreatibutorsFileImport({
 
       <Message info size="small" className="text-left mt-15">
         <Message.Header>{i18next.t("File format")}</Message.Header>
-        <p>{i18next.t(`Upload a JSON file containing a list of ${type}.`)}</p>
+        <p>
+          {type === "contributors"
+            ? i18next.t("Upload a JSON file containing a list of contributors.")
+            : i18next.t("Upload a JSON file containing a list of authors/creators.")}
+        </p>
         <pre className="creatibutors-import-example">{CREATIBUTOR_IMPORT_EXAMPLE}</pre>
       </Message>
     </>
@@ -183,7 +190,13 @@ function CreatibutorsFileReview({
           {validEntries.length > 0 && (
             <>
               <Header as="h4" className="mb-10">
-                {i18next.t(`Valid ${type} (${validEntries.length})`)}
+                {type === "contributors"
+                  ? i18next.t("Valid contributors ({{count}})", {
+                      count: validEntries.length,
+                    })
+                  : i18next.t("Valid authors/creators ({{count}})", {
+                      count: validEntries.length,
+                    })}
               </Header>
               <CreatibutorsItemContext.Provider
                 value={{
@@ -406,8 +419,12 @@ export class CreatibutorsFileModal extends Component {
 
     const headerText =
       phase === "pick"
-        ? i18next.t(`Add ${type} from file`)
-        : i18next.t(`Review ${type} from file`);
+        ? type === "contributors"
+          ? i18next.t("Add contributors from file")
+          : i18next.t("Add authors/creators from file")
+        : type === "contributors"
+        ? i18next.t("Review contributors from file")
+        : i18next.t("Review authors/creators from file");
 
     return (
       <Modal
@@ -475,7 +492,15 @@ export class CreatibutorsFileModal extends Component {
               type="button"
               icon="check"
               disabled={validEntries.length === 0}
-              content={i18next.t(`Import ${validEntries.length} ${type}`)}
+              content={
+                type === "contributors"
+                  ? i18next.t("Import {{count}} contributors", {
+                      count: validEntries.length,
+                    })
+                  : i18next.t("Import {{count}} authors/creators", {
+                      count: validEntries.length,
+                    })
+              }
               onClick={this.handleConfirm}
             />
           )}

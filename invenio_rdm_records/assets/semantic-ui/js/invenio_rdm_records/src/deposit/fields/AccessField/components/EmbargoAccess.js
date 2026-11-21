@@ -1,6 +1,7 @@
 /*
  * SPDX-FileCopyrightText: 2020-2025 CERN.
  * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -11,6 +12,7 @@ import { TextAreaField } from "react-invenio-forms";
 import { Divider, Icon, List } from "semantic-ui-react";
 import { EmbargoCheckboxField } from "./EmbargoCheckboxField";
 import { EmbargoDateField } from "./EmbargoDateField";
+import { Trans } from "react-i18next";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 export const EmbargoAccess = ({ access, accessCommunity, metadataOnly = false }) => {
@@ -49,10 +51,11 @@ export const EmbargoAccess = ({ access, accessCommunity, metadataOnly = false })
           </List.Header>
 
           <List.Description>
-            <>
-              {i18next.t("Record or files protection must be")}{" "}
-              <b>{i18next.t("restricted")}</b> {i18next.t("to apply an embargo.")}
-            </>
+            <Trans
+              i18n={i18next}
+              defaults="Record or files protection must be <bold>restricted</bold> to apply an embargo."
+              components={{ bold: <b /> }}
+            />
           </List.Description>
 
           {embargoActive && (

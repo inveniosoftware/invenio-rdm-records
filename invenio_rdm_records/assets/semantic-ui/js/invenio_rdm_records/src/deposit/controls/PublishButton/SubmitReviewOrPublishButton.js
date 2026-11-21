@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2022-2026 CERN.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -45,7 +46,7 @@ function SubmitReviewOrPublishComponent({
     if (shouldCheckForExplicitDOIReservation) {
       const errors = {
         pids: {
-          doi: i18next.t(errorMessage),
+          doi: errorMessage,
         },
       };
       formik.setErrors(errors);
