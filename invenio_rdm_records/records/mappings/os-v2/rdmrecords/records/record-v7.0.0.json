@@ -1402,6 +1402,9 @@
           "default_preview": {
             "type": "keyword"
           },
+          "order": {
+            "type": "keyword"
+          },
           "count": {
             "type": "integer"
           },
@@ -1467,6 +1470,9 @@
             "type": "boolean"
           },
           "default_preview": {
+            "type": "keyword"
+          },
+          "order": {
             "type": "keyword"
           },
           "count": {
