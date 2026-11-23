@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2020-2023 CERN.
+ * SPDX-FileCopyrightText: 2020-2026 CERN.
  * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
  * SPDX-License-Identifier: MIT
  */
@@ -8,7 +8,15 @@ export { AccessRightField } from "./AccessField";
 export { DescriptionsField } from "./DescriptionsField";
 export { LanguagesField } from "./LanguagesField";
 export { CopyrightsField } from "./CopyrightsField";
-export { CreatibutorsField } from "./CreatibutorsField";
+export {
+  CreatibutorsField,
+  createCreatibutorFileFormatRegistry,
+  DEFAULT_CREATIBUTOR_FILE_FORMAT_ORDER,
+  getCreatibutorFileFormats,
+  registerCreatibutorFileFormat,
+  unregisterCreatibutorFileFormat,
+} from "./CreatibutorsField";
+export { CREATIBUTOR_TYPE } from "./CreatibutorsField/type";
 export { DatesField } from "./DatesField";
 export * from "./FileUploader";
 export { PIDField, IdentifiersField } from "./Identifiers";
