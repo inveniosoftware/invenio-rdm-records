@@ -376,6 +376,8 @@ def vars_self_iiif(drafcord, vars):
 
 def is_container(file_, ctx):
     """Determine if a file is a container."""
+    if not current_app.config["RDM_RECORDS_CONTAINER_ENABLED"]:
+        return False
     # We do not have file service as part of context here, so we need to rely on the list of configured file extensions.
     file_ext = splitext(file_.key)[1].lower()
     return file_ext in current_app.config["RDM_RECORDS_CONTAINER_EXTENSIONS"]
@@ -552,6 +554,7 @@ class FileServiceConfig(
 
     name_of_file_blueprint = ""  # Has to be overridden by descendants
     allow_archive_download = FromConfig("RDM_ARCHIVE_DOWNLOAD_ENABLED", True)
+    allow_container = FromConfig("RDM_RECORDS_CONTAINER_ENABLED", True)
 
     file_extractors = FromConfig("RDM_RECORD_FILE_EXTRACTORS", default=[])
 
