@@ -1163,6 +1163,9 @@
                   }
                 }
               },
+              "relation_type_information": {
+                "type": "text"
+              },
               "resource_type": {
                 "type": "object",
                 "properties": {

@@ -158,6 +158,9 @@
               },
               "resource_type": {
                 "$ref": "local://records/definitions-v2.0.0.json#/resource_type"
+              },
+              "relation_type_information": {
+                "type": "string"
               }
             }
           }
