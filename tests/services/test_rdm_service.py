@@ -6,11 +6,15 @@
 """Service level tests for Invenio RDM Records."""
 
 from copy import deepcopy
+from datetime import timedelta
 
 import pytest
+from flask import current_app
 from invenio_access.permissions import system_identity
+from invenio_db import db
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
+from marshmallow import ValidationError
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.services.errors import (
@@ -327,6 +331,49 @@ def test_public_record_to_restricted_keeps_doi(
     draft = service.update_draft(superuser_identity, draft.id, draft.data)
     record = service.publish(superuser_identity, draft.id)
     assert "doi" in record._record.pids
+
+
+def _backdate_draft_past_grace_period(service, draft):
+    """Push a draft's creation date past the restriction grace period."""
+    grace_period = current_app.config["RDM_RECORDS_RESTRICTION_GRACE_PERIOD"]
+    draft._record.model.created -= grace_period + timedelta(days=1)
+    draft._record.commit()
+    db.session.commit()
+
+
+def test_restrict_after_grace_period_blocked_for_regular_user(
+    running_app, search_clear, minimal_record, verified_user
+):
+    """A regular (non-moderator) user can't restrict a record past the grace period."""
+    verified_user_identity = verified_user.identity
+    service = current_rdm_records.records_service
+    draft = service.create(verified_user_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+
+    draft = service.edit(verified_user_identity, record.id)
+    _backdate_draft_past_grace_period(service, draft)
+
+    draft["access"]["record"] = "restricted"
+    with pytest.raises(ValidationError):
+        service.update_draft(verified_user_identity, draft.id, draft.data)
+
+
+def test_restrict_after_grace_period_allowed_for_moderator(
+    running_app, search_clear, minimal_record, verified_user
+):
+    """A moderator can still restrict a record past the grace period."""
+    verified_user_identity = verified_user.identity
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    draft = service.create(verified_user_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+
+    draft = service.edit(verified_user_identity, record.id)
+    _backdate_draft_past_grace_period(service, draft)
+
+    draft["access"]["record"] = "restricted"
+    draft = service.update_draft(superuser_identity, draft.id, draft.data)
+    assert draft["access"]["record"] == "restricted"
 
 
 #
