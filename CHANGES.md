@@ -8,6 +8,11 @@ SPDX-License-Identifier: MIT
 
 # Changes
 
+## Version v38.0.0 (released 2026-11-24)
+
+- feature: add user-specific max_additional_quota
+- fix(pids): free external DOI when removed on publish
+
 ## Version v37.0.3 (released 2026-11-19)
 
 - chore(deps): remove pytz
