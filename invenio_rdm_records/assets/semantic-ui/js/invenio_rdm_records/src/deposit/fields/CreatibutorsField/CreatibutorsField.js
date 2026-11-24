@@ -19,7 +19,10 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import { CreatibutorsInlinePanel } from "./CreatibutorsDisplay/CreatibutorsInlinePanel";
-import { CreatibutorsFileModal } from "./CreatibutorsFileModal";
+import {
+  CREATIBUTORS_FILE_MODAL_ID,
+  CreatibutorsFileModal,
+} from "./CreatibutorsFileModal";
 import { CreatibutorsItemContext } from "./CreatibutorsFieldItem";
 import { sortOptions } from "../../utils";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
@@ -225,30 +228,32 @@ class CreatibutorsFieldForm extends Component {
                   }
                 />
 
-                <CreatibutorsFileModal
-                  roleOptions={roleOptions}
-                  schema={schema}
-                  autocompleteNames={autocompleteNames}
-                  addLabel={modal.addLabel}
-                  editLabel={modal.editLabel}
-                  serializeSuggestions={serializeSuggestions}
-                  serializeCreatibutor={serializeCreatibutor}
-                  deserializeCreatibutor={deserializeCreatibutor}
-                  onConfirm={this.handleAddCreatibutorsFromFile}
-                  trigger={
-                    <Button
-                      type="button"
-                      icon
-                      labelPosition="left"
-                      className={className}
-                    >
-                      <Icon name="upload" />
-                      {isContributors
-                        ? i18next.t("Add contributors from file")
-                        : i18next.t("Add authors from file")}
-                    </Button>
-                  }
-                />
+                <Overridable id={CREATIBUTORS_FILE_MODAL_ID}>
+                  <CreatibutorsFileModal
+                    roleOptions={roleOptions}
+                    schema={schema}
+                    autocompleteNames={autocompleteNames}
+                    addLabel={modal.addLabel}
+                    editLabel={modal.editLabel}
+                    serializeSuggestions={serializeSuggestions}
+                    serializeCreatibutor={serializeCreatibutor}
+                    deserializeCreatibutor={deserializeCreatibutor}
+                    onConfirm={this.handleAddCreatibutorsFromFile}
+                    trigger={
+                      <Button
+                        type="button"
+                        icon
+                        labelPosition="left"
+                        className={className}
+                      >
+                        <Icon name="upload" />
+                        {isContributors
+                          ? i18next.t("Add contributors from file")
+                          : i18next.t("Add authors from file")}
+                      </Button>
+                    }
+                  />
+                </Overridable>
               </div>
 
               {addButtonHelpText && (

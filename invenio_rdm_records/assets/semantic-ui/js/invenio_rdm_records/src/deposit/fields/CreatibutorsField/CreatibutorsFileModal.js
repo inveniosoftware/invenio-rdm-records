@@ -5,64 +5,74 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Button, Header, Icon, Message, Modal, Segment } from "semantic-ui-react";
+import { Button, Header, Icon, Message, Modal, Segment, Tab } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { validateCreatibutorEntry } from "./CreatibutorsModal";
 import { CreatibutorsInlinePanel } from "./CreatibutorsDisplay/CreatibutorsInlinePanel";
 import { CreatibutorsItemContext } from "./CreatibutorsFieldItem";
+import { parseCreatibutorFile } from "./parseCreatibutorFile";
+import { creatibutorFileFormatPropType, jsonFileFormat } from "./fileFormats";
+
+// ID of the "add authors/contributors from file" dialog.
+export const CREATIBUTORS_FILE_MODAL_ID =
+  "InvenioRdmRecords.DepositForm.CreatibutorsFileModal";
+
+// JSON is always accepted; instances add more formats via the `fileFormats` prop.
+const DEFAULT_FILE_FORMATS = [jsonFileFormat];
 
 const getCreatibutorSchemaLabel = (schema) =>
   schema === "creators" ? "authors/creators" : "contributors";
 
-const CREATIBUTOR_IMPORT_EXAMPLE = `[
-  {
-    "person_or_org": {
-      "type": "personal",
-      "family_name": "Smith",
-      "given_name": "Jane",
-      "identifiers": [{ "scheme": "orcid", "identifier": "0000-0002-1825-0097" }]
-    },
-    "affiliations": [{ "name": "CERN" }]
-  },
-  {
-    "person_or_org": {
-      "type": "organizational",
-      "name": "European Organization for Nuclear Research"
-    }
-  }
-]`;
+const fileExtensions = (formats) => formats.map((format) => format.extension);
 
-/**
- * Parse a raw file text as a JSON array of plain objects.
- * Returns the parsed array when the data formatting is valid,
- * or `null` when the data cannot be interpreted in the expected format.
- */
-const parseCreatibutorFile = (text) => {
-  let parsed;
-  try {
-    parsed = JSON.parse(text);
-  } catch {
-    return null;
-  }
-  if (!Array.isArray(parsed)) {
-    return null;
-  }
-  for (const entry of parsed) {
-    if (typeof entry !== "object" || entry === null || Array.isArray(entry)) {
+const getParseErrorMessage = (error) => {
+  switch (error.type) {
+    case "unsupported":
+      return i18next.t("This file type is not supported.");
+    case "invalid":
+      return i18next.t("This is not a valid {{format}} file.", {
+        format: i18next.t(error.format),
+      });
+    default:
       return null;
-    }
   }
-  return parsed;
+};
+
+const fileFormatPane = (format) => ({
+  menuItem: i18next.t(format.label),
+  render: () => (
+    <Tab.Pane attached={false}>
+      {format.example && (
+        <pre className="creatibutors-import-example">{format.example}</pre>
+      )}
+      {format.note && <p className="text-muted mb-0">{i18next.t(format.note)}</p>}
+    </Tab.Pane>
+  ),
+});
+
+const FileFormatExamples = ({ fileFormats }) => {
+  const panes = fileFormats
+    .filter((format) => format.example || format.note)
+    .map(fileFormatPane);
+
+  if (panes.length === 0) return null;
+  return <Tab menu={{ secondary: true, pointing: true }} panes={panes} />;
+};
+
+FileFormatExamples.propTypes = {
+  fileFormats: PropTypes.arrayOf(creatibutorFileFormatPropType).isRequired,
 };
 
 function CreatibutorsFileImport({
   schema,
+  fileFormats,
   loading,
   fileInputRef,
   onFileChange,
   onTriggerFileInput,
 }) {
   const type = getCreatibutorSchemaLabel(schema);
+  const extensions = fileExtensions(fileFormats);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -94,7 +104,9 @@ function CreatibutorsFileImport({
           <Icon name="cloud upload" />
           {i18next.t(`Upload ${type} from file`)}
           <Header.Subheader>
-            {i18next.t("Only .json files are supported")}
+            {i18next.t("Supported file types: {{ extensions }}", {
+              extensions: extensions.join(", "),
+            })}
           </Header.Subheader>
         </Header>
         <Button
@@ -112,15 +124,20 @@ function CreatibutorsFileImport({
           type="file"
           hidden
           ref={fileInputRef}
-          accept=".json"
+          accept={extensions.join(",")}
           onChange={onFileChange}
         />
       </Segment>
 
       <Message info size="small" className="text-left mt-15">
         <Message.Header>{i18next.t("File format")}</Message.Header>
-        <p>{i18next.t(`Upload a JSON file containing a list of ${type}.`)}</p>
-        <pre className="creatibutors-import-example">{CREATIBUTOR_IMPORT_EXAMPLE}</pre>
+        <p>
+          {i18next.t("Upload a file containing a list of {{type}}.", {
+            type,
+            interpolation: { escapeValue: false },
+          })}
+        </p>
+        <FileFormatExamples fileFormats={fileFormats} />
       </Message>
     </>
   );
@@ -128,6 +145,7 @@ function CreatibutorsFileImport({
 
 CreatibutorsFileImport.propTypes = {
   schema: PropTypes.oneOf(["creators", "contributors"]).isRequired,
+  fileFormats: PropTypes.arrayOf(creatibutorFileFormatPropType).isRequired,
   loading: PropTypes.bool.isRequired,
   fileInputRef: PropTypes.object.isRequired,
   onFileChange: PropTypes.func.isRequired,
@@ -136,6 +154,7 @@ CreatibutorsFileImport.propTypes = {
 
 function CreatibutorsFileReview({
   schema,
+  fileFormats,
   fileName,
   parseError,
   validEntries,
@@ -164,19 +183,10 @@ function CreatibutorsFileReview({
         <Message error size="small">
           <Message.Header>
             <Icon name="exclamation triangle" />
-            {i18next.t("The file does not match the expected {{type}} format.", {
-              type,
-            })}
+            {getParseErrorMessage(parseError)}
           </Message.Header>
-          <p>
-            {i18next.t(
-              "Please upload a JSON file containing an array of {{type}} objects:",
-              { type }
-            )}
-          </p>
-          <pre className="creatibutors-import-example">
-            {CREATIBUTOR_IMPORT_EXAMPLE}
-          </pre>
+          <p>{i18next.t("Please upload a file in one of the supported formats:")}</p>
+          <FileFormatExamples fileFormats={fileFormats} />
         </Message>
       ) : (
         <>
@@ -222,7 +232,7 @@ function CreatibutorsFileReview({
                   const preview =
                     typeof inv.raw === "string" ? inv.raw : JSON.stringify(inv.raw);
                   return (
-                    <Message.Item key={inv.reason}>
+                    <Message.Item key={idx}>
                       <code>{preview}</code> {inv.reason}
                     </Message.Item>
                   );
@@ -245,8 +255,12 @@ function CreatibutorsFileReview({
 
 CreatibutorsFileReview.propTypes = {
   schema: PropTypes.oneOf(["creators", "contributors"]).isRequired,
+  fileFormats: PropTypes.arrayOf(creatibutorFileFormatPropType).isRequired,
   fileName: PropTypes.string,
-  parseError: PropTypes.bool.isRequired,
+  parseError: PropTypes.shape({
+    type: PropTypes.oneOf(["unsupported", "invalid"]).isRequired,
+    format: PropTypes.string,
+  }),
   validEntries: PropTypes.array.isRequired,
   invalidEntries: PropTypes.array.isRequired,
   onRemove: PropTypes.func.isRequired,
@@ -263,6 +277,7 @@ CreatibutorsFileReview.propTypes = {
 
 CreatibutorsFileReview.defaultProps = {
   fileName: null,
+  parseError: null,
   autocompleteNames: "search",
   addLabel: undefined,
   editLabel: undefined,
@@ -281,7 +296,7 @@ export class CreatibutorsFileModal extends Component {
       fileName: null,
       validEntries: [],
       invalidEntries: [],
-      parseError: false,
+      parseError: null,
     };
     this.fileInputRef = React.createRef();
   }
@@ -294,7 +309,7 @@ export class CreatibutorsFileModal extends Component {
       fileName: null,
       validEntries: [],
       invalidEntries: [],
-      parseError: false,
+      parseError: null,
     });
   };
 
@@ -307,7 +322,7 @@ export class CreatibutorsFileModal extends Component {
       phase: "pick",
       validEntries: [],
       invalidEntries: [],
-      parseError: false,
+      parseError: null,
     });
   };
 
@@ -319,12 +334,14 @@ export class CreatibutorsFileModal extends Component {
   };
 
   handleFileChange = (event) => {
+    const { fileFormats = DEFAULT_FILE_FORMATS } = this.props;
     const file = event.target.files[0];
     if (!file) return;
     this.setState({ loading: true });
     const reader = new FileReader();
     reader.onload = (e) => {
-      this.classifyEntries(parseCreatibutorFile(e.target.result), file.name);
+      const result = parseCreatibutorFile(e.target.result, file.name, fileFormats);
+      this.classifyEntries(result, file.name);
     };
     reader.onerror = () => {
       this.setState({ loading: false });
@@ -332,14 +349,14 @@ export class CreatibutorsFileModal extends Component {
     reader.readAsText(file);
   };
 
-  classifyEntries = (rows, fileName) => {
-    if (rows === null) {
+  classifyEntries = (result, fileName) => {
+    if (result.error) {
       this.setState({
         loading: false,
         fileName,
         validEntries: [],
         invalidEntries: [],
-        parseError: true,
+        parseError: result.error,
         phase: "review",
       });
       return;
@@ -348,7 +365,7 @@ export class CreatibutorsFileModal extends Component {
     const { schema } = this.props;
     const validEntries = [];
     const invalidEntries = [];
-    rows.forEach((raw) => {
+    result.entries.forEach((raw) => {
       const error = validateCreatibutorEntry(raw, schema);
       if (error) {
         invalidEntries.push({ raw, reason: error });
@@ -361,7 +378,7 @@ export class CreatibutorsFileModal extends Component {
       fileName,
       validEntries,
       invalidEntries,
-      parseError: false,
+      parseError: null,
       phase: "review",
     });
   };
@@ -409,7 +426,9 @@ export class CreatibutorsFileModal extends Component {
       serializeSuggestions,
       serializeCreatibutor,
       deserializeCreatibutor,
+      fileFormats,
     } = this.props;
+    if (fileFormats.length === 0) return null;
     const { open, phase, loading, fileName, validEntries, invalidEntries, parseError } =
       this.state;
     const type = getCreatibutorSchemaLabel(schema);
@@ -437,6 +456,7 @@ export class CreatibutorsFileModal extends Component {
           {phase === "pick" ? (
             <CreatibutorsFileImport
               schema={schema}
+              fileFormats={fileFormats}
               loading={loading}
               fileInputRef={this.fileInputRef}
               onFileChange={this.handleFileChange}
@@ -445,6 +465,7 @@ export class CreatibutorsFileModal extends Component {
           ) : (
             <CreatibutorsFileReview
               schema={schema}
+              fileFormats={fileFormats}
               fileName={fileName}
               parseError={parseError}
               validEntries={validEntries}
@@ -495,6 +516,7 @@ export class CreatibutorsFileModal extends Component {
 CreatibutorsFileModal.propTypes = {
   trigger: PropTypes.node.isRequired,
   schema: PropTypes.oneOf(["creators", "contributors"]).isRequired,
+  fileFormats: PropTypes.arrayOf(creatibutorFileFormatPropType),
   onConfirm: PropTypes.func.isRequired,
   roleOptions: PropTypes.array.isRequired,
   autocompleteNames: PropTypes.oneOf(["search", "search_only", "off"]),
@@ -506,6 +528,7 @@ CreatibutorsFileModal.propTypes = {
 };
 
 CreatibutorsFileModal.defaultProps = {
+  fileFormats: DEFAULT_FILE_FORMATS,
   autocompleteNames: "search",
   addLabel: undefined,
   editLabel: undefined,
