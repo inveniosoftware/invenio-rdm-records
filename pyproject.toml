@@ -7,7 +7,7 @@
 
 [project]
 name = "invenio-rdm-records"
-description = "InvenioRDM module for the communities feature."
+description = "InvenioRDM module for records: DataCite-based data model, drafts, files, PIDs, access and services."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
