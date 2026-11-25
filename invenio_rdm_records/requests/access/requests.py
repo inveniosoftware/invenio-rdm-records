@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2023 TU Wien.
 # SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
 # SPDX-FileCopyrightText: 2025 Graz University of Technology.
+# SPDX-FileCopyrightText: 2026 CERN.
 # SPDX-License-Identifier: MIT
 
 """Access requests for records."""
@@ -9,7 +10,6 @@ from datetime import datetime, timedelta, timezone
 
 import marshmallow as ma
 from invenio_access.permissions import system_identity
-from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import gettext as t
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
@@ -165,14 +165,12 @@ class GuestAcceptAction(actions.AcceptAction):
             data["expires_at"] = (
                 (datetime.now(timezone.utc) + timedelta(days=days)).date().isoformat()
             )
-        link = service.access.create_secret_link(identity, record.id, data)
+        # NOTE: pass the uow, so that the secret link and the request's status
+        #       change are committed together; `create_secret_link` already
+        #       registers the `ParentRecordCommitOp` for the modified parent
+        link = service.access.create_secret_link(identity, record.id, data, uow=uow)
         access_url = f"{record.links['self_html']}?token={link._link.token}"
 
-        uow.register(
-            ParentRecordCommitOp(
-                record._record.parent, indexer_context=dict(service=service)
-            )
-        )
         uow.register(
             NotificationOp(
                 GuestAccessRequestAcceptNotificationBuilder.build(
@@ -226,9 +224,8 @@ class UserAcceptAction(actions.AcceptAction):
 
         # NOTE: we're using the system identity here to avoid the grant creation
         #       potentially being blocked by the requesting user's profile visibility
-        service.access.bulk_create_grants(system_identity, record.pid.pid_value, data)
-        uow.register(
-            ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))
+        service.access.bulk_create_grants(
+            system_identity, record.pid.pid_value, data, uow=uow
         )
         uow.register(
             NotificationOp(
@@ -275,6 +272,9 @@ class UserAccessRequest(BaseRequest):
     allowed_receiver_ref_types = ["user", "community"]
     allowed_topic_ref_types = ["record"]
 
+    resolve_topic_needs = True
+    needs_context = {"record_permission": "manage"}
+
     links_item = {
         "self_html": EndpointLink(
             "invenio_app_rdm_requests.user_dashboard_request_view",
@@ -311,6 +311,9 @@ class GuestAccessRequest(BaseRequest):
     allowed_creator_ref_types = ["email"]
     allowed_receiver_ref_types = ["user", "community"]
     allowed_topic_ref_types = ["record"]
+
+    resolve_topic_needs = True
+    needs_context = {"record_permission": "manage"}
 
     links_item = {
         "self_html": ConditionalLink(
