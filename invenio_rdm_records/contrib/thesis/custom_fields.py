@@ -13,7 +13,7 @@ Implements the following fields:
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import BaseCF
 from marshmallow import fields
-from marshmallow_utils.fields import EDTFLevel2DateString, SanitizedUnicode
+from marshmallow_utils.fields import EDTFLevel2DateString, StrippedHTML
 
 
 class ThesisCF(BaseCF):
@@ -24,9 +24,9 @@ class ThesisCF(BaseCF):
         """Thesis fields definitions."""
         return fields.Nested(
             {
-                "university": SanitizedUnicode(),
-                "department": SanitizedUnicode(),
-                "type": SanitizedUnicode(),
+                "university": StrippedHTML(),
+                "department": StrippedHTML(),
+                "type": StrippedHTML(),
                 "date_submitted": EDTFLevel2DateString(),
                 "date_defended": EDTFLevel2DateString(),
             }

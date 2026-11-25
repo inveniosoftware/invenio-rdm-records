@@ -65,6 +65,10 @@ class RDMRecordService(RecordService):
         self._access = access_service
         self._pids = pids_service
         self._review = review_service
+        self._schema_tombstone = ServiceSchemaWrapper(
+            self, schema=self.config.schema_tombstone
+        )
+        self._schema_quota = ServiceSchemaWrapper(self, schema=self.config.schema_quota)
 
     #
     # Subservices
@@ -103,12 +107,12 @@ class RDMRecordService(RecordService):
     @property
     def schema_tombstone(self):
         """Schema for tombstone information."""
-        return ServiceSchemaWrapper(self, schema=self.config.schema_tombstone)
+        return self._schema_tombstone
 
     @property
     def schema_quota(self):
         """Returns the featured data schema instance."""
-        return ServiceSchemaWrapper(self, schema=self.config.schema_quota)
+        return self._schema_quota
 
     #
     # Service methods
@@ -846,6 +850,10 @@ class RDMRecordService(RecordService):
             record = self.record_cls.pid.resolve(id_)
         except:
             record = self.draft_cls.pid.resolve(id_, registered_only=False)
+
+        # Lock before the policy reads the user's granted quotas, so that concurrent
+        # increases for the same user cannot all pass the per-user cap
+        RDMUserQuota.lock_user(record.parent.access.owned_by.owner_id)
 
         # The policy checks if the bucket's quota is allowed, so we temporarily
         # set the bucket quota, evaluate the policy and restore the bucket quota

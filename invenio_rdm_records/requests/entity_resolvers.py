@@ -22,6 +22,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from ..proxies import current_rdm_records_service
 from ..records.api import RDMDraft, RDMRecord
+from ..resources.serializers.ui.schema import record_version
 from ..services.config import RDMRecordServiceConfig
 from ..services.dummy import DummyExpandingService
 
@@ -59,6 +60,14 @@ class RDMRecordProxy(RecordProxy):
         public records, thus the `ghost_record` method will always kick in!
         """
         return {"id": record}
+
+    def pick_resolved_fields(self, identity, resolved_dict):
+        """Select which fields to return when resolving the reference."""
+        out = {"id": resolved_dict["id"]}
+        version = record_version(resolved_dict)
+        if version:
+            out["version"] = version
+        return out
 
     def get_needs(self, ctx=None):
         """Enrich request with record needs.

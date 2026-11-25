@@ -1,5 +1,6 @@
-# SPDX-FileCopyrightText: 2023-2025 CERN.
+# SPDX-FileCopyrightText: 2023-2026 CERN.
 # SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
+# SPDX-FileCopyrightText: 2026 TU Wien.
 # SPDX-License-Identifier: MIT
 
 """Meeting custom fields.
@@ -14,8 +15,6 @@ Implements the following fields:
 - meeting.title
 - meeting.url
 """
-
-from functools import partial
 
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import BaseCF
@@ -45,9 +44,8 @@ class MeetingCF(BaseCF):
                 ),
                 "identifiers": IdentifierValueSet(
                     fields.Nested(
-                        partial(
-                            IdentifierSchema,
-                            allowed_schemes=record_related_identifiers_schemes,
+                        IdentifierSchema(
+                            allowed_schemes=record_related_identifiers_schemes
                         )
                     )
                 ),

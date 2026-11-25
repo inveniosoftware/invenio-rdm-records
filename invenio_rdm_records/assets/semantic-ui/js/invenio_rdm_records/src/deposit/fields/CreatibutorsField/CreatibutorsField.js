@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2020-2025 CERN.
+ * SPDX-FileCopyrightText: 2020-2026 CERN.
  * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
  * SPDX-FileCopyrightText: 2021 Graz University of Technology.
  * SPDX-License-Identifier: MIT
@@ -8,8 +8,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { getIn, FieldArray } from "formik";
-import { Button, Form, List, Icon } from "semantic-ui-react";
-import _get from "lodash/get";
+import { Button, Form, Icon } from "semantic-ui-react";
 import {
   FeedbackLabel,
   FieldLabel,
@@ -19,18 +18,96 @@ import {
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { CreatibutorsModal } from "./CreatibutorsModal";
+import { CreatibutorsInlinePanel } from "./CreatibutorsDisplay/CreatibutorsInlinePanel";
 import {
-  CreatibutorsFieldItem,
-  getCreatibutorDisplayName,
-} from "./CreatibutorsFieldItem";
+  CREATIBUTORS_FILE_MODAL_ID,
+  CreatibutorsFileModal,
+} from "./CreatibutorsFileModal";
+import { CreatibutorsItemContext } from "./CreatibutorsFieldItem";
 import { sortOptions } from "../../utils";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
 
 class CreatibutorsFieldForm extends Component {
-  handleOnContributorChange = (selectedCreatibutor) => {
-    const { push: formikArrayPush } = this.props;
+  // Re-render only when related Formik data changed, helps immesely with performance due to inline search changing the list
+  shouldComponentUpdate(nextProps) {
+    const { name, form } = this.props;
+    const nextForm = nextProps.form;
+    if (getIn(form.values, name) !== getIn(nextForm.values, name)) return true;
+    if (getIn(form.errors, name) !== getIn(nextForm.errors, name)) return true;
+    if (getIn(form.initialErrors, name) !== getIn(nextForm.initialErrors, name))
+      return true;
+    if (getIn(form.initialValues, name) !== getIn(nextForm.initialValues, name))
+      return true;
+    return false;
+  }
+
+  // Refs hold the latest Formik array helpers. Formik recreates these functions
+  // on every render, but we need stable references so the list doesn't re-render
+  // when unrelated fields change.
+  _removeRef = null;
+  _replaceRef = null;
+  _moveRef = null;
+  _highlight = { from: 0, until: 0, shown: new Set() };
+
+  stableRemove = (index) => this._removeRef(index);
+  stableReplace = (index, newValue) => this._replaceRef(index, newValue);
+  stableMove = (from, to) => this._moveRef(from, to);
+
+  // Cache sorted role options so a new array isn't created on every render.
+  _lastRoleOptions = null;
+  _sortedRoleOptions = null;
+  getSortedRoleOptions() {
+    const { roleOptions } = this.props;
+    if (roleOptions !== this._lastRoleOptions) {
+      this._lastRoleOptions = roleOptions;
+      this._sortedRoleOptions = sortOptions(roleOptions);
+    }
+    return this._sortedRoleOptions;
+  }
+
+  // Cache the context value so CreatibutorsFieldItem consumers only re-render
+  // when one of the static config props actually changes reference.
+  _lastItemContextValue = null;
+  getItemContextValue() {
+    const {
+      roleOptions,
+      schema,
+      autocompleteNames,
+      modal: { addLabel, editLabel },
+      serializeSuggestions,
+      serializeCreatibutor,
+      deserializeCreatibutor,
+    } = this.props;
+    this._lastItemContextValue = {
+      roleOptions,
+      schema,
+      autocompleteNames,
+      addLabel,
+      editLabel,
+      serializeSuggestions,
+      serializeCreatibutor,
+      deserializeCreatibutor,
+      highlight: this._highlight,
+    };
+    return this._lastItemContextValue;
+  }
+
+  handleOnCreatibutorChange = (selectedCreatibutor) => {
+    const {
+      push: formikArrayPush,
+      form: { values },
+      name: fieldPath,
+    } = this.props;
+    const h = this._highlight;
+    h.from = getIn(values, fieldPath, []).length;
+    h.until = Date.now() + 2000; // 2 seconds
+    h.shown.clear();
     formikArrayPush(selectedCreatibutor);
+  };
+
+  handleAddCreatibutorsFromFile = (entries) => {
+    entries.forEach((entry) => this.handleOnCreatibutorChange(entry));
   };
 
   render() {
@@ -52,6 +129,11 @@ class CreatibutorsFieldForm extends Component {
       serializeCreatibutor,
       deserializeCreatibutor,
     } = this.props;
+
+    // Keep refs pointing at the latest helpers without changing their identity.
+    this._removeRef = formikArrayRemove;
+    this._replaceRef = formikArrayReplace;
+    this._moveRef = formikArrayMove;
 
     const creatibutorsList = getIn(values, fieldPath, []);
     const formikInitialValues = getIn(initialValues, fieldPath, []);
@@ -81,6 +163,12 @@ class CreatibutorsFieldForm extends Component {
       };
     }
 
+    const isContributors = schema === "contributors";
+    const totalCount = creatibutorsList.length;
+
+    // Display label for the inline filter placeholder.
+    const type = isContributors ? "contributors" : "authors/creators";
+
     return (
       <Overridable
         id="InvenioRdmRecords.DepositForm.CreatibutorsField.Container"
@@ -94,81 +182,102 @@ class CreatibutorsFieldForm extends Component {
         addButtonHelpText={addButtonHelpText}
         className={className}
       >
-        <DndProvider backend={HTML5Backend}>
-          <Form.Field required={schema === "creators"} className={className}>
-            <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-            <List>
-              {creatibutorsList.map((value, index) => {
-                const key = `${fieldPath}.${index}`;
-                const displayName = getCreatibutorDisplayName(value);
+        <CreatibutorsItemContext.Provider value={this.getItemContextValue()}>
+          <DndProvider backend={HTML5Backend}>
+            <Form.Field required={schema === "creators"} className={className}>
+              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
 
-                return (
-                  <CreatibutorsFieldItem
-                    key={key}
-                    creatibutorError={
-                      creatibutorsError &&
-                      typeof creatibutorsError !== "string" &&
-                      creatibutorsError[index]
+              {totalCount > 0 && (
+                <CreatibutorsInlinePanel
+                  list={creatibutorsList}
+                  keyPrefix={fieldPath}
+                  type={type}
+                  creatibutorErrors={
+                    creatibutorsError && typeof creatibutorsError !== "string"
+                      ? creatibutorsError
+                      : undefined
+                  }
+                  removeCreatibutor={this.stableRemove}
+                  replaceCreatibutor={this.stableReplace}
+                  moveCreatibutor={this.stableMove}
+                />
+              )}
+
+              <div className="creatibutors-action-bar mt-15">
+                <CreatibutorsModal
+                  onCreatibutorChange={this.handleOnCreatibutorChange}
+                  action="add"
+                  addLabel={modal.addLabel}
+                  editLabel={modal.editLabel}
+                  roleOptions={this.getSortedRoleOptions()}
+                  schema={schema}
+                  autocompleteNames={autocompleteNames}
+                  serializeSuggestions={serializeSuggestions}
+                  serializeCreatibutor={serializeCreatibutor}
+                  deserializeCreatibutor={deserializeCreatibutor}
+                  trigger={
+                    <Button
+                      type="button"
+                      icon
+                      labelPosition="left"
+                      className={className}
+                    >
+                      <Icon name="add" />
+                      {addButtonLabel}
+                    </Button>
+                  }
+                />
+
+                <Overridable id={CREATIBUTORS_FILE_MODAL_ID}>
+                  <CreatibutorsFileModal
+                    roleOptions={roleOptions}
+                    schema={schema}
+                    autocompleteNames={autocompleteNames}
+                    addLabel={modal.addLabel}
+                    editLabel={modal.editLabel}
+                    serializeSuggestions={serializeSuggestions}
+                    serializeCreatibutor={serializeCreatibutor}
+                    deserializeCreatibutor={deserializeCreatibutor}
+                    onConfirm={this.handleAddCreatibutorsFromFile}
+                    trigger={
+                      <Button
+                        type="button"
+                        icon
+                        labelPosition="left"
+                        className={className}
+                      >
+                        <Icon name="upload" />
+                        {isContributors
+                          ? i18next.t("Add contributors from file")
+                          : i18next.t("Add authors from file")}
+                      </Button>
                     }
-                    {...{
-                      displayName,
-                      index,
-                      roleOptions,
-                      schema,
-                      compKey: key,
-                      initialCreatibutor: value,
-                      removeCreatibutor: formikArrayRemove,
-                      replaceCreatibutor: formikArrayReplace,
-                      moveCreatibutor: formikArrayMove,
-                      addLabel: modal.addLabel,
-                      editLabel: modal.editLabel,
-                      autocompleteNames: autocompleteNames,
-                      serializeSuggestions: serializeSuggestions,
-                      serializeCreatibutor: serializeCreatibutor,
-                      deserializeCreatibutor: deserializeCreatibutor,
-                    }}
                   />
-                );
-              })}
-            </List>
-            <CreatibutorsModal
-              onCreatibutorChange={this.handleOnContributorChange}
-              action="add"
-              addLabel={modal.addLabel}
-              editLabel={modal.editLabel}
-              roleOptions={sortOptions(roleOptions)}
-              schema={schema}
-              autocompleteNames={autocompleteNames}
-              trigger={
-                <Button type="button" icon labelPosition="left" className={className}>
-                  <Icon name="add" />
-                  {addButtonLabel}
-                </Button>
-              }
-            />
-            {addButtonHelpText && (
-              <label className="helptext">{addButtonHelpText}</label>
-            )}
-            {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
-          </Form.Field>
-        </DndProvider>
+                </Overridable>
+              </div>
+
+              {addButtonHelpText && (
+                <label className="helptext">{addButtonHelpText}</label>
+              )}
+              {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
+            </Form.Field>
+          </DndProvider>
+        </CreatibutorsItemContext.Provider>
       </Overridable>
     );
   }
 }
 
 export class CreatibutorsFieldComponent extends Component {
+  // Stable class-instance function so FieldArray never sees a new `component`
+  // reference on unrelated Formik state changes.
+  _renderForm = (formikProps) => (
+    <CreatibutorsFieldForm {...formikProps} {...this.props} />
+  );
+
   render() {
     const { fieldPath } = this.props;
-
-    return (
-      <FieldArray
-        name={fieldPath}
-        component={(formikProps) => (
-          <CreatibutorsFieldForm {...formikProps} {...this.props} />
-        )}
-      />
-    );
+    return <FieldArray name={fieldPath} component={this._renderForm} />;
   }
 }
 

@@ -1,12 +1,11 @@
 # SPDX-FileCopyrightText: 2020-2025 CERN.
 # SPDX-FileCopyrightText: 2020 Northwestern University.
 # SPDX-FileCopyrightText: 2021-2025 Graz University of Technology.
-# SPDX-FileCopyrightText: 2022-2023 TU Wien.
+# SPDX-FileCopyrightText: 2022-2026 TU Wien.
 # SPDX-License-Identifier: MIT
 
 """Record response serializers."""
 
-from copy import deepcopy
 from functools import partial
 
 from babel_edtf import parse_edtf
@@ -23,14 +22,20 @@ from invenio_vocabularies.contrib.awards.serializer import AwardL10NItemSchema
 from invenio_vocabularies.contrib.funders.serializer import FunderL10NItemSchema
 from invenio_vocabularies.resources import L10NString, VocabularyL10Schema
 from marshmallow import Schema, fields, missing, post_dump, pre_dump
-from marshmallow_utils.fields import FormatDate as FormatDate_
-from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
-from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode, StrippedHTML
+from marshmallow_utils.fields import (
+    FormatDate,
+    FormatEDTF,
+    SanitizedHTML,
+    SanitizedUnicode,
+    StrippedHTML,
+)
 from marshmallow_utils.fields.babel import gettext_from_dict
+from marshmallow_utils.html import strip_html
 from pyparsing import ParseException
 
 from ....services.request_policies import RDMRecordDeletionPolicy
 from ....services.schemas.fields import SanitizedHTML
+from ....utils import simple_deepcopy
 from .fields import AccessStatusField
 
 
@@ -42,11 +47,6 @@ def current_default_locale():
     return "en"
 
 
-# Partial to make short definitions in below schema.
-FormatEDTF = partial(FormatEDTF_, locale=get_locale)
-FormatDate = partial(FormatDate_, locale=get_locale)
-
-
 def make_affiliation_index(attr, obj, *args):
     """Serializes creators/contributors for easier UI consumption.
 
@@ -55,7 +55,7 @@ def make_affiliation_index(attr, obj, *args):
     changes to fix RemovedInMarshmallow4Warning
     """
     # Copy so we don't modify in place the existing dict.
-    creators = deepcopy(obj.get("metadata", {}).get(attr))
+    creators = simple_deepcopy(obj.get("metadata", {}).get(attr))
     if not creators:
         return missing
 
@@ -97,7 +97,11 @@ def record_version(obj):
     field_data = obj.get("metadata", {}).get("version")
 
     if not field_data:
-        return f"v{obj['versions']['index']}"
+        field_data = obj.get("versions", {}).get("index")
+        if field_data:
+            return f"v{field_data}"
+        # If both metadata.version and versions.index are not available, return None as it is not published yet
+        return None
 
     return field_data
 
@@ -276,9 +280,16 @@ def compute_publishing_information(obj):
     def _format_thesis(thesis):
         """Formats a thesis entry into a string based on its attributes."""
         if not isinstance(thesis, dict):
-            return thesis
+            return strip_html(thesis) if isinstance(thesis, str) else thesis
         university = thesis.get("university")
+        if university:
+            university = strip_html(university)
         department = thesis.get("department")
+        if department:
+            department = strip_html(department)
+        thesis_type = thesis.get("type")
+        if thesis_type:
+            thesis_type = strip_html(thesis_type)
         if university and department:
             university = f"{university} ({department})"
         elif university is None:
@@ -289,7 +300,7 @@ def compute_publishing_information(obj):
         date_defended = thesis.get("date_defended")
         defended = f"{_('Defended: ')}{date_defended}" if date_defended else None
 
-        fields = [university, thesis.get("type"), submitted, defended]
+        fields = [university, thesis_type, submitted, defended]
         return ", ".join(filter(None, fields))
 
     attr = "custom_fields"
@@ -333,9 +344,13 @@ class TombstoneSchema(Schema):
     # This information is masked into a string in UIRecordSchema
     removed_by = fields.Raw(attribute="removed_by")
 
-    removal_date_l10n_medium = FormatEDTF(attribute="removal_date", format="medium")
+    removal_date_l10n_medium = FormatEDTF(
+        attribute="removal_date", format="medium", locale=get_locale
+    )
 
-    removal_date_l10n_long = FormatEDTF(attribute="removal_date", format="long")
+    removal_date_l10n_long = FormatEDTF(
+        attribute="removal_date", format="long", locale=get_locale
+    )
 
     citation_text = fields.String(attribute="citation_text")
 
@@ -369,16 +384,20 @@ class UIRecordSchema(BaseObjectSchema):
     object_key = "ui"
 
     publication_date_l10n_medium = FormatEDTF(
-        attribute="metadata.publication_date", format="medium"
+        attribute="metadata.publication_date", format="medium", locale=get_locale
     )
 
     publication_date_l10n_long = FormatEDTF(
-        attribute="metadata.publication_date", format="long"
+        attribute="metadata.publication_date", format="long", locale=get_locale
     )
 
-    created_date_l10n_long = FormatDate(attribute="created", format="long")
+    created_date_l10n_long = FormatDate(
+        attribute="created", format="long", locale=get_locale
+    )
 
-    updated_date_l10n_long = FormatDate(attribute="updated", format="long")
+    updated_date_l10n_long = FormatDate(
+        attribute="updated", format="long", locale=get_locale
+    )
 
     resource_type = fields.Nested(
         VocabularyL10Schema, attribute="metadata.resource_type"
@@ -389,9 +408,7 @@ class UIRecordSchema(BaseObjectSchema):
     )
 
     # Custom fields
-    custom_fields = fields.Nested(
-        partial(CustomFieldsSchemaUI, fields_var="RDM_CUSTOM_FIELDS")
-    )
+    custom_fields = fields.Nested(lambda: CustomFieldsSchemaUI("RDM_CUSTOM_FIELDS"))
 
     publishing_information = fields.Function(compute_publishing_information)
 
@@ -399,9 +416,13 @@ class UIRecordSchema(BaseObjectSchema):
 
     access_status = AccessStatusField(attribute="access")
 
-    creators = fields.Function(partial(make_affiliation_index, "creators"))
+    creators = fields.Function(
+        lambda obj: make_affiliation_index(attr="creators", obj=obj)
+    )
 
-    contributors = fields.Function(partial(make_affiliation_index, "contributors"))
+    contributors = fields.Function(
+        lambda obj: make_affiliation_index(attr="contributors", obj=obj)
+    )
 
     languages = fields.List(
         fields.Nested(VocabularyL10Schema),

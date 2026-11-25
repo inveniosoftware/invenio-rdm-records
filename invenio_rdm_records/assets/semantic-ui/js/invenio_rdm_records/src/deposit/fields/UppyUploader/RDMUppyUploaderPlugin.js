@@ -55,9 +55,9 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
   install() {
     AwsS3Multipart.prototype.install.apply(this);
     this.uppy.on("upload-success", this.#completeSinglePartUpload);
+    this.uppy.on("upload-success", this.#removeFileOnSuccess);
     this.uppy.on("upload-progress", this.#onUploadProgress);
     this.uppy.on("file-removed", this.#onFileRemoved);
-    this.uppy.on("complete", this.#resetOnComplete);
     this.uppy.addPreProcessor(this.#saveDraftBeforeUpload);
     // Disable resumable uploads Uppy capability.
     // Currently unsupported, as it requires missing API
@@ -68,9 +68,9 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
   uninstall() {
     AwsS3Multipart.prototype.uninstall.apply(this);
     this.uppy.off("upload-success", this.#completeSinglePartUpload);
+    this.uppy.off("upload-success", this.#removeFileOnSuccess);
     this.uppy.off("upload-progress", this.#onUploadProgress);
     this.uppy.off("file-removed", this.#onFileRemoved);
-    this.uppy.off("complete", this.#resetOnComplete);
     this.uppy.removePreProcessor(this.#saveDraftBeforeUpload);
     this.uppy.removePreProcessor(this.#disableResumableUploadsCapability);
   }
@@ -109,14 +109,22 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
   };
 
   #onFileRemoved = (file) => {
-    if (!file.progress.uploadComplete) {
-      file.links = file.meta.links;
-      this.opts.abortUpload(file);
+    if (file.progress?.uploadComplete) {
+      return;
     }
+    if (!file.meta?.links) {
+      // The file was never initialized on the backend (e.g. it was added to the
+      // Dashboard but the upload was never started), so there is nothing to abort.
+      return;
+    }
+    file.links = file.meta.links;
+    this.opts.abortUpload(file);
   };
 
-  #resetOnComplete = (result) => {
-    this.uppy.cancelAll();
+  #removeFileOnSuccess = (file) => {
+    // Remove successful uploads from Uppy state so they disappear from the Dashboard.
+    // Failed uploads remain available for retry/removal.
+    this.uppy.removeFile(file.id);
   };
 
   #saveDraftBeforeUpload = async (fileIDs) => {

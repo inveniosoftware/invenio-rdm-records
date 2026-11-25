@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2020-2025 CERN.
+ * SPDX-FileCopyrightText: 2020-2026 CERN.
  * SPDX-FileCopyrightText: 2020-2022 Northwestern University.
  * SPDX-FileCopyrightText: 2021 New York University.
  * SPDX-FileCopyrightText: 2024 KTH Royal Institute of Technology.
@@ -8,33 +8,23 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import _get from "lodash/get";
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, { useRef, useState, useEffect, useContext, createContext } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { Button, Label, List, Ref } from "semantic-ui-react";
 import { FeedbackLabel } from "react-invenio-forms";
 import { CreatibutorsModal } from "./CreatibutorsModal";
-import { CREATIBUTOR_TYPE } from "./type";
 import PropTypes from "prop-types";
 
-export const getCreatibutorDisplayName = (value) => {
-  const creatibutorType = _get(value, "person_or_org.type", CREATIBUTOR_TYPE.PERSON);
-  const isPerson = creatibutorType === CREATIBUTOR_TYPE.PERSON;
+// Item-level config context provided to all rows by parent components.
+export const CreatibutorsItemContext = createContext(null);
 
-  const familyName = _get(value, "person_or_org.family_name", "");
-  const givenName = _get(value, "person_or_org.given_name", "");
-  const affiliations = value?.affiliations.map(
-    (affiliation) => affiliation.text || affiliation.name
-  );
-  const name = _get(value, `person_or_org.name`);
+// until: 0 keeps Date.now() >= until true until an add sets a future expiry.
+const NO_HIGHLIGHT = { from: 0, until: 0, shown: new Set() };
 
-  const affiliation = affiliations.length ? ` (${affiliations.join(", ")})` : "";
-
-  if (isPerson) {
-    const givenNameSuffix = givenName ? `, ${givenName}` : "";
-    return `${familyName}${givenNameSuffix}${affiliation}`;
-  }
-
-  return `${name}${affiliation}`;
+const renderRole = (role, roleOptions) => {
+  if (!role) return null;
+  const friendlyRole = roleOptions.find(({ value }) => value === role)?.text ?? role;
+  return <Label size="tiny">{friendlyRole}</Label>;
 };
 
 export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
@@ -44,26 +34,44 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
   replaceCreatibutor,
   removeCreatibutor,
   moveCreatibutor,
-  addLabel,
-  editLabel,
   initialCreatibutor,
   displayName,
-  roleOptions,
-  schema,
-  autocompleteNames,
-  serializeSuggestions,
-  serializeCreatibutor,
-  deserializeCreatibutor,
 }) {
+  const {
+    roleOptions,
+    schema,
+    autocompleteNames,
+    addLabel,
+    editLabel,
+    serializeSuggestions,
+    serializeCreatibutor,
+    deserializeCreatibutor,
+    highlight = NO_HIGHLIGHT,
+  } = useContext(CreatibutorsItemContext) ?? {};
+
+  const [isHighlighted, setIsHighlighted] = useState(() => {
+    if (
+      index < highlight.from ||
+      Date.now() >= highlight.until ||
+      highlight.shown.has(index)
+    )
+      return false;
+    highlight.shown.add(index);
+    return true;
+  });
+
+  useEffect(() => {
+    if (!isHighlighted) return;
+    const t = setTimeout(
+      () => setIsHighlighted(false),
+      Math.max(0, highlight.until - Date.now())
+    );
+    return () => clearTimeout(t);
+  }, [isHighlighted, highlight]);
+
   const dropRef = useRef(null);
   const modalRef = useRef(null);
   const [mountModal, setMountModal] = useState(false);
-
-  // Only recompute the display string when this author's data actually changes.
-  const creatibutorDisplayName = useMemo(
-    () => getCreatibutorDisplayName(initialCreatibutor),
-    [initialCreatibutor]
-  );
 
   // eslint-disable-next-line no-unused-vars
   const [_, drag, preview] = useDrag({
@@ -93,6 +101,7 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
     }),
   });
 
+  // After the modal mounts for the first time, open it immediately.
   useEffect(() => {
     if (mountModal && modalRef.current) {
       modalRef.current.openModal();
@@ -101,35 +110,33 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
 
   const handleEditClick = () => {
     if (mountModal && modalRef.current) {
-      // Already mounted from a previous edit – open directly.
+      // Already mounted from a previous edit - open directly.
       modalRef.current.openModal();
     } else {
       // First edit: mount the modal; the effect above will open it.
-      setMountModal(true);
+      setTimeout(() => setMountModal(true), 0);
     }
   };
 
-  const renderRole = (role, roleOptions) => {
-    if (role) {
-      const friendlyRole =
-        roleOptions.find(({ value }) => value === role)?.text ?? role;
-
-      return <Label size="tiny">{friendlyRole}</Label>;
-    }
-  };
-
-  // Initialize the ref explicitly
+  // Initialize the ref explicitely
   drop(dropRef);
   return (
     <Ref innerRef={dropRef} key={compKey}>
       <List.Item
         key={compKey}
-        className={hidden ? "deposit-drag-listitem hidden" : "deposit-drag-listitem"}
+        className={[
+          "deposit-drag-listitem",
+          hidden && "drag-ghost",
+          isHighlighted && "highlighted",
+        ]
+          .filter(Boolean)
+          .join(" ")}
       >
         <List.Content floated="right">
           <Button size="mini" type="button" onClick={() => removeCreatibutor(index)}>
             {i18next.t("Remove")}
           </Button>
+          {/* Edit button mounts the modal lazily on first click. */}
           <Button size="mini" primary type="button" onClick={handleEditClick}>
             {i18next.t("Edit")}
           </Button>
@@ -146,6 +153,7 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
               schema={schema}
               autocompleteNames={autocompleteNames}
               action="edit"
+              trigger={null}
               serializeSuggestions={serializeSuggestions}
               serializeCreatibutor={serializeCreatibutor}
               deserializeCreatibutor={deserializeCreatibutor}
@@ -192,8 +200,7 @@ export const CreatibutorsFieldItem = React.memo(function CreatibutorsFieldItem({
                     height="16"
                   />
                 )}
-                {displayName || creatibutorDisplayName}
-                {renderRole(initialCreatibutor?.role, roleOptions)}
+                {displayName} {renderRole(initialCreatibutor?.role, roleOptions)}
               </span>
             </List.Description>
             {creatibutorError && (
@@ -213,25 +220,11 @@ CreatibutorsFieldItem.propTypes = {
   replaceCreatibutor: PropTypes.func.isRequired,
   removeCreatibutor: PropTypes.func.isRequired,
   moveCreatibutor: PropTypes.func.isRequired,
-  addLabel: PropTypes.node,
-  editLabel: PropTypes.node,
   initialCreatibutor: PropTypes.object.isRequired,
   displayName: PropTypes.string,
-  roleOptions: PropTypes.array.isRequired,
-  schema: PropTypes.string.isRequired,
-  autocompleteNames: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
-  serializeSuggestions: PropTypes.func,
-  serializeCreatibutor: PropTypes.func,
-  deserializeCreatibutor: PropTypes.func,
 };
 
 CreatibutorsFieldItem.defaultProps = {
   creatibutorError: undefined,
-  addLabel: undefined,
-  editLabel: undefined,
   displayName: undefined,
-  autocompleteNames: undefined,
-  serializeSuggestions: undefined,
-  serializeCreatibutor: undefined,
-  deserializeCreatibutor: undefined,
 };
