@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2023 TU Wien.
+# SPDX-FileCopyrightText: 2026 Rachel Bittner
 # SPDX-License-Identifier: MIT
 
 """Testing the workflow for access requests."""
@@ -368,3 +369,60 @@ def test_access_grant_for_role(
 
     response = client.get(f"/records/{record.id}")
     assert response.status_code == 200
+
+
+def test_user_access_request_accept_with_existing_grant(
+    running_app, client, users, minimal_record
+):
+    """Accepting a request whose requester already has a grant succeeds.
+
+    Without this, accepting fails with an unhandled ``GrantExistsError`` (HTTP
+    500), e.g. when the owner already granted access manually, or when an
+    earlier accept attempt failed after the grant had been committed.
+    """
+    record_owner, user = users
+    identity = Identity(record_owner.id)
+    identity.provides.add(any_user)
+    identity.provides.add(authenticated_user)
+    identity.provides.add(UserNeed(record_owner.id))
+    login_user(user)
+    login_user_via_session(client, email=user.email)
+
+    record_json = copy.deepcopy(minimal_record)
+    record_json["files"] = {"enabled": False}
+    record_json["access"]["record"] = "public"
+    record_json["access"]["files"] = "restricted"
+    draft = service.create(identity=identity, data=record_json)
+    record = service.publish(identity=identity, id_=draft.id)
+
+    response = client.post(
+        f"/records/{record.id}/access/request",
+        json={"message": "Please!", "email": user.email, "full_name": "User"},
+    )
+    assert response.status_code == 200
+    request_id = response.json["id"]
+
+    # The owner grants access manually before handling the request
+    service.access.bulk_create_grants(
+        system_identity,
+        record.id,
+        {
+            "grants": [
+                {
+                    "permission": "view",
+                    "subject": {"type": "user", "id": str(user.id)},
+                    "origin": "manual",
+                }
+            ]
+        },
+    )
+
+    # Accepting the request still works, without duplicating the grant
+    current_requests_service.execute_action(identity, request_id, "accept", data={})
+    result = current_requests_service.read(system_identity, request_id)
+    assert result["status"] == "accepted"
+
+    record = service.read(identity=identity, id_=record.id)
+    grants = record._record.parent.access.grants
+    assert len(grants) == 1
+    assert grants[0].to_dict()["origin"] == "manual"

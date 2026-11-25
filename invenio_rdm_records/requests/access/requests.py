@@ -226,7 +226,18 @@ class UserAcceptAction(actions.AcceptAction):
 
         # NOTE: we're using the system identity here to avoid the grant creation
         #       potentially being blocked by the requesting user's profile visibility
-        service.access.bulk_create_grants(system_identity, record.pid.pid_value, data)
+        # NOTE: if the requester already holds a grant for this record (e.g.
+        #       created manually by the owner, or left behind by an earlier,
+        #       partially failed accept), there's nothing left to grant, so we
+        #       just accept the request instead of failing with `GrantExistsError`
+        already_granted = any(
+            grant.subject_type == "user" and str(grant.subject_id) == str(creator.id)
+            for grant in record.parent.access.grants
+        )
+        if not already_granted:
+            service.access.bulk_create_grants(
+                system_identity, record.pid.pid_value, data
+            )
         uow.register(
             ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))
         )
