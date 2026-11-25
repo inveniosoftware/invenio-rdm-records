@@ -8,6 +8,10 @@ SPDX-License-Identifier: MIT
 
 # Changes
 
+## Version v38.1.0
+
+- feat: reindex records when referenced affiliations/funders change
+
 ## Version v38.0.0 (released 2026-11-24)
 
 - feature: add user-specific max_additional_quota
