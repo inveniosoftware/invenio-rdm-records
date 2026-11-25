@@ -8,6 +8,10 @@ SPDX-License-Identifier: MIT
 
 # Changes
 
+## Version v38.1.0 (released 2026-11-25)
+
+- feat: add support for additional file formats when importing authors and contributors
+
 ## Version v38.0.0 (released 2026-11-24)
 
 - feature: add user-specific max_additional_quota
