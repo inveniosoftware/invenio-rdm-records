@@ -9,6 +9,44 @@
 Changes
 =======
 
+Version v32.4.0 (released 2026-11-25)
+
+- feat(auditlog): Add audit logs for file create/delete
+- fix(requests): expose record version in expanded topic
+- fix(ui): use SECURITY_LOGIN_URL in restricted files login link
+- iiif: fix: logging without reserved filename key
+- fix(entity_resolvers): Fix ghost_record for drafts on submission
+- feat(ui): make NewVersionButton overridable
+- feat(Creatibutors): add inline scrolling and file importing in deposit
+- fix(CreatibutorsInlinePanel): Optimize re-render condition
+- fix(CreatibutorsFileModal): Simplify components and CSS rendering
+- fix(CreatibutorsInlinePanel): Move props to CreatibutorsItemContext
+- fix(CreatibutorsFieldItem): Trigger update via context
+- fix(creatibutors): only accept txt files
+- fix(uppy): keep failed uploads in dashboard on complete
+- fix(deposit-ui): enforce file count and storage quotas in Uppy uploader
+- fix(file-modification): handle validation errors
+- change(components): preserve internal note
+- feat(notifications): add NOTIFICATIONS_SHOW_EMOJIS config option
+- chore: replace pipenv by uv
+- deposit: update the text of disabled new version btn
+- feat(utils): add simplified deepcopy implementations to utils
+- fix(tombstone): avoid side effects from shallow copies in removal reason
+- fix(performance): replace `deepcopy()` in UI serialization
+- refactor(schema): optimize RDM record schemas for reusability
+- refactor(schemas): initialize schemas in the service constructors
+- fix(github): resolve badge DOI in 1 query
+- fix: strip html from thesis not only sanitize unicode
+- fix(iiif): reduce memory consumption for PDFs
+- feat(deposit-ui): allow overriding file items
+- fix: flatten transparent pdf page on white to prevent black JPEG output
+- fix(languages): update title for lang `uig`
+- feat(deposit-ui): pass icon to deserialized errors
+- fix: enforce per-user quota cap on increase
+- fix(pids): free external DOI when removed on publish
+- fix(uppy): support removal of non-uploaded files
+- feat: add support for additional file formats when importing authors and contributors
+
 Version v32.3.3 (released 2026-10-30)
 
 - fix(serializers): get correctly translated rights
