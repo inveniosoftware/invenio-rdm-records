@@ -65,7 +65,9 @@ class RDMVCSRelease(VCSRelease):
 
     metadata_cls = RDMReleaseMetadata
 
-    def __init__(self, release: Release, provider: RepositoryServiceProvider):
+    def __init__(
+        self, release: Release, provider: "RepositoryServiceProvider | None" = None
+    ):
         """Constructor."""
         super().__init__(release, provider)
         self.warnings = []

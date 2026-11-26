@@ -94,6 +94,22 @@ def test_badge_value_query_count_vcs(db, github_release, provider, published_rec
     assert re.fullmatch(pattern, badge_value) is not None
 
 
+def test_badge_value_no_provider(db, github_release, published_record):
+    """`badge_value` works without constructing a provider.
+
+    Badges are rendered from an anonymous, unauthenticated view (e.g. an
+    <img> tag embedded in a public GitHub README), so `RDMVCSRelease` must
+    support being constructed with no `provider` at all.
+    """
+    doi = published_record["pids"]["doi"]["identifier"]
+    badge_value = RDMVCSRelease(github_release).badge_value
+
+    assert badge_value == doi
+
+    pattern = r"10\.1234/[a-z0-9\-]{1,12}"
+    assert re.fullmatch(pattern, badge_value) is not None
+
+
 def test_badge_value_query_count(db, github_release, published_record):
     """Regression test: `badge_value` stays at one query."""
     doi = published_record["pids"]["doi"]["identifier"]
