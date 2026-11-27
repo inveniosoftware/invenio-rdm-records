@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 CERN.
+# SPDX-FileCopyrightText: 2021-2026 CERN.
 # SPDX-License-Identifier: MIT
 
 """CSL based Schema for Invenio RDM Records."""
@@ -7,9 +7,9 @@ from babel_edtf import parse_edtf
 from edtf.parser.edtf_exceptions import EDTFParseException
 from edtf.parser.parser_classes import Date, Interval
 from flask_resources.serializers import BaseSerializerSchema
+from invenio_records.dictutils import dict_lookup
 from marshmallow import Schema, fields, missing, pre_dump
 from marshmallow_utils.fields import SanitizedUnicode, StrippedHTML
-from pydash import py_
 
 from ..schemas import CommonFieldsMixin
 from ..utils import get_vocabulary_props
@@ -59,7 +59,7 @@ class CSLJSONSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_type(self, obj):
         """Get resource type."""
-        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        resource_type_id = dict_lookup(obj, "metadata.resource_type.id", default=None)
         if not resource_type_id:
             return missing
 
@@ -74,7 +74,7 @@ class CSLJSONSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_issued(self, obj):
         """Get issued dates."""
-        publication_date = py_.get(obj, "metadata.publication_date")
+        publication_date = dict_lookup(obj, "metadata.publication_date", default=None)
         if not publication_date:
             return missing
 
