@@ -1,12 +1,12 @@
-# SPDX-FileCopyrightText: 2023 CERN.
+# SPDX-FileCopyrightText: 2023-2026 CERN.
 # SPDX-License-Identifier: MIT
 
 """Codemeta schema."""
 
 from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
+from invenio_records.dictutils import dict_lookup
 from marshmallow import fields, missing
-from pydash import py_
 
 from ..schemaorg.schema import SchemaorgSchema
 
@@ -51,14 +51,14 @@ class CodemetaSchema(SchemaorgSchema):
 
     def get_embargo_date(self, obj):
         """Get embargo date."""
-        is_embargo = py_.get(obj, "access.embargo.active")
+        is_embargo = dict_lookup(obj, "access.embargo.active", default=None)
 
         if not is_embargo:
             return missing
 
         parsed_date = None
         try:
-            parsed_date = parse_edtf(py_.get(obj, "access.embargo"))
+            parsed_date = parse_edtf(dict_lookup(obj, "access.embargo", default=None))
         except ParseException:
             pass
         return parsed_date or missing
