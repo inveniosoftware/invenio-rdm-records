@@ -742,6 +742,7 @@ class RDMRecordService(RecordService):
             not allow_restriction
             and current_draft_is_public
             and is_update_to_restricted
+            and not self.check_permission(identity, "moderate", record=draft)
         ):
             end_of_grace_period = (
                 draft.created
