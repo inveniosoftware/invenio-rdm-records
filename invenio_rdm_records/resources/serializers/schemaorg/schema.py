@@ -458,7 +458,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         Only dates of type ``coverage`` are returned, since schema.org's
         ``temporalCoverage`` describes the period the content covers, unlike
-        ``temporal``, which carries the record's other dates,
+        ``temporal``, which carries the record's other dates.
         """
         dates = []
         for date in obj["metadata"].get("dates", []):
