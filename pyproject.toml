@@ -9,7 +9,7 @@
 name = "invenio-rdm-records"
 description = "InvenioRDM module for records: DataCite-based data model, drafts, files, PIDs, access and services."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = "MIT"
 authors = [{ name = "CERN", email = "info@inveniosoftware.org" }]
 keywords = ["data", "invenio", "model", "rdm"]
