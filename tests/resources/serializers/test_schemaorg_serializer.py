@@ -1,9 +1,12 @@
 # SPDX-FileCopyrightText: 2023-2024 CERN.
 # SPDX-FileCopyrightText: 2021 Caltech.
 # SPDX-FileCopyrightText: 2021 Northwestern University.
+# SPDX-FileCopyrightText: 2026 EcoDeco AS.
 # SPDX-License-Identifier: MIT
 
 """Resources serializers tests."""
+
+from copy import deepcopy
 
 from invenio_rdm_records.resources.serializers.schemaorg import (
     SchemaorgJSONLDSerializer,
@@ -193,3 +196,57 @@ def test_schemaorg_serializer_empty_record(running_app, empty_record):
     serialized_record = serializer.dump_obj(empty_record)
 
     assert serialized_record == expected_data
+
+
+def test_schemaorg_serializer_temporal_coverage(running_app, full_record_to_dict):
+    """Test that only dates of type ``coverage`` reach ``temporalCoverage``."""
+
+    serializer = SchemaorgJSONLDSerializer()
+
+    # The full record's only date is of type "other", so the record has no
+    # temporalCoverage and "temporal" is unaffected.
+    without_coverage = serializer.dump_obj(full_record_to_dict)
+
+    assert "temporalCoverage" not in without_coverage
+    assert without_coverage["temporal"] == ["1939/1945"]
+
+    # A coverage date fills temporalCoverage and is kept out of "temporal",
+    # which carries the record's other dates.
+    record = deepcopy(full_record_to_dict)
+    record["metadata"]["dates"].append(
+        {
+            "date": "1815/1830",
+            "description": "The period the photographs are about",
+            "type": {"id": "coverage", "title": {"en": "Coverage"}},
+        }
+    )
+    with_coverage = serializer.dump_obj(record)
+
+    assert with_coverage["temporalCoverage"] == "1815/1830"
+    assert with_coverage["temporal"] == ["1939/1945"]
+
+    # Several coverage dates are carried as a list.
+    record["metadata"]["dates"].append(
+        {
+            "date": "1900",
+            "type": {"id": "coverage", "title": {"en": "Coverage"}},
+        }
+    )
+    with_two = serializer.dump_obj(record)
+
+    assert with_two["temporalCoverage"] == ["1815/1830", "1900"]
+    assert with_two["temporal"] == ["1939/1945"]
+
+    # A record whose only date is a coverage date has no "temporal" at all,
+    # rather than an empty list.
+    only_coverage = deepcopy(full_record_to_dict)
+    only_coverage["metadata"]["dates"] = [
+        {
+            "date": "1815/1830",
+            "type": {"id": "coverage", "title": {"en": "Coverage"}},
+        }
+    ]
+    serialized = serializer.dump_obj(only_coverage)
+
+    assert serialized["temporalCoverage"] == "1815/1830"
+    assert "temporal" not in serialized
